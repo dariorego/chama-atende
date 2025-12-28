@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { ClientLayout } from "@/components/layout/ClientLayout";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   User, 
   Phone, 
@@ -12,9 +13,13 @@ import {
   Check,
   Minus,
   Plus,
-  Clock,
   CalendarDays,
-  Sparkles
+  Sparkles,
+  ArrowLeft,
+  Share2,
+  MoreHorizontal,
+  MapPin,
+  Star,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -27,6 +32,7 @@ const timeSlots = [
 ];
 
 const ReservationsPage = () => {
+  const navigate = useNavigate();
   const [date, setDate] = useState<Date>();
   const [time, setTime] = useState<string>();
   const [partySize, setPartySize] = useState(2);
@@ -38,7 +44,16 @@ const ReservationsPage = () => {
   const [nameFocused, setNameFocused] = useState(false);
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [observationFocused, setObservationFocused] = useState(false);
+  const [activeTab, setActiveTab] = useState("reserva");
   const { toast } = useToast();
+
+  const establishment = {
+    name: "Bistro Verde",
+    location: "Jardins, São Paulo",
+    rating: 4.8,
+    reviewCount: 324,
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop",
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,80 +91,201 @@ const ReservationsPage = () => {
 
   if (isSuccess) {
     return (
-      <ClientLayout title="Reserva" showBack backTo="/">
-        <div className="flex flex-col items-center justify-center py-8 animate-scale-in">
-          {/* Decorative blur */}
-          <div className="absolute top-20 right-0 w-40 h-40 bg-primary/20 rounded-full blur-[80px] pointer-events-none" />
-          
-          {/* Success Icon */}
-          <div className="relative mb-6">
-            <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
-              <CheckCircle className="h-12 w-12 text-primary" />
-            </div>
-            <div className="absolute -top-2 -right-2 bg-primary text-background text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-bounce">
-              <Sparkles className="w-3 h-3" />
-              Confirmada!
-            </div>
-          </div>
-          
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            Reserva Confirmada!
-          </h2>
-          <p className="text-muted-foreground text-center max-w-xs mb-8">
-            Sua mesa foi reservada. Enviaremos uma confirmação por WhatsApp.
-          </p>
+      <div className="min-h-screen bg-background">
+        {/* Hero Header */}
+        <div className="relative h-80">
+          <img
+            src={establishment.image}
+            alt={establishment.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
 
-          {/* Details Card */}
-          <div className="w-full max-w-sm p-6 bg-surface-dark rounded-2xl border border-border/50">
-            <div className="flex items-center gap-2 mb-4">
-              <CalendarDays className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold text-foreground">Detalhes da Reserva</h3>
-            </div>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center py-2 border-b border-border/30">
-                <span className="text-muted-foreground">Data</span>
-                <span className="text-foreground font-medium">
-                  {date && format(date, "dd 'de' MMMM", { locale: ptBR })}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-border/30">
-                <span className="text-muted-foreground">Horário</span>
-                <span className="text-foreground font-medium">{time}</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-border/30">
-                <span className="text-muted-foreground">Pessoas</span>
-                <span className="text-foreground font-medium">{partySize} {partySize === 1 ? "pessoa" : "pessoas"}</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Nome</span>
-                <span className="text-foreground font-medium">{name}</span>
-              </div>
+          {/* Floating buttons */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+            <button
+              onClick={() => navigate("/")}
+              className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
+            >
+              <ArrowLeft className="h-5 w-5 text-white" />
+            </button>
+            <div className="flex gap-2">
+              <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+                <Share2 className="h-5 w-5 text-white" />
+              </button>
+              <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+                <MoreHorizontal className="h-5 w-5 text-white" />
+              </button>
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            onClick={() => {
-              setIsSuccess(false);
-              setDate(undefined);
-              setTime(undefined);
-              setPartySize(2);
-              setName("");
-              setPhone("");
-              setObservation("");
-            }}
-            className="mt-6 rounded-full px-8"
-          >
-            Nova Reserva
-          </Button>
+          {/* Restaurant info over image */}
+          <div className="absolute bottom-6 left-4 right-4">
+            {/* Open badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-xs font-medium text-primary">Aberto agora</span>
+            </div>
+
+            <h1 className="text-3xl font-bold text-white mb-1">{establishment.name}</h1>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1 text-white/80">
+                <MapPin className="h-4 w-4" />
+                <span className="text-sm">{establishment.location}</span>
+              </div>
+              <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
+                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                <span className="text-sm font-medium text-white">{establishment.rating}</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </ClientLayout>
+
+        <div className="px-4 py-8">
+          <div className="flex flex-col items-center justify-center animate-scale-in">
+            {/* Success Icon */}
+            <div className="relative mb-6">
+              <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
+                <CheckCircle className="h-12 w-12 text-primary" />
+              </div>
+              <div className="absolute -top-2 -right-2 bg-primary text-background text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-bounce">
+                <Sparkles className="w-3 h-3" />
+                Confirmada!
+              </div>
+            </div>
+            
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Reserva Confirmada!
+            </h2>
+            <p className="text-muted-foreground text-center max-w-xs mb-8">
+              Sua mesa foi reservada. Enviaremos uma confirmação por WhatsApp.
+            </p>
+
+            {/* Details Card */}
+            <div className="w-full max-w-sm p-6 bg-surface-dark rounded-2xl border border-border/50">
+              <div className="flex items-center gap-2 mb-4">
+                <CalendarDays className="w-5 h-5 text-primary" />
+                <h3 className="font-semibold text-foreground">Detalhes da Reserva</h3>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center py-2 border-b border-border/30">
+                  <span className="text-muted-foreground">Data</span>
+                  <span className="text-foreground font-medium">
+                    {date && format(date, "dd 'de' MMMM", { locale: ptBR })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-border/30">
+                  <span className="text-muted-foreground">Horário</span>
+                  <span className="text-foreground font-medium">{time}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-border/30">
+                  <span className="text-muted-foreground">Pessoas</span>
+                  <span className="text-foreground font-medium">{partySize} {partySize === 1 ? "pessoa" : "pessoas"}</span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-muted-foreground">Nome</span>
+                  <span className="text-foreground font-medium">{name}</span>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsSuccess(false);
+                setDate(undefined);
+                setTime(undefined);
+                setPartySize(2);
+                setName("");
+                setPhone("");
+                setObservation("");
+              }}
+              className="mt-6 rounded-full px-8"
+            >
+              Nova Reserva
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <ClientLayout title="Fazer Reserva" showBack backTo="/">
-      <form onSubmit={handleSubmit} className="space-y-6 pb-28">
+    <div className="min-h-screen bg-background">
+      {/* Hero Header */}
+      <div className="relative h-80">
+        <img
+          src={establishment.image}
+          alt={establishment.name}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+
+        {/* Floating buttons */}
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+          <button
+            onClick={() => navigate("/")}
+            className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
+          >
+            <ArrowLeft className="h-5 w-5 text-white" />
+          </button>
+          <div className="flex gap-2">
+            <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <Share2 className="h-5 w-5 text-white" />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <MoreHorizontal className="h-5 w-5 text-white" />
+            </button>
+          </div>
+        </div>
+
+        {/* Restaurant info over image */}
+        <div className="absolute bottom-6 left-4 right-4">
+          {/* Open badge */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-xs font-medium text-primary">Aberto agora</span>
+          </div>
+
+          <h1 className="text-3xl font-bold text-white mb-1">{establishment.name}</h1>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 text-white/80">
+              <MapPin className="h-4 w-4" />
+              <span className="text-sm">{establishment.location}</span>
+            </div>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
+              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+              <span className="text-sm font-medium text-white">{establishment.rating}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="px-4 -mt-4 relative z-10">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1">
+            <TabsTrigger
+              value="reserva"
+              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Fazer Reserva
+            </TabsTrigger>
+            <TabsTrigger
+              value="cardapio"
+              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              onClick={() => navigate("/menu")}
+            >
+              Cardápio
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="px-4 py-6 pb-32 space-y-6">
         {/* Section: Date */}
         <div className="space-y-3">
           <h2 className="text-xl font-bold text-foreground">Escolha uma data</h2>
@@ -361,7 +497,7 @@ const ReservationsPage = () => {
           )}
         </Button>
       </div>
-    </ClientLayout>
+    </div>
   );
 };
 
