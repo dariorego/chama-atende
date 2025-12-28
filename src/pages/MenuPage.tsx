@@ -3,8 +3,14 @@ import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
 import { ProductDetailSheet } from "@/components/ui/product-detail-sheet";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, ChefHat } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 interface Product {
   id: string;
@@ -109,11 +115,22 @@ const MenuPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
     setIsSheetOpen(true);
   };
+
+  // Setup carousel API listener
+  useState(() => {
+    if (!carouselApi) return;
+    
+    carouselApi.on("select", () => {
+      setCurrentSlide(carouselApi.selectedScrollSnap());
+    });
+  });
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = activeCategory === "all" || product.category === activeCategory;
@@ -122,7 +139,7 @@ const MenuPage = () => {
     return matchesCategory && matchesSearch;
   });
 
-  const highlightedProducts = filteredProducts.filter((p) => p.highlight);
+  const highlightedProducts = products.filter((p) => p.highlight);
   const regularProducts = filteredProducts.filter((p) => !p.highlight);
 
   return (
@@ -138,6 +155,82 @@ const MenuPage = () => {
           className="pl-10 bg-secondary border-border"
         />
       </div>
+
+      {/* Chef Highlights Carousel */}
+      {highlightedProducts.length > 0 && (
+        <div className="mb-6 -mx-4">
+          <div className="px-4 mb-3">
+            <h2 className="text-sm font-semibold text-primary flex items-center gap-2">
+              <ChefHat className="h-4 w-4" /> Sugestão do Chef
+            </h2>
+          </div>
+          
+          <Carousel
+            setApi={setCarouselApi}
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 px-4">
+              {highlightedProducts.map((product) => (
+                <CarouselItem key={product.id} className="pl-2 basis-[85%] md:basis-[60%]">
+                  <button
+                    onClick={() => handleProductClick(product)}
+                    className="relative w-full aspect-[16/10] rounded-xl overflow-hidden group"
+                  >
+                    {/* Background Image */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+                      style={{ backgroundImage: `url(${product.image})` }}
+                    />
+                    
+                    {/* Dark Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    
+                    {/* Badge */}
+                    <div className="absolute top-3 left-3">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                        <ChefHat className="h-3 w-3" />
+                        Sugestão do Chef
+                      </span>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
+                      <h3 className="text-lg font-bold text-white mb-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-white/80 line-clamp-2">
+                        {product.description}
+                      </p>
+                    </div>
+                  </button>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+          
+          {/* Carousel Indicators */}
+          {highlightedProducts.length > 1 && (
+            <div className="flex justify-center gap-1.5 mt-3">
+              {highlightedProducts.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => carouselApi?.scrollTo(index)}
+                  className={cn(
+                    "w-2 h-2 rounded-full transition-all",
+                    currentSlide === index
+                      ? "bg-primary w-4"
+                      : "bg-muted-foreground/30"
+                  )}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Category Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none -mx-4 px-4">
@@ -156,33 +249,6 @@ const MenuPage = () => {
           </button>
         ))}
       </div>
-
-      {/* Highlighted Products */}
-      {highlightedProducts.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-sm font-semibold text-primary mb-3 flex items-center gap-2">
-            <span>✨</span> Sugestão do Chef
-          </h2>
-          <div className="space-y-3">
-            {highlightedProducts.map((product, index) => (
-              <div
-                key={product.id}
-                className="animate-slide-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <ProductCard
-                  name={product.name}
-                  description={product.description}
-                  price={product.price}
-                  image={product.image}
-                  highlight
-                  onClick={() => handleProductClick(product)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Regular Products */}
       <div className="space-y-3">
