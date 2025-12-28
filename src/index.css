@@ -49,6 +49,15 @@
     --gradient-card: linear-gradient(180deg, hsl(220 18% 14%) 0%, hsl(220 18% 10%) 100%);
     --shadow-glow: 0 0 20px hsl(142 85% 49% / 0.3);
     --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.3);
+    --shadow-glow-lg: 0 0 40px hsl(142 85% 49% / 0.4);
+
+    /* Module colors */
+    --module-amber: 38 92% 50%;
+    --module-amber-bg: 38 92% 95%;
+    --module-purple: 270 70% 55%;
+    --module-purple-bg: 270 70% 95%;
+    --module-blue: 210 80% 55%;
+    --module-blue-bg: 210 80% 95%;
 
     --sidebar-background: 220 18% 10%;
     --sidebar-foreground: 0 0% 98%;
