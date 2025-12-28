@@ -21,7 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<HubPage />} />
           <Route path="/cardapio" element={<MenuPage />} />
-          <Route path="/chamar-garcom" element={<WaiterCallPage />} />
+          <Route path="/solicitar-atendimento" element={<WaiterCallPage />} />
           <Route path="/reservas" element={<ReservationsPage />} />
           <Route path="/fila" element={<QueuePage />} />
           <Route path="*" element={<NotFound />} />
