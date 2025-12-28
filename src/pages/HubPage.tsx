@@ -91,9 +91,9 @@ const HubPage = () => {
           {establishment.modules.waiterCall && (
             <ActionCard
               icon={Bell}
-              title="Chamar Garçom"
+              title="Solicitar Atendimento"
               description="Solicite atendimento na sua mesa"
-              to="/chamar-garcom"
+              to="/solicitar-atendimento"
             />
           )}
 
