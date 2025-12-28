@@ -16,13 +16,14 @@ import {
   Star,
   User,
   Phone,
-  Users,
   Bell,
   Clock,
   X,
   ChevronRight,
   Zap,
   MessageSquare,
+  Minus,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -359,36 +360,46 @@ export default function QueuePage() {
 
         {/* Party size */}
         <div className="space-y-3 mb-4">
-          <Label className="text-muted-foreground flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Quantidade de pessoas
-          </Label>
-          <div className="flex gap-3">
-            {[1, 2, 3, 4, 5, 6].map((size) => (
-              <button
-                key={size}
-                onClick={() => setPartySize(size)}
-                className={cn(
-                  "w-14 h-14 rounded-2xl font-semibold text-lg transition-all",
-                  partySize === size
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
-                    : "bg-surface-dark text-foreground border border-border hover:border-primary/50"
-                )}
-              >
-                {size}
-              </button>
-            ))}
-            <button
-              onClick={() => setPartySize(7)}
-              className={cn(
-                "w-14 h-14 rounded-2xl font-semibold text-lg transition-all",
-                partySize >= 7
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
-                  : "bg-surface-dark text-foreground border border-border hover:border-primary/50"
-              )}
-            >
-              7+
-            </button>
+          <div className="bg-surface-dark rounded-2xl p-5 border border-border/30">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Quantas pessoas?</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Mesas acima de 8 pessoas requerem confirmação.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => partySize > 1 && setPartySize(partySize - 1)}
+                  disabled={partySize <= 1}
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                    partySize <= 1
+                      ? "bg-white/5 text-muted-foreground cursor-not-allowed"
+                      : "bg-white/10 text-foreground hover:bg-white/20 active:scale-95"
+                  )}
+                >
+                  <Minus className="w-5 h-5" />
+                </button>
+                <span className="text-2xl font-bold text-foreground w-8 text-center">
+                  {partySize}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => partySize < 20 && setPartySize(partySize + 1)}
+                  disabled={partySize >= 20}
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                    partySize >= 20
+                      ? "bg-primary/50 text-primary-foreground cursor-not-allowed"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/30"
+                  )}
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
