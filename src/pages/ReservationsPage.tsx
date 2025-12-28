@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { 
   User, 
   Phone, 
@@ -44,7 +44,6 @@ const ReservationsPage = () => {
   const [nameFocused, setNameFocused] = useState(false);
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [observationFocused, setObservationFocused] = useState(false);
-  const [activeTab, setActiveTab] = useState("reserva");
   const { toast } = useToast();
 
   const establishment = {
@@ -263,25 +262,11 @@ const ReservationsPage = () => {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Title Tab */}
       <div className="px-4 -mt-4 relative z-10">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1">
-            <TabsTrigger
-              value="reserva"
-              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Fazer Reserva
-            </TabsTrigger>
-            <TabsTrigger
-              value="cardapio"
-              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              onClick={() => navigate("/menu")}
-            >
-              Cardápio
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1 flex items-center justify-center">
+          <span className="text-foreground font-semibold">Fazer Reserva</span>
+        </div>
       </div>
 
       {/* Form */}
