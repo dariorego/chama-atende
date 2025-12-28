@@ -80,7 +80,7 @@ const WaiterCallPage = () => {
               placeholder="Ex: 12"
               value={tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
-              className="h-14 text-center text-2xl font-bold bg-secondary border-border"
+              className="h-14 text-center text-2xl font-bold bg-secondary border-border text-foreground"
               maxLength={4}
             />
           </div>
