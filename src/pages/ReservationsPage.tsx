@@ -2,11 +2,20 @@ import { useState } from "react";
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Clock, Users, CheckCircle } from "lucide-react";
+import { 
+  User, 
+  Phone, 
+  MessageSquare, 
+  CheckCircle, 
+  Check,
+  Minus,
+  Plus,
+  Clock,
+  CalendarDays,
+  Sparkles
+} from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -20,17 +29,21 @@ const timeSlots = [
 const ReservationsPage = () => {
   const [date, setDate] = useState<Date>();
   const [time, setTime] = useState<string>();
-  const [partySize, setPartySize] = useState<string>();
+  const [partySize, setPartySize] = useState(2);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [observation, setObservation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [nameFocused, setNameFocused] = useState(false);
+  const [phoneFocused, setPhoneFocused] = useState(false);
+  const [observationFocused, setObservationFocused] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!date || !time || !partySize || !name || !phone) {
+    if (!date || !time || !name || !phone) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos",
@@ -48,44 +61,67 @@ const ReservationsPage = () => {
     setIsSuccess(true);
 
     toast({
-      title: "Reserva solicitada!",
-      description: "Aguarde a confirmação do estabelecimento",
+      title: "Reserva confirmada!",
+      description: "Você receberá uma confirmação por WhatsApp",
     });
+  };
+
+  const decrementPartySize = () => {
+    if (partySize > 1) setPartySize(partySize - 1);
+  };
+
+  const incrementPartySize = () => {
+    if (partySize < 20) setPartySize(partySize + 1);
   };
 
   if (isSuccess) {
     return (
       <ClientLayout title="Reserva" showBack backTo="/">
-        <div className="flex flex-col items-center justify-center py-12 animate-scale-in">
-          <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mb-6">
-            <CheckCircle className="h-10 w-10 text-primary" />
+        <div className="flex flex-col items-center justify-center py-8 animate-scale-in">
+          {/* Decorative blur */}
+          <div className="absolute top-20 right-0 w-40 h-40 bg-primary/20 rounded-full blur-[80px] pointer-events-none" />
+          
+          {/* Success Icon */}
+          <div className="relative mb-6">
+            <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
+              <CheckCircle className="h-12 w-12 text-primary" />
+            </div>
+            <div className="absolute -top-2 -right-2 bg-primary text-background text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-bounce">
+              <Sparkles className="w-3 h-3" />
+              Confirmada!
+            </div>
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">
-            Reserva Solicitada!
+          
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            Reserva Confirmada!
           </h2>
-          <p className="text-muted-foreground text-center max-w-xs mb-6">
-            Sua solicitação foi enviada. Você receberá uma confirmação em breve.
+          <p className="text-muted-foreground text-center max-w-xs mb-8">
+            Sua mesa foi reservada. Enviaremos uma confirmação por WhatsApp.
           </p>
 
-          <div className="w-full max-w-sm p-4 bg-secondary rounded-xl border border-border">
-            <h3 className="font-semibold text-foreground mb-3">Detalhes:</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Data:</span>
+          {/* Details Card */}
+          <div className="w-full max-w-sm p-6 bg-surface-dark rounded-2xl border border-border/50">
+            <div className="flex items-center gap-2 mb-4">
+              <CalendarDays className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold text-foreground">Detalhes da Reserva</h3>
+            </div>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center py-2 border-b border-border/30">
+                <span className="text-muted-foreground">Data</span>
                 <span className="text-foreground font-medium">
                   {date && format(date, "dd 'de' MMMM", { locale: ptBR })}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Horário:</span>
+              <div className="flex justify-between items-center py-2 border-b border-border/30">
+                <span className="text-muted-foreground">Horário</span>
                 <span className="text-foreground font-medium">{time}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Pessoas:</span>
-                <span className="text-foreground font-medium">{partySize}</span>
+              <div className="flex justify-between items-center py-2 border-b border-border/30">
+                <span className="text-muted-foreground">Pessoas</span>
+                <span className="text-foreground font-medium">{partySize} {partySize === 1 ? "pessoa" : "pessoas"}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Nome:</span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Nome</span>
                 <span className="text-foreground font-medium">{name}</span>
               </div>
             </div>
@@ -97,11 +133,12 @@ const ReservationsPage = () => {
               setIsSuccess(false);
               setDate(undefined);
               setTime(undefined);
-              setPartySize(undefined);
+              setPartySize(2);
               setName("");
               setPhone("");
+              setObservation("");
             }}
-            className="mt-6"
+            className="mt-6 rounded-full px-8"
           >
             Nova Reserva
           </Button>
@@ -112,123 +149,218 @@ const ReservationsPage = () => {
 
   return (
     <ClientLayout title="Fazer Reserva" showBack backTo="/">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Date Picker */}
-        <div className="space-y-2">
-          <Label>Data</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal h-12 bg-secondary border-border",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Selecione uma data"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                disabled={(date) => date < new Date()}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+      <form onSubmit={handleSubmit} className="space-y-6 pb-28">
+        {/* Section: Date */}
+        <div className="space-y-3">
+          <h2 className="text-xl font-bold text-foreground">Escolha uma data</h2>
+          <div className="bg-surface-dark rounded-2xl p-4 border border-border/30">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              disabled={(date) => date < new Date()}
+              locale={ptBR}
+              className="w-full pointer-events-auto"
+              classNames={{
+                months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                month: "space-y-4 w-full",
+                caption: "flex justify-center pt-1 relative items-center mb-4",
+                caption_label: "text-base font-semibold text-foreground",
+                nav: "space-x-1 flex items-center",
+                nav_button: cn(
+                  "h-9 w-9 bg-white/10 hover:bg-white/20 rounded-full p-0 opacity-70 hover:opacity-100 transition-all inline-flex items-center justify-center"
+                ),
+                nav_button_previous: "absolute left-1",
+                nav_button_next: "absolute right-1",
+                table: "w-full border-collapse",
+                head_row: "flex justify-between",
+                head_cell: "text-muted-foreground rounded-md w-10 font-medium text-xs uppercase",
+                row: "flex w-full mt-2 justify-between",
+                cell: cn(
+                  "h-10 w-10 text-center text-sm p-0 relative",
+                  "[&:has([aria-selected])]:bg-transparent"
+                ),
+                day: cn(
+                  "h-10 w-10 p-0 font-normal rounded-full transition-all",
+                  "hover:bg-white/10 focus:bg-white/10",
+                  "aria-selected:opacity-100"
+                ),
+                day_range_end: "day-range-end",
+                day_selected: cn(
+                  "bg-primary text-primary-foreground font-semibold",
+                  "hover:bg-primary hover:text-primary-foreground",
+                  "focus:bg-primary focus:text-primary-foreground",
+                  "shadow-lg shadow-primary/30"
+                ),
+                day_today: "bg-white/10 text-foreground font-semibold",
+                day_outside: "day-outside text-muted-foreground opacity-30",
+                day_disabled: "text-muted-foreground opacity-30",
+                day_hidden: "invisible",
+              }}
+            />
+          </div>
         </div>
 
-        {/* Time Picker */}
-        <div className="space-y-2">
-          <Label>Horário</Label>
-          <Select value={time} onValueChange={setTime}>
-            <SelectTrigger className="h-12 bg-secondary border-border">
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Selecione um horário" />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
+        {/* Section: Time Pills */}
+        <div className="space-y-3">
+          <h2 className="text-xl font-bold text-foreground">Horário Disponível</h2>
+          <div className="overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex gap-2 w-max">
               {timeSlots.map((slot) => (
-                <SelectItem key={slot} value={slot}>
+                <button
+                  key={slot}
+                  type="button"
+                  onClick={() => setTime(slot)}
+                  className={cn(
+                    "px-5 py-3 rounded-full text-sm font-medium transition-all whitespace-nowrap",
+                    time === slot
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                      : "bg-surface-dark text-foreground hover:bg-white/10 border border-border/30"
+                  )}
+                >
                   {slot}
-                </SelectItem>
+                </button>
               ))}
-            </SelectContent>
-          </Select>
+            </div>
+          </div>
         </div>
 
-        {/* Party Size */}
-        <div className="space-y-2">
-          <Label>Número de Pessoas</Label>
-          <Select value={partySize} onValueChange={setPartySize}>
-            <SelectTrigger className="h-12 bg-secondary border-border">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Quantas pessoas?" />
+        {/* Section: Party Size Counter */}
+        <div className="space-y-3">
+          <div className="bg-surface-dark rounded-2xl p-5 border border-border/30">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Quantas pessoas?</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Mesas acima de 8 pessoas requerem confirmação.
+                </p>
               </div>
-            </SelectTrigger>
-            <SelectContent>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                <SelectItem key={num} value={num.toString()}>
-                  {num} {num === 1 ? "pessoa" : "pessoas"}
-                </SelectItem>
-              ))}
-              <SelectItem value="10+">Mais de 10</SelectItem>
-            </SelectContent>
-          </Select>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={decrementPartySize}
+                  disabled={partySize <= 1}
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                    partySize <= 1
+                      ? "bg-white/5 text-muted-foreground cursor-not-allowed"
+                      : "bg-white/10 text-foreground hover:bg-white/20 active:scale-95"
+                  )}
+                >
+                  <Minus className="w-5 h-5" />
+                </button>
+                <span className="text-2xl font-bold text-foreground w-8 text-center">
+                  {partySize}
+                </span>
+                <button
+                  type="button"
+                  onClick={incrementPartySize}
+                  disabled={partySize >= 20}
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                    partySize >= 20
+                      ? "bg-primary/50 text-primary-foreground cursor-not-allowed"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/30"
+                  )}
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Name */}
-        <div className="space-y-2">
-          <Label htmlFor="name">Nome</Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="Seu nome completo"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="h-12 bg-secondary border-border"
-          />
-        </div>
+        {/* Section: User Data */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-foreground">Seus dados</h2>
+          
+          {/* Name Input */}
+          <div className="relative">
+            <div className={cn(
+              "absolute left-4 top-1/2 -translate-y-1/2 transition-colors",
+              nameFocused ? "text-primary" : "text-muted-foreground"
+            )}>
+              <User className="w-5 h-5" />
+            </div>
+            <Input
+              type="text"
+              placeholder="Nome completo"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onFocus={() => setNameFocused(true)}
+              onBlur={() => setNameFocused(false)}
+              className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+            />
+          </div>
 
-        {/* Phone */}
-        <div className="space-y-2">
-          <Label htmlFor="phone">Telefone</Label>
-          <Input
-            id="phone"
-            type="tel"
-            placeholder="(00) 00000-0000"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="h-12 bg-secondary border-border"
-          />
-        </div>
+          {/* Phone Input */}
+          <div className="relative">
+            <div className={cn(
+              "absolute left-4 top-1/2 -translate-y-1/2 transition-colors",
+              phoneFocused ? "text-primary" : "text-muted-foreground"
+            )}>
+              <Phone className="w-5 h-5" />
+            </div>
+            <Input
+              type="tel"
+              placeholder="Telefone (WhatsApp)"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              onFocus={() => setPhoneFocused(true)}
+              onBlur={() => setPhoneFocused(false)}
+              className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+            />
+          </div>
 
-        {/* Submit Button */}
+          {/* Observation Textarea */}
+          <div className="relative">
+            <div className={cn(
+              "absolute left-4 top-4 transition-colors",
+              observationFocused ? "text-primary" : "text-muted-foreground"
+            )}>
+              <MessageSquare className="w-5 h-5" />
+            </div>
+            <Textarea
+              placeholder="Observações (opcional, ex: aniversário, alergias)"
+              value={observation}
+              onChange={(e) => setObservation(e.target.value)}
+              onFocus={() => setObservationFocused(true)}
+              onBlur={() => setObservationFocused(false)}
+              rows={3}
+              className="pl-12 pt-4 bg-surface-dark border-border/30 rounded-xl text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
+            />
+          </div>
+        </div>
+      </form>
+
+      {/* Fixed Bottom Button */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pt-8 z-50">
         <Button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full h-14 text-lg font-semibold shadow-glow"
+          disabled={isSubmitting || !date || !time || !name || !phone}
+          onClick={handleSubmit}
+          className={cn(
+            "w-full h-14 text-lg font-semibold rounded-full transition-all",
+            "bg-primary hover:bg-primary/90 text-primary-foreground",
+            "shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)]",
+            "active:scale-[0.98]",
+            "disabled:opacity-50 disabled:shadow-none"
+          )}
           size="lg"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
-              <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-              Enviando...
+              <span className="h-5 w-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              Confirmando...
             </span>
           ) : (
-            "Solicitar Reserva"
+            <span className="flex items-center gap-2">
+              <Check className="w-5 h-5" />
+              Confirmar Reserva
+            </span>
           )}
         </Button>
-
-        <p className="text-xs text-muted-foreground text-center">
-          A reserva será confirmada após aprovação do estabelecimento
-        </p>
-      </form>
+      </div>
     </ClientLayout>
   );
 };
