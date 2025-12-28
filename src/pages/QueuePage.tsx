@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { toast } from "@/hooks/use-toast";
 import {
   ArrowLeft,
@@ -36,7 +36,7 @@ export default function QueuePage() {
   const [observation, setObservation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [activeTab, setActiveTab] = useState("queue");
+  
 
   // Dados simulados
   const queuePosition = 3;
@@ -276,25 +276,11 @@ export default function QueuePage() {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Title Tab */}
       <div className="px-4 -mt-4 relative z-10">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1">
-            <TabsTrigger
-              value="queue"
-              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Entrar na Fila
-            </TabsTrigger>
-            <TabsTrigger
-              value="menu"
-              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              onClick={() => navigate("/menu")}
-            >
-              Cardápio
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1 flex items-center justify-center">
+          <span className="text-foreground font-semibold">Entrar na Fila</span>
+        </div>
       </div>
 
       {/* Form */}
