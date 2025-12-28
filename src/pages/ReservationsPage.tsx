@@ -289,7 +289,7 @@ const ReservationsPage = () => {
               onChange={(e) => setName(e.target.value)}
               onFocus={() => setNameFocused(true)}
               onBlur={() => setNameFocused(false)}
-              className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+              className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-muted-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
             />
           </div>
 
@@ -308,7 +308,7 @@ const ReservationsPage = () => {
               onChange={(e) => setPhone(e.target.value)}
               onFocus={() => setPhoneFocused(true)}
               onBlur={() => setPhoneFocused(false)}
-              className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+              className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-muted-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
             />
           </div>
 
@@ -327,7 +327,7 @@ const ReservationsPage = () => {
               onFocus={() => setObservationFocused(true)}
               onBlur={() => setObservationFocused(false)}
               rows={3}
-              className="pl-12 pt-4 bg-surface-dark border-border/30 rounded-xl text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
+              className="pl-12 pt-4 bg-surface-dark border-border/30 rounded-xl text-base text-muted-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
             />
           </div>
         </div>
