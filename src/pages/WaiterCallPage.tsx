@@ -1,112 +1,150 @@
 import { useState } from "react";
-import { ClientLayout } from "@/components/layout/ClientLayout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Bell, CheckCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Menu, Bell, Receipt, ChevronRight, X, Hourglass } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const WaiterCallPage = () => {
-  const [tableNumber, setTableNumber] = useState("");
-  const [isCalling, setIsCalling] = useState(false);
-  const [callSent, setCallSent] = useState(false);
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const [tableNumber] = useState("05");
+  const [isWaiterCalled, setIsWaiterCalled] = useState(false);
+  const [isBillRequested, setIsBillRequested] = useState(false);
 
-  const handleCallWaiter = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!tableNumber.trim()) {
-      toast({
-        title: "Campo obrigatório",
-        description: "Por favor, informe o número da mesa",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsCalling(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setIsCalling(false);
-    setCallSent(true);
-
+  const handleCallWaiter = () => {
+    setIsWaiterCalled(true);
     toast({
-      title: "Atendimento solicitado!",
-      description: `Solicitação enviada para a mesa ${tableNumber}`,
+      title: "Garçom chamado!",
+      description: "Um atendente está a caminho da sua mesa.",
     });
-
-    // Reset after a few seconds
-    setTimeout(() => {
-      setCallSent(false);
-      setTableNumber("");
-    }, 5000);
   };
 
+  const handleRequestBill = () => {
+    setIsBillRequested(true);
+    toast({
+      title: "Conta solicitada!",
+      description: "Aguarde, a conta está sendo preparada.",
+    });
+  };
+
+  const handleCancelRequest = () => {
+    setIsWaiterCalled(false);
+    setIsBillRequested(false);
+    toast({
+      title: "Solicitação cancelada",
+      description: "Sua solicitação foi cancelada com sucesso.",
+    });
+  };
+
+  const isRequestActive = isWaiterCalled || isBillRequested;
+
   return (
-    <ClientLayout title="Solicitar Atendimento" showBack backTo="/">
-      {/* Instructions */}
-      <div className="mb-6 p-4 bg-secondary rounded-xl border border-border">
-        <p className="text-sm text-muted-foreground">
-          Informe o número da sua mesa e toque em{" "}
-          <span className="text-primary font-medium">"Solicitar Atendimento"</span> para
-          chamar um atendente.
-        </p>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <div className="sticky top-0 z-50 flex items-center justify-between bg-background px-4 py-4 border-b border-border/50">
+        <button 
+          onClick={() => navigate(-1)}
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition-colors"
+        >
+          <ArrowLeft className="h-6 w-6 text-foreground" />
+        </button>
+        <h2 className="text-lg font-bold text-foreground">Meu Pedido</h2>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition-colors">
+          <Menu className="h-6 w-6 text-foreground" />
+        </button>
       </div>
 
-      {/* Success State */}
-      {callSent ? (
-        <div className="p-6 bg-primary/10 border border-primary/30 rounded-xl animate-scale-in">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-              <CheckCircle className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="font-semibold text-foreground">Solicitação enviada!</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Um atendente irá até a mesa <span className="text-primary font-medium">{tableNumber}</span> em breve
-            </p>
+      {/* Main Content */}
+      <div className="flex-1 px-4 py-6 space-y-8">
+        {/* Status Badge */}
+        <div className="flex justify-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+              Conectado
+            </span>
           </div>
         </div>
-      ) : (
-        <form onSubmit={handleCallWaiter} className="space-y-6">
-          {/* Table Number Input */}
-          <div className="space-y-2">
-            <Label htmlFor="tableNumber">Número da Mesa</Label>
-            <Input
-              id="tableNumber"
-              type="text"
-              inputMode="numeric"
-              placeholder="Ex: 12"
-              value={tableNumber}
-              onChange={(e) => setTableNumber(e.target.value)}
-              className="h-14 text-center text-2xl font-bold bg-secondary border-border text-muted-foreground"
-              maxLength={4}
-            />
-          </div>
 
-          {/* Call Button */}
-          <Button
-            type="submit"
-            disabled={isCalling}
-            className="w-full h-14 text-lg font-semibold shadow-glow"
-            size="lg"
+        {/* Table Display */}
+        <div className="text-center space-y-2">
+          <p className="text-muted-foreground text-sm">Você está ocupando a</p>
+          <div className="flex items-baseline justify-center gap-2">
+            <span className="text-4xl font-bold text-foreground">Mesa</span>
+            <span 
+              className="text-6xl font-black text-primary"
+              style={{
+                textShadow: '0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.3)'
+              }}
+            >
+              {tableNumber}
+            </span>
+          </div>
+        </div>
+
+        {/* Action Cards */}
+        <div className="space-y-4 pt-4">
+          {/* Call Waiter Card */}
+          <button
+            onClick={handleCallWaiter}
+            disabled={isRequestActive}
+            className="w-full p-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center gap-4 hover:from-primary/30 hover:to-primary/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
-            {isCalling ? (
-              <span className="flex items-center gap-2">
-                <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                Enviando...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Bell className="h-5 w-5" />
-                Solicitar Atendimento
-              </span>
-            )}
-          </Button>
-        </form>
+            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/30 transition-colors">
+              <Bell className="h-7 w-7 text-primary" />
+            </div>
+            <div className="flex-1 text-left">
+              <h3 className="font-semibold text-foreground text-lg">Solicitar Atendimento</h3>
+              <p className="text-sm text-muted-foreground">Chamar garçom na mesa</p>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+          </button>
+
+          {/* Request Bill Card */}
+          <button
+            onClick={handleRequestBill}
+            disabled={isRequestActive}
+            className="w-full p-4 rounded-2xl bg-secondary/50 border border-border flex items-center gap-4 hover:bg-secondary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
+          >
+            <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-muted/80 transition-colors">
+              <Receipt className="h-7 w-7 text-muted-foreground" />
+            </div>
+            <div className="flex-1 text-left">
+              <h3 className="font-semibold text-foreground text-lg">Pedir a Conta</h3>
+              <p className="text-sm text-muted-foreground">Fechar e realizar pagamento</p>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+          </button>
+        </div>
+      </div>
+
+      {/* Active Request Bar */}
+      {isRequestActive && (
+        <div className="sticky bottom-0 left-0 right-0 bg-primary p-4 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                <Hourglass className="h-5 w-5 text-primary-foreground animate-pulse" />
+              </div>
+              <div>
+                <p className="font-semibold text-primary-foreground">
+                  {isWaiterCalled ? "Garçom a caminho..." : "Preparando sua conta..."}
+                </p>
+                <p className="text-xs text-primary-foreground/70">
+                  Aguarde um momento
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleCancelRequest}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive text-destructive-foreground font-medium text-sm hover:bg-destructive/90 transition-colors"
+            >
+              <X className="h-4 w-4" />
+              Cancelar
+            </button>
+          </div>
+        </div>
       )}
-    </ClientLayout>
+    </div>
   );
 };
 
