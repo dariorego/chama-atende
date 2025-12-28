@@ -8,6 +8,7 @@ interface ProductCardProps {
   highlight?: boolean;
   promotion?: string;
   className?: string;
+  onClick?: () => void;
 }
 
 export function ProductCard({
@@ -18,6 +19,7 @@ export function ProductCard({
   highlight,
   promotion,
   className,
+  onClick,
 }: ProductCardProps) {
   const formattedPrice = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -26,11 +28,13 @@ export function ProductCard({
 
   return (
     <div
+      onClick={onClick}
       className={cn(
         "flex gap-4 p-4 rounded-xl border bg-card transition-all duration-300",
         highlight
           ? "border-primary/50 bg-primary/5"
           : "border-border hover:border-border/80",
+        onClick && "cursor-pointer active:scale-[0.98]",
         className
       )}
     >

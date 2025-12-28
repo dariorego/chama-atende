@@ -1,9 +1,21 @@
 import { useState } from "react";
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
+import { ProductDetailSheet } from "@/components/ui/product-detail-sheet";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface Product {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  category: string;
+  image?: string;
+  highlight?: boolean;
+  promotion?: string;
+}
 
 // Demo data - will be replaced with Supabase data
 const categories = [
@@ -95,6 +107,13 @@ const products = [
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsSheetOpen(true);
+  };
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = activeCategory === "all" || product.category === activeCategory;
@@ -157,6 +176,7 @@ const MenuPage = () => {
                   price={product.price}
                   image={product.image}
                   highlight
+                  onClick={() => handleProductClick(product)}
                 />
               </div>
             ))}
@@ -178,10 +198,18 @@ const MenuPage = () => {
               price={product.price}
               image={product.image}
               promotion={product.promotion}
+              onClick={() => handleProductClick(product)}
             />
           </div>
         ))}
       </div>
+
+      {/* Product Detail Sheet */}
+      <ProductDetailSheet
+        product={selectedProduct}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
 
       {/* Empty State */}
       {filteredProducts.length === 0 && (
