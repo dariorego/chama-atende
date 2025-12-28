@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Menu, Bell, Receipt, ChevronRight, X, Hourglass } from "lucide-react";
+import { ArrowLeft, Share2, MoreHorizontal, MapPin, Star, Menu, Bell, Receipt, ChevronRight, X, Hourglass } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
 const WaiterCallPage = () => {
@@ -9,6 +10,14 @@ const WaiterCallPage = () => {
   const [tableNumber] = useState("05");
   const [isWaiterCalled, setIsWaiterCalled] = useState(false);
   const [isBillRequested, setIsBillRequested] = useState(false);
+  const [activeTab, setActiveTab] = useState("atendimento");
+
+  const establishment = {
+    name: "Bistro Verde",
+    location: "Jardins, São Paulo",
+    rating: 4.8,
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop",
+  };
 
   const handleCallWaiter = () => {
     setIsWaiterCalled(true);
@@ -38,23 +47,80 @@ const WaiterCallPage = () => {
   const isRequestActive = isWaiterCalled || isBillRequested;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="sticky top-0 z-50 flex items-center justify-between bg-background px-4 py-4 border-b border-border/50">
-        <button 
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition-colors"
-        >
-          <ArrowLeft className="h-6 w-6 text-foreground" />
-        </button>
-        <h2 className="text-lg font-bold text-foreground">Meu Pedido</h2>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition-colors">
-          <Menu className="h-6 w-6 text-foreground" />
-        </button>
+    <div className="min-h-screen bg-background">
+      {/* Hero Header */}
+      <div className="relative h-80">
+        <img
+          src={establishment.image}
+          alt={establishment.name}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+
+        {/* Floating buttons */}
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+          <button
+            onClick={() => navigate("/")}
+            className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
+          >
+            <ArrowLeft className="h-5 w-5 text-white" />
+          </button>
+          <div className="flex gap-2">
+            <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <Share2 className="h-5 w-5 text-white" />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <MoreHorizontal className="h-5 w-5 text-white" />
+            </button>
+          </div>
+        </div>
+
+        {/* Restaurant info over image */}
+        <div className="absolute bottom-6 left-4 right-4">
+          {/* Open badge */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-xs font-medium text-primary">Aberto agora</span>
+          </div>
+
+          <h1 className="text-3xl font-bold text-white mb-1">{establishment.name}</h1>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 text-white/80">
+              <MapPin className="h-4 w-4" />
+              <span className="text-sm">{establishment.location}</span>
+            </div>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
+              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+              <span className="text-sm font-medium text-white">{establishment.rating}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="px-4 -mt-4 relative z-10">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1">
+            <TabsTrigger
+              value="atendimento"
+              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Meu Pedido
+            </TabsTrigger>
+            <TabsTrigger
+              value="menu"
+              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              onClick={() => navigate("/menu")}
+            >
+              Cardápio
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 px-4 py-6 space-y-8">
+      <div className="px-4 py-6 space-y-6 pb-32">
         {/* Status Badge */}
         <div className="flex justify-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
@@ -119,7 +185,7 @@ const WaiterCallPage = () => {
 
       {/* Active Request Bar */}
       {isRequestActive && (
-        <div className="sticky bottom-0 left-0 right-0 bg-primary p-4 animate-fade-in">
+        <div className="fixed bottom-0 left-0 right-0 bg-primary p-4 animate-fade-in z-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
