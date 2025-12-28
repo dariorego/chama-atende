@@ -335,7 +335,7 @@ export default function QueuePage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Seu nome"
-              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base"
+              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-foreground"
             />
           </div>
         </div>
@@ -352,7 +352,7 @@ export default function QueuePage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="(11) 99999-9999"
-              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base"
+              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-foreground"
             />
           </div>
         </div>
@@ -402,7 +402,7 @@ export default function QueuePage() {
             value={observation}
             onChange={(e) => setObservation(e.target.value)}
             placeholder="Ex: Cadeirinha para bebê, aniversário..."
-            className="min-h-[100px] rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+            className="min-h-[100px] rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-foreground"
           />
         </div>
       </div>
