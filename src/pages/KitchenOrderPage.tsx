@@ -75,7 +75,7 @@ const KitchenOrderPage = () => {
 
   const handleSelectBase = (baseId: string) => {
     setSelectedBase(baseId);
-    // TODO: Navegar para o próximo passo
+    navigate(`/pedido-cozinha/${baseId}`);
   };
 
   return (
