@@ -8,7 +8,7 @@ interface ActionCardProps {
   title: string;
   description: string;
   to: string;
-  variant?: "default" | "primary" | "hero" | "amber" | "purple" | "blue";
+  variant?: "default" | "primary" | "hero" | "amber" | "purple" | "blue" | "rose";
   badge?: string;
   image?: string;
   className?: string;
@@ -79,8 +79,8 @@ export function ActionCard({
     );
   }
 
-  // Colored variants (amber, purple, blue)
-  const coloredVariants = ["amber", "purple", "blue"] as const;
+  // Colored variants (amber, purple, blue, rose)
+  const coloredVariants = ["amber", "purple", "blue", "rose"] as const;
   if (coloredVariants.includes(variant as typeof coloredVariants[number])) {
     const colorClasses = {
       amber: {
@@ -94,6 +94,10 @@ export function ActionCard({
       blue: {
         iconBg: "bg-blue-500/10",
         iconColor: "text-blue-500",
+      },
+      rose: {
+        iconBg: "bg-rose-500/10",
+        iconColor: "text-rose-500",
       },
     };
 
