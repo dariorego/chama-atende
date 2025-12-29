@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Star, Store, HeadphonesIcon, UtensilsCrossed, FileEdit, User, Phone, Send } from "lucide-react";
+import { ArrowLeft, Star, Store, HeadphonesIcon, UtensilsCrossed, FileEdit, User, Phone, Send, Share2, MoreHorizontal, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -75,6 +75,13 @@ const RatingCard = ({ icon, title, rating, onRatingChange }: RatingCardProps) =>
   );
 };
 
+const establishment = {
+  name: "Bistro Verde",
+  location: "Jardins, São Paulo",
+  rating: 4.8,
+  image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop",
+};
+
 const CustomerReviewPage = () => {
   const navigate = useNavigate();
   
@@ -114,23 +121,66 @@ const CustomerReviewPage = () => {
   const isFormValid = fullName.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="flex items-center justify-between px-4 py-3">
+    <div className="min-h-screen bg-background">
+      {/* Hero Header */}
+      <div className="relative h-80">
+        <img
+          src={establishment.image}
+          alt={establishment.name}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+
+        {/* Floating buttons */}
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
             onClick={handleBack}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+            className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <ArrowLeft className="h-5 w-5 text-white" />
           </button>
-          <h1 className="text-lg font-bold">Avaliação do Cliente</h1>
-          <div className="w-10" />
+          <div className="flex gap-2">
+            <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <Share2 className="h-5 w-5 text-white" />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <MoreHorizontal className="h-5 w-5 text-white" />
+            </button>
+          </div>
         </div>
-      </header>
+
+        {/* Restaurant info over image */}
+        <div className="absolute bottom-6 left-4 right-4">
+          {/* Open badge */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-xs font-medium text-primary">Aberto agora</span>
+          </div>
+
+          <h1 className="text-3xl font-bold text-white mb-1">{establishment.name}</h1>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 text-white/80">
+              <MapPin className="h-4 w-4" />
+              <span className="text-sm">{establishment.location}</span>
+            </div>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
+              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+              <span className="text-sm font-medium text-white">{establishment.rating}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Title Tab */}
+      <div className="px-4 -mt-4 relative z-10">
+        <div className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1 flex items-center justify-center">
+          <span className="text-foreground font-semibold">Avaliação do Cliente</span>
+        </div>
+      </div>
 
       {/* Content */}
-      <div className="px-4 py-6 space-y-6">
+      <div className="px-4 py-6 pb-28 space-y-6">
         {/* Intro text */}
         <p className="text-muted-foreground text-sm text-center">
           Compartilhe sua experiência conosco. Sua opinião ajuda a melhorarmos nosso serviço.

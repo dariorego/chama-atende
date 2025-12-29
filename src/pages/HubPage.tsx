@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   Share2,
   Navigation,
+  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -39,6 +40,7 @@ const establishment = {
     reservations: true,
     queue: true,
     kitchenOrder: true,
+    customerReview: true,
   },
   social: {
     instagram: "https://instagram.com/bistroverde",
@@ -236,6 +238,16 @@ const HubPage = () => {
               description="Monte seu prato personalizado"
               to="/pedido-cozinha"
               variant="rose"
+            />
+          )}
+
+          {establishment.modules.customerReview && (
+            <ActionCard
+              icon={Star}
+              title="Avaliar Experiência"
+              description="Compartilhe sua opinião sobre nosso serviço"
+              to="/avaliacao"
+              variant="amber"
             />
           )}
         </div>
