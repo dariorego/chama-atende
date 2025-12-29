@@ -4,6 +4,7 @@ import {
   UtensilsCrossed,
   Bell,
   CalendarCheck,
+  ChefHat,
   Users,
   MapPin,
   Clock,
@@ -37,6 +38,7 @@ const establishment = {
     waiterCall: true,
     reservations: true,
     queue: true,
+    kitchenOrder: true,
   },
   social: {
     instagram: "https://instagram.com/bistroverde",
@@ -224,6 +226,16 @@ const HubPage = () => {
               to="/fila"
               variant="blue"
               badge={establishment.estimatedWaitTime}
+            />
+          )}
+
+          {establishment.modules.kitchenOrder && (
+            <ActionCard
+              icon={ChefHat}
+              title="Pedido Cozinha"
+              description="Monte seu prato personalizado"
+              to="/pedido-cozinha"
+              variant="rose"
             />
           )}
         </div>
