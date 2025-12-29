@@ -61,13 +61,16 @@ const OrderReviewPage = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Pedido enviado:", {
-      base: baseId,
-      observations,
-      tableNumber,
-      ...orderData,
+    navigate(`/pedido-cozinha/${baseId}/status`, {
+      state: {
+        base: baseId,
+        tableNumber,
+        observations,
+        ingredients: allIngredients,
+        orderNumber: Math.floor(1000 + Math.random() * 9000),
+        submittedAt: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      }
     });
-    // TODO: Navigate to confirmation or status page
   };
 
   const baseName = baseNames[baseId || ""] || "Prato";

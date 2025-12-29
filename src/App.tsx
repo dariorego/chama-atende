@@ -11,6 +11,7 @@ import QueuePage from "./pages/QueuePage";
 import KitchenOrderPage from "./pages/KitchenOrderPage";
 import CustomizeOrderPage from "./pages/CustomizeOrderPage";
 import OrderReviewPage from "./pages/OrderReviewPage";
+import OrderStatusPage from "./pages/OrderStatusPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/pedido-cozinha" element={<KitchenOrderPage />} />
           <Route path="/pedido-cozinha/:baseId" element={<CustomizeOrderPage />} />
           <Route path="/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
+          <Route path="/pedido-cozinha/:baseId/status" element={<OrderStatusPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
