@@ -108,14 +108,15 @@ const CustomizeOrderPage = () => {
   };
 
   const handleConfirm = () => {
-    // TODO: Navigate to step 3 (review)
-    console.log({
-      base: baseId,
-      cheeses: selectedCheeses,
-      proteins: proteinQuantities,
-      vegetables: selectedVegetables,
-      sauces: selectedSauces,
-      notes: chefNotes,
+    navigate(`/pedido-cozinha/${baseId}/revisao`, {
+      state: {
+        base: baseId,
+        cheeses: selectedCheeses,
+        proteins: proteinQuantities,
+        vegetables: selectedVegetables,
+        sauces: selectedSauces,
+        notes: chefNotes,
+      },
     });
   };
 
