@@ -106,7 +106,7 @@ const WaiterCallPage = () => {
               value="atendimento"
               className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
-              Meu Pedido
+              Solicitar Atendimento
             </TabsTrigger>
             <TabsTrigger
               value="menu"
