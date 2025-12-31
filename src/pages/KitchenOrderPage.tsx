@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, ChevronRight, HelpCircle } from "lucide-react";
 
 interface BaseOption {
@@ -66,16 +66,17 @@ const stepLabels: Record<number, string> = {
 
 const KitchenOrderPage = () => {
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const [currentStep] = useState(1);
   const [selectedBase, setSelectedBase] = useState<string | null>(null);
 
   const handleBack = () => {
-    navigate(-1);
+    navigate(`/${slug}`);
   };
 
   const handleSelectBase = (baseId: string) => {
     setSelectedBase(baseId);
-    navigate(`/pedido-cozinha/${baseId}`);
+    navigate(`/${slug}/pedido-cozinha/${baseId}`);
   };
 
   return (

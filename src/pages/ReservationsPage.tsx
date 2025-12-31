@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,11 +20,13 @@ import {
   MoreHorizontal,
   MapPin,
   Star,
+  Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useRestaurant } from "@/hooks/useRestaurant";
 
 const timeSlots = [
   "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
@@ -33,6 +35,7 @@ const timeSlots = [
 
 const ReservationsPage = () => {
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const [date, setDate] = useState<Date>();
   const [time, setTime] = useState<string>();
   const [partySize, setPartySize] = useState(2);
@@ -46,13 +49,7 @@ const ReservationsPage = () => {
   const [observationFocused, setObservationFocused] = useState(false);
   const { toast } = useToast();
 
-  const establishment = {
-    name: "Bistro Verde",
-    location: "Jardins, São Paulo",
-    rating: 4.8,
-    reviewCount: 324,
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop",
-  };
+  const { data: restaurant, isLoading } = useRestaurant(slug ?? '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,14 +85,33 @@ const ReservationsPage = () => {
     if (partySize < 20) setPartySize(partySize + 1);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!restaurant) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Restaurante não encontrado</h1>
+        <p className="text-muted-foreground text-center">
+          O restaurante que você está procurando não existe ou está inativo.
+        </p>
+      </div>
+    );
+  }
+
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-background">
         {/* Hero Header */}
         <div className="relative h-80">
           <img
-            src={establishment.image}
-            alt={establishment.name}
+            src={restaurant.cover_image_url || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop"}
+            alt={restaurant.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
@@ -103,7 +119,7 @@ const ReservationsPage = () => {
           {/* Floating buttons */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate(`/${slug}`)}
               className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
             >
               <ArrowLeft className="h-5 w-5 text-white" />
@@ -123,19 +139,23 @@ const ReservationsPage = () => {
             {/* Open badge */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs font-medium text-primary">Aberto agora</span>
+              <span className="text-xs font-medium text-primary">
+                {restaurant.status === "open" ? "Aberto agora" : "Fechado"}
+              </span>
             </div>
 
-            <h1 className="text-3xl font-bold text-white mb-1">{establishment.name}</h1>
+            <h1 className="text-3xl font-bold text-white mb-1">{restaurant.name}</h1>
             
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1 text-white/80">
-                <MapPin className="h-4 w-4" />
-                <span className="text-sm">{establishment.location}</span>
-              </div>
+              {restaurant.address && (
+                <div className="flex items-center gap-1 text-white/80">
+                  <MapPin className="h-4 w-4" />
+                  <span className="text-sm">{restaurant.address.split(",")[0]}</span>
+                </div>
+              )}
               <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
                 <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                <span className="text-sm font-medium text-white">{establishment.rating}</span>
+                <span className="text-sm font-medium text-white">4.8</span>
               </div>
             </div>
           </div>
@@ -215,8 +235,8 @@ const ReservationsPage = () => {
       {/* Hero Header */}
       <div className="relative h-80">
         <img
-          src={establishment.image}
-          alt={establishment.name}
+          src={restaurant.cover_image_url || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop"}
+          alt={restaurant.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
@@ -224,7 +244,7 @@ const ReservationsPage = () => {
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(`/${slug}`)}
             className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
             <ArrowLeft className="h-5 w-5 text-white" />
@@ -244,19 +264,23 @@ const ReservationsPage = () => {
           {/* Open badge */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-medium text-primary">Aberto agora</span>
+            <span className="text-xs font-medium text-primary">
+              {restaurant.status === "open" ? "Aberto agora" : "Fechado"}
+            </span>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-1">{establishment.name}</h1>
+          <h1 className="text-3xl font-bold text-white mb-1">{restaurant.name}</h1>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 text-white/80">
-              <MapPin className="h-4 w-4" />
-              <span className="text-sm">{establishment.location}</span>
-            </div>
+            {restaurant.address && (
+              <div className="flex items-center gap-1 text-white/80">
+                <MapPin className="h-4 w-4" />
+                <span className="text-sm">{restaurant.address.split(",")[0]}</span>
+              </div>
+            )}
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
               <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-medium text-white">{establishment.rating}</span>
+              <span className="text-sm font-medium text-white">4.8</span>
             </div>
           </div>
         </div>
@@ -424,7 +448,7 @@ const ReservationsPage = () => {
             </div>
             <Input
               type="tel"
-              placeholder="Telefone (WhatsApp)"
+              placeholder="WhatsApp"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               onFocus={() => setPhoneFocused(true)}
@@ -433,7 +457,7 @@ const ReservationsPage = () => {
             />
           </div>
 
-          {/* Observation Textarea */}
+          {/* Observation Input */}
           <div className="relative">
             <div className={cn(
               "absolute left-4 top-4 transition-colors",
@@ -442,44 +466,25 @@ const ReservationsPage = () => {
               <MessageSquare className="w-5 h-5" />
             </div>
             <Textarea
-              placeholder="Observações (opcional, ex: aniversário, alergias)"
+              placeholder="Observações (opcional)"
               value={observation}
               onChange={(e) => setObservation(e.target.value)}
               onFocus={() => setObservationFocused(true)}
               onBlur={() => setObservationFocused(false)}
-              rows={3}
-              className="pl-12 pt-4 bg-surface-dark border-border/30 rounded-xl text-base text-muted-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
+              className="min-h-[100px] pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-muted-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
             />
           </div>
         </div>
       </form>
 
-      {/* Fixed Bottom Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pt-8 z-50">
+      {/* Fixed bottom submit button */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pt-8">
         <Button
-          type="submit"
-          disabled={isSubmitting || !date || !time || !name || !phone}
           onClick={handleSubmit}
-          className={cn(
-            "w-full h-14 text-lg font-semibold rounded-full transition-all",
-            "bg-primary hover:bg-primary/90 text-primary-foreground",
-            "shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)]",
-            "active:scale-[0.98]",
-            "disabled:opacity-50 disabled:shadow-none"
-          )}
-          size="lg"
+          disabled={isSubmitting}
+          className="w-full h-14 rounded-full bg-primary text-primary-foreground text-base font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all"
         >
-          {isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <span className="h-5 w-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-              Confirmando...
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
-              <Check className="w-5 h-5" />
-              Confirmar Reserva
-            </span>
-          )}
+          {isSubmitting ? "Confirmando..." : "Confirmar Reserva"}
         </Button>
       </div>
     </div>

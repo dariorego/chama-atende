@@ -32,7 +32,7 @@ const ingredientNames: Record<string, string> = {
 
 const OrderStatusPage = () => {
   const navigate = useNavigate();
-  const { baseId } = useParams();
+  const { slug, baseId } = useParams<{ slug: string; baseId: string }>();
   const location = useLocation();
   const orderData = location.state as {
     base: string;
@@ -75,7 +75,7 @@ const OrderStatusPage = () => {
   ];
 
   const handleBack = () => {
-    navigate("/pedido-cozinha");
+    navigate(`/${slug}/pedido-cozinha`);
   };
 
   return (

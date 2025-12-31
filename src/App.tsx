@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
 import HubPage from "./pages/HubPage";
 import MenuPage from "./pages/MenuPage";
 import WaiterCallPage from "./pages/WaiterCallPage";
@@ -24,16 +25,21 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HubPage />} />
-          <Route path="/cardapio" element={<MenuPage />} />
-          <Route path="/solicitar-atendimento" element={<WaiterCallPage />} />
-          <Route path="/reservas" element={<ReservationsPage />} />
-          <Route path="/fila" element={<QueuePage />} />
-          <Route path="/pedido-cozinha" element={<KitchenOrderPage />} />
-          <Route path="/pedido-cozinha/:baseId" element={<CustomizeOrderPage />} />
-          <Route path="/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
-          <Route path="/pedido-cozinha/:baseId/status" element={<OrderStatusPage />} />
-          <Route path="/avaliacao" element={<CustomerReviewPage />} />
+          {/* Landing page - redirects to default restaurant */}
+          <Route path="/" element={<LandingPage />} />
+          
+          {/* Dynamic routes by restaurant slug */}
+          <Route path="/:slug" element={<HubPage />} />
+          <Route path="/:slug/cardapio" element={<MenuPage />} />
+          <Route path="/:slug/solicitar-atendimento" element={<WaiterCallPage />} />
+          <Route path="/:slug/reservas" element={<ReservationsPage />} />
+          <Route path="/:slug/fila" element={<QueuePage />} />
+          <Route path="/:slug/pedido-cozinha" element={<KitchenOrderPage />} />
+          <Route path="/:slug/pedido-cozinha/:baseId" element={<CustomizeOrderPage />} />
+          <Route path="/:slug/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
+          <Route path="/:slug/pedido-cozinha/:baseId/status" element={<OrderStatusPage />} />
+          <Route path="/:slug/avaliacao" element={<CustomerReviewPage />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
