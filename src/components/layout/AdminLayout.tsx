@@ -44,38 +44,31 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { profile } = useCurrentUser();
   const { restaurant } = useAdminAccess(slug ?? '');
 
-  const menuItems = [
+  const menuGroups = [
     {
-      title: 'Dashboard',
-      url: `/${slug}/admin`,
-      icon: LayoutDashboard,
+      label: null,
+      items: [
+        { title: 'Dashboard', url: `/${slug}/admin`, icon: LayoutDashboard },
+      ],
     },
     {
-      title: 'Produtos',
-      url: `/${slug}/admin/produtos`,
-      icon: UtensilsCrossed,
+      label: 'Cardápio',
+      items: [
+        { title: 'Produtos', url: `/${slug}/admin/produtos`, icon: UtensilsCrossed },
+        { title: 'Categorias', url: `/${slug}/admin/categorias`, icon: FolderTree },
+      ],
     },
     {
-      title: 'Categorias',
-      url: `/${slug}/admin/categorias`,
-      icon: FolderTree,
-    },
-    {
-      title: 'Módulos',
-      url: `/${slug}/admin/modulos`,
-      icon: Puzzle,
-    },
-    {
-      title: 'Usuários',
-      url: `/${slug}/admin/usuarios`,
-      icon: Users,
-    },
-    {
-      title: 'Configurações',
-      url: `/${slug}/admin/configuracoes`,
-      icon: Settings,
+      label: 'Gestão',
+      items: [
+        { title: 'Módulos', url: `/${slug}/admin/modulos`, icon: Puzzle },
+        { title: 'Usuários', url: `/${slug}/admin/usuarios`, icon: Users },
+        { title: 'Configurações', url: `/${slug}/admin/configuracoes`, icon: Settings },
+      ],
     },
   ];
+
+  const allMenuItems = menuGroups.flatMap((g) => g.items);
 
   const handleLogout = async () => {
     await logout();
@@ -109,13 +102,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </div>
             </div>
           </SidebarHeader>
-
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Menu</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {menuItems.map((item) => (
+                  {menuGroups[0].items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink
@@ -133,6 +124,31 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+
+            {menuGroups.slice(1).map((group) => (
+              <SidebarGroup key={group.label}>
+                <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {group.items.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <NavLink
+                            to={item.url}
+                            end={item.url === `/${slug}/admin`}
+                            className="flex items-center gap-2 hover:bg-muted/50"
+                            activeClassName="bg-primary/10 text-primary font-medium"
+                          >
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ))}
 
             <SidebarGroup>
               <SidebarGroupLabel>Links Rápidos</SidebarGroupLabel>
@@ -187,7 +203,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <header className="h-14 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center px-4 sticky top-0 z-10">
             <SidebarTrigger className="mr-4" />
             <h1 className="font-semibold">
-              {menuItems.find((item) => 
+              {allMenuItems.find((item) => 
                 location.pathname === item.url || 
                 (item.url !== `/${slug}/admin` && location.pathname.startsWith(item.url))
               )?.title ?? 'Dashboard'}
