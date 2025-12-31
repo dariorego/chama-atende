@@ -25,6 +25,12 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminModules from "./pages/admin/AdminModules";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminWaiterCalls from "./pages/admin/AdminWaiterCalls";
+import AdminReservations from "./pages/admin/AdminReservations";
+import AdminQueue from "./pages/admin/AdminQueue";
+import AdminReviews from "./pages/admin/AdminReviews";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminMetrics from "./pages/admin/AdminMetrics";
 
 const queryClient = new QueryClient();
 
@@ -103,8 +109,66 @@ const App = () => (
               </AuthGuard>
             }
           />
-          
-          {/* Dynamic routes by restaurant slug */}
+          <Route
+            path="/:slug/admin/atendimentos"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminWaiterCalls />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/reservas"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminReservations />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/fila"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminQueue />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/avaliacoes"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminReviews />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/pedidos"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminOrders />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/metricas"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminMetrics />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
           <Route path="/:slug" element={<HubPage />} />
           <Route path="/:slug/cardapio" element={<MenuPage />} />
           <Route path="/:slug/solicitar-atendimento" element={<WaiterCallPage />} />
