@@ -18,43 +18,26 @@ import {
   Share2,
   Navigation,
   Star,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-// Demo data - will be replaced with Supabase data
-const establishment = {
-  name: "Bistro Verde",
-  subtitle: "Cozinha Natural & Bar",
-  slug: "bistro-verde",
-  logo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&h=200&fit=crop&crop=center",
-  status: "open" as const,
-  closingTime: "23:00",
-  address: "Rua Augusta, 1500 - São Paulo - SP",
-  phone: "(11) 99999-9999",
-  menuImage: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop&crop=center",
-  mapImage: "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=300&fit=crop&crop=center",
-  estimatedWaitTime: "~15 min",
-  modules: {
-    menu: true,
-    waiterCall: true,
-    reservations: true,
-    queue: true,
-    kitchenOrder: true,
-    customerReview: true,
-  },
-  social: {
-    instagram: "https://instagram.com/bistroverde",
-    facebook: "https://facebook.com/bistroverde",
-    website: "https://bistroverde.com",
-  },
-  wifi: {
-    network: "Bistro Verde Guest",
-    password: "bemvindo2024",
-  },
-};
+import { useRestaurant } from "@/hooks/useRestaurant";
+import { useRestaurantModules } from "@/hooks/useRestaurantModules";
+import { SocialLinks, WifiInfo, formatTime } from "@/types/restaurant";
+import { toast } from "sonner";
 
 const HubPage = () => {
   const [scrolled, setScrolled] = useState(false);
+
+  // Fetch data from Supabase
+  const { data: restaurant, isLoading: isLoadingRestaurant } = useRestaurant("bistro-verde");
+  const { data: modules, isLoading: isLoadingModules } = useRestaurantModules(restaurant?.id);
+
+  const isLoading = isLoadingRestaurant || isLoadingModules;
+
+  // Parse JSONB fields
+  const socialLinks = (restaurant?.social_links as SocialLinks) ?? {};
+  const wifiInfo = (restaurant?.wifi_info as WifiInfo) ?? {};
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,15 +50,36 @@ const HubPage = () => {
   const handleShare = async () => {
     if (navigator.share) {
       await navigator.share({
-        title: establishment.name,
+        title: restaurant?.name ?? '',
         url: window.location.href,
       });
     }
   };
 
   const copyWifiPassword = () => {
-    navigator.clipboard.writeText(establishment.wifi.password);
+    if (wifiInfo.password) {
+      navigator.clipboard.writeText(wifiInfo.password);
+      toast.success("Senha do WiFi copiada!");
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!restaurant) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Restaurante não encontrado</p>
+      </div>
+    );
+  }
+
+  const isOpen = restaurant.status === 'open';
 
   return (
     <div className="min-h-screen bg-background">
@@ -95,7 +99,7 @@ const HubPage = () => {
                 scrolled ? "opacity-100" : "opacity-0"
               }`}
             >
-              {establishment.name}
+              {restaurant.name}
             </span>
             <Button variant="ghost" size="icon" className="text-foreground" onClick={handleShare}>
               <Share2 className="h-5 w-5" />
@@ -119,36 +123,56 @@ const HubPage = () => {
               
               {/* Logo container */}
               <div className="relative w-28 h-28 rounded-full border-4 border-primary/40 overflow-hidden shadow-glow">
-                <img
-                  src={establishment.logo}
-                  alt={establishment.name}
-                  className="w-full h-full object-cover"
-                />
+                {restaurant.logo_url ? (
+                  <img
+                    src={restaurant.logo_url}
+                    alt={restaurant.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-secondary flex items-center justify-center">
+                    <UtensilsCrossed className="h-10 w-10 text-muted-foreground" />
+                  </div>
+                )}
                 
                 {/* Status badge inside */}
-                <div className="absolute bottom-1 right-1 flex items-center gap-1 px-2 py-0.5 bg-primary rounded-full">
+                <div className={`absolute bottom-1 right-1 flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                  isOpen ? 'bg-primary' : 'bg-muted'
+                }`}>
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-foreground" />
+                    {isOpen && (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75" />
+                    )}
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                      isOpen ? 'bg-primary-foreground' : 'bg-muted-foreground'
+                    }`} />
                   </span>
-                  <span className="text-xs font-semibold text-primary-foreground">Aberto</span>
+                  <span className={`text-xs font-semibold ${
+                    isOpen ? 'text-primary-foreground' : 'text-muted-foreground'
+                  }`}>
+                    {isOpen ? 'Aberto' : 'Fechado'}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Name and subtitle */}
             <h1 className="mt-5 text-2xl font-bold text-foreground">
-              {establishment.name}
+              {restaurant.name}
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              {establishment.subtitle}
-            </p>
+            {restaurant.subtitle && (
+              <p className="text-muted-foreground text-sm mt-1">
+                {restaurant.subtitle}
+              </p>
+            )}
 
             {/* Opening hours */}
-            <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4 text-primary" />
-              <span>Fecha às <span className="text-foreground font-medium">{establishment.closingTime}</span></span>
-            </div>
+            {restaurant.closing_time && (
+              <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4 text-primary" />
+                <span>Fecha às <span className="text-foreground font-medium">{formatTime(restaurant.closing_time)}</span></span>
+              </div>
+            )}
           </div>
 
           {/* Quick Action Buttons */}
@@ -159,26 +183,30 @@ const HubPage = () => {
               </div>
               <span className="text-xs text-muted-foreground">Fotos</span>
             </button>
-            <a href={`https://wa.me/${establishment.phone.replace(/\D/g, "")}`} className="flex flex-col items-center gap-1.5 group">
-              <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/20 transition-colors">
-                <MessageCircle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-              </div>
-              <span className="text-xs text-muted-foreground">Chat</span>
-            </a>
-            {establishment.social.website && (
-              <a href={establishment.social.website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 group">
+            {restaurant.phone && (
+              <a href={`https://wa.me/${restaurant.phone.replace(/\D/g, "")}`} className="flex flex-col items-center gap-1.5 group">
+                <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/20 transition-colors">
+                  <MessageCircle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-xs text-muted-foreground">Chat</span>
+              </a>
+            )}
+            {socialLinks.website && (
+              <a href={socialLinks.website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 group">
                 <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/20 transition-colors">
                   <Globe className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
                 <span className="text-xs text-muted-foreground">Site</span>
               </a>
             )}
-            <button onClick={copyWifiPassword} className="flex flex-col items-center gap-1.5 group">
-              <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/20 transition-colors">
-                <Wifi className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-              </div>
-              <span className="text-xs text-muted-foreground">WiFi</span>
-            </button>
+            {wifiInfo.password && (
+              <button onClick={copyWifiPassword} className="flex flex-col items-center gap-1.5 group">
+                <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/20 transition-colors">
+                  <Wifi className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-xs text-muted-foreground">WiFi</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -187,7 +215,7 @@ const HubPage = () => {
       <div className="container mx-auto px-4 pb-8 max-w-lg">
         <div className="space-y-3">
           {/* Hero Menu Card */}
-          {establishment.modules.menu && (
+          {modules?.menu && (
             <ActionCard
               icon={UtensilsCrossed}
               title="Cardápio Digital"
@@ -195,12 +223,11 @@ const HubPage = () => {
               to="/cardapio"
               variant="hero"
               badge="DESTAQUE"
-              image={establishment.menuImage}
             />
           )}
 
           {/* Colored Module Cards */}
-          {establishment.modules.waiterCall && (
+          {modules?.waiterCall && (
             <ActionCard
               icon={Bell}
               title="Chamar Garçom"
@@ -210,7 +237,7 @@ const HubPage = () => {
             />
           )}
 
-          {establishment.modules.reservations && (
+          {modules?.reservations && (
             <ActionCard
               icon={CalendarCheck}
               title="Fazer Reserva"
@@ -220,18 +247,17 @@ const HubPage = () => {
             />
           )}
 
-          {establishment.modules.queue && (
+          {modules?.queue && (
             <ActionCard
               icon={Users}
               title="Fila de Espera"
               description="Entre na fila e acompanhe sua posição"
               to="/fila"
               variant="blue"
-              badge={establishment.estimatedWaitTime}
             />
           )}
 
-          {establishment.modules.kitchenOrder && (
+          {modules?.kitchenOrder && (
             <ActionCard
               icon={ChefHat}
               title="Pedido Cozinha"
@@ -241,7 +267,7 @@ const HubPage = () => {
             />
           )}
 
-          {establishment.modules.customerReview && (
+          {modules?.customerReview && (
             <ActionCard
               icon={Star}
               title="Avaliar Experiência"
@@ -253,56 +279,55 @@ const HubPage = () => {
         </div>
 
         {/* Map Card */}
-        <div className="mt-6">
-          <a
-            href={`https://maps.google.com/?q=${encodeURIComponent(establishment.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block rounded-xl overflow-hidden border border-border group"
-          >
-            <div className="relative h-32">
-              <img
-                src={establishment.mapImage}
-                alt="Localização"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <p className="text-sm text-foreground font-medium">{establishment.address}</p>
+        {restaurant.address && (
+          <div className="mt-6">
+            <a
+              href={`https://maps.google.com/?q=${encodeURIComponent(restaurant.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-xl overflow-hidden border border-border group"
+            >
+              <div className="relative h-32 bg-secondary">
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <p className="text-sm text-foreground font-medium">{restaurant.address}</p>
+                  </div>
+                  <Button size="icon" variant="secondary" className="shrink-0">
+                    <Navigation className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button size="icon" variant="secondary" className="shrink-0">
-                  <Navigation className="h-4 w-4" />
-                </Button>
               </div>
-            </div>
-          </a>
-        </div>
+            </a>
+          </div>
+        )}
 
         {/* Social Links */}
-        <div className="flex items-center justify-center gap-3 mt-6">
-          {establishment.social.instagram && (
-            <a
-              href={establishment.social.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-secondary rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
-            >
-              <Instagram className="h-5 w-5" />
-            </a>
-          )}
-          {establishment.social.facebook && (
-            <a
-              href={establishment.social.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-secondary rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
-            >
-              <Facebook className="h-5 w-5" />
-            </a>
-          )}
-        </div>
+        {(socialLinks.instagram || socialLinks.facebook) && (
+          <div className="flex items-center justify-center gap-3 mt-6">
+            {socialLinks.instagram && (
+              <a
+                href={socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 bg-secondary rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+            )}
+            {socialLinks.facebook && (
+              <a
+                href={socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 bg-secondary rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+              >
+                <Facebook className="h-5 w-5" />
+              </a>
+            )}
+          </div>
+        )}
 
         {/* Footer */}
         <div className="mt-8 pt-6 border-t border-border text-center">
