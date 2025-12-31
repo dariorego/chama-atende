@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, HelpCircle, Plus, Minus, Check, ArrowRight } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +46,7 @@ const sauceOptions = [
 
 const CustomizeOrderPage = () => {
   const navigate = useNavigate();
-  const { baseId } = useParams<{ baseId: string }>();
+  const { slug, baseId } = useParams<{ slug: string; baseId: string }>();
   
   const [activeTab, setActiveTab] = useState("queijos");
   const [selectedCheeses, setSelectedCheeses] = useState<string[]>([]);
@@ -59,7 +58,7 @@ const CustomizeOrderPage = () => {
   const baseName = baseNames[baseId || ""] || "Prato";
 
   const handleBack = () => {
-    navigate("/pedido-cozinha");
+    navigate(`/${slug}/pedido-cozinha`);
   };
 
   const handleCheeseToggle = (cheeseId: string) => {
@@ -108,7 +107,7 @@ const CustomizeOrderPage = () => {
   };
 
   const handleConfirm = () => {
-    navigate(`/pedido-cozinha/${baseId}/revisao`, {
+    navigate(`/${slug}/pedido-cozinha/${baseId}/revisao`, {
       state: {
         base: baseId,
         cheeses: selectedCheeses,

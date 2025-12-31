@@ -42,7 +42,7 @@ const ingredientNames: Record<string, string> = {
 
 const OrderReviewPage = () => {
   const navigate = useNavigate();
-  const { baseId } = useParams<{ baseId: string }>();
+  const { slug, baseId } = useParams<{ slug: string; baseId: string }>();
   const location = useLocation();
   const orderData = location.state as {
     base: string;
@@ -61,7 +61,7 @@ const OrderReviewPage = () => {
   };
 
   const handleSubmit = () => {
-    navigate(`/pedido-cozinha/${baseId}/status`, {
+    navigate(`/${slug}/pedido-cozinha/${baseId}/status`, {
       state: {
         base: baseId,
         tableNumber,

@@ -1,23 +1,20 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Share2, MoreHorizontal, MapPin, Star, Menu, Bell, Receipt, ChevronRight, X, Hourglass } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, Share2, MoreHorizontal, MapPin, Star, Bell, Receipt, ChevronRight, X, Hourglass, Loader2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useRestaurant } from "@/hooks/useRestaurant";
 
 const WaiterCallPage = () => {
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
   const [tableNumber] = useState("05");
   const [isWaiterCalled, setIsWaiterCalled] = useState(false);
   const [isBillRequested, setIsBillRequested] = useState(false);
   const [activeTab, setActiveTab] = useState("atendimento");
 
-  const establishment = {
-    name: "Bistro Verde",
-    location: "Jardins, São Paulo",
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop",
-  };
+  const { data: restaurant, isLoading } = useRestaurant(slug ?? '');
 
   const handleCallWaiter = () => {
     setIsWaiterCalled(true);
@@ -46,13 +43,32 @@ const WaiterCallPage = () => {
 
   const isRequestActive = isWaiterCalled || isBillRequested;
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!restaurant) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Restaurante não encontrado</h1>
+        <p className="text-muted-foreground text-center">
+          O restaurante que você está procurando não existe ou está inativo.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Header */}
       <div className="relative h-80">
         <img
-          src={establishment.image}
-          alt={establishment.name}
+          src={restaurant.cover_image_url || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop"}
+          alt={restaurant.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
@@ -60,7 +76,7 @@ const WaiterCallPage = () => {
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(`/${slug}`)}
             className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
             <ArrowLeft className="h-5 w-5 text-white" />
@@ -80,19 +96,23 @@ const WaiterCallPage = () => {
           {/* Open badge */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-medium text-primary">Aberto agora</span>
+            <span className="text-xs font-medium text-primary">
+              {restaurant.status === "open" ? "Aberto agora" : "Fechado"}
+            </span>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-1">{establishment.name}</h1>
+          <h1 className="text-3xl font-bold text-white mb-1">{restaurant.name}</h1>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 text-white/80">
-              <MapPin className="h-4 w-4" />
-              <span className="text-sm">{establishment.location}</span>
-            </div>
+            {restaurant.address && (
+              <div className="flex items-center gap-1 text-white/80">
+                <MapPin className="h-4 w-4" />
+                <span className="text-sm">{restaurant.address.split(",")[0]}</span>
+              </div>
+            )}
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
               <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-medium text-white">{establishment.rating}</span>
+              <span className="text-sm font-medium text-white">4.8</span>
             </div>
           </div>
         </div>
@@ -111,7 +131,7 @@ const WaiterCallPage = () => {
             <TabsTrigger
               value="menu"
               className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              onClick={() => navigate("/menu")}
+              onClick={() => navigate(`/${slug}/cardapio`)}
             >
               Cardápio
             </TabsTrigger>
