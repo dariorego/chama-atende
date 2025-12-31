@@ -15,6 +15,16 @@ import OrderReviewPage from "./pages/OrderReviewPage";
 import OrderStatusPage from "./pages/OrderStatusPage";
 import CustomerReviewPage from "./pages/CustomerReviewPage";
 import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import { AuthGuard } from "./components/auth/AuthGuard";
+import { AdminLayout } from "./components/layout/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminModules from "./pages/admin/AdminModules";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +37,72 @@ const App = () => (
         <Routes>
           {/* Landing page - redirects to default restaurant */}
           <Route path="/" element={<LandingPage />} />
+          
+          {/* Auth routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          
+          {/* Admin routes - protected */}
+          <Route
+            path="/:slug/admin"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/produtos"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminProducts />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/categorias"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminCategories />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/modulos"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminModules />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/usuarios"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminUsers />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/:slug/admin/configuracoes"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminSettings />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
           
           {/* Dynamic routes by restaurant slug */}
           <Route path="/:slug" element={<HubPage />} />
