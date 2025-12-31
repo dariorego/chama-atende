@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ActionCard } from "@/components/ui/action-card";
 import {
   UtensilsCrossed,
@@ -27,10 +28,11 @@ import { SocialLinks, WifiInfo, formatTime } from "@/types/restaurant";
 import { toast } from "sonner";
 
 const HubPage = () => {
+  const { slug } = useParams<{ slug: string }>();
   const [scrolled, setScrolled] = useState(false);
 
   // Fetch data from Supabase
-  const { data: restaurant, isLoading: isLoadingRestaurant } = useRestaurant("bistro-verde");
+  const { data: restaurant, isLoading: isLoadingRestaurant } = useRestaurant(slug ?? '');
   const { data: modules, isLoading: isLoadingModules } = useRestaurantModules(restaurant?.id);
 
   const isLoading = isLoadingRestaurant || isLoadingModules;
@@ -220,7 +222,7 @@ const HubPage = () => {
               icon={UtensilsCrossed}
               title="Cardápio Digital"
               description="Explore nosso menu completo com fotos e descrições detalhadas"
-              to="/cardapio"
+              to={`/${slug}/cardapio`}
               variant="hero"
               badge="DESTAQUE"
             />
@@ -232,7 +234,7 @@ const HubPage = () => {
               icon={Bell}
               title="Chamar Garçom"
               description="Solicite atendimento na sua mesa"
-              to="/solicitar-atendimento"
+              to={`/${slug}/solicitar-atendimento`}
               variant="amber"
             />
           )}
@@ -242,7 +244,7 @@ const HubPage = () => {
               icon={CalendarCheck}
               title="Fazer Reserva"
               description="Reserve sua mesa com antecedência"
-              to="/reservas"
+              to={`/${slug}/reservas`}
               variant="purple"
             />
           )}
@@ -252,7 +254,7 @@ const HubPage = () => {
               icon={Users}
               title="Fila de Espera"
               description="Entre na fila e acompanhe sua posição"
-              to="/fila"
+              to={`/${slug}/fila`}
               variant="blue"
             />
           )}
@@ -262,7 +264,7 @@ const HubPage = () => {
               icon={ChefHat}
               title="Pedido Cozinha"
               description="Monte seu prato personalizado"
-              to="/pedido-cozinha"
+              to={`/${slug}/pedido-cozinha`}
               variant="rose"
             />
           )}
@@ -272,7 +274,7 @@ const HubPage = () => {
               icon={Star}
               title="Avaliar Experiência"
               description="Compartilhe sua opinião sobre nosso serviço"
-              to="/avaliacao"
+              to={`/${slug}/avaliacao`}
               variant="amber"
             />
           )}
