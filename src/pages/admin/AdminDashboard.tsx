@@ -4,6 +4,7 @@ import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { useMenuCategories } from '@/hooks/useMenuCategories';
 import { useMenuProducts } from '@/hooks/useMenuProducts';
 import { useRestaurantModules } from '@/hooks/useRestaurantModules';
+import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { 
   UtensilsCrossed, 
   FolderTree, 
@@ -11,8 +12,30 @@ import {
   Users,
   TrendingUp,
   Clock,
+  DollarSign,
+  Star,
+  Eye,
 } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent,
+  type ChartConfig 
+} from '@/components/ui/chart';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  PieChart, 
+  Pie, 
+  Cell,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+} from 'recharts';
 
 export default function AdminDashboard() {
   const { slug } = useParams<{ slug: string }>();
@@ -20,12 +43,54 @@ export default function AdminDashboard() {
   const { data: categories, isLoading: isLoadingCategories } = useMenuCategories(restaurant?.id);
   const { data: products, isLoading: isLoadingProducts } = useMenuProducts(restaurant?.id);
   const { data: modules, isLoading: isLoadingModules } = useRestaurantModules(restaurant?.id);
+  const { users, isLoading: isLoadingUsers } = useAdminUsers();
 
-  const isLoading = isLoadingAccess || isLoadingCategories || isLoadingProducts || isLoadingModules;
+  const isLoading = isLoadingAccess || isLoadingCategories || isLoadingProducts || isLoadingModules || isLoadingUsers;
 
   // Count active modules
   const activeModules = modules ? Object.entries(modules).filter(([_, active]) => active) : [];
   const activeModuleNames = activeModules.map(([name]) => name);
+
+  // Calculate stats
+  const highlightProducts = products?.filter(p => p.is_highlight).length ?? 0;
+  const avgPrice = products && products.length > 0 
+    ? (products.reduce((sum, p) => sum + Number(p.price), 0) / products.length).toFixed(2)
+    : '0.00';
+  const promotionalProducts = products?.filter(p => p.promotional_price).length ?? 0;
+
+  // Products by category for chart
+  const productsByCategory = categories?.map(cat => ({
+    name: cat.name.length > 12 ? cat.name.slice(0, 12) + '...' : cat.name,
+    produtos: products?.filter(p => p.category_id === cat.id).length ?? 0,
+  })) ?? [];
+
+  // Pie chart data for product status
+  const productStatusData = [
+    { name: 'Ativos', value: products?.filter(p => p.is_active).length ?? 0, fill: 'hsl(var(--chart-1))' },
+    { name: 'Inativos', value: products?.filter(p => !p.is_active).length ?? 0, fill: 'hsl(var(--chart-2))' },
+  ];
+
+  // Simulated weekly views (in real app, would come from analytics)
+  const weeklyData = [
+    { day: 'Seg', visitas: 45 },
+    { day: 'Ter', visitas: 52 },
+    { day: 'Qua', visitas: 49 },
+    { day: 'Qui', visitas: 63 },
+    { day: 'Sex', visitas: 89 },
+    { day: 'Sáb', visitas: 132 },
+    { day: 'Dom', visitas: 98 },
+  ];
+
+  const chartConfig: ChartConfig = {
+    produtos: {
+      label: "Produtos",
+      color: "hsl(var(--chart-1))",
+    },
+    visitas: {
+      label: "Visitas",
+      color: "hsl(var(--chart-2))",
+    },
+  };
 
   if (isLoading) {
     return (
@@ -62,11 +127,38 @@ export default function AdminDashboard() {
     },
     {
       title: 'Equipe',
-      value: '-',
+      value: users?.length ?? 0,
       description: 'Usuários cadastrados',
       icon: Users,
       color: 'text-amber-500',
       bgColor: 'bg-amber-500/10',
+    },
+  ];
+
+  const highlights = [
+    {
+      title: 'Preço Médio',
+      value: `R$ ${avgPrice}`,
+      icon: DollarSign,
+      color: 'text-green-500',
+    },
+    {
+      title: 'Em Destaque',
+      value: highlightProducts,
+      icon: Star,
+      color: 'text-yellow-500',
+    },
+    {
+      title: 'Em Promoção',
+      value: promotionalProducts,
+      icon: TrendingUp,
+      color: 'text-rose-500',
+    },
+    {
+      title: 'Visitas (semana)',
+      value: '528',
+      icon: Eye,
+      color: 'text-cyan-500',
     },
   ];
 
@@ -81,6 +173,7 @@ export default function AdminDashboard() {
         </p>
       </div>
 
+      {/* Main Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.title}>
@@ -102,16 +195,93 @@ export default function AdminDashboard() {
         ))}
       </div>
 
+      {/* Secondary Stats */}
+      <div className="grid gap-4 md:grid-cols-4">
+        {highlights.map((item) => (
+          <Card key={item.title} className="bg-muted/50">
+            <CardContent className="pt-4">
+              <div className="flex items-center gap-3">
+                <item.icon className={`h-5 w-5 ${item.color}`} />
+                <div>
+                  <p className="text-xs text-muted-foreground">{item.title}</p>
+                  <p className="text-lg font-semibold">{item.value}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Charts Row */}
       <div className="grid gap-4 md:grid-cols-2">
+        {/* Products by Category Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Produtos por Categoria</CardTitle>
+            <CardDescription>Distribuição de itens no cardápio</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {productsByCategory.length > 0 ? (
+              <ChartContainer config={chartConfig} className="h-[250px] w-full">
+                <BarChart data={productsByCategory} layout="vertical" margin={{ left: 0, right: 20 }}>
+                  <XAxis type="number" hide />
+                  <YAxis 
+                    type="category" 
+                    dataKey="name" 
+                    width={100}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar 
+                    dataKey="produtos" 
+                    fill="hsl(var(--chart-1))" 
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
+              </ChartContainer>
+            ) : (
+              <p className="text-muted-foreground text-sm text-center py-10">
+                Nenhuma categoria cadastrada
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Weekly Visits Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Visitas da Semana</CardTitle>
+            <CardDescription>Acessos ao cardápio digital</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[250px] w-full">
+              <LineChart data={weeklyData} margin={{ left: 0, right: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="visitas" 
+                  stroke="hsl(var(--chart-2))" 
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--chart-2))" }}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Status Row */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {/* Restaurant Status */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
               Status do Restaurante
             </CardTitle>
-            <CardDescription>
-              Informações sobre o funcionamento
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -136,15 +306,50 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
+        {/* Product Status Pie */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Status dos Produtos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[120px] flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={productStatusData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={30}
+                    outerRadius={50}
+                    dataKey="value"
+                  >
+                    {productStatusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex justify-center gap-4 text-sm">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-[hsl(var(--chart-1))]" />
+                <span>Ativos ({productStatusData[0].value})</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-[hsl(var(--chart-2))]" />
+                <span>Inativos ({productStatusData[1].value})</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Active Modules */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Puzzle className="h-5 w-5 text-primary" />
               Módulos Ativos
             </CardTitle>
-            <CardDescription>
-              Funcionalidades habilitadas para o cliente
-            </CardDescription>
           </CardHeader>
           <CardContent>
             {activeModuleNames.length > 0 ? (
@@ -160,7 +365,7 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">
-                Nenhum módulo ativo no momento
+                Nenhum módulo ativo
               </p>
             )}
           </CardContent>
