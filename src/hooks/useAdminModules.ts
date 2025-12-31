@@ -1,0 +1,90 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useCurrentUser } from "./useCurrentUser";
+import { toast } from "sonner";
+
+export interface RestaurantModule {
+  id: string;
+  module_name: string;
+  is_active: boolean;
+  settings: Record<string, unknown>;
+}
+
+export const MODULE_INFO: Record<string, { label: string; description: string; icon: string }> = {
+  menu: {
+    label: "Cardápio Digital",
+    description: "Exibir cardápio digital para os clientes",
+    icon: "UtensilsCrossed",
+  },
+  waiter_call: {
+    label: "Chamar Garçom",
+    description: "Permite que clientes chamem o garçom pela mesa",
+    icon: "Bell",
+  },
+  reservations: {
+    label: "Reservas",
+    description: "Sistema de reservas online",
+    icon: "CalendarDays",
+  },
+  queue: {
+    label: "Fila de Espera",
+    description: "Gerenciamento de fila de espera",
+    icon: "Users",
+  },
+  kitchen_order: {
+    label: "Pedidos na Cozinha",
+    description: "Pedidos direto para a cozinha",
+    icon: "ChefHat",
+  },
+  customer_review: {
+    label: "Avaliações",
+    description: "Coletar avaliações dos clientes",
+    icon: "Star",
+  },
+};
+
+export function useAdminModules() {
+  const { profile } = useCurrentUser();
+  const queryClient = useQueryClient();
+
+  const { data: modules, isLoading, error } = useQuery({
+    queryKey: ['admin-modules', profile?.restaurant_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('restaurant_modules')
+        .select('id, module_name, is_active, settings')
+        .eq('restaurant_id', profile!.restaurant_id!);
+
+      if (error) throw error;
+      return data as RestaurantModule[];
+    },
+    enabled: !!profile?.restaurant_id,
+  });
+
+  const toggleModuleMutation = useMutation({
+    mutationFn: async ({ moduleId, isActive }: { moduleId: string; isActive: boolean }) => {
+      const { error } = await supabase
+        .from('restaurant_modules')
+        .update({ is_active: isActive })
+        .eq('id', moduleId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-modules'] });
+      toast.success("Módulo atualizado com sucesso!");
+    },
+    onError: (error) => {
+      console.error('Error toggling module:', error);
+      toast.error("Erro ao atualizar módulo");
+    },
+  });
+
+  return {
+    modules,
+    isLoading,
+    error,
+    toggleModule: toggleModuleMutation.mutate,
+    isToggling: toggleModuleMutation.isPending,
+  };
+}
