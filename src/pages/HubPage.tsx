@@ -20,7 +20,9 @@ import {
   Navigation,
   Star,
   Loader2,
+  Settings,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useRestaurant } from "@/hooks/useRestaurant";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
@@ -340,6 +342,11 @@ const HubPage = () => {
             <a href="/termos" className="hover:text-primary transition-colors">TERMOS</a>
             <span>•</span>
             <a href="/privacidade" className="hover:text-primary transition-colors">PRIVACIDADE</a>
+            <span>•</span>
+            <Link to={`/${slug}/admin`} className="hover:text-primary transition-colors flex items-center gap-1">
+              <Settings className="h-3 w-3" />
+              ADMIN
+            </Link>
           </div>
         </div>
       </div>
