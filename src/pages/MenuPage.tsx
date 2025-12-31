@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
 import { ProductDetailSheet } from "@/components/ui/product-detail-sheet";
@@ -41,6 +42,7 @@ function transformProduct(product: MenuProduct): Product {
 }
 
 const MenuPage = () => {
+  const { slug } = useParams<{ slug: string }>();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -49,7 +51,7 @@ const MenuPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Fetch data from Supabase
-  const { data: restaurant, isLoading: isLoadingRestaurant } = useRestaurant("bistro-verde");
+  const { data: restaurant, isLoading: isLoadingRestaurant } = useRestaurant(slug ?? '');
   const { data: categoriesData, isLoading: isLoadingCategories } = useMenuCategories(restaurant?.id);
   const { data: productsData, isLoading: isLoadingProducts } = useMenuProducts(restaurant?.id);
 
@@ -95,7 +97,7 @@ const MenuPage = () => {
 
   if (isLoading) {
     return (
-      <ClientLayout title="Cardápio" showBack backTo="/">
+      <ClientLayout title="Cardápio" showBack backTo={`/${slug}`}>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -104,7 +106,7 @@ const MenuPage = () => {
   }
 
   return (
-    <ClientLayout title="Cardápio" showBack backTo="/">
+    <ClientLayout title="Cardápio" showBack backTo={`/${slug}`}>
       {/* Search */}
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
