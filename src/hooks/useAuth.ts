@@ -10,20 +10,28 @@ export function useAuth() {
 
   useEffect(() => {
     // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
+
+    // THEN check for existing session
+    (async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(session?.user ?? null);
+      } catch {
+        // If Supabase is temporarily unreachable, avoid infinite loading
+        setSession(null);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    })();
 
     return () => subscription.unsubscribe();
   }, []);
