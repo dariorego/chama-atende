@@ -36,7 +36,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold">Olá, {profile?.display_name || "Administrador"}! 👋</h1>
+        <h1 className="text-3xl font-bold">Olá, {profile?.full_name || "Administrador"}! 👋</h1>
         <p className="text-muted-foreground text-lg">{restaurant?.name}</p>
       </div>
 
