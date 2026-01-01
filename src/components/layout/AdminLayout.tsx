@@ -27,10 +27,15 @@ import {
   LogOut,
   ChefHat,
   ExternalLink,
+  Bell,
+  Calendar,
+  Star,
+  BarChart3,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { useAdminModules } from '@/hooks/useAdminModules';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -43,27 +48,46 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
   const { restaurant } = useAdminAccess(slug ?? '');
+  const { modules } = useAdminModules();
+
+  // Get active modules
+  const activeModules = modules?.filter((m) => m.is_active) || [];
+  const isModuleActive = (moduleName: string) => activeModules.some((m) => m.module_name === moduleName);
+
+  // Build dynamic menu based on active modules
+  const moduleMenuItems = [
+    { moduleName: 'waiter_call', title: 'Atendimentos', url: `/admin/${slug}/atendimentos`, icon: Bell },
+    { moduleName: 'reservations', title: 'Reservas', url: `/admin/${slug}/reservas`, icon: Calendar },
+    { moduleName: 'queue', title: 'Fila', url: `/admin/${slug}/fila`, icon: Users },
+    { moduleName: 'customer_review', title: 'Avaliações', url: `/admin/${slug}/avaliacoes`, icon: Star },
+    { moduleName: 'kitchen_order', title: 'Pedidos', url: `/admin/${slug}/pedidos`, icon: ChefHat },
+  ].filter((item) => isModuleActive(item.moduleName));
 
   const menuGroups = [
     {
       label: null,
       items: [
-        { title: 'Dashboard', url: `/${slug}/admin`, icon: LayoutDashboard },
+        { title: 'Dashboard', url: `/admin/${slug}`, icon: LayoutDashboard },
       ],
     },
     {
       label: 'Cardápio',
       items: [
-        { title: 'Produtos', url: `/${slug}/admin/produtos`, icon: UtensilsCrossed },
-        { title: 'Categorias', url: `/${slug}/admin/categorias`, icon: FolderTree },
+        { title: 'Produtos', url: `/admin/${slug}/produtos`, icon: UtensilsCrossed },
+        { title: 'Categorias', url: `/admin/${slug}/categorias`, icon: FolderTree },
       ],
     },
+    ...(moduleMenuItems.length > 0 ? [{
+      label: 'Módulos',
+      items: moduleMenuItems,
+    }] : []),
     {
       label: 'Gestão',
       items: [
-        { title: 'Módulos', url: `/${slug}/admin/modulos`, icon: Puzzle },
-        { title: 'Usuários', url: `/${slug}/admin/usuarios`, icon: Users },
-        { title: 'Configurações', url: `/${slug}/admin/configuracoes`, icon: Settings },
+        { title: 'Métricas', url: `/admin/${slug}/metricas`, icon: BarChart3 },
+        { title: 'Módulos', url: `/admin/${slug}/modulos`, icon: Puzzle },
+        { title: 'Usuários', url: `/admin/${slug}/usuarios`, icon: Users },
+        { title: 'Configurações', url: `/admin/${slug}/configuracoes`, icon: Settings },
       ],
     },
   ];
@@ -72,7 +96,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login', { replace: true });
+    navigate(`/admin/${slug}/login`, { replace: true });
   };
 
   const getInitials = (name: string | null) => {
@@ -91,8 +115,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <Sidebar className="border-r border-border/50">
           <SidebarHeader className="border-b border-border/50 p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <ChefHat className="h-5 w-5 text-primary" />
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center overflow-hidden">
+                {restaurant?.logo_url ? (
+                  <img 
+                    src={restaurant.logo_url} 
+                    alt={restaurant.name} 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <ChefHat className="h-5 w-5 text-primary" />
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="font-semibold text-sm truncate">
@@ -111,7 +143,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       <SidebarMenuButton asChild>
                         <NavLink
                           to={item.url}
-                          end={item.url === `/${slug}/admin`}
+                          end={item.url === `/admin/${slug}`}
                           className="flex items-center gap-2 hover:bg-muted/50"
                           activeClassName="bg-primary/10 text-primary font-medium"
                         >
@@ -135,7 +167,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         <SidebarMenuButton asChild>
                           <NavLink
                             to={item.url}
-                            end={item.url === `/${slug}/admin`}
+                            end={item.url === `/admin/${slug}`}
                             className="flex items-center gap-2 hover:bg-muted/50"
                             activeClassName="bg-primary/10 text-primary font-medium"
                           >
@@ -205,7 +237,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <h1 className="font-semibold">
               {allMenuItems.find((item) => 
                 location.pathname === item.url || 
-                (item.url !== `/${slug}/admin` && location.pathname.startsWith(item.url))
+                (item.url !== `/admin/${slug}` && location.pathname.startsWith(item.url))
               )?.title ?? 'Dashboard'}
             </h1>
           </header>

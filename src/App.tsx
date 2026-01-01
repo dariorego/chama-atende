@@ -41,16 +41,18 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Landing page - redirects to default restaurant */}
+          {/* Landing page */}
           <Route path="/" element={<LandingPage />} />
           
-          {/* Auth routes */}
-          <Route path="/login" element={<LoginPage />} />
+          {/* Global auth routes (legacy - kept for compatibility) */}
           <Route path="/signup" element={<SignupPage />} />
           
-          {/* Admin routes - protected */}
+          {/* Admin login - per establishment */}
+          <Route path="/admin/:slug/login" element={<LoginPage />} />
+          
+          {/* Admin routes - protected, with /admin/:slug prefix */}
           <Route
-            path="/:slug/admin"
+            path="/admin/:slug"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -60,7 +62,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/produtos"
+            path="/admin/:slug/produtos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -70,7 +72,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/categorias"
+            path="/admin/:slug/categorias"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -80,7 +82,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/modulos"
+            path="/admin/:slug/modulos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -90,7 +92,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/usuarios"
+            path="/admin/:slug/usuarios"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -100,7 +102,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/configuracoes"
+            path="/admin/:slug/configuracoes"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -110,7 +112,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/atendimentos"
+            path="/admin/:slug/atendimentos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -120,7 +122,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/reservas"
+            path="/admin/:slug/reservas"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -130,7 +132,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/fila"
+            path="/admin/:slug/fila"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -140,7 +142,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/avaliacoes"
+            path="/admin/:slug/avaliacoes"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -150,7 +152,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/pedidos"
+            path="/admin/:slug/pedidos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -160,7 +162,7 @@ const App = () => (
             }
           />
           <Route
-            path="/:slug/admin/metricas"
+            path="/admin/:slug/metricas"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -169,6 +171,8 @@ const App = () => (
               </AuthGuard>
             }
           />
+
+          {/* Public restaurant routes */}
           <Route path="/:slug" element={<HubPage />} />
           <Route path="/:slug/cardapio" element={<MenuPage />} />
           <Route path="/:slug/solicitar-atendimento" element={<WaiterCallPage />} />
