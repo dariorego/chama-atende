@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/useAuth';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useRestaurant } from '@/hooks/useRestaurant';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, ChefHat } from 'lucide-react';
-import { useRestaurant } from '@/hooks/useRestaurant';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
@@ -20,13 +19,11 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { login, isAuthenticated, loading: authLoading } = useAuth();
-  const { profile, isLoading: profileLoading } = useCurrentUser();
+  const { data: restaurant, isLoading: restaurantLoading } = useRestaurant(slug ?? '');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Fetch restaurant to get slug for redirect
-  const { data: restaurant } = useRestaurant(profile?.restaurant_id ? '' : '');
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -38,40 +35,43 @@ export default function LoginPage() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (authLoading || profileLoading) return;
+    if (authLoading) return;
     
-    if (isAuthenticated && profile?.restaurant_id) {
-      // Fetch restaurant slug and redirect
-      const fetchAndRedirect = async () => {
-        const { supabase } = await import('@/integrations/supabase/client');
-        const { data } = await supabase
-          .from('restaurants')
-          .select('slug')
-          .eq('id', profile.restaurant_id!)
-          .single();
-        
-        if (data?.slug) {
-          navigate(`/${data.slug}/admin`, { replace: true });
-        }
-      };
-      fetchAndRedirect();
+    if (isAuthenticated && slug) {
+      navigate(`/admin/${slug}`, { replace: true });
     }
-  }, [isAuthenticated, profile, authLoading, profileLoading, navigate]);
+  }, [isAuthenticated, authLoading, navigate, slug]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
     const { error } = await login(data.email, data.password);
     setIsSubmitting(false);
 
-    if (!error) {
-      // Will be redirected by the useEffect above
+    if (!error && slug) {
+      navigate(`/admin/${slug}`, { replace: true });
     }
   };
 
-  if (authLoading) {
+  if (authLoading || restaurantLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Show error if restaurant not found
+  if (!restaurant && !restaurantLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="py-8 text-center">
+            <p className="text-muted-foreground">Restaurante não encontrado</p>
+            <Link to="/" className="text-primary hover:underline mt-4 inline-block">
+              Voltar ao início
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -81,12 +81,20 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            <ChefHat className="h-8 w-8 text-primary" />
+            {restaurant?.logo_url ? (
+              <img 
+                src={restaurant.logo_url} 
+                alt={restaurant.name} 
+                className="w-full h-full object-cover rounded-full"
+              />
+            ) : (
+              <ChefHat className="h-8 w-8 text-primary" />
+            )}
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">Bem-vindo de volta</CardTitle>
+            <CardTitle className="text-2xl font-bold">{restaurant?.name}</CardTitle>
             <CardDescription className="mt-2">
-              Entre na sua conta para acessar o painel
+              Entre na sua conta para acessar o painel administrativo
             </CardDescription>
           </div>
         </CardHeader>
@@ -149,10 +157,12 @@ export default function LoginPage() {
             </form>
           </Form>
 
-          <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Não tem uma conta? </span>
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Criar conta
+          <div className="mt-6 text-center">
+            <Link 
+              to={`/${slug}`} 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              ← Voltar ao site
             </Link>
           </div>
         </CardContent>

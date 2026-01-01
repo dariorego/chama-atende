@@ -343,7 +343,7 @@ const HubPage = () => {
             <span>•</span>
             <a href="/privacidade" className="hover:text-primary transition-colors">PRIVACIDADE</a>
             <span>•</span>
-            <Link to={`/${slug}/admin`} className="hover:text-primary transition-colors flex items-center gap-1">
+            <Link to={`/admin/${slug}`} className="hover:text-primary transition-colors flex items-center gap-1">
               <Settings className="h-3 w-3" />
               ADMIN
             </Link>

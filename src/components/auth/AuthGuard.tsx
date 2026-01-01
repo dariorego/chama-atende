@@ -21,11 +21,13 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
     if (isLoading) return;
 
     if (!isAuthenticated) {
-      navigate('/login', { replace: true });
+      // Redirect to admin login page for this establishment
+      navigate(`/admin/${slug}/login`, { replace: true });
       return;
     }
 
     if (requireAdmin && !hasAccess) {
+      // User authenticated but doesn't have access to this restaurant
       navigate(`/${slug}`, { replace: true });
     }
   }, [isAuthenticated, hasAccess, isLoading, requireAdmin, navigate, slug]);

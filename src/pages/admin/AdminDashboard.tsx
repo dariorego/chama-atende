@@ -43,7 +43,7 @@ export default function AdminDashboard() {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Módulos do Restaurante</h2>
         {activeModules.length === 0 ? (
-          <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum módulo ativo. <Link to={`/${slug}/admin/modulos`} className="text-primary underline">Ativar módulos</Link></CardContent></Card>
+          <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum módulo ativo. <Link to={`/admin/${slug}/modulos`} className="text-primary underline">Ativar módulos</Link></CardContent></Card>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {activeModules.map((module) => {
@@ -51,7 +51,7 @@ export default function AdminDashboard() {
               if (!config) return null;
               const Icon = config.icon;
               return (
-                <Link key={module.id} to={`/${slug}/admin/${config.href}`}>
+                <Link key={module.id} to={`/admin/${slug}/${config.href}`}>
                   <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 group">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap gap-3">
           {QUICK_ACCESS.map((item) => {
             const Icon = item.icon;
-            return <Link key={item.href} to={`/${slug}/admin/${item.href}`}><Button variant="outline" className="gap-2"><Icon className="h-4 w-4" />{item.label}</Button></Link>;
+            return <Link key={item.href} to={`/admin/${slug}/${item.href}`}><Button variant="outline" className="gap-2"><Icon className="h-4 w-4" />{item.label}</Button></Link>;
           })}
         </div>
       </div>
