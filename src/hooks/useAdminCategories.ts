@@ -90,3 +90,31 @@ export function useDeleteCategory() {
     },
   });
 }
+
+export function useReorderCategories() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (categories: { id: string; display_order: number }[]) => {
+      const updates = categories.map(({ id, display_order }) =>
+        supabase
+          .from('menu_categories')
+          .update({ display_order })
+          .eq('id', id)
+      );
+      
+      const results = await Promise.all(updates);
+      
+      const errors = results.filter(r => r.error);
+      if (errors.length > 0) {
+        throw new Error('Erro ao reordenar categorias');
+      }
+      
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-categories'] });
+    },
+  });
+}
