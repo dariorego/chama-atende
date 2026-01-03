@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronRight, HelpCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, ChevronRight, HelpCircle, Loader2, CameraOff } from "lucide-react";
 import { useClientOrderItems, OrderItemTag } from "@/hooks/useClientOrderItems";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 
@@ -86,12 +86,16 @@ const KitchenOrderPage = () => {
               }`}
             >
               {/* Image */}
-              <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
-                <img
-                  src={option.image_url || "/placeholder.svg"}
-                  alt={option.name}
-                  className="w-full h-full object-cover"
-                />
+              <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-muted flex items-center justify-center">
+                {option.image_url ? (
+                  <img
+                    src={option.image_url}
+                    alt={option.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <CameraOff className="h-10 w-10 text-muted-foreground" />
+                )}
               </div>
 
               {/* Content */}
