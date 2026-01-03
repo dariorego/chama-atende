@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw } from 'lucide-react';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { formatTime } from '@/types/restaurant';
+import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
+import { hexToHsl, hslToHex, DEFAULT_COLORS } from '@/lib/color-utils';
 
 const settingsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
@@ -32,6 +34,15 @@ type SettingsFormData = z.infer<typeof settingsSchema>;
 
 export default function AdminSettings() {
   const { restaurant, isLoading, updateRestaurant, isUpdating } = useAdminSettings();
+  
+  // Image states
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  
+  // Color states
+  const [primaryColor, setPrimaryColor] = useState(DEFAULT_COLORS.primary!);
+  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background!);
+  const [cardColor, setCardColor] = useState(DEFAULT_COLORS.card!);
 
   const form = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
@@ -69,8 +80,25 @@ export default function AdminSettings() {
         facebook: restaurant.social_links?.facebook || '',
         website: restaurant.social_links?.website || '',
       });
+      
+      // Load images
+      setLogoUrl(restaurant.logo_url);
+      setCoverUrl(restaurant.cover_image_url);
+      
+      // Load colors
+      if (restaurant.theme_colors) {
+        setPrimaryColor(restaurant.theme_colors.primary || DEFAULT_COLORS.primary!);
+        setBackgroundColor(restaurant.theme_colors.background || DEFAULT_COLORS.background!);
+        setCardColor(restaurant.theme_colors.card || DEFAULT_COLORS.card!);
+      }
     }
   }, [restaurant, form]);
+
+  const resetToDefaultColors = () => {
+    setPrimaryColor(DEFAULT_COLORS.primary!);
+    setBackgroundColor(DEFAULT_COLORS.background!);
+    setCardColor(DEFAULT_COLORS.card!);
+  };
 
   const onSubmit = (data: SettingsFormData) => {
     updateRestaurant({
@@ -82,6 +110,8 @@ export default function AdminSettings() {
       status: data.status,
       opening_time: data.opening_time || null,
       closing_time: data.closing_time || null,
+      logo_url: logoUrl,
+      cover_image_url: coverUrl,
       wifi_info: {
         network: data.wifi_network || undefined,
         password: data.wifi_password || undefined,
@@ -90,6 +120,12 @@ export default function AdminSettings() {
         instagram: data.instagram || undefined,
         facebook: data.facebook || undefined,
         website: data.website || undefined,
+      },
+      theme_colors: {
+        primary: primaryColor,
+        background: backgroundColor,
+        card: cardColor,
+        accent: primaryColor,
       },
     });
   };
@@ -151,6 +187,45 @@ export default function AdminSettings() {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          {/* Identidade Visual */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <ImageIcon className="h-5 w-5" />
+                Identidade Visual
+              </CardTitle>
+              <CardDescription>
+                Logo e imagem de capa do restaurante
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Logo do Restaurante</Label>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Formato quadrado recomendado
+                  </p>
+                  <ImageUploadWithCrop
+                    value={logoUrl}
+                    onChange={setLogoUrl}
+                    folder="logos"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Imagem de Capa</Label>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Exibida no topo do site
+                  </p>
+                  <ImageUploadWithCrop
+                    value={coverUrl}
+                    onChange={setCoverUrl}
+                    folder="covers"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -369,6 +444,106 @@ export default function AdminSettings() {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          {/* Configurações de Cores */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Palette className="h-5 w-5" />
+                Configurações de Cores
+              </CardTitle>
+              <CardDescription>
+                Personalize as cores do seu site
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Cor Principal */}
+              <div className="flex items-center gap-4">
+                <div 
+                  className="w-12 h-12 rounded-lg border border-border shrink-0"
+                  style={{ backgroundColor: `hsl(${primaryColor})` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <Label>Cor Principal</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Botões, links e destaques
+                  </p>
+                </div>
+                <Input 
+                  type="color" 
+                  value={hslToHex(primaryColor)}
+                  onChange={(e) => setPrimaryColor(hexToHsl(e.target.value))}
+                  className="w-16 h-10 p-1 cursor-pointer"
+                />
+              </div>
+
+              {/* Cor de Fundo */}
+              <div className="flex items-center gap-4">
+                <div 
+                  className="w-12 h-12 rounded-lg border border-border shrink-0"
+                  style={{ backgroundColor: `hsl(${backgroundColor})` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <Label>Cor de Fundo</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Fundo geral do site
+                  </p>
+                </div>
+                <Input 
+                  type="color" 
+                  value={hslToHex(backgroundColor)}
+                  onChange={(e) => setBackgroundColor(hexToHsl(e.target.value))}
+                  className="w-16 h-10 p-1 cursor-pointer"
+                />
+              </div>
+
+              {/* Cor dos Cards */}
+              <div className="flex items-center gap-4">
+                <div 
+                  className="w-12 h-12 rounded-lg border border-border shrink-0"
+                  style={{ backgroundColor: `hsl(${cardColor})` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <Label>Cor dos Cards</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Caixas e painéis
+                  </p>
+                </div>
+                <Input 
+                  type="color" 
+                  value={hslToHex(cardColor)}
+                  onChange={(e) => setCardColor(hexToHsl(e.target.value))}
+                  className="w-16 h-10 p-1 cursor-pointer"
+                />
+              </div>
+
+              {/* Botão para resetar cores padrão */}
+              <Button type="button" variant="outline" onClick={resetToDefaultColors}>
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Restaurar cores padrão
+              </Button>
+
+              {/* Preview em tempo real */}
+              <div 
+                className="p-4 rounded-lg border border-border"
+                style={{ backgroundColor: `hsl(${backgroundColor})` }}
+              >
+                <p className="text-sm mb-3 text-foreground">Preview:</p>
+                <div 
+                  className="p-4 rounded-lg"
+                  style={{ backgroundColor: `hsl(${cardColor})` }}
+                >
+                  <Button 
+                    type="button"
+                    style={{ backgroundColor: `hsl(${primaryColor})` }}
+                    className="text-primary-foreground hover:opacity-90"
+                  >
+                    Botão de Exemplo
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
