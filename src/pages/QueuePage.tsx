@@ -121,7 +121,7 @@ export default function QueuePage() {
         
         {/* Header */}
         <header className="relative z-10 flex items-center justify-between p-4">
-          <button onClick={() => navigate('/')} className="w-10 h-10 rounded-full bg-surface-dark/80 backdrop-blur-sm flex items-center justify-center">
+          <button onClick={() => navigate('/')} className="w-10 h-10 rounded-full bg-surface/80 backdrop-blur-sm flex items-center justify-center">
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
           <h1 className="font-semibold text-foreground">Fila de Espera</h1>
@@ -326,7 +326,7 @@ export default function QueuePage() {
 
       {/* Title Tab */}
       <div className="px-4 -mt-4 relative z-10">
-        <div className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1 flex items-center justify-center">
+        <div className="w-full h-12 bg-surface/80 backdrop-blur-sm rounded-2xl p-1 flex items-center justify-center">
           <span className="text-foreground font-semibold">Entrar na Fila</span>
         </div>
       </div>
@@ -345,7 +345,7 @@ export default function QueuePage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Seu nome"
-              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-muted-foreground"
+              className="h-14 pl-12 rounded-2xl bg-surface border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base placeholder:text-surface-foreground"
             />
           </div>
         </div>
@@ -362,14 +362,14 @@ export default function QueuePage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="(11) 99999-9999"
-              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-muted-foreground"
+              className="h-14 pl-12 rounded-2xl bg-surface border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base placeholder:text-surface-foreground"
             />
           </div>
         </div>
 
         {/* Party size */}
         <div className="space-y-3 mb-4">
-          <div className="bg-surface-dark rounded-2xl p-5 border border-border/30">
+          <div className="bg-surface rounded-2xl p-5 border border-border/30">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-foreground">Quantas pessoas?</h2>
@@ -422,7 +422,7 @@ export default function QueuePage() {
             value={observation}
             onChange={(e) => setObservation(e.target.value)}
             placeholder="Ex: Cadeirinha para bebê, aniversário..."
-            className="min-h-[100px] rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-muted-foreground"
+            className="min-h-[100px] rounded-2xl bg-surface border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-none placeholder:text-surface-foreground"
           />
         </div>
       </div>
