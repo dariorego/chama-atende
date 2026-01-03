@@ -31,6 +31,8 @@ import {
   Calendar,
   Star,
   BarChart3,
+  LayoutGrid,
+  User,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -56,6 +58,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // Build dynamic menu based on active modules
   const moduleMenuItems = [
     { moduleName: 'waiter_call', title: 'Atendimentos', url: '/admin/atendimentos', icon: Bell },
+    { moduleName: 'waiter_call', title: 'Mesas', url: '/admin/mesas', icon: LayoutGrid },
+    { moduleName: 'waiter_call', title: 'Atendentes', url: '/admin/atendentes', icon: User },
     { moduleName: 'reservations', title: 'Reservas', url: '/admin/reservas', icon: Calendar },
     { moduleName: 'queue', title: 'Fila', url: '/admin/fila', icon: Users },
     { moduleName: 'customer_review', title: 'Avaliações', url: '/admin/avaliacoes', icon: Star },

@@ -25,6 +25,8 @@ import AdminModules from "./pages/admin/AdminModules";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminWaiterCalls from "./pages/admin/AdminWaiterCalls";
+import AdminTables from "./pages/admin/AdminTables";
+import AdminWaiters from "./pages/admin/AdminWaiters";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminQueue from "./pages/admin/AdminQueue";
 import AdminReviews from "./pages/admin/AdminReviews";
@@ -123,6 +125,26 @@ const App = () => (
               <AuthGuard requireAdmin>
                 <AdminLayout>
                   <AdminWaiterCalls />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/admin/mesas"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminTables />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/admin/atendentes"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminWaiters />
                 </AdminLayout>
               </AuthGuard>
             }
