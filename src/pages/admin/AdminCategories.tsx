@@ -22,6 +22,7 @@ import {
   useUpdateCategory,
   useDeleteCategory,
   useReorderCategories,
+  useAdjustCategoryOrder,
   type MenuCategory,
 } from '@/hooks/useAdminCategories';
 import { CategoryFormDialog, type CategoryFormData } from '@/components/admin/CategoryFormDialog';
@@ -44,8 +45,15 @@ export default function AdminCategories() {
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
   const reorderCategories = useReorderCategories();
+  const adjustCategoryOrder = useAdjustCategoryOrder();
 
   const isFiltered = statusFilter !== 'all' || searchQuery !== '';
+
+  const nextOrder = useMemo(() => {
+    if (!categories || categories.length === 0) return 1;
+    const maxOrder = Math.max(...categories.map(c => c.display_order ?? 0));
+    return maxOrder + 1;
+  }, [categories]);
 
   const filteredCategories = useMemo(() => {
     if (!categories) return [];
@@ -84,6 +92,15 @@ export default function AdminCategories() {
 
     try {
       if (editingCategory) {
+        // Se a ordem mudou, ajustar as outras categorias primeiro
+        if (data.display_order !== editingCategory.display_order && categories) {
+          await adjustCategoryOrder.mutateAsync({
+            categoryId: editingCategory.id,
+            newOrder: data.display_order,
+            currentCategories: categories,
+          });
+        }
+        
         await updateCategory.mutateAsync({
           id: editingCategory.id,
           name: data.name,
@@ -130,7 +147,7 @@ export default function AdminCategories() {
   const handleReorder = async (reorderedCategories: MenuCategory[]) => {
     const updates = reorderedCategories.map((cat, index) => ({
       id: cat.id,
-      display_order: index,
+      display_order: index + 1, // Começa em 1
     }));
 
     try {
@@ -212,7 +229,8 @@ export default function AdminCategories() {
         onOpenChange={setIsFormOpen}
         category={editingCategory}
         onSubmit={handleFormSubmit}
-        isLoading={createCategory.isPending || updateCategory.isPending}
+        isLoading={createCategory.isPending || updateCategory.isPending || adjustCategoryOrder.isPending}
+        suggestedOrder={nextOrder}
       />
 
       <AlertDialog
