@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Star, Store, HeadphonesIcon, UtensilsCrossed, FileEdit, User, Phone, Send, Share2, MoreHorizontal, MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { useSubmitReview } from "@/hooks/useAdminReviews";
 
 const getRatingLabel = (rating: number) => {
   switch (rating) {
@@ -87,12 +88,13 @@ const CustomerReviewPage = () => {
   const [phone, setPhone] = useState("");
 
   const { restaurant, isLoading } = useAdminSettings();
+  const submitReview = useSubmitReview();
 
   const handleBack = () => {
     navigate('/');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!fullName.trim()) {
       toast({
         title: "Nome obrigatório",
@@ -102,16 +104,34 @@ const CustomerReviewPage = () => {
       return;
     }
 
-    // Simular envio
-    toast({
-      title: "Avaliação enviada!",
-      description: "Obrigado por compartilhar sua experiência conosco.",
-    });
+    if (!restaurant) return;
 
-    // Navegar de volta após envio
-    setTimeout(() => {
-      navigate('/');
-    }, 1500);
+    try {
+      await submitReview.mutateAsync({
+        restaurant_id: restaurant.id,
+        customer_name: fullName.trim(),
+        phone: phone || null,
+        ambiente_rating: ambienteRating || null,
+        atendimento_rating: atendimentoRating || null,
+        comida_rating: comidaRating || null,
+        observations: observations || null,
+      });
+
+      toast({
+        title: "Avaliação enviada!",
+        description: "Obrigado por compartilhar sua experiência conosco.",
+      });
+
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Erro ao enviar",
+        description: "Tente novamente em alguns instantes.",
+        variant: "destructive",
+      });
+    }
   };
 
   const isFormValid = fullName.trim().length > 0;
@@ -278,10 +298,19 @@ const CustomerReviewPage = () => {
         <Button
           onClick={handleSubmit}
           className="w-full h-14 rounded-xl text-base font-bold gap-2 shadow-lg shadow-primary/20"
-          disabled={!isFormValid}
+          disabled={!isFormValid || submitReview.isPending}
         >
-          Enviar Avaliação
-          <Send className="w-5 h-5" />
+          {submitReview.isPending ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Enviando...
+            </>
+          ) : (
+            <>
+              Enviar Avaliação
+              <Send className="w-5 h-5" />
+            </>
+          )}
         </Button>
       </footer>
     </div>
