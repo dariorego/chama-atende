@@ -159,6 +159,63 @@ export type Database = {
           },
         ]
       }
+      queue_entries: {
+        Row: {
+          called_at: string | null
+          cancelled_at: string | null
+          created_at: string | null
+          customer_name: string
+          estimated_wait_minutes: number | null
+          id: string
+          joined_at: string | null
+          notes: string | null
+          notifications_enabled: boolean | null
+          party_size: number
+          phone: string | null
+          position: number | null
+          queue_code: string
+          seated_at: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          called_at?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          customer_name: string
+          estimated_wait_minutes?: number | null
+          id?: string
+          joined_at?: string | null
+          notes?: string | null
+          notifications_enabled?: boolean | null
+          party_size?: number
+          phone?: string | null
+          position?: number | null
+          queue_code: string
+          seated_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          called_at?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          customer_name?: string
+          estimated_wait_minutes?: number | null
+          id?: string
+          joined_at?: string | null
+          notes?: string | null
+          notifications_enabled?: boolean | null
+          party_size?: number
+          phone?: string | null
+          position?: number | null
+          queue_code?: string
+          seated_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       restaurant_modules: {
         Row: {
           created_at: string | null
