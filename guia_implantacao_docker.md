@@ -1,4 +1,4 @@
-# Guia Técnico de Implantação - RestoPlatform
+# Guia Técnico de Implantação - Plataforma Ativa
 
 ## Índice
 
@@ -21,7 +21,7 @@
 
 ### 1.1 Sobre a Plataforma
 
-O **RestoPlatform** é um sistema SaaS completo para gestão de restaurantes, oferecendo:
+A **Plataforma Ativa** é um sistema SaaS completo para gestão de restaurantes, oferecendo:
 
 - **Cardápio Digital** - Menu interativo para clientes
 - **Pedidos para Cozinha** - Sistema de comandas personalizáveis

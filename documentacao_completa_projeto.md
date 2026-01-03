@@ -1,4 +1,4 @@
-# 📘 Documentação Técnica Completa - RestoPlatform
+# 📘 Documentação Técnica Completa - Plataforma Ativa
 
 > Sistema de Gestão para Restaurantes com Interface Dual (Cliente/Admin)
 
@@ -7,7 +7,7 @@
 ## 1. Identificação do Projeto
 
 ### Nome do Projeto
-**RestoPlatform** - Sistema de Gestão para Restaurantes
+**Plataforma Ativa** - Sistema de Gestão para Restaurantes
 
 ### Descrição Resumida
 Sistema completo de gestão para restaurantes com interface dual: uma voltada para clientes (Hub) e outra para administração (Dashboard Admin). Oferece módulos para cardápio digital, pedidos de cozinha, chamadas de garçom, reservas, fila de espera e avaliações de clientes.
