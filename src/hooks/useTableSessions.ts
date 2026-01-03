@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import { useNotificationSound } from "./useNotificationSound";
 
 export interface TableSession {
   id: string;
@@ -26,6 +27,7 @@ export interface TableSession {
 
 export function useTableSessions() {
   const queryClient = useQueryClient();
+  const { playNotificationSound } = useNotificationSound();
 
   const query = useQuery({
     queryKey: ["table-sessions"],
@@ -52,7 +54,25 @@ export function useTableSessions() {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'table_sessions'
+        },
+        (payload) => {
+          // Tocar som quando pedido de conta é solicitado
+          const newData = payload.new as { status: string };
+          const oldData = payload.old as { status: string };
+          if (newData.status === 'bill_requested' && oldData.status !== 'bill_requested') {
+            playNotificationSound();
+          }
+          queryClient.invalidateQueries({ queryKey: ["table-sessions"] });
+          queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
           schema: 'public',
           table: 'table_sessions'
         },
@@ -66,7 +86,7 @@ export function useTableSessions() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, playNotificationSound]);
 
   return query;
 }

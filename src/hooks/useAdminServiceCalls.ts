@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import { useNotificationSound } from "./useNotificationSound";
 
 export interface ServiceCall {
   id: string;
@@ -27,6 +28,7 @@ export interface ServiceCall {
 
 export function useAdminServiceCalls() {
   const queryClient = useQueryClient();
+  const { playNotificationSound } = useNotificationSound();
 
   const query = useQuery({
     queryKey: ["admin-service-calls"],
@@ -52,7 +54,22 @@ export function useAdminServiceCalls() {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
+          schema: 'public',
+          table: 'service_calls'
+        },
+        (payload) => {
+          // Tocar som para novas solicitações pendentes
+          if (payload.new && (payload.new as { status: string }).status === 'pending') {
+            playNotificationSound();
+          }
+          queryClient.invalidateQueries({ queryKey: ["admin-service-calls"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
           schema: 'public',
           table: 'service_calls'
         },
@@ -65,13 +82,14 @@ export function useAdminServiceCalls() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, playNotificationSound]);
 
   return query;
 }
 
 export function usePendingServiceCalls() {
   const queryClient = useQueryClient();
+  const { playNotificationSound } = useNotificationSound();
 
   const query = useQuery({
     queryKey: ["pending-service-calls"],
@@ -98,7 +116,22 @@ export function usePendingServiceCalls() {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
+          schema: 'public',
+          table: 'service_calls'
+        },
+        (payload) => {
+          // Tocar som para novas solicitações pendentes
+          if (payload.new && (payload.new as { status: string }).status === 'pending') {
+            playNotificationSound();
+          }
+          queryClient.invalidateQueries({ queryKey: ["pending-service-calls"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
           schema: 'public',
           table: 'service_calls'
         },
@@ -111,7 +144,7 @@ export function usePendingServiceCalls() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, playNotificationSound]);
 
   return query;
 }

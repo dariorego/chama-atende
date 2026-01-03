@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SocialLinks, WifiInfo, ThemeColors, IdentificationType } from "@/types/restaurant";
+import { SocialLinks, WifiInfo, ThemeColors, IdentificationType, NotificationSettings } from "@/types/restaurant";
 
 export interface RestaurantSettings {
   id: string;
@@ -20,6 +20,7 @@ export interface RestaurantSettings {
   social_links: SocialLinks;
   wifi_info: WifiInfo;
   theme_colors: ThemeColors;
+  notification_settings: NotificationSettings;
 }
 
 export interface UpdateRestaurantData {
@@ -37,6 +38,7 @@ export interface UpdateRestaurantData {
   social_links?: Record<string, string | undefined>;
   wifi_info?: Record<string, string | undefined>;
   theme_colors?: Record<string, string | undefined>;
+  notification_settings?: Record<string, boolean | undefined>;
 }
 
 export function useAdminSettings() {
@@ -61,6 +63,7 @@ export function useAdminSettings() {
         social_links: (data.social_links as SocialLinks) || {},
         wifi_info: (data.wifi_info as WifiInfo) || {},
         theme_colors: (data.theme_colors as ThemeColors) || {},
+        notification_settings: (data.notification_settings as NotificationSettings) || { sound_enabled: true },
       } as RestaurantSettings : null;
     },
   });

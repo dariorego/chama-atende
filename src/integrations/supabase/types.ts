@@ -742,6 +742,7 @@ export type Database = {
           is_active: boolean | null
           logo_url: string | null
           name: string
+          notification_settings: Json | null
           opening_time: string | null
           phone: string | null
           slug: string
@@ -763,6 +764,7 @@ export type Database = {
           is_active?: boolean | null
           logo_url?: string | null
           name: string
+          notification_settings?: Json | null
           opening_time?: string | null
           phone?: string | null
           slug: string
@@ -784,6 +786,7 @@ export type Database = {
           is_active?: boolean | null
           logo_url?: string | null
           name?: string
+          notification_settings?: Json | null
           opening_time?: string | null
           phone?: string | null
           slug?: string
