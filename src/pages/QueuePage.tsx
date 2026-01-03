@@ -6,29 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
-
 import { toast } from "@/hooks/use-toast";
-import {
-  ArrowLeft,
-  Share2,
-  MoreHorizontal,
-  MapPin,
-  Star,
-  User,
-  Phone,
-  Bell,
-  Clock,
-  X,
-  ChevronRight,
-  Zap,
-  MessageSquare,
-  Minus,
-  Plus,
-  Loader2,
-} from "lucide-react";
+import { ArrowLeft, Share2, MoreHorizontal, MapPin, Star, User, Phone, Bell, Clock, X, ChevronRight, Zap, MessageSquare, Minus, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
-
 export default function QueuePage() {
   const navigate = useNavigate();
   const [isInQueue, setIsInQueue] = useState(false);
@@ -38,41 +19,35 @@ export default function QueuePage() {
   const [observation, setObservation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-
-  const { restaurant, isLoading } = useAdminSettings();
+  const {
+    restaurant,
+    isLoading
+  } = useAdminSettings();
 
   // Dados simulados
   const queuePosition = 3;
   const queueCode = "A-047";
   const estimatedWait = "15 min";
   const progressPercent = 70;
-
-  const queueAvatars = [
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-  ];
-
+  const queueAvatars = ["https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop", "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop"];
   const handleJoinQueue = async () => {
     if (!name.trim()) {
       toast({
         title: "Nome obrigatório",
         description: "Por favor, informe seu nome.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     setIsInQueue(true);
     toast({
       title: "Você entrou na fila! 🎉",
-      description: `Sua posição: ${queuePosition}º - Código: ${queueCode}`,
+      description: `Sua posição: ${queuePosition}º - Código: ${queueCode}`
     });
   };
-
   const handleLeaveQueue = () => {
     setIsInQueue(false);
     setName("");
@@ -81,42 +56,32 @@ export default function QueuePage() {
     setObservation("");
     toast({
       title: "Você saiu da fila",
-      description: "Esperamos vê-lo em breve!",
+      description: "Esperamos vê-lo em breve!"
     });
   };
-
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+      </div>;
   }
-
   if (!restaurant) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+    return <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <h1 className="text-2xl font-bold text-foreground mb-2">Restaurante não encontrado</h1>
         <p className="text-muted-foreground text-center">
           O restaurante que você está procurando não existe ou está inativo.
         </p>
-      </div>
-    );
+      </div>;
   }
 
   // Tela quando está na fila
   if (isInQueue) {
-    return (
-      <div className="min-h-screen bg-background relative overflow-hidden">
+    return <div className="min-h-screen bg-background relative overflow-hidden">
         {/* Decorative green blur */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
         
         {/* Header */}
         <header className="relative z-10 flex items-center justify-between p-4">
-          <button
-            onClick={() => navigate('/')}
-            className="w-10 h-10 rounded-full bg-surface-dark/80 backdrop-blur-sm flex items-center justify-center"
-          >
+          <button onClick={() => navigate('/')} className="w-10 h-10 rounded-full bg-surface-dark/80 backdrop-blur-sm flex items-center justify-center">
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
           <h1 className="font-semibold text-foreground">Fila de Espera</h1>
@@ -214,47 +179,31 @@ export default function QueuePage() {
                   <p className="text-sm text-muted-foreground">Avisar quando chegar a vez</p>
                 </div>
               </div>
-              <Switch
-                checked={notificationsEnabled}
-                onCheckedChange={setNotificationsEnabled}
-              />
+              <Switch checked={notificationsEnabled} onCheckedChange={setNotificationsEnabled} />
             </div>
           </div>
         </div>
 
         {/* Fixed bottom button */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pt-8">
-          <Button
-            onClick={handleLeaveQueue}
-            variant="outline"
-            className="w-full h-14 rounded-full text-base font-medium border-destructive/30 text-destructive hover:bg-destructive/10"
-          >
+          <Button onClick={handleLeaveQueue} variant="outline" className="w-full h-14 rounded-full text-base font-medium border-destructive/30 text-destructive hover:bg-destructive/10">
             <X className="h-5 w-5 mr-2" />
             Sair da Fila
           </Button>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // Tela de formulário para entrar na fila
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Hero Header */}
       <div className="relative h-80">
-        <img
-          src={restaurant.cover_image_url || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop"}
-          alt={restaurant.name}
-          className="w-full h-full object-cover"
-        />
+        <img src={restaurant.cover_image_url || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop"} alt={restaurant.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
 
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-          <button
-            onClick={() => navigate('/')}
-            className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
-          >
+          <button onClick={() => navigate('/')} className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10">
             <ArrowLeft className="h-5 w-5 text-white" />
           </button>
           <div className="flex gap-2">
@@ -280,12 +229,10 @@ export default function QueuePage() {
           <h1 className="text-3xl font-bold text-white mb-1">{restaurant.name}</h1>
           
           <div className="flex items-center gap-4">
-            {restaurant.address && (
-              <div className="flex items-center gap-1 text-white/80">
+            {restaurant.address && <div className="flex items-center gap-1 text-white/80">
                 <MapPin className="h-4 w-4" />
                 <span className="text-sm">{restaurant.address.split(",")[0]}</span>
-              </div>
-            )}
+              </div>}
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
               <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
               <span className="text-sm font-medium text-white">4.8</span>
@@ -304,29 +251,7 @@ export default function QueuePage() {
       {/* Form */}
       <div className="px-4 py-6 pb-32">
         {/* Queue status with avatars */}
-        <div className="bg-surface-dark/50 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-border/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-3">
-                {queueAvatars.map((avatar, i) => (
-                  <img
-                    key={i}
-                    src={avatar}
-                    alt=""
-                    className="w-10 h-10 rounded-full border-2 border-background object-cover"
-                  />
-                ))}
-                <div className="w-10 h-10 rounded-full border-2 border-background bg-primary/20 flex items-center justify-center">
-                  <span className="text-xs font-medium text-primary">+5</span>
-                </div>
-              </div>
-              <div>
-                <p className="font-medium text-foreground">8 grupos na fila</p>
-                <p className="text-sm text-muted-foreground">~25 min de espera</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Name input */}
         <div className="space-y-2 mb-4">
@@ -335,13 +260,7 @@ export default function QueuePage() {
           </Label>
           <div className="relative">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Seu nome"
-              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-muted-foreground"
-            />
+            <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Seu nome" className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-muted-foreground" />
           </div>
         </div>
 
@@ -352,13 +271,7 @@ export default function QueuePage() {
           </Label>
           <div className="relative">
             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              id="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="(11) 99999-9999"
-              className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-muted-foreground"
-            />
+            <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} placeholder="(11) 99999-9999" className="h-14 pl-12 rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base text-muted-foreground" />
           </div>
         </div>
 
@@ -373,33 +286,13 @@ export default function QueuePage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => partySize > 1 && setPartySize(partySize - 1)}
-                  disabled={partySize <= 1}
-                  className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center transition-all",
-                    partySize <= 1
-                      ? "bg-white/5 text-muted-foreground cursor-not-allowed"
-                      : "bg-white/10 text-foreground hover:bg-white/20 active:scale-95"
-                  )}
-                >
+                <button type="button" onClick={() => partySize > 1 && setPartySize(partySize - 1)} disabled={partySize <= 1} className={cn("w-10 h-10 rounded-full flex items-center justify-center transition-all", partySize <= 1 ? "bg-white/5 text-muted-foreground cursor-not-allowed" : "bg-white/10 text-foreground hover:bg-white/20 active:scale-95")}>
                   <Minus className="w-5 h-5" />
                 </button>
                 <span className="text-2xl font-bold text-foreground w-8 text-center">
                   {partySize}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => partySize < 20 && setPartySize(partySize + 1)}
-                  disabled={partySize >= 20}
-                  className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center transition-all",
-                    partySize >= 20
-                      ? "bg-primary/50 text-primary-foreground cursor-not-allowed"
-                      : "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/30"
-                  )}
-                >
+                <button type="button" onClick={() => partySize < 20 && setPartySize(partySize + 1)} disabled={partySize >= 20} className={cn("w-10 h-10 rounded-full flex items-center justify-center transition-all", partySize >= 20 ? "bg-primary/50 text-primary-foreground cursor-not-allowed" : "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/30")}>
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
@@ -412,33 +305,18 @@ export default function QueuePage() {
           <Label htmlFor="observation" className="text-muted-foreground">
             Observações (opcional)
           </Label>
-          <Textarea
-            id="observation"
-            value={observation}
-            onChange={(e) => setObservation(e.target.value)}
-            placeholder="Ex: Cadeirinha para bebê, aniversário..."
-            className="min-h-[100px] rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-muted-foreground"
-          />
+          <Textarea id="observation" value={observation} onChange={e => setObservation(e.target.value)} placeholder="Ex: Cadeirinha para bebê, aniversário..." className="min-h-[100px] rounded-2xl bg-surface-dark border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-muted-foreground" />
         </div>
       </div>
 
       {/* Fixed bottom submit button */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pt-8">
-        <Button
-          onClick={handleJoinQueue}
-          disabled={isSubmitting}
-          className="w-full h-14 rounded-full bg-primary text-primary-foreground text-base font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all group"
-        >
-          {isSubmitting ? (
-            "Entrando..."
-          ) : (
-            <>
+        <Button onClick={handleJoinQueue} disabled={isSubmitting} className="w-full h-14 rounded-full bg-primary text-primary-foreground text-base font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all group">
+          {isSubmitting ? "Entrando..." : <>
               Entrar na Fila
               <ChevronRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-            </>
-          )}
+            </>}
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 }
