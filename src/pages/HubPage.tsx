@@ -238,9 +238,10 @@ const HubPage = () => {
             <ActionCard
               icon={Bell}
               title="Pedir Atendimento"
-              description="Solicite atendimento na sua mesa"
+              description={isOpen ? "Solicite atendimento na sua mesa" : "Disponível no horário de funcionamento"}
               to="/solicitar-atendimento"
               variant="amber"
+              disabled={!isOpen}
             />
           )}
 
@@ -258,9 +259,10 @@ const HubPage = () => {
             <ActionCard
               icon={Users}
               title="Fila de Espera"
-              description="Entre na fila e acompanhe sua posição"
+              description={isOpen ? "Entre na fila e acompanhe sua posição" : "Disponível no horário de funcionamento"}
               to="/fila"
               variant="blue"
+              disabled={!isOpen}
             />
           )}
 
@@ -268,9 +270,10 @@ const HubPage = () => {
             <ActionCard
               icon={ChefHat}
               title="Pedido Cozinha"
-              description="Monte seu prato personalizado"
+              description={isOpen ? "Monte seu prato personalizado" : "Disponível no horário de funcionamento"}
               to="/pedido-cozinha"
               variant="rose"
+              disabled={!isOpen}
             />
           )}
 
