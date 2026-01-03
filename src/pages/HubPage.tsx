@@ -27,8 +27,9 @@ import { Button } from "@/components/ui/button";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
 import { useRestaurantStatus } from "@/hooks/useRestaurantStatus";
-import { SocialLinks, WifiInfo } from "@/types/restaurant";
+import { SocialLinks, WifiInfo, LocationCoordinates } from "@/types/restaurant";
 import { toast } from "sonner";
+import { generateGoogleMapsUrl } from "@/lib/google-maps-utils";
 
 const HubPage = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -42,6 +43,7 @@ const HubPage = () => {
   // Parse JSONB fields
   const socialLinks = (restaurant?.social_links as SocialLinks) ?? {};
   const wifiInfo = (restaurant?.wifi_info as WifiInfo) ?? {};
+  const locationCoordinates = (restaurant?.location_coordinates as LocationCoordinates) ?? null;
   
   // Calculate automatic status based on business hours
   // Hook must be called unconditionally before any returns
@@ -290,21 +292,36 @@ const HubPage = () => {
           )}
         </div>
 
-        {/* Map Card */}
-        {restaurant.address && (
+        {/* Map Card - Usa coordenadas se disponíveis, senão usa endereço */}
+        {(locationCoordinates || restaurant.address) && (
           <div className="mt-6">
             <a
-              href={`https://maps.google.com/?q=${encodeURIComponent(restaurant.address)}`}
+              href={
+                locationCoordinates 
+                  ? generateGoogleMapsUrl(locationCoordinates)
+                  : `https://maps.google.com/?q=${encodeURIComponent(restaurant.address || '')}`
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="block rounded-xl overflow-hidden border border-border group"
             >
-              <div className="relative h-32 bg-secondary">
+              <div className="relative h-32 bg-secondary overflow-hidden">
+                {locationCoordinates ? (
+                  <iframe
+                    src={`https://www.google.com/maps?q=${locationCoordinates.latitude},${locationCoordinates.longitude}&output=embed`}
+                    width="100%"
+                    height="128"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="pointer-events-none"
+                  />
+                ) : null}
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <p className="text-sm text-foreground font-medium">{restaurant.address}</p>
+                    <p className="text-sm text-foreground font-medium">{restaurant.address || 'Ver no mapa'}</p>
                   </div>
                   <Button size="icon" variant="secondary" className="shrink-0">
                     <Navigation className="h-4 w-4" />
