@@ -37,7 +37,7 @@ export default function AdminProducts() {
   const { data: products = [], isLoading: isLoadingProducts } = useAdminProducts({
     search: search || undefined,
     categoryId: categoryFilter !== 'all' ? categoryFilter : undefined,
-    status: statusFilter,
+    isActive: statusFilter === 'all' ? undefined : statusFilter === 'active',
   });
   const { data: categories = [] } = useAdminCategories();
 
@@ -67,8 +67,9 @@ export default function AdminProducts() {
     try {
       await deleteProduct.mutateAsync({ id: product.id });
       toast({ title: 'Produto desativado', description: 'O produto foi removido.' });
-    } catch (error: any) {
-      toast({ title: 'Erro', description: error.message || 'Erro ao desativar.', variant: 'destructive' });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao desativar.';
+      toast({ title: 'Erro', description: errorMessage, variant: 'destructive' });
     }
   };
 

@@ -12,14 +12,13 @@ export interface ProductFilters {
   isActive?: boolean | null;
 }
 
-export function useAdminProducts(restaurantId: string | undefined, filters?: ProductFilters) {
+export function useAdminProducts(filters?: ProductFilters) {
   return useQuery({
-    queryKey: ['admin-products', restaurantId, filters],
+    queryKey: ['admin-products', filters],
     queryFn: async () => {
       let query = supabase
         .from('menu_products')
         .select('*')
-        .eq('restaurant_id', restaurantId!)
         .order('display_order')
         .order('name');
 
@@ -40,7 +39,6 @@ export function useAdminProducts(restaurantId: string | undefined, filters?: Pro
       if (error) throw error;
       return data;
     },
-    enabled: !!restaurantId,
   });
 }
 
@@ -91,18 +89,17 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, restaurantId }: { id: string; restaurantId: string }) => {
-      // Soft delete - apenas desativa o produto
+    mutationFn: async ({ id }: { id: string }) => {
       const { error } = await supabase
         .from('menu_products')
         .update({ is_active: false })
         .eq('id', id);
 
       if (error) throw error;
-      return { id, restaurantId };
+      return { id };
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-products', data.restaurantId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       queryClient.invalidateQueries({ queryKey: ['menu-products'] });
     },
   });

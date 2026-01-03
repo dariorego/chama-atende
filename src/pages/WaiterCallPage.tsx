@@ -7,14 +7,13 @@ import { useAdminSettings } from "@/hooks/useAdminSettings";
 
 const WaiterCallPage = () => {
   const navigate = useNavigate();
-  const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
   const [tableNumber] = useState("05");
   const [isWaiterCalled, setIsWaiterCalled] = useState(false);
   const [isBillRequested, setIsBillRequested] = useState(false);
   const [activeTab, setActiveTab] = useState("atendimento");
 
-  const { data: restaurant, isLoading } = useRestaurant(slug ?? '');
+  const { restaurant, isLoading } = useAdminSettings();
 
   const handleCallWaiter = () => {
     setIsWaiterCalled(true);
@@ -76,7 +75,7 @@ const WaiterCallPage = () => {
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
-            onClick={() => navigate(`/${slug}`)}
+            onClick={() => navigate('/')}
             className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
             <ArrowLeft className="h-5 w-5 text-white" />
@@ -131,7 +130,7 @@ const WaiterCallPage = () => {
             <TabsTrigger
               value="menu"
               className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              onClick={() => navigate(`/${slug}/cardapio`)}
+              onClick={() => navigate('/cardapio')}
             >
               Cardápio
             </TabsTrigger>
