@@ -42,6 +42,10 @@ export interface ThemeColors {
   accent?: string;
 }
 
+export interface NotificationSettings {
+  sound_enabled?: boolean;
+}
+
 export interface ModulesMap {
   menu: boolean;
   waiterCall: boolean;

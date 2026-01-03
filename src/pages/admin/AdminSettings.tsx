@@ -7,13 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties } from 'lucide-react';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { formatTime, IdentificationType } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
 import { hexToHsl, hslToHex, DEFAULT_COLORS } from '@/lib/color-utils';
-import { TableProperties } from 'lucide-react';
+import { useNotificationSound } from '@/hooks/useNotificationSound';
 
 const settingsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
@@ -36,6 +37,7 @@ type SettingsFormData = z.infer<typeof settingsSchema>;
 
 export default function AdminSettings() {
   const { restaurant, isLoading, updateRestaurant, isUpdating } = useAdminSettings();
+  const { playTestSound } = useNotificationSound();
   
   // Image states
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
@@ -45,6 +47,9 @@ export default function AdminSettings() {
   const [primaryColor, setPrimaryColor] = useState(DEFAULT_COLORS.primary!);
   const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background!);
   const [cardColor, setCardColor] = useState(DEFAULT_COLORS.card!);
+  
+  // Notification states
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
   const form = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
@@ -95,6 +100,11 @@ export default function AdminSettings() {
         setBackgroundColor(restaurant.theme_colors.background || DEFAULT_COLORS.background!);
         setCardColor(restaurant.theme_colors.card || DEFAULT_COLORS.card!);
       }
+      
+      // Load notification settings
+      if (restaurant.notification_settings) {
+        setSoundEnabled(restaurant.notification_settings.sound_enabled ?? true);
+      }
     }
   }, [restaurant, form]);
 
@@ -131,6 +141,9 @@ export default function AdminSettings() {
         background: backgroundColor,
         card: cardColor,
         accent: primaryColor,
+      },
+      notification_settings: {
+        sound_enabled: soundEnabled,
       },
     });
   };
@@ -503,6 +516,51 @@ export default function AdminSettings() {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          {/* Notificações */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Volume2 className="h-5 w-5" />
+                Notificações
+              </CardTitle>
+              <CardDescription>
+                Configure alertas sonoros para novas solicitações
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Sinal Sonoro</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Tocar som ao receber solicitações de atendimento ou conta
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {soundEnabled ? (
+                    <Volume2 className="h-4 w-4 text-primary" />
+                  ) : (
+                    <VolumeX className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <Switch
+                    checked={soundEnabled}
+                    onCheckedChange={setSoundEnabled}
+                  />
+                </div>
+              </div>
+              
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={playTestSound}
+                disabled={!soundEnabled}
+              >
+                <Volume2 className="h-4 w-4 mr-2" />
+                Testar Som
+              </Button>
             </CardContent>
           </Card>
 
