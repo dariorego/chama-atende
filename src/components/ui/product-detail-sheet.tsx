@@ -6,7 +6,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ImageZoomDialog } from "./image-zoom-dialog";
-import { ZoomIn } from "lucide-react";
+import { ZoomIn, CameraOff } from "lucide-react";
 
 interface Product {
   id: string;
@@ -59,8 +59,8 @@ export function ProductDetailSheet({
               </div>
             </button>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-6xl">🍽️</span>
+            <div className="w-full h-full flex items-center justify-center bg-muted">
+              <CameraOff className="h-16 w-16 text-muted-foreground" />
             </div>
           )}
           

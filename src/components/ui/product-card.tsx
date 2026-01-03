@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ImageZoomDialog } from "./image-zoom-dialog";
-import { ZoomIn } from "lucide-react";
+import { ZoomIn, CameraOff } from "lucide-react";
 
 interface ProductCardProps {
   name: string;
@@ -68,8 +68,8 @@ export function ProductCard({
           )}
         </button>
       ) : (
-        <div className="w-20 h-20 rounded-lg bg-secondary shrink-0 flex items-center justify-center">
-          <span className="text-2xl">🍽️</span>
+        <div className="w-20 h-20 rounded-lg bg-muted shrink-0 flex items-center justify-center">
+          <CameraOff className="h-8 w-8 text-muted-foreground" />
         </div>
       )}
 

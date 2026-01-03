@@ -37,7 +37,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Pencil, Trash2, Star, ImageOff, GripVertical } from 'lucide-react';
+import { Pencil, Trash2, Star, CameraOff, GripVertical } from 'lucide-react';
 import type { MenuProduct } from '@/hooks/useAdminProducts';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
 
@@ -117,7 +117,7 @@ function SortableProductRow({
           />
         ) : (
           <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center">
-            <ImageOff className="h-5 w-5 text-muted-foreground" />
+            <CameraOff className="h-5 w-5 text-muted-foreground" />
           </div>
         )}
       </TableCell>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Link2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Link2, Loader2, CameraOff } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -125,12 +125,16 @@ export default function AdminOrderItems() {
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    {item.image_url && (
+                    {item.image_url ? (
                       <img
                         src={item.image_url}
                         alt={item.name}
                         className="w-12 h-12 rounded-lg object-cover"
                       />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                        <CameraOff className="h-5 w-5 text-muted-foreground" />
+                      </div>
                     )}
                     <div>
                       <CardTitle className="text-lg">{item.name}</CardTitle>
