@@ -750,6 +750,7 @@ export type Database = {
           status: string | null
           subtitle: string | null
           theme_colors: Json | null
+          theme_settings: Json | null
           updated_at: string | null
           wifi_info: Json | null
         }
@@ -772,6 +773,7 @@ export type Database = {
           status?: string | null
           subtitle?: string | null
           theme_colors?: Json | null
+          theme_settings?: Json | null
           updated_at?: string | null
           wifi_info?: Json | null
         }
@@ -794,6 +796,7 @@ export type Database = {
           status?: string | null
           subtitle?: string | null
           theme_colors?: Json | null
+          theme_settings?: Json | null
           updated_at?: string | null
           wifi_info?: Json | null
         }

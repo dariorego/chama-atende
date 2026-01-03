@@ -38,197 +38,216 @@ import AdminMetrics from "./pages/admin/AdminMetrics";
 
 const queryClient = new QueryClient();
 
+// Client pages wrapper with client theme
+function ClientPages() {
+  return (
+    <ThemeProvider storageKey="client-theme" defaultTheme="dark">
+      <Routes>
+        <Route path="/" element={<HubPage />} />
+        <Route path="/cardapio" element={<MenuPage />} />
+        <Route path="/atendimento/:tableId" element={<WaiterCallPage />} />
+        <Route path="/solicitar-atendimento" element={<WaiterCallPage />} />
+        <Route path="/reservas" element={<ReservationsPage />} />
+        <Route path="/fila" element={<QueuePage />} />
+        <Route path="/pedido-cozinha" element={<KitchenOrderPage />} />
+        <Route path="/pedido-cozinha/:baseId" element={<CustomizeOrderPage />} />
+        <Route path="/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
+        <Route path="/pedido-cozinha/status/:orderId" element={<OrderStatusPage />} />
+        <Route path="/avaliacao" element={<CustomerReviewPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+      </Routes>
+    </ThemeProvider>
+  );
+}
+
+// Admin pages wrapper with admin theme
+function AdminPages() {
+  return (
+    <ThemeProvider storageKey="admin-theme" defaultTheme="dark">
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/produtos"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminProducts />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/categorias"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminCategories />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/modulos"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminModules />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/usuarios"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminUsers />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/configuracoes"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminSettings />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/atendimentos"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminWaiterCalls />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/mesas"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminTables />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/atendentes"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminWaiters />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/reservas"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminReservations />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/fila"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminQueue />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/avaliacoes"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminReviews />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/pedidos"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminOrders />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/itens-pedido"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminOrderItems />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/combinacoes"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminCombinationGroups />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/metricas"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminMetrics />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+      </Routes>
+    </ThemeProvider>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <ThemeProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
         <Routes>
-          {/* Public pages */}
-          <Route path="/" element={<HubPage />} />
-          <Route path="/cardapio" element={<MenuPage />} />
-          <Route path="/atendimento/:tableId" element={<WaiterCallPage />} />
-          <Route path="/solicitar-atendimento" element={<WaiterCallPage />} />
-          <Route path="/reservas" element={<ReservationsPage />} />
-          <Route path="/fila" element={<QueuePage />} />
-          <Route path="/pedido-cozinha" element={<KitchenOrderPage />} />
-          <Route path="/pedido-cozinha/:baseId" element={<CustomizeOrderPage />} />
-          <Route path="/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
-          <Route path="/pedido-cozinha/status/:orderId" element={<OrderStatusPage />} />
-          <Route path="/avaliacao" element={<CustomerReviewPage />} />
+          {/* Admin routes with separate theme */}
+          <Route path="/admin/*" element={<AdminPages />} />
           
-          {/* Auth routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+          {/* Client routes with separate theme */}
+          <Route path="/*" element={<ClientPages />} />
           
-          {/* Admin routes - protected */}
-          <Route
-            path="/admin"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminDashboard />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/produtos"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminProducts />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/categorias"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminCategories />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/modulos"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminModules />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/usuarios"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminUsers />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/configuracoes"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminSettings />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/atendimentos"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminWaiterCalls />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/mesas"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminTables />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/atendentes"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminWaiters />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/reservas"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminReservations />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/fila"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminQueue />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/avaliacoes"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminReviews />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/pedidos"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminOrders />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/itens-pedido"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminOrderItems />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/combinacoes"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminCombinationGroups />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/admin/metricas"
-            element={
-              <AuthGuard requireAdmin>
-                <AdminLayout>
-                  <AdminMetrics />
-                </AdminLayout>
-              </AuthGuard>
-            }
-          />
-          
+          {/* 404 fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

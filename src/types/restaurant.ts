@@ -46,6 +46,11 @@ export interface NotificationSettings {
   sound_enabled?: boolean;
 }
 
+export interface ThemeSettings {
+  client_default_theme?: 'light' | 'dark';
+  admin_default_theme?: 'light' | 'dark';
+}
+
 export interface ModulesMap {
   menu: boolean;
   waiterCall: boolean;

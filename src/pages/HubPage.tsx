@@ -22,6 +22,7 @@ import {
   Loader2,
   Settings,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
@@ -103,9 +104,12 @@ const HubPage = () => {
             >
               {restaurant.name}
             </span>
-            <Button variant="ghost" size="icon" className="text-foreground" onClick={handleShare}>
-              <Share2 className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <Button variant="ghost" size="icon" className="text-foreground" onClick={handleShare}>
+                <Share2 className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
