@@ -40,6 +40,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { useAdminModules } from '@/hooks/useAdminModules';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -248,12 +249,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <main className="flex-1 flex flex-col min-h-screen">
           <header className="h-14 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center px-4 sticky top-0 z-10">
             <SidebarTrigger className="mr-4" />
-            <h1 className="font-semibold">
+            <h1 className="font-semibold flex-1">
               {allMenuItems.find((item) => 
                 location.pathname === item.url || 
                 (item.url !== '/admin' && location.pathname.startsWith(item.url))
               )?.title ?? 'Dashboard'}
             </h1>
+            <ThemeToggle />
           </header>
           <div className="flex-1 p-6">{children}</div>
         </main>
