@@ -2052,7 +2052,54 @@ ALTER TABLE public.restaurant_modules ENABLE ROW LEVEL SECURITY;
 
 ---
 
-## 11. Glossário
+## 11. Regras de Negócio no Frontend
+
+### 11.1 Horário de Funcionamento e Módulos
+
+O sistema calcula automaticamente se o restaurante está aberto com base nos campos `business_hours` e `timezone` da tabela `restaurants`.
+
+**Módulos dependentes do horário de funcionamento:**
+
+| Módulo | Nome Técnico | Depende do Horário | Comportamento Fechado |
+|--------|--------------|-------------------|----------------------|
+| Cardápio Digital | `menu` | ❌ Não | Sempre ativo |
+| Pedir Atendimento | `waiter_call` | ✅ Sim | Desabilitado |
+| Fila de Espera | `queue` | ✅ Sim | Desabilitado |
+| Pedido Cozinha | `kitchen_order` | ✅ Sim | Desabilitado |
+| Fazer Reserva | `reservations` | ❌ Não | Sempre ativo |
+| Avaliar Experiência | `customer_review` | ❌ Não | Sempre ativo |
+
+**Comportamento dos módulos desabilitados:**
+- Ficam visíveis na interface (não são ocultados)
+- Opacidade reduzida (50%)
+- Não são clicáveis (cursor `not-allowed`)
+- Descrição alterada para "Disponível no horário de funcionamento"
+
+### 11.2 Cálculo do Status Aberto/Fechado
+
+```typescript
+// Lógica implementada em useRestaurantStatus.ts
+function calculateIsOpen(businessHours: BusinessHours, timezone: string): boolean {
+  const now = new Date();
+  const dayOfWeek = getDayInTimezone(now, timezone); // 'monday', 'tuesday', etc.
+  const currentTime = getTimeInTimezone(now, timezone); // 'HH:MM'
+  
+  const dayConfig = businessHours[dayOfWeek];
+  
+  if (dayConfig.is_closed) return false;
+  
+  // Suporta horários que atravessam meia-noite (ex: 18:00 - 02:00)
+  if (dayConfig.close < dayConfig.open) {
+    return currentTime >= dayConfig.open || currentTime < dayConfig.close;
+  }
+  
+  return currentTime >= dayConfig.open && currentTime < dayConfig.close;
+}
+```
+
+---
+
+## 12. Glossário
 
 | Termo | Descrição |
 |-------|-----------|
@@ -2063,9 +2110,10 @@ ALTER TABLE public.restaurant_modules ENABLE ROW LEVEL SECURITY;
 | **UUID** | Universally Unique Identifier |
 | **JSONB** | JSON Binary - JSON otimizado para PostgreSQL |
 | **Multi-tenant** | Múltiplos clientes em uma única instância |
+| **ActionCard** | Componente UI para módulos do Hub com suporte a estado disabled |
 
 ---
 
 **Documento gerado automaticamente**  
-**Versão**: 1.0  
+**Versão**: 1.1  
 **Data**: 2026-01-03
