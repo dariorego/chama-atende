@@ -78,7 +78,6 @@ const RatingCard = ({ icon, title, rating, onRatingChange }: RatingCardProps) =>
 
 const CustomerReviewPage = () => {
   const navigate = useNavigate();
-  const { slug } = useParams<{ slug: string }>();
   
   const [ambienteRating, setAmbienteRating] = useState(0);
   const [atendimentoRating, setAtendimentoRating] = useState(0);
@@ -87,10 +86,10 @@ const CustomerReviewPage = () => {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
 
-  const { data: restaurant, isLoading } = useRestaurant(slug ?? '');
+  const { restaurant, isLoading } = useAdminSettings();
 
   const handleBack = () => {
-    navigate(`/${slug}`);
+    navigate('/');
   };
 
   const handleSubmit = () => {
@@ -111,7 +110,7 @@ const CustomerReviewPage = () => {
 
     // Navegar de volta após envio
     setTimeout(() => {
-      navigate(`/${slug}`);
+      navigate('/');
     }, 1500);
   };
 

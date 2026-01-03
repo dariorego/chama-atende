@@ -21,7 +21,7 @@ const AdminMetrics = () => {
   const { profile, isLoading: profileLoading } = useCurrentUser();
   
   const { data: categories, isLoading: categoriesLoading } = useAdminCategories();
-  const { data: products, isLoading: productsLoading } = useAdminProducts();
+  const { data: products, isLoading: productsLoading } = useAdminProducts({});
   const { modules, isLoading: modulesLoading } = useAdminModules();
   const { users, isLoading: usersLoading } = useAdminUsers();
 

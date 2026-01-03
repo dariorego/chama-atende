@@ -31,7 +31,6 @@ import { useAdminSettings } from "@/hooks/useAdminSettings";
 
 export default function QueuePage() {
   const navigate = useNavigate();
-  const { slug } = useParams<{ slug: string }>();
   const [isInQueue, setIsInQueue] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -40,7 +39,7 @@ export default function QueuePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
-  const { data: restaurant, isLoading } = useRestaurant(slug ?? '');
+  const { restaurant, isLoading } = useAdminSettings();
 
   // Dados simulados
   const queuePosition = 3;
@@ -115,7 +114,7 @@ export default function QueuePage() {
         {/* Header */}
         <header className="relative z-10 flex items-center justify-between p-4">
           <button
-            onClick={() => navigate(`/${slug}`)}
+            onClick={() => navigate('/')}
             className="w-10 h-10 rounded-full bg-surface-dark/80 backdrop-blur-sm flex items-center justify-center"
           >
             <ArrowLeft className="h-5 w-5 text-foreground" />
@@ -253,7 +252,7 @@ export default function QueuePage() {
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
-            onClick={() => navigate(`/${slug}`)}
+            onClick={() => navigate('/')}
             className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
             <ArrowLeft className="h-5 w-5 text-white" />

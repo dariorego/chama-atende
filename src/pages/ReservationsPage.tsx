@@ -35,7 +35,6 @@ const timeSlots = [
 
 const ReservationsPage = () => {
   const navigate = useNavigate();
-  const { slug } = useParams<{ slug: string }>();
   const [date, setDate] = useState<Date>();
   const [time, setTime] = useState<string>();
   const [partySize, setPartySize] = useState(2);
@@ -49,7 +48,7 @@ const ReservationsPage = () => {
   const [observationFocused, setObservationFocused] = useState(false);
   const { toast } = useToast();
 
-  const { data: restaurant, isLoading } = useRestaurant(slug ?? '');
+  const { restaurant, isLoading } = useAdminSettings();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,7 +118,7 @@ const ReservationsPage = () => {
           {/* Floating buttons */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
             <button
-              onClick={() => navigate(`/${slug}`)}
+              onClick={() => navigate('/')}
               className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
             >
               <ArrowLeft className="h-5 w-5 text-white" />
@@ -244,7 +243,7 @@ const ReservationsPage = () => {
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
-            onClick={() => navigate(`/${slug}`)}
+            onClick={() => navigate('/')}
             className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
             <ArrowLeft className="h-5 w-5 text-white" />
