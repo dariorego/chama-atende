@@ -264,6 +264,48 @@ export function useLeaveQueue() {
   });
 }
 
+// Hook to search queue entry by phone
+export function useSearchQueueByPhone() {
+  const [searchPhone, setSearchPhone] = useState<string | null>(null);
+
+  const query = useQuery({
+    queryKey: ['queue-search-phone', searchPhone],
+    queryFn: async () => {
+      if (!searchPhone) return null;
+
+      // Clean phone number for search
+      const cleanPhone = searchPhone.replace(/\D/g, '');
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const { data, error } = await supabase
+        .from('queue_entries')
+        .select('*')
+        .gte('created_at', today.toISOString())
+        .or(`phone.ilike.%${cleanPhone}%`)
+        .in('status', ['waiting', 'called'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as QueueEntry | null;
+    },
+    enabled: !!searchPhone && searchPhone.replace(/\D/g, '').length >= 8,
+  });
+
+  const search = (phone: string) => {
+    setSearchPhone(phone);
+  };
+
+  const clearSearch = () => {
+    setSearchPhone(null);
+  };
+
+  return { ...query, search, clearSearch, searchPhone };
+}
+
 // Local storage helpers for persisting queue code
 const QUEUE_CODE_KEY = 'queue_code';
 
