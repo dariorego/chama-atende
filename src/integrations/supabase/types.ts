@@ -257,6 +257,163 @@ export type Database = {
         }
         Relationships: []
       }
+      service_calls: {
+        Row: {
+          acknowledged_at: string | null
+          call_type: string
+          called_at: string | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          response_time_seconds: number | null
+          status: string | null
+          table_id: string
+          table_session_id: string | null
+          updated_at: string | null
+          waiter_id: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          call_type: string
+          called_at?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          response_time_seconds?: number | null
+          status?: string | null
+          table_id: string
+          table_session_id?: string | null
+          updated_at?: string | null
+          waiter_id?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          call_type?: string
+          called_at?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          response_time_seconds?: number | null
+          status?: string | null
+          table_id?: string
+          table_session_id?: string | null
+          updated_at?: string | null
+          waiter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_calls_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_calls_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_calls_waiter_id_fkey"
+            columns: ["waiter_id"]
+            isOneToOne: false
+            referencedRelation: "waiters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      table_sessions: {
+        Row: {
+          bill_requested_at: string | null
+          closed_at: string | null
+          created_at: string | null
+          customer_count: number | null
+          id: string
+          notes: string | null
+          opened_at: string | null
+          status: string | null
+          table_id: string
+          updated_at: string | null
+          waiter_id: string | null
+        }
+        Insert: {
+          bill_requested_at?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          customer_count?: number | null
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          status?: string | null
+          table_id: string
+          updated_at?: string | null
+          waiter_id?: string | null
+        }
+        Update: {
+          bill_requested_at?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          customer_count?: number | null
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          status?: string | null
+          table_id?: string
+          updated_at?: string | null
+          waiter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "table_sessions_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_sessions_waiter_id_fkey"
+            columns: ["waiter_id"]
+            isOneToOne: false
+            referencedRelation: "waiters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tables: {
+        Row: {
+          capacity: number | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string | null
+          number: number
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string | null
+          number: number
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string | null
+          number?: number
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -277,6 +434,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      waiters: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          is_available: boolean | null
+          name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_available?: boolean | null
+          name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_available?: boolean | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waiters_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
