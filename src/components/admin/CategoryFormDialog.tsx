@@ -28,7 +28,7 @@ const categorySchema = z.object({
   slug: z.string().min(1, 'Slug é obrigatório').max(100, 'Máximo 100 caracteres')
     .regex(/^[a-z0-9-]+$/, 'Use apenas letras minúsculas, números e hífens'),
   description: z.string().max(500, 'Máximo 500 caracteres').optional().nullable(),
-  display_order: z.coerce.number().int().min(0, 'Ordem deve ser positiva'),
+  display_order: z.coerce.number().int().min(1, 'Ordem mínima é 1'),
   is_active: z.boolean(),
 });
 
@@ -40,6 +40,7 @@ interface CategoryFormDialogProps {
   category?: MenuCategory | null;
   onSubmit: (data: CategoryFormData) => void;
   isLoading?: boolean;
+  suggestedOrder?: number;
 }
 
 function generateSlug(name: string): string {
@@ -59,6 +60,7 @@ export function CategoryFormDialog({
   category,
   onSubmit,
   isLoading = false,
+  suggestedOrder = 1,
 }: CategoryFormDialogProps) {
   const isEditing = !!category;
 
@@ -68,7 +70,7 @@ export function CategoryFormDialog({
       name: '',
       slug: '',
       description: '',
-      display_order: 0,
+      display_order: 1,
       is_active: true,
     },
   });
@@ -80,7 +82,7 @@ export function CategoryFormDialog({
           name: category.name,
           slug: category.slug,
           description: category.description ?? '',
-          display_order: category.display_order ?? 0,
+          display_order: category.display_order ?? 1,
           is_active: category.is_active ?? true,
         });
       } else {
@@ -88,12 +90,12 @@ export function CategoryFormDialog({
           name: '',
           slug: '',
           description: '',
-          display_order: 0,
+          display_order: suggestedOrder,
           is_active: true,
         });
       }
     }
-  }, [open, category, form]);
+  }, [open, category, form, suggestedOrder]);
 
   const watchName = form.watch('name');
 
@@ -176,7 +178,7 @@ export function CategoryFormDialog({
                   <FormItem>
                     <FormLabel>Ordem de Exibição</FormLabel>
                     <FormControl>
-                      <Input type="number" min={0} {...field} />
+                      <Input type="number" min={1} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

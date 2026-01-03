@@ -118,3 +118,62 @@ export function useReorderCategories() {
     },
   });
 }
+
+export function useAdjustCategoryOrder() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({
+      categoryId,
+      newOrder,
+      currentCategories,
+    }: {
+      categoryId: string;
+      newOrder: number;
+      currentCategories: MenuCategory[];
+    }) => {
+      const category = currentCategories.find(c => c.id === categoryId);
+      if (!category) throw new Error('Categoria não encontrada');
+      
+      const oldOrder = category.display_order ?? 1;
+      
+      if (oldOrder === newOrder) return true;
+      
+      const updates: { id: string; display_order: number }[] = [];
+      
+      for (const cat of currentCategories) {
+        if (cat.id === categoryId) continue;
+        
+        const catOrder = cat.display_order ?? 1;
+        
+        if (newOrder < oldOrder) {
+          // Movendo para cima: categorias entre [newOrder, oldOrder) sobem 1
+          if (catOrder >= newOrder && catOrder < oldOrder) {
+            updates.push({ id: cat.id, display_order: catOrder + 1 });
+          }
+        } else {
+          // Movendo para baixo: categorias entre (oldOrder, newOrder] descem 1
+          if (catOrder > oldOrder && catOrder <= newOrder) {
+            updates.push({ id: cat.id, display_order: catOrder - 1 });
+          }
+        }
+      }
+      
+      if (updates.length > 0) {
+        const promises = updates.map(({ id, display_order }) =>
+          supabase
+            .from('menu_categories')
+            .update({ display_order })
+            .eq('id', id)
+        );
+        await Promise.all(promises);
+      }
+      
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-categories'] });
+    },
+  });
+}
