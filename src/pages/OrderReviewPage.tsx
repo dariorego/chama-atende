@@ -1,57 +1,30 @@
 import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { ArrowLeft, HelpCircle, CheckCircle, FileEdit, MapPin, Send } from "lucide-react";
+import { ArrowLeft, HelpCircle, CheckCircle, FileEdit, MapPin, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useSubmitOrder, OrderSelection } from "@/hooks/useSubmitOrder";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { useClientOrderItem } from "@/hooks/useClientItemCombinations";
 
-const baseNames: Record<string, string> = {
-  tapioca: "Tapioca",
-  crepioca: "Crepioca",
-  omelete: "Omelete",
-  waffle: "Waffle",
-};
-
-const baseImages: Record<string, string> = {
-  tapioca: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&h=200&fit=crop",
-  crepioca: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop",
-  omelete: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&h=200&fit=crop",
-  waffle: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=200&h=200&fit=crop",
-};
-
-const ingredientNames: Record<string, string> = {
-  mozzarella: "Mozzarella Fresca",
-  cheddar: "Cheddar Maturado",
-  feta: "Queijo Feta",
-  gouda: "Gouda Defumado",
-  ham: "Presunto Defumado",
-  bacon: "Bacon Crocante",
-  turkey: "Peru Assado",
-  chicken: "Frango Grelhado",
-  spinach: "Espinafre",
-  mushrooms: "Cogumelos",
-  tomatoes: "Tomates",
-  onions: "Cebola Roxa",
-  peppers: "Pimentões",
-  olives: "Azeitonas",
-  pesto: "Pesto de Manjericão",
-  chipotle: "Chipotle Defumado",
-  garlic: "Alho Tostado",
-  honey: "Mel e Mostarda",
-};
+interface LocationState {
+  orderItemId: string;
+  orderItemName: string;
+  selections: OrderSelection[];
+  notes: string;
+}
 
 const OrderReviewPage = () => {
   const navigate = useNavigate();
-  const { slug, baseId } = useParams<{ slug: string; baseId: string }>();
+  const { baseId } = useParams<{ baseId: string }>();
   const location = useLocation();
-  const orderData = location.state as {
-    base: string;
-    cheeses: string[];
-    proteins: Record<string, number>;
-    vegetables: string[];
-    sauces: string[];
-    notes: string;
-  } | null;
+  const orderData = location.state as LocationState | null;
+
+  const { restaurant } = useAdminSettings();
+  const { data: orderItem } = useClientOrderItem(baseId);
+  const submitOrder = useSubmitOrder();
 
   const [observations, setObservations] = useState(orderData?.notes || "");
   const [tableNumber, setTableNumber] = useState("");
@@ -60,44 +33,44 @@ const OrderReviewPage = () => {
     navigate(-1);
   };
 
-  const handleSubmit = () => {
-    navigate(`/${slug}/pedido-cozinha/${baseId}/status`, {
-      state: {
-        base: baseId,
-        tableNumber,
-        observations,
-        ingredients: allIngredients,
-        orderNumber: Math.floor(1000 + Math.random() * 9000),
-        submittedAt: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      }
-    });
+  const handleSubmit = async () => {
+    if (!tableNumber.trim()) {
+      toast.error("Por favor, informe o número da mesa ou quarto");
+      return;
+    }
+
+    if (!restaurant?.id || !baseId) {
+      toast.error("Erro ao identificar restaurante");
+      return;
+    }
+
+    try {
+      const result = await submitOrder.mutateAsync({
+        restaurantId: restaurant.id,
+        orderItemId: baseId,
+        orderItemName: orderData?.orderItemName || orderItem?.name || "Pedido",
+        tableNumber: tableNumber.trim(),
+        observations: observations.trim() || undefined,
+        selections: orderData?.selections || [],
+      });
+
+      toast.success("Pedido enviado com sucesso!");
+      navigate(`/pedido-cozinha/status/${result.orderId}`, {
+        state: { orderNumber: result.orderNumber },
+      });
+    } catch (error) {
+      // Error is handled in the hook
+    }
   };
 
-  const baseName = baseNames[baseId || ""] || "Prato";
-  const baseImage = baseImages[baseId || ""] || baseImages.omelete;
+  const itemName = orderData?.orderItemName || orderItem?.name || "Prato";
+  const selections = orderData?.selections || [];
 
-  // Collect all selected ingredients
-  const allIngredients: { id: string; name: string; quantity?: number }[] = [];
-  
-  if (orderData) {
-    orderData.cheeses.forEach((id) => {
-      allIngredients.push({ id, name: ingredientNames[id] || id });
-    });
-    
-    Object.entries(orderData.proteins).forEach(([id, qty]) => {
-      if (qty > 0) {
-        allIngredients.push({ id, name: ingredientNames[id] || id, quantity: qty });
-      }
-    });
-    
-    orderData.vegetables.forEach((id) => {
-      allIngredients.push({ id, name: ingredientNames[id] || id });
-    });
-    
-    orderData.sauces.forEach((id) => {
-      allIngredients.push({ id, name: ingredientNames[id] || id });
-    });
-  }
+  // Calculate total additional price
+  const additionalTotal = selections.reduce(
+    (sum, s) => sum + (s.additionalPrice * s.quantity),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -138,13 +111,19 @@ const OrderReviewPage = () => {
         <div className="bg-card rounded-2xl p-4 border border-border mb-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
-              <p className="text-xl font-bold">{baseName} Personalizada</p>
-              <p className="text-primary text-sm font-medium mt-1">Base de 3 Ovos</p>
+              <p className="text-xl font-bold">{itemName} Personalizada</p>
+              {additionalTotal > 0 && (
+                <p className="text-primary text-sm font-medium mt-1">
+                  +R$ {additionalTotal.toFixed(2)} em adicionais
+                </p>
+              )}
             </div>
-            <div
-              className="w-24 h-24 bg-cover bg-center rounded-xl border border-border"
-              style={{ backgroundImage: `url(${baseImage})` }}
-            />
+            {orderItem?.image_url && (
+              <div
+                className="w-24 h-24 bg-cover bg-center rounded-xl border border-border"
+                style={{ backgroundImage: `url(${orderItem.image_url})` }}
+              />
+            )}
           </div>
         </div>
 
@@ -152,19 +131,24 @@ const OrderReviewPage = () => {
         <div className="mb-6">
           <h3 className="text-lg font-bold mb-3">Ingredientes Selecionados</h3>
           <div className="space-y-2">
-            {allIngredients.length > 0 ? (
-              allIngredients.map((ingredient) => (
+            {selections.length > 0 ? (
+              selections.map((selection) => (
                 <div
-                  key={ingredient.id}
+                  key={selection.optionId}
                   className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border"
                 >
                   <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
                   <span className="text-base font-medium flex-1">
-                    {ingredient.name}
-                    {ingredient.quantity && ingredient.quantity > 1 && (
-                      <span className="text-muted-foreground ml-1">x{ingredient.quantity}</span>
+                    {selection.optionName}
+                    {selection.quantity > 1 && (
+                      <span className="text-muted-foreground ml-1">x{selection.quantity}</span>
                     )}
                   </span>
+                  {selection.additionalPrice > 0 && (
+                    <span className="text-sm text-primary">
+                      +R$ {(selection.additionalPrice * selection.quantity).toFixed(2)}
+                    </span>
+                  )}
                 </div>
               ))
             ) : (
@@ -181,7 +165,7 @@ const OrderReviewPage = () => {
               placeholder="Ex: Bem passado, sem sal, extra crocante..."
               value={observations}
               onChange={(e) => setObservations(e.target.value)}
-              className="min-h-[100px] resize-none pr-10 bg-card border-border rounded-xl"
+              className="min-h-[100px] resize-none pr-10 bg-surface placeholder:text-surface-foreground border-border rounded-xl"
             />
             <FileEdit className="absolute bottom-3 right-3 w-4 h-4 text-muted-foreground" />
           </div>
@@ -196,7 +180,7 @@ const OrderReviewPage = () => {
               placeholder="Número da Mesa ou Quarto"
               value={tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
-              className="pl-12 h-14 text-base bg-card border-border rounded-xl"
+              className="pl-12 h-14 text-base bg-surface placeholder:text-surface-foreground border-border rounded-xl"
             />
           </div>
           <p className="text-xs text-muted-foreground mt-2 ml-1">
@@ -209,10 +193,20 @@ const OrderReviewPage = () => {
       <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border p-4">
         <Button
           onClick={handleSubmit}
+          disabled={submitOrder.isPending}
           className="w-full h-14 rounded-xl text-lg font-bold gap-2 shadow-[0_0_24px_hsl(var(--primary)/0.4)]"
         >
-          ENVIAR PEDIDO
-          <Send className="w-5 h-5" />
+          {submitOrder.isPending ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Enviando...
+            </>
+          ) : (
+            <>
+              ENVIAR PEDIDO
+              <Send className="w-5 h-5" />
+            </>
+          )}
         </Button>
       </footer>
     </div>
