@@ -100,3 +100,67 @@ export function useDeleteTable() {
     },
   });
 }
+
+export function useCreateBatchTables() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({
+      startNumber,
+      endNumber,
+      capacity,
+      skipExisting,
+    }: {
+      startNumber: number;
+      endNumber: number;
+      capacity: number;
+      skipExisting: boolean;
+    }) => {
+      // Fetch existing tables if skipExisting is true
+      let existingNumbers: number[] = [];
+      if (skipExisting) {
+        const { data } = await supabase.from("tables").select("number");
+        existingNumbers = data?.map((t) => t.number) || [];
+      }
+
+      // Generate array of tables to create
+      const tables: TableInsert[] = [];
+      for (let i = startNumber; i <= endNumber; i++) {
+        if (!skipExisting || !existingNumbers.includes(i)) {
+          tables.push({
+            number: i,
+            name: null,
+            capacity,
+            status: "available",
+            is_active: true,
+          });
+        }
+      }
+
+      if (tables.length === 0) {
+        throw new Error("Nenhuma mesa nova para criar");
+      }
+
+      // Insert all at once
+      const { data, error } = await supabase
+        .from("tables")
+        .insert(tables)
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
+      toast({ title: `${data.length} mesas criadas com sucesso!` });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao criar mesas",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
