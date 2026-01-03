@@ -738,9 +738,11 @@ export type Database = {
           cover_image_url: string | null
           created_at: string | null
           email: string | null
+          google_maps_url: string | null
           id: string
           identification_type: string | null
           is_active: boolean | null
+          location_coordinates: Json | null
           logo_url: string | null
           name: string
           notification_settings: Json | null
@@ -763,9 +765,11 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string | null
           email?: string | null
+          google_maps_url?: string | null
           id?: string
           identification_type?: string | null
           is_active?: boolean | null
+          location_coordinates?: Json | null
           logo_url?: string | null
           name: string
           notification_settings?: Json | null
@@ -788,9 +792,11 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string | null
           email?: string | null
+          google_maps_url?: string | null
           id?: string
           identification_type?: string | null
           is_active?: boolean | null
+          location_coordinates?: Json | null
           logo_url?: string | null
           name?: string
           notification_settings?: Json | null

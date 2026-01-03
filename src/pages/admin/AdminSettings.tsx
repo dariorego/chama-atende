@@ -11,13 +11,14 @@ import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe, MapPin, Check, X } from 'lucide-react';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
-import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS } from '@/types/restaurant';
+import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS, LocationCoordinates } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
 import { hexToHsl, hslToHex, DEFAULT_COLORS } from '@/lib/color-utils';
 import { useNotificationSound } from '@/hooks/useNotificationSound';
 import { useRestaurantStatus } from '@/hooks/useRestaurantStatus';
+import { parseGoogleMapsUrl, isGoogleMapsUrl, formatCoordinates } from '@/lib/google-maps-utils';
 
 const settingsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
@@ -56,6 +57,11 @@ export default function AdminSettings() {
   // Business hours states
   const [businessHours, setBusinessHours] = useState<BusinessHours>(DEFAULT_BUSINESS_HOURS);
   const [timezone, setTimezone] = useState('America/Sao_Paulo');
+  
+  // Location states
+  const [googleMapsUrl, setGoogleMapsUrl] = useState('');
+  const [locationCoordinates, setLocationCoordinates] = useState<LocationCoordinates | null>(null);
+  const [locationError, setLocationError] = useState('');
   
   // Calculate current status
   const calculatedStatus = useRestaurantStatus(businessHours, timezone);
@@ -120,6 +126,14 @@ export default function AdminSettings() {
       if (restaurant.timezone) {
         setTimezone(restaurant.timezone);
       }
+      
+      // Load location data
+      if (restaurant.google_maps_url) {
+        setGoogleMapsUrl(restaurant.google_maps_url);
+      }
+      if (restaurant.location_coordinates) {
+        setLocationCoordinates(restaurant.location_coordinates);
+      }
     }
   }, [restaurant, form]);
   
@@ -136,6 +150,32 @@ export default function AdminSettings() {
 
   const resetToDefaultColors = () => {
     setPrimaryColor(DEFAULT_COLORS.primary!);
+  };
+  
+  // Handle Google Maps URL change
+  const handleGoogleMapsUrlChange = (url: string) => {
+    setGoogleMapsUrl(url);
+    setLocationError('');
+    
+    if (!url) {
+      setLocationCoordinates(null);
+      return;
+    }
+    
+    if (!isGoogleMapsUrl(url)) {
+      setLocationError('Cole um link válido do Google Maps');
+      setLocationCoordinates(null);
+      return;
+    }
+    
+    const coords = parseGoogleMapsUrl(url);
+    if (coords) {
+      setLocationCoordinates(coords);
+      setLocationError('');
+    } else {
+      setLocationError('Não foi possível extrair as coordenadas deste link');
+      setLocationCoordinates(null);
+    }
   };
 
   const onSubmit = (data: SettingsFormData) => {
@@ -170,6 +210,8 @@ export default function AdminSettings() {
       },
       business_hours: businessHours,
       timezone: timezone,
+      google_maps_url: googleMapsUrl || null,
+      location_coordinates: locationCoordinates,
     });
   };
 
@@ -488,6 +530,94 @@ export default function AdminSettings() {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          {/* Localização Google Maps */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <MapPin className="h-5 w-5" />
+                Localização no Mapa
+              </CardTitle>
+              <CardDescription>
+                Cole o link do Google Maps para exibir sua localização exata
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Link do Google Maps</Label>
+                <Input
+                  value={googleMapsUrl}
+                  onChange={(e) => handleGoogleMapsUrlChange(e.target.value)}
+                  placeholder="https://www.google.com/maps/place/..."
+                  className="bg-surface"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Abra o Google Maps, encontre seu estabelecimento e copie o link da barra de endereços
+                </p>
+              </div>
+              
+              {/* Feedback de coordenadas */}
+              {googleMapsUrl && (
+                <div className={`flex items-start gap-2 p-3 rounded-lg border ${
+                  locationCoordinates 
+                    ? 'bg-green-500/10 border-green-500/30' 
+                    : 'bg-destructive/10 border-destructive/30'
+                }`}>
+                  {locationCoordinates ? (
+                    <>
+                      <Check className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-green-500">
+                          Coordenadas detectadas
+                        </p>
+                        <p className="text-xs text-muted-foreground font-mono">
+                          Lat: {locationCoordinates.latitude.toFixed(7)}
+                        </p>
+                        <p className="text-xs text-muted-foreground font-mono">
+                          Lng: {locationCoordinates.longitude.toFixed(7)}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <X className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                      <p className="text-sm text-destructive">
+                        {locationError || 'Link inválido'}
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Preview do mapa */}
+              {locationCoordinates && (
+                <div className="space-y-2">
+                  <Label>Preview da Localização</Label>
+                  <a
+                    href={`https://www.google.com/maps?q=${locationCoordinates.latitude},${locationCoordinates.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-lg overflow-hidden border border-border group"
+                  >
+                    <div className="relative h-40 bg-secondary">
+                      <iframe
+                        src={`https://www.google.com/maps?q=${locationCoordinates.latitude},${locationCoordinates.longitude}&output=embed`}
+                        width="100%"
+                        height="160"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="pointer-events-none"
+                      />
+                    </div>
+                  </a>
+                  <p className="text-xs text-muted-foreground">
+                    Clique para abrir no Google Maps
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

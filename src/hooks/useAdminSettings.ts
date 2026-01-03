@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SocialLinks, WifiInfo, ThemeColors, IdentificationType, NotificationSettings, ThemeSettings, BusinessHours, DEFAULT_BUSINESS_HOURS } from "@/types/restaurant";
+import { SocialLinks, WifiInfo, ThemeColors, IdentificationType, NotificationSettings, ThemeSettings, BusinessHours, DEFAULT_BUSINESS_HOURS, LocationCoordinates } from "@/types/restaurant";
 
 export interface RestaurantSettings {
   id: string;
@@ -24,6 +24,8 @@ export interface RestaurantSettings {
   theme_settings: ThemeSettings;
   business_hours: BusinessHours;
   timezone: string;
+  google_maps_url: string | null;
+  location_coordinates: LocationCoordinates | null;
 }
 
 export interface UpdateRestaurantData {
@@ -45,6 +47,8 @@ export interface UpdateRestaurantData {
   theme_settings?: Record<string, string | undefined>;
   business_hours?: BusinessHours;
   timezone?: string;
+  google_maps_url?: string | null;
+  location_coordinates?: LocationCoordinates | null;
 }
 
 export function useAdminSettings() {
@@ -73,6 +77,8 @@ export function useAdminSettings() {
         theme_settings: (data.theme_settings as ThemeSettings) || { client_default_theme: 'dark', admin_default_theme: 'dark' },
         business_hours: (data.business_hours as unknown as BusinessHours) || DEFAULT_BUSINESS_HOURS,
         timezone: (data.timezone as string) || 'America/Sao_Paulo',
+        google_maps_url: (data.google_maps_url as string) || null,
+        location_coordinates: (data.location_coordinates as unknown as LocationCoordinates) || null,
       } as RestaurantSettings : null;
     },
   });

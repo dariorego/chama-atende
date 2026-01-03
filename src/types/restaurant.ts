@@ -2,6 +2,11 @@
 
 export type IdentificationType = 'table' | 'room' | 'phone';
 
+export interface LocationCoordinates {
+  latitude: number;
+  longitude: number;
+}
+
 export const IDENTIFICATION_CONFIG: Record<IdentificationType, { 
   label: string; 
   placeholder: string; 
