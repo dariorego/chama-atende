@@ -8,22 +8,15 @@ function normalizePhone(phone: string): string {
   return phone.replace(/\D/g, '');
 }
 
-// Hook para buscar reservas por telefone
+// Hook para buscar reservas por telefone usando RPC seguro
 export function useSearchReservations(phone: string | null) {
   return useQuery({
     queryKey: ['client-reservations', phone],
     queryFn: async () => {
       if (!phone || phone.length < 10) return [];
 
-      const normalizedPhone = normalizePhone(phone);
-      
       const { data, error } = await supabase
-        .from('reservations')
-        .select('*')
-        .or(`phone.eq.${normalizedPhone},phone.eq.${phone}`)
-        .in('status', ['pending', 'confirmed'])
-        .order('reservation_date', { ascending: true })
-        .order('reservation_time', { ascending: true });
+        .rpc('search_reservations_by_phone', { search_phone: phone });
 
       if (error) throw error;
       return data as Reservation[];
