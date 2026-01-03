@@ -14,6 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
+      customer_reviews: {
+        Row: {
+          admin_response: string | null
+          ambiente_rating: number | null
+          atendimento_rating: number | null
+          comida_rating: number | null
+          created_at: string | null
+          customer_name: string
+          id: string
+          is_featured: boolean | null
+          observations: string | null
+          overall_rating: number | null
+          phone: string | null
+          responded_at: string | null
+          responded_by: string | null
+          restaurant_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          admin_response?: string | null
+          ambiente_rating?: number | null
+          atendimento_rating?: number | null
+          comida_rating?: number | null
+          created_at?: string | null
+          customer_name: string
+          id?: string
+          is_featured?: boolean | null
+          observations?: string | null
+          overall_rating?: number | null
+          phone?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          restaurant_id: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          admin_response?: string | null
+          ambiente_rating?: number | null
+          atendimento_rating?: number | null
+          comida_rating?: number | null
+          created_at?: string | null
+          customer_name?: string
+          id?: string
+          is_featured?: boolean | null
+          observations?: string | null
+          overall_rating?: number | null
+          phone?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          restaurant_id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_reviews_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       menu_categories: {
         Row: {
           created_at: string | null
