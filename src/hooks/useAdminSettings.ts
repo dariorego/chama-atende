@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useCurrentUser } from "./useCurrentUser";
 import { toast } from "sonner";
 import { SocialLinks, WifiInfo } from "@/types/restaurant";
 
@@ -35,35 +34,37 @@ export interface UpdateRestaurantData {
 }
 
 export function useAdminSettings() {
-  const { profile } = useCurrentUser();
   const queryClient = useQueryClient();
 
   const { data: restaurant, isLoading, error } = useQuery({
-    queryKey: ['admin-restaurant', profile?.restaurant_id],
+    queryKey: ['admin-restaurant'],
     queryFn: async () => {
+      // Get the first active restaurant (single-tenant)
       const { data, error } = await supabase
         .from('restaurants')
         .select('*')
-        .eq('id', profile!.restaurant_id!)
+        .eq('is_active', true)
+        .limit(1)
         .maybeSingle();
 
       if (error) throw error;
       
-      return {
+      return data ? {
         ...data,
-        social_links: (data?.social_links as SocialLinks) || {},
-        wifi_info: (data?.wifi_info as WifiInfo) || {},
-      } as RestaurantSettings;
+        social_links: (data.social_links as SocialLinks) || {},
+        wifi_info: (data.wifi_info as WifiInfo) || {},
+      } as RestaurantSettings : null;
     },
-    enabled: !!profile?.restaurant_id,
   });
 
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateRestaurantData) => {
+      if (!restaurant?.id) throw new Error("Restaurant not found");
+      
       const { error } = await supabase
         .from('restaurants')
         .update(updates)
-        .eq('id', profile!.restaurant_id!);
+        .eq('id', restaurant.id);
 
       if (error) throw error;
     },

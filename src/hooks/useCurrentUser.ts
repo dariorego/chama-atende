@@ -6,7 +6,6 @@ export type Profile = {
   id: string;
   email: string;
   full_name: string | null;
-  restaurant_id: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -24,7 +23,7 @@ export function useCurrentUser() {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, email, full_name, is_active, created_at, updated_at')
         .eq('id', user.id)
         .single();
 

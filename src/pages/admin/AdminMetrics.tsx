@@ -1,5 +1,4 @@
-import { useParams } from "react-router-dom";
-import { useRestaurant } from "@/hooks/useRestaurant";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useAdminCategories } from "@/hooks/useAdminCategories";
 import { useAdminProducts } from "@/hooks/useAdminProducts";
@@ -18,14 +17,11 @@ import {
 } from "lucide-react";
 
 const AdminMetrics = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const { data: restaurant, isLoading: restaurantLoading } = useRestaurant(slug || "");
+  const { restaurant, isLoading: restaurantLoading } = useAdminSettings();
   const { profile, isLoading: profileLoading } = useCurrentUser();
   
-  const restaurantId = profile?.restaurant_id;
-  
-  const { data: categories, isLoading: categoriesLoading } = useAdminCategories(restaurantId);
-  const { data: products, isLoading: productsLoading } = useAdminProducts(restaurantId);
+  const { data: categories, isLoading: categoriesLoading } = useAdminCategories();
+  const { data: products, isLoading: productsLoading } = useAdminProducts();
   const { modules, isLoading: modulesLoading } = useAdminModules();
   const { users, isLoading: usersLoading } = useAdminUsers();
 
@@ -195,9 +191,7 @@ const AdminMetrics = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Status</span>
-              <span className={`font-medium ${restaurant?.is_active ? "text-green-500" : "text-red-500"}`}>
-                {restaurant?.is_active ? "Ativo" : "Inativo"}
-              </span>
+              <span className="font-medium text-green-500">Ativo</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Horário</span>

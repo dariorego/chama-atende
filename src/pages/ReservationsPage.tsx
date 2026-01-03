@@ -26,7 +26,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { useRestaurant } from "@/hooks/useRestaurant";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 
 const timeSlots = [
   "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",

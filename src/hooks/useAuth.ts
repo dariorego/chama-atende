@@ -64,8 +64,7 @@ export function useAuth() {
   const signup = useCallback(async (
     email: string,
     password: string,
-    fullName: string,
-    restaurantId: string
+    fullName: string
   ) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
@@ -77,7 +76,6 @@ export function useAuth() {
           emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
-            restaurant_id: restaurantId,
           },
         },
       });

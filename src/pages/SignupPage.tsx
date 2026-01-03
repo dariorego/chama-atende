@@ -4,21 +4,17 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, ChefHat } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100, 'Nome muito longo'),
   email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres').max(72, 'Senha muito longa'),
   confirmPassword: z.string(),
-  restaurantId: z.string().uuid('Selecione um restaurante'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'As senhas não coincidem',
   path: ['confirmPassword'],
@@ -31,21 +27,6 @@ export default function SignupPage() {
   const { signup, isAuthenticated, loading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch available restaurants
-  const { data: restaurants, isLoading: restaurantsLoading } = useQuery({
-    queryKey: ['restaurants-for-signup'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('restaurants')
-        .select('id, name, slug')
-        .eq('is_active', true)
-        .order('name');
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -53,14 +34,13 @@ export default function SignupPage() {
       email: '',
       password: '',
       confirmPassword: '',
-      restaurantId: '',
     },
   });
 
   // Redirect if already authenticated
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      navigate('/', { replace: true });
+      navigate('/admin', { replace: true });
     }
   }, [isAuthenticated, authLoading, navigate]);
 
@@ -69,8 +49,7 @@ export default function SignupPage() {
     const { error } = await signup(
       data.email,
       data.password,
-      data.fullName,
-      data.restaurantId
+      data.fullName
     );
     setIsSubmitting(false);
 
@@ -97,7 +76,7 @@ export default function SignupPage() {
           <div>
             <CardTitle className="text-2xl font-bold">Criar conta</CardTitle>
             <CardDescription className="mt-2">
-              Cadastre-se para gerenciar seu restaurante
+              Cadastre-se para acessar o sistema
             </CardDescription>
           </div>
         </CardHeader>
@@ -137,37 +116,6 @@ export default function SignupPage() {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="restaurantId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Restaurante</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o restaurante" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {restaurantsLoading ? (
-                          <SelectItem value="loading" disabled>
-                            Carregando...
-                          </SelectItem>
-                        ) : (
-                          restaurants?.map((restaurant) => (
-                            <SelectItem key={restaurant.id} value={restaurant.id}>
-                              {restaurant.name}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

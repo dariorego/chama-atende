@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Share2, MoreHorizontal, MapPin, Star, Bell, Receipt, ChevronRight, X, Hourglass, Loader2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { useRestaurant } from "@/hooks/useRestaurant";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 
 const WaiterCallPage = () => {
   const navigate = useNavigate();

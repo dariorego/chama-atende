@@ -1,7 +1,7 @@
-import { useParams, Link } from "react-router-dom";
-import { useRestaurant } from "@/hooks/useRestaurant";
+import { Link } from "react-router-dom";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useAdminModules } from "@/hooks/useAdminModules";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UtensilsCrossed, Bell, Calendar, Users, Star, ChefHat, Settings, UserCog, LayoutDashboard, ArrowRight } from "lucide-react";
@@ -22,8 +22,7 @@ const QUICK_ACCESS = [
 ];
 
 export default function AdminDashboard() {
-  const { slug } = useParams<{ slug: string }>();
-  const { data: restaurant, isLoading: restaurantLoading } = useRestaurant(slug || "");
+  const { restaurant, isLoading: restaurantLoading } = useAdminSettings();
   const { profile, isLoading: profileLoading } = useCurrentUser();
   const { modules, isLoading: modulesLoading } = useAdminModules();
 
@@ -43,7 +42,7 @@ export default function AdminDashboard() {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Módulos do Restaurante</h2>
         {activeModules.length === 0 ? (
-          <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum módulo ativo. <Link to={`/admin/${slug}/modulos`} className="text-primary underline">Ativar módulos</Link></CardContent></Card>
+          <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum módulo ativo. <Link to="/admin/modulos" className="text-primary underline">Ativar módulos</Link></CardContent></Card>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {activeModules.map((module) => {
@@ -51,7 +50,7 @@ export default function AdminDashboard() {
               if (!config) return null;
               const Icon = config.icon;
               return (
-                <Link key={module.id} to={`/admin/${slug}/${config.href}`}>
+                <Link key={module.id} to={`/admin/${config.href}`}>
                   <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 group">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
@@ -74,7 +73,7 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap gap-3">
           {QUICK_ACCESS.map((item) => {
             const Icon = item.icon;
-            return <Link key={item.href} to={`/admin/${slug}/${item.href}`}><Button variant="outline" className="gap-2"><Icon className="h-4 w-4" />{item.label}</Button></Link>;
+            return <Link key={item.href} to={`/admin/${item.href}`}><Button variant="outline" className="gap-2"><Icon className="h-4 w-4" />{item.label}</Button></Link>;
           })}
         </div>
       </div>

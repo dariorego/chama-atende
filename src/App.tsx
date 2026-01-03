@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
 import HubPage from "./pages/HubPage";
 import MenuPage from "./pages/MenuPage";
 import WaiterCallPage from "./pages/WaiterCallPage";
@@ -41,18 +40,25 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Landing page */}
-          <Route path="/" element={<LandingPage />} />
+          {/* Public pages */}
+          <Route path="/" element={<HubPage />} />
+          <Route path="/cardapio" element={<MenuPage />} />
+          <Route path="/solicitar-atendimento" element={<WaiterCallPage />} />
+          <Route path="/reservas" element={<ReservationsPage />} />
+          <Route path="/fila" element={<QueuePage />} />
+          <Route path="/pedido-cozinha" element={<KitchenOrderPage />} />
+          <Route path="/pedido-cozinha/:baseId" element={<CustomizeOrderPage />} />
+          <Route path="/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
+          <Route path="/pedido-cozinha/:baseId/status" element={<OrderStatusPage />} />
+          <Route path="/avaliacao" element={<CustomerReviewPage />} />
           
-          {/* Global auth routes (legacy - kept for compatibility) */}
+          {/* Auth routes */}
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           
-          {/* Admin login - per establishment */}
-          <Route path="/admin/:slug/login" element={<LoginPage />} />
-          
-          {/* Admin routes - protected, with /admin/:slug prefix */}
+          {/* Admin routes - protected */}
           <Route
-            path="/admin/:slug"
+            path="/admin"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -62,7 +68,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/produtos"
+            path="/admin/produtos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -72,7 +78,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/categorias"
+            path="/admin/categorias"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -82,7 +88,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/modulos"
+            path="/admin/modulos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -92,7 +98,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/usuarios"
+            path="/admin/usuarios"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -102,7 +108,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/configuracoes"
+            path="/admin/configuracoes"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -112,7 +118,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/atendimentos"
+            path="/admin/atendimentos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -122,7 +128,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/reservas"
+            path="/admin/reservas"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -132,7 +138,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/fila"
+            path="/admin/fila"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -142,7 +148,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/avaliacoes"
+            path="/admin/avaliacoes"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -152,7 +158,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/pedidos"
+            path="/admin/pedidos"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -162,7 +168,7 @@ const App = () => (
             }
           />
           <Route
-            path="/admin/:slug/metricas"
+            path="/admin/metricas"
             element={
               <AuthGuard requireAdmin>
                 <AdminLayout>
@@ -171,18 +177,6 @@ const App = () => (
               </AuthGuard>
             }
           />
-
-          {/* Public restaurant routes */}
-          <Route path="/:slug" element={<HubPage />} />
-          <Route path="/:slug/cardapio" element={<MenuPage />} />
-          <Route path="/:slug/solicitar-atendimento" element={<WaiterCallPage />} />
-          <Route path="/:slug/reservas" element={<ReservationsPage />} />
-          <Route path="/:slug/fila" element={<QueuePage />} />
-          <Route path="/:slug/pedido-cozinha" element={<KitchenOrderPage />} />
-          <Route path="/:slug/pedido-cozinha/:baseId" element={<CustomizeOrderPage />} />
-          <Route path="/:slug/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
-          <Route path="/:slug/pedido-cozinha/:baseId/status" element={<OrderStatusPage />} />
-          <Route path="/:slug/avaliacao" element={<CustomerReviewPage />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

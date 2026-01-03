@@ -11,14 +11,13 @@ const DEFAULT_MODULES: ModulesMap = {
   customerReview: false,
 };
 
-export function useRestaurantModules(restaurantId: string | undefined) {
+export function useRestaurantModules() {
   return useQuery({
-    queryKey: ['restaurant-modules', restaurantId],
+    queryKey: ['restaurant-modules'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('restaurant_modules')
         .select('module_name, is_active, settings')
-        .eq('restaurant_id', restaurantId!)
         .eq('is_active', true);
 
       if (error) throw error;
@@ -35,6 +34,5 @@ export function useRestaurantModules(restaurantId: string | undefined) {
 
       return modules;
     },
-    enabled: !!restaurantId,
   });
 }

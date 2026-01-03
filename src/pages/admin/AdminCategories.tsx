@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +15,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { FolderTree, Plus, Search } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { useAdminSettings } from '@/hooks/useAdminSettings';
 import {
   useAdminCategories,
   useCreateCategory,
@@ -30,8 +29,7 @@ import { CategoriesTable } from '@/components/admin/CategoriesTable';
 type StatusFilter = 'all' | 'active' | 'inactive';
 
 export default function AdminCategories() {
-  const { slug } = useParams<{ slug: string }>();
-  const { restaurant } = useAdminAccess(slug ?? '');
+  const { restaurant } = useAdminSettings();
   const restaurantId = restaurant?.id;
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -40,7 +38,7 @@ export default function AdminCategories() {
   const [editingCategory, setEditingCategory] = useState<MenuCategory | null>(null);
   const [deletingCategory, setDeletingCategory] = useState<MenuCategory | null>(null);
 
-  const { data: categories, isLoading } = useAdminCategories(restaurantId);
+  const { data: categories, isLoading } = useAdminCategories();
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
@@ -111,12 +109,11 @@ export default function AdminCategories() {
   };
 
   const handleConfirmDelete = async () => {
-    if (!deletingCategory || !restaurantId) return;
+    if (!deletingCategory) return;
 
     try {
       await deleteCategory.mutateAsync({
         id: deletingCategory.id,
-        restaurantId,
       });
       toast.success('Categoria desativada com sucesso!');
       setDeletingCategory(null);

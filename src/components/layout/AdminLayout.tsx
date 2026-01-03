@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   SidebarProvider,
   Sidebar,
@@ -42,12 +42,11 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
-  const { restaurant } = useAdminAccess(slug ?? '');
+  const { restaurant } = useAdminAccess();
   const { modules } = useAdminModules();
 
   // Get active modules
@@ -56,25 +55,25 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Build dynamic menu based on active modules
   const moduleMenuItems = [
-    { moduleName: 'waiter_call', title: 'Atendimentos', url: `/admin/${slug}/atendimentos`, icon: Bell },
-    { moduleName: 'reservations', title: 'Reservas', url: `/admin/${slug}/reservas`, icon: Calendar },
-    { moduleName: 'queue', title: 'Fila', url: `/admin/${slug}/fila`, icon: Users },
-    { moduleName: 'customer_review', title: 'Avaliações', url: `/admin/${slug}/avaliacoes`, icon: Star },
-    { moduleName: 'kitchen_order', title: 'Pedidos', url: `/admin/${slug}/pedidos`, icon: ChefHat },
+    { moduleName: 'waiter_call', title: 'Atendimentos', url: '/admin/atendimentos', icon: Bell },
+    { moduleName: 'reservations', title: 'Reservas', url: '/admin/reservas', icon: Calendar },
+    { moduleName: 'queue', title: 'Fila', url: '/admin/fila', icon: Users },
+    { moduleName: 'customer_review', title: 'Avaliações', url: '/admin/avaliacoes', icon: Star },
+    { moduleName: 'kitchen_order', title: 'Pedidos', url: '/admin/pedidos', icon: ChefHat },
   ].filter((item) => isModuleActive(item.moduleName));
 
   const menuGroups = [
     {
       label: null,
       items: [
-        { title: 'Dashboard', url: `/admin/${slug}`, icon: LayoutDashboard },
+        { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
       ],
     },
     {
       label: 'Cardápio',
       items: [
-        { title: 'Produtos', url: `/admin/${slug}/produtos`, icon: UtensilsCrossed },
-        { title: 'Categorias', url: `/admin/${slug}/categorias`, icon: FolderTree },
+        { title: 'Produtos', url: '/admin/produtos', icon: UtensilsCrossed },
+        { title: 'Categorias', url: '/admin/categorias', icon: FolderTree },
       ],
     },
     ...(moduleMenuItems.length > 0 ? [{
@@ -84,10 +83,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     {
       label: 'Gestão',
       items: [
-        { title: 'Métricas', url: `/admin/${slug}/metricas`, icon: BarChart3 },
-        { title: 'Módulos', url: `/admin/${slug}/modulos`, icon: Puzzle },
-        { title: 'Usuários', url: `/admin/${slug}/usuarios`, icon: Users },
-        { title: 'Configurações', url: `/admin/${slug}/configuracoes`, icon: Settings },
+        { title: 'Métricas', url: '/admin/metricas', icon: BarChart3 },
+        { title: 'Módulos', url: '/admin/modulos', icon: Puzzle },
+        { title: 'Usuários', url: '/admin/usuarios', icon: Users },
+        { title: 'Configurações', url: '/admin/configuracoes', icon: Settings },
       ],
     },
   ];
@@ -96,7 +95,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     await logout();
-    navigate(`/admin/${slug}/login`, { replace: true });
+    navigate('/login', { replace: true });
   };
 
   const getInitials = (name: string | null) => {
@@ -143,7 +142,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       <SidebarMenuButton asChild>
                         <NavLink
                           to={item.url}
-                          end={item.url === `/admin/${slug}`}
+                          end={item.url === '/admin'}
                           className="flex items-center gap-2 hover:bg-muted/50"
                           activeClassName="bg-primary/10 text-primary font-medium"
                         >
@@ -167,7 +166,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         <SidebarMenuButton asChild>
                           <NavLink
                             to={item.url}
-                            end={item.url === `/admin/${slug}`}
+                            end={item.url === '/admin'}
                             className="flex items-center gap-2 hover:bg-muted/50"
                             activeClassName="bg-primary/10 text-primary font-medium"
                           >
@@ -188,15 +187,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a
-                        href={`/${slug}`}
+                      <Link
+                        to="/"
                         target="_blank"
-                        rel="noopener noreferrer"
                         className="flex items-center gap-2 hover:bg-muted/50"
                       >
                         <ExternalLink className="h-4 w-4" />
                         <span>Ver Site</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -237,7 +235,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <h1 className="font-semibold">
               {allMenuItems.find((item) => 
                 location.pathname === item.url || 
-                (item.url !== `/admin/${slug}` && location.pathname.startsWith(item.url))
+                (item.url !== '/admin' && location.pathname.startsWith(item.url))
               )?.title ?? 'Dashboard'}
             </h1>
           </header>

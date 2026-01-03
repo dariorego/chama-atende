@@ -16,9 +16,9 @@ export function calculatePromotion(price: number, promotionalPrice: number | nul
   return `-${discount}%`;
 }
 
-export function useMenuProducts(restaurantId: string | undefined) {
+export function useMenuProducts() {
   return useQuery({
-    queryKey: ['menu-products', restaurantId],
+    queryKey: ['menu-products'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('menu_products')
@@ -26,13 +26,11 @@ export function useMenuProducts(restaurantId: string | undefined) {
           *,
           category:menu_categories(slug, name)
         `)
-        .eq('restaurant_id', restaurantId!)
         .eq('is_active', true)
         .order('display_order');
 
       if (error) throw error;
       return data as MenuProduct[];
     },
-    enabled: !!restaurantId,
   });
 }
