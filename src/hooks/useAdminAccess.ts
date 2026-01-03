@@ -1,20 +1,17 @@
 import { useMemo } from 'react';
 import { useCurrentUser } from './useCurrentUser';
-import { useRestaurant } from './useRestaurant';
+import { useAdminSettings } from './useAdminSettings';
 
-export function useAdminAccess(slug: string) {
+export function useAdminAccess() {
   const { profile, roles, isLoading: isLoadingUser, isAdmin, isManager } = useCurrentUser();
-  const { data: restaurant, isLoading: isLoadingRestaurant } = useRestaurant(slug);
+  const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
 
   const hasAccess = useMemo(() => {
-    if (!profile || !restaurant) return false;
-    
-    // User must belong to this restaurant
-    if (profile.restaurant_id !== restaurant.id) return false;
+    if (!profile) return false;
     
     // User must be admin or manager
     return isAdmin || isManager;
-  }, [profile, restaurant, isAdmin, isManager]);
+  }, [profile, isAdmin, isManager]);
 
   const accessLevel = useMemo(() => {
     if (isAdmin) return 'admin';

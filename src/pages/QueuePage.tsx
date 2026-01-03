@@ -27,7 +27,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useRestaurant } from "@/hooks/useRestaurant";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 
 export default function QueuePage() {
   const navigate = useNavigate();

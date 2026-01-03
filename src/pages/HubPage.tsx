@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ActionCard } from "@/components/ui/action-card";
 import {
   UtensilsCrossed,
@@ -22,20 +22,18 @@ import {
   Loader2,
   Settings,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useRestaurant } from "@/hooks/useRestaurant";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
 import { SocialLinks, WifiInfo, formatTime } from "@/types/restaurant";
 import { toast } from "sonner";
 
 const HubPage = () => {
-  const { slug } = useParams<{ slug: string }>();
   const [scrolled, setScrolled] = useState(false);
 
   // Fetch data from Supabase
-  const { data: restaurant, isLoading: isLoadingRestaurant } = useRestaurant(slug ?? '');
-  const { data: modules, isLoading: isLoadingModules } = useRestaurantModules(restaurant?.id);
+  const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
+  const { data: modules, isLoading: isLoadingModules } = useRestaurantModules();
 
   const isLoading = isLoadingRestaurant || isLoadingModules;
 
@@ -224,7 +222,7 @@ const HubPage = () => {
               icon={UtensilsCrossed}
               title="Cardápio Digital"
               description="Explore nosso menu completo com fotos e descrições detalhadas"
-              to={`/${slug}/cardapio`}
+              to="/cardapio"
               variant="hero"
               badge="DESTAQUE"
             />
@@ -236,7 +234,7 @@ const HubPage = () => {
               icon={Bell}
               title="Chamar Garçom"
               description="Solicite atendimento na sua mesa"
-              to={`/${slug}/solicitar-atendimento`}
+              to="/solicitar-atendimento"
               variant="amber"
             />
           )}
@@ -246,7 +244,7 @@ const HubPage = () => {
               icon={CalendarCheck}
               title="Fazer Reserva"
               description="Reserve sua mesa com antecedência"
-              to={`/${slug}/reservas`}
+              to="/reservas"
               variant="purple"
             />
           )}
@@ -256,7 +254,7 @@ const HubPage = () => {
               icon={Users}
               title="Fila de Espera"
               description="Entre na fila e acompanhe sua posição"
-              to={`/${slug}/fila`}
+              to="/fila"
               variant="blue"
             />
           )}
@@ -266,7 +264,7 @@ const HubPage = () => {
               icon={ChefHat}
               title="Pedido Cozinha"
               description="Monte seu prato personalizado"
-              to={`/${slug}/pedido-cozinha`}
+              to="/pedido-cozinha"
               variant="rose"
             />
           )}
@@ -276,7 +274,7 @@ const HubPage = () => {
               icon={Star}
               title="Avaliar Experiência"
               description="Compartilhe sua opinião sobre nosso serviço"
-              to={`/${slug}/avaliacao`}
+              to="/avaliacao"
               variant="amber"
             />
           )}
@@ -343,7 +341,7 @@ const HubPage = () => {
             <span>•</span>
             <a href="/privacidade" className="hover:text-primary transition-colors">PRIVACIDADE</a>
             <span>•</span>
-            <Link to={`/admin/${slug}`} className="hover:text-primary transition-colors flex items-center gap-1">
+            <Link to="/admin" className="hover:text-primary transition-colors flex items-center gap-1">
               <Settings className="h-3 w-3" />
               ADMIN
             </Link>

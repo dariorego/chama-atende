@@ -6,14 +6,13 @@ export type MenuCategory = Tables<'menu_categories'>;
 export type CategoryInsert = TablesInsert<'menu_categories'>;
 export type CategoryUpdate = TablesUpdate<'menu_categories'>;
 
-export function useAdminCategories(restaurantId: string | undefined, includeInactive = true) {
+export function useAdminCategories(includeInactive = true) {
   return useQuery({
-    queryKey: ['admin-categories', restaurantId, includeInactive],
+    queryKey: ['admin-categories', includeInactive],
     queryFn: async () => {
       let query = supabase
         .from('menu_categories')
         .select('*')
-        .eq('restaurant_id', restaurantId!)
         .order('display_order')
         .order('name');
 
@@ -26,7 +25,6 @@ export function useAdminCategories(restaurantId: string | undefined, includeInac
       if (error) throw error;
       return data;
     },
-    enabled: !!restaurantId,
   });
 }
 
@@ -44,8 +42,9 @@ export function useCreateCategory() {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories', data.restaurant_id] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-categories'] });
     },
   });
 }
@@ -65,8 +64,9 @@ export function useUpdateCategory() {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories', data.restaurant_id] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-categories'] });
     },
   });
 }
@@ -75,17 +75,18 @@ export function useDeleteCategory() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, restaurantId }: { id: string; restaurantId: string }) => {
+    mutationFn: async ({ id }: { id: string }) => {
       const { error } = await supabase
         .from('menu_categories')
         .update({ is_active: false })
         .eq('id', id);
 
       if (error) throw error;
-      return { id, restaurantId };
+      return { id };
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories', data.restaurantId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-categories'] });
     },
   });
 }

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/useAuth';
-import { useRestaurant } from '@/hooks/useRestaurant';
+import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,10 +19,9 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { login, isAuthenticated, loading: authLoading } = useAuth();
-  const { data: restaurant, isLoading: restaurantLoading } = useRestaurant(slug ?? '');
+  const { restaurant, isLoading: restaurantLoading } = useAdminSettings();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<LoginFormData>({
@@ -37,18 +36,18 @@ export default function LoginPage() {
   useEffect(() => {
     if (authLoading) return;
     
-    if (isAuthenticated && slug) {
-      navigate(`/admin/${slug}`, { replace: true });
+    if (isAuthenticated) {
+      navigate('/admin', { replace: true });
     }
-  }, [isAuthenticated, authLoading, navigate, slug]);
+  }, [isAuthenticated, authLoading, navigate]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
     const { error } = await login(data.email, data.password);
     setIsSubmitting(false);
 
-    if (!error && slug) {
-      navigate(`/admin/${slug}`, { replace: true });
+    if (!error) {
+      navigate('/admin', { replace: true });
     }
   };
 
@@ -56,22 +55,6 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  // Show error if restaurant not found
-  if (!restaurant && !restaurantLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="py-8 text-center">
-            <p className="text-muted-foreground">Restaurante não encontrado</p>
-            <Link to="/" className="text-primary hover:underline mt-4 inline-block">
-              Voltar ao início
-            </Link>
-          </CardContent>
-        </Card>
       </div>
     );
   }
@@ -92,7 +75,7 @@ export default function LoginPage() {
             )}
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">{restaurant?.name}</CardTitle>
+            <CardTitle className="text-2xl font-bold">{restaurant?.name || 'Admin'}</CardTitle>
             <CardDescription className="mt-2">
               Entre na sua conta para acessar o painel administrativo
             </CardDescription>
@@ -159,7 +142,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <Link 
-              to={`/${slug}`} 
+              to="/" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               ← Voltar ao site

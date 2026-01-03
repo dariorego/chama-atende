@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useCurrentUser } from "./useCurrentUser";
 
 export interface AdminUser {
   id: string;
@@ -12,20 +11,17 @@ export interface AdminUser {
 }
 
 export function useAdminUsers() {
-  const { profile } = useCurrentUser();
-
   const { data: users, isLoading, error } = useQuery({
-    queryKey: ['admin-users', profile?.restaurant_id],
+    queryKey: ['admin-users'],
     queryFn: async () => {
-      // First, get profiles from the same restaurant
+      // Get all active profiles (single-tenant - no restaurant filter)
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, email, full_name, is_active, created_at')
-        .eq('restaurant_id', profile!.restaurant_id!);
+        .select('id, email, full_name, is_active, created_at');
 
       if (profilesError) throw profilesError;
 
-      // Then, get roles for each user
+      // Get roles for each user
       const usersWithRoles: AdminUser[] = await Promise.all(
         (profiles || []).map(async (p) => {
           const { data: rolesData } = await supabase
@@ -46,7 +42,6 @@ export function useAdminUsers() {
 
       return usersWithRoles;
     },
-    enabled: !!profile?.restaurant_id,
   });
 
   return {

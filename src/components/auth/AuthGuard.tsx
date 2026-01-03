@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { Loader2 } from 'lucide-react';
@@ -10,10 +10,9 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
-  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const { hasAccess, isLoading: accessLoading } = useAdminAccess(slug ?? '');
+  const { hasAccess, isLoading: accessLoading } = useAdminAccess();
 
   const isLoading = authLoading || accessLoading;
 
@@ -21,16 +20,14 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
     if (isLoading) return;
 
     if (!isAuthenticated) {
-      // Redirect to admin login page for this establishment
-      navigate(`/admin/${slug}/login`, { replace: true });
+      navigate('/login', { replace: true });
       return;
     }
 
     if (requireAdmin && !hasAccess) {
-      // User authenticated but doesn't have access to this restaurant
-      navigate(`/${slug}`, { replace: true });
+      navigate('/', { replace: true });
     }
-  }, [isAuthenticated, hasAccess, isLoading, requireAdmin, navigate, slug]);
+  }, [isAuthenticated, hasAccess, isLoading, requireAdmin, navigate]);
 
   if (isLoading) {
     return (

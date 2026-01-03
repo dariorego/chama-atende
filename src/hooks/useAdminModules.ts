@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useCurrentUser } from "./useCurrentUser";
 import { toast } from "sonner";
 
 export interface RestaurantModule {
@@ -44,21 +43,18 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
 };
 
 export function useAdminModules() {
-  const { profile } = useCurrentUser();
   const queryClient = useQueryClient();
 
   const { data: modules, isLoading, error } = useQuery({
-    queryKey: ['admin-modules', profile?.restaurant_id],
+    queryKey: ['admin-modules'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('restaurant_modules')
-        .select('id, module_name, is_active, settings')
-        .eq('restaurant_id', profile!.restaurant_id!);
+        .select('id, module_name, is_active, settings');
 
       if (error) throw error;
       return data as RestaurantModule[];
     },
-    enabled: !!profile?.restaurant_id,
   });
 
   const toggleModuleMutation = useMutation({
@@ -72,6 +68,7 @@ export function useAdminModules() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-modules'] });
+      queryClient.invalidateQueries({ queryKey: ['restaurant-modules'] });
       toast.success("Módulo atualizado com sucesso!");
     },
     onError: (error) => {
