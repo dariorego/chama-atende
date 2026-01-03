@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SocialLinks, WifiInfo, ThemeColors, IdentificationType, NotificationSettings, ThemeSettings } from "@/types/restaurant";
+import { SocialLinks, WifiInfo, ThemeColors, IdentificationType, NotificationSettings, ThemeSettings, BusinessHours, DEFAULT_BUSINESS_HOURS } from "@/types/restaurant";
 
 export interface RestaurantSettings {
   id: string;
@@ -22,6 +22,8 @@ export interface RestaurantSettings {
   theme_colors: ThemeColors;
   notification_settings: NotificationSettings;
   theme_settings: ThemeSettings;
+  business_hours: BusinessHours;
+  timezone: string;
 }
 
 export interface UpdateRestaurantData {
@@ -41,6 +43,8 @@ export interface UpdateRestaurantData {
   theme_colors?: Record<string, string | undefined>;
   notification_settings?: Record<string, boolean | undefined>;
   theme_settings?: Record<string, string | undefined>;
+  business_hours?: BusinessHours;
+  timezone?: string;
 }
 
 export function useAdminSettings() {
@@ -67,6 +71,8 @@ export function useAdminSettings() {
         theme_colors: (data.theme_colors as ThemeColors) || {},
         notification_settings: (data.notification_settings as NotificationSettings) || { sound_enabled: true },
         theme_settings: (data.theme_settings as ThemeSettings) || { client_default_theme: 'dark', admin_default_theme: 'dark' },
+        business_hours: (data.business_hours as unknown as BusinessHours) || DEFAULT_BUSINESS_HOURS,
+        timezone: (data.timezone as string) || 'America/Sao_Paulo',
       } as RestaurantSettings : null;
     },
   });
@@ -75,9 +81,10 @@ export function useAdminSettings() {
     mutationFn: async (updates: UpdateRestaurantData) => {
       if (!restaurant?.id) throw new Error("Restaurant not found");
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await supabase
         .from('restaurants')
-        .update(updates)
+        .update(updates as any)
         .eq('id', restaurant.id);
 
       if (error) throw error;

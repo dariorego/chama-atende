@@ -733,6 +733,7 @@ export type Database = {
       restaurants: {
         Row: {
           address: string | null
+          business_hours: Json | null
           closing_time: string | null
           cover_image_url: string | null
           created_at: string | null
@@ -751,11 +752,13 @@ export type Database = {
           subtitle: string | null
           theme_colors: Json | null
           theme_settings: Json | null
+          timezone: string | null
           updated_at: string | null
           wifi_info: Json | null
         }
         Insert: {
           address?: string | null
+          business_hours?: Json | null
           closing_time?: string | null
           cover_image_url?: string | null
           created_at?: string | null
@@ -774,11 +777,13 @@ export type Database = {
           subtitle?: string | null
           theme_colors?: Json | null
           theme_settings?: Json | null
+          timezone?: string | null
           updated_at?: string | null
           wifi_info?: Json | null
         }
         Update: {
           address?: string | null
+          business_hours?: Json | null
           closing_time?: string | null
           cover_image_url?: string | null
           created_at?: string | null
@@ -797,6 +802,7 @@ export type Database = {
           subtitle?: string | null
           theme_colors?: Json | null
           theme_settings?: Json | null
+          timezone?: string | null
           updated_at?: string | null
           wifi_info?: Json | null
         }

@@ -26,7 +26,8 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
-import { SocialLinks, WifiInfo, formatTime } from "@/types/restaurant";
+import { useRestaurantStatus } from "@/hooks/useRestaurantStatus";
+import { SocialLinks, WifiInfo } from "@/types/restaurant";
 import { toast } from "sonner";
 
 const HubPage = () => {
@@ -41,6 +42,13 @@ const HubPage = () => {
   // Parse JSONB fields
   const socialLinks = (restaurant?.social_links as SocialLinks) ?? {};
   const wifiInfo = (restaurant?.wifi_info as WifiInfo) ?? {};
+  
+  // Calculate automatic status based on business hours
+  // Hook must be called unconditionally before any returns
+  const { isOpen, statusText } = useRestaurantStatus(
+    restaurant?.business_hours,
+    restaurant?.timezone
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,8 +89,6 @@ const HubPage = () => {
       </div>
     );
   }
-
-  const isOpen = restaurant.status === 'open';
 
   return (
     <div className="min-h-screen bg-background">
@@ -172,11 +178,11 @@ const HubPage = () => {
               </p>
             )}
 
-            {/* Opening hours */}
-            {restaurant.closing_time && (
+            {/* Opening hours - now using calculated status */}
+            {statusText && (
               <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
                 <Clock className="h-4 w-4 text-primary" />
-                <span>Fecha às <span className="text-foreground font-medium">{formatTime(restaurant.closing_time)}</span></span>
+                <span className="text-foreground font-medium">{statusText}</span>
               </div>
             )}
           </div>

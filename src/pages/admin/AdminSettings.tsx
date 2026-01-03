@@ -9,12 +9,15 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe } from 'lucide-react';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
-import { formatTime, IdentificationType } from '@/types/restaurant';
+import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
 import { hexToHsl, hslToHex, DEFAULT_COLORS } from '@/lib/color-utils';
 import { useNotificationSound } from '@/hooks/useNotificationSound';
+import { useRestaurantStatus } from '@/hooks/useRestaurantStatus';
 
 const settingsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
@@ -22,9 +25,6 @@ const settingsSchema = z.object({
   address: z.string().max(300).optional().nullable(),
   phone: z.string().max(20).optional().nullable(),
   email: z.string().email('Email inválido').optional().nullable().or(z.literal('')),
-  status: z.enum(['open', 'closed']),
-  opening_time: z.string().optional().nullable(),
-  closing_time: z.string().optional().nullable(),
   identification_type: z.enum(['table', 'room', 'phone']),
   wifi_network: z.string().max(100).optional(),
   wifi_password: z.string().max(100).optional(),
@@ -45,8 +45,6 @@ export default function AdminSettings() {
   
   // Color states
   const [primaryColor, setPrimaryColor] = useState(DEFAULT_COLORS.primary!);
-  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background!);
-  const [cardColor, setCardColor] = useState(DEFAULT_COLORS.card!);
   
   // Notification states
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -54,6 +52,13 @@ export default function AdminSettings() {
   // Theme settings states
   const [clientDefaultTheme, setClientDefaultTheme] = useState<'light' | 'dark'>('dark');
   const [adminDefaultTheme, setAdminDefaultTheme] = useState<'light' | 'dark'>('dark');
+  
+  // Business hours states
+  const [businessHours, setBusinessHours] = useState<BusinessHours>(DEFAULT_BUSINESS_HOURS);
+  const [timezone, setTimezone] = useState('America/Sao_Paulo');
+  
+  // Calculate current status
+  const calculatedStatus = useRestaurantStatus(businessHours, timezone);
 
   const form = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
@@ -63,9 +68,6 @@ export default function AdminSettings() {
       address: '',
       phone: '',
       email: '',
-      status: 'closed',
-      opening_time: '',
-      closing_time: '',
       identification_type: 'table',
       wifi_network: '',
       wifi_password: '',
@@ -83,9 +85,6 @@ export default function AdminSettings() {
         address: restaurant.address || '',
         phone: restaurant.phone || '',
         email: restaurant.email || '',
-        status: (restaurant.status as 'open' | 'closed') || 'closed',
-        opening_time: formatTime(restaurant.opening_time) || '',
-        closing_time: formatTime(restaurant.closing_time) || '',
         identification_type: restaurant.identification_type || 'table',
         wifi_network: restaurant.wifi_info?.network || '',
         wifi_password: restaurant.wifi_info?.password || '',
@@ -101,8 +100,6 @@ export default function AdminSettings() {
       // Load colors
       if (restaurant.theme_colors) {
         setPrimaryColor(restaurant.theme_colors.primary || DEFAULT_COLORS.primary!);
-        setBackgroundColor(restaurant.theme_colors.background || DEFAULT_COLORS.background!);
-        setCardColor(restaurant.theme_colors.card || DEFAULT_COLORS.card!);
       }
       
       // Load notification settings
@@ -115,13 +112,30 @@ export default function AdminSettings() {
         setClientDefaultTheme(restaurant.theme_settings.client_default_theme || 'dark');
         setAdminDefaultTheme(restaurant.theme_settings.admin_default_theme || 'dark');
       }
+      
+      // Load business hours and timezone
+      if (restaurant.business_hours) {
+        setBusinessHours(restaurant.business_hours);
+      }
+      if (restaurant.timezone) {
+        setTimezone(restaurant.timezone);
+      }
     }
   }, [restaurant, form]);
+  
+  // Update day hours helper
+  const updateDayHours = (dayKey: string, field: keyof DayHours, value: string | boolean) => {
+    setBusinessHours(prev => ({
+      ...prev,
+      [dayKey]: {
+        ...prev[dayKey as keyof BusinessHours],
+        [field]: value,
+      },
+    }));
+  };
 
   const resetToDefaultColors = () => {
     setPrimaryColor(DEFAULT_COLORS.primary!);
-    setBackgroundColor(DEFAULT_COLORS.background!);
-    setCardColor(DEFAULT_COLORS.card!);
   };
 
   const onSubmit = (data: SettingsFormData) => {
@@ -131,9 +145,6 @@ export default function AdminSettings() {
       address: data.address || null,
       phone: data.phone || null,
       email: data.email || null,
-      status: data.status,
-      opening_time: data.opening_time || null,
-      closing_time: data.closing_time || null,
       identification_type: data.identification_type as IdentificationType,
       logo_url: logoUrl,
       cover_image_url: coverUrl,
@@ -148,8 +159,6 @@ export default function AdminSettings() {
       },
       theme_colors: {
         primary: primaryColor,
-        background: backgroundColor,
-        card: cardColor,
         accent: primaryColor,
       },
       notification_settings: {
@@ -159,6 +168,8 @@ export default function AdminSettings() {
         client_default_theme: clientDefaultTheme,
         admin_default_theme: adminDefaultTheme,
       },
+      business_hours: businessHours,
+      timezone: timezone,
     });
   };
 
@@ -269,64 +280,106 @@ export default function AdminSettings() {
                 Horário de Funcionamento
               </CardTitle>
               <CardDescription>
-                Defina o horário e status de operação
+                Configure os horários para cada dia da semana
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="opening_time"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Abertura</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" value={field.value || ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="closing_time"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Fechamento</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" value={field.value || ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <CardContent className="space-y-6">
+              {/* Fuso Horário */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  Fuso Horário
+                </Label>
+                <Select value={timezone} onValueChange={setTimezone}>
+                  <SelectTrigger className="bg-surface">
+                    <SelectValue placeholder="Selecione o fuso horário" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BRAZIL_TIMEZONES.map((tz) => (
+                      <SelectItem key={tz.value} value={tz.value}>
+                        {tz.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status Atual</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex gap-4"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="open" id="open" />
-                          <Label htmlFor="open" className="text-green-600 font-medium">Aberto</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="closed" id="closed" />
-                          <Label htmlFor="closed" className="text-red-600 font-medium">Fechado</Label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+              {/* Tabela de Horários */}
+              <div className="space-y-3">
+                <Label>Horários por Dia</Label>
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Dia</TableHead>
+                        <TableHead>Abertura</TableHead>
+                        <TableHead>Fechamento</TableHead>
+                        <TableHead className="text-center">Fechado</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {WEEKDAYS.map((day) => {
+                        const dayHours = businessHours[day.key as keyof BusinessHours];
+                        return (
+                          <TableRow key={day.key}>
+                            <TableCell className="font-medium">{day.label}</TableCell>
+                            <TableCell>
+                              <Input
+                                type="time"
+                                value={dayHours?.open || ''}
+                                onChange={(e) => updateDayHours(day.key, 'open', e.target.value)}
+                                disabled={dayHours?.is_closed}
+                                className="w-28 bg-surface disabled:opacity-50"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="time"
+                                value={dayHours?.close || ''}
+                                onChange={(e) => updateDayHours(day.key, 'close', e.target.value)}
+                                disabled={dayHours?.is_closed}
+                                className="w-28 bg-surface disabled:opacity-50"
+                              />
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Switch
+                                checked={dayHours?.is_closed || false}
+                                onCheckedChange={(checked) => updateDayHours(day.key, 'is_closed', checked)}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Status Atual Calculado */}
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-surface border border-border">
+                <div className={`flex items-center gap-2 ${
+                  calculatedStatus.isOpen ? 'text-green-500' : 'text-red-500'
+                }`}>
+                  <span className="relative flex h-3 w-3">
+                    {calculatedStatus.isOpen && (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                    )}
+                    <span className={`relative inline-flex rounded-full h-3 w-3 ${
+                      calculatedStatus.isOpen ? 'bg-green-500' : 'bg-red-500'
+                    }`} />
+                  </span>
+                  <span className="font-semibold">
+                    {calculatedStatus.isOpen ? 'Aberto' : 'Fechado'}
+                  </span>
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {calculatedStatus.statusText}
+                </span>
+              </div>
+              
+              <p className="text-sm text-muted-foreground">
+                O status é calculado automaticamente com base no dia e horário atual.
+              </p>
             </CardContent>
           </Card>
 
@@ -653,10 +706,10 @@ export default function AdminSettings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Palette className="h-5 w-5" />
-                Configurações de Cores
+                Cor Principal
               </CardTitle>
               <CardDescription>
-                Personalize as cores do seu site
+                Personalize a cor de destaque do seu site
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -680,70 +733,22 @@ export default function AdminSettings() {
                 />
               </div>
 
-              {/* Cor de Fundo */}
-              <div className="flex items-center gap-4">
-                <div 
-                  className="w-12 h-12 rounded-lg border border-border shrink-0"
-                  style={{ backgroundColor: `hsl(${backgroundColor})` }}
-                />
-                <div className="flex-1 min-w-0">
-                  <Label>Cor de Fundo</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Fundo geral do site
-                  </p>
-                </div>
-                <Input 
-                  type="color" 
-                  value={hslToHex(backgroundColor)}
-                  onChange={(e) => setBackgroundColor(hexToHsl(e.target.value))}
-                  className="w-16 h-10 p-1 cursor-pointer"
-                />
-              </div>
-
-              {/* Cor dos Cards */}
-              <div className="flex items-center gap-4">
-                <div 
-                  className="w-12 h-12 rounded-lg border border-border shrink-0"
-                  style={{ backgroundColor: `hsl(${cardColor})` }}
-                />
-                <div className="flex-1 min-w-0">
-                  <Label>Cor dos Cards</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Caixas e painéis
-                  </p>
-                </div>
-                <Input 
-                  type="color" 
-                  value={hslToHex(cardColor)}
-                  onChange={(e) => setCardColor(hexToHsl(e.target.value))}
-                  className="w-16 h-10 p-1 cursor-pointer"
-                />
-              </div>
-
               {/* Botão para resetar cores padrão */}
               <Button type="button" variant="outline" onClick={resetToDefaultColors}>
                 <RotateCcw className="h-4 w-4 mr-2" />
-                Restaurar cores padrão
+                Restaurar cor padrão
               </Button>
 
               {/* Preview em tempo real */}
-              <div 
-                className="p-4 rounded-lg border border-border"
-                style={{ backgroundColor: `hsl(${backgroundColor})` }}
-              >
+              <div className="p-4 rounded-lg border border-border bg-card">
                 <p className="text-sm mb-3 text-foreground">Preview:</p>
-                <div 
-                  className="p-4 rounded-lg"
-                  style={{ backgroundColor: `hsl(${cardColor})` }}
+                <Button 
+                  type="button"
+                  style={{ backgroundColor: `hsl(${primaryColor})` }}
+                  className="text-primary-foreground hover:opacity-90"
                 >
-                  <Button 
-                    type="button"
-                    style={{ backgroundColor: `hsl(${primaryColor})` }}
-                    className="text-primary-foreground hover:opacity-90"
-                  >
-                    Botão de Exemplo
-                  </Button>
-                </div>
+                  Botão de Exemplo
+                </Button>
               </div>
             </CardContent>
           </Card>
