@@ -104,3 +104,90 @@ export function useDeleteProduct() {
     },
   });
 }
+
+export function useAdjustProductOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      productId,
+      categoryId,
+      newOrder,
+      oldOrder,
+      currentProducts,
+    }: {
+      productId: string;
+      categoryId: string;
+      newOrder: number;
+      oldOrder: number;
+      currentProducts: MenuProduct[];
+    }) => {
+      if (oldOrder === newOrder) return true;
+
+      // Filter only products from the same category
+      const categoryProducts = currentProducts.filter(
+        (p) => p.category_id === categoryId && p.id !== productId
+      );
+
+      const updates: { id: string; display_order: number }[] = [];
+
+      for (const product of categoryProducts) {
+        const productOrder = product.display_order ?? 0;
+
+        if (newOrder < oldOrder) {
+          // Moving up: products between [newOrder, oldOrder) go up by 1
+          if (productOrder >= newOrder && productOrder < oldOrder) {
+            updates.push({ id: product.id, display_order: productOrder + 1 });
+          }
+        } else {
+          // Moving down: products between (oldOrder, newOrder] go down by 1
+          if (productOrder > oldOrder && productOrder <= newOrder) {
+            updates.push({ id: product.id, display_order: productOrder - 1 });
+          }
+        }
+      }
+
+      // Execute updates in batch
+      if (updates.length > 0) {
+        const promises = updates.map(({ id, display_order }) =>
+          supabase
+            .from('menu_products')
+            .update({ display_order })
+            .eq('id', id)
+        );
+        const results = await Promise.all(promises);
+        const failed = results.find((r) => r.error);
+        if (failed?.error) throw failed.error;
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-products'] });
+    },
+  });
+}
+
+export function useReorderProducts() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (products: { id: string; display_order: number }[]) => {
+      const promises = products.map(({ id, display_order }) =>
+        supabase
+          .from('menu_products')
+          .update({ display_order })
+          .eq('id', id)
+      );
+      const results = await Promise.all(promises);
+      const failed = results.find((r) => r.error);
+      if (failed?.error) throw failed.error;
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-products'] });
+    },
+  });
+}

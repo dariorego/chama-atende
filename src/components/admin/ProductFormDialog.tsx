@@ -43,7 +43,7 @@ const productSchema = z.object({
   image_url: z.string().optional().nullable(),
   is_highlight: z.boolean().default(false),
   is_active: z.boolean().default(true),
-  display_order: z.coerce.number().int().min(0).default(0),
+  display_order: z.coerce.number().int().min(1, 'Ordem mínima é 1').default(1),
 }).refine((data) => {
   if (data.promotional_price && data.promotional_price >= data.price) {
     return false;
@@ -63,6 +63,7 @@ interface ProductFormDialogProps {
   categories: MenuCategory[];
   onSubmit: (data: ProductFormData) => Promise<void>;
   isLoading?: boolean;
+  suggestedOrder?: number;
 }
 
 export function ProductFormDialog({
@@ -72,6 +73,7 @@ export function ProductFormDialog({
   categories,
   onSubmit,
   isLoading,
+  suggestedOrder,
 }: ProductFormDialogProps) {
   const isEditing = !!product;
 
@@ -86,7 +88,7 @@ export function ProductFormDialog({
       image_url: '',
       is_highlight: false,
       is_active: true,
-      display_order: 0,
+      display_order: suggestedOrder ?? 1,
     },
   });
 
@@ -114,7 +116,7 @@ export function ProductFormDialog({
           image_url: '',
           is_highlight: false,
           is_active: true,
-          display_order: 0,
+          display_order: suggestedOrder ?? 1,
         });
       }
     }
@@ -278,13 +280,13 @@ export function ProductFormDialog({
                   <FormControl>
                     <Input
                       type="number"
-                      min="0"
-                      placeholder="0"
+                      min="1"
+                      placeholder="1"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    Produtos com menor número aparecem primeiro
+                    Produtos com ordem 1 aparecem primeiro
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
