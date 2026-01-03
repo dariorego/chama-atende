@@ -232,7 +232,7 @@ const HubPage = () => {
           {modules?.waiterCall && (
             <ActionCard
               icon={Bell}
-              title="Chamar Garçom"
+              title="Pedir Atendimento"
               description="Solicite atendimento na sua mesa"
               to="/solicitar-atendimento"
               variant="amber"
