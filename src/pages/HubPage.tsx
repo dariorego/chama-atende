@@ -357,7 +357,7 @@ const HubPage = () => {
         {/* Footer */}
         <div className="mt-8 pt-6 border-t border-border text-center">
           <p className="text-xs text-muted-foreground">
-            Powered by <span className="text-primary font-medium">RestoPlatform</span>
+            Powered by <span className="text-primary font-medium">Plataforma Ativa</span>
           </p>
           <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
             <a href="/termos" className="hover:text-primary transition-colors">TERMOS</a>

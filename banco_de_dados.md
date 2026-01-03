@@ -1,6 +1,6 @@
 # 📊 Documentação Completa do Banco de Dados
 
-**Projeto**: RestoPlatform  
+**Projeto**: Plataforma Ativa  
 **Plataforma**: Supabase (PostgreSQL)  
 **Última atualização**: 2026-01-03
 
@@ -9,7 +9,7 @@
 ## 1. Visão Geral do Banco
 
 ### Objetivo
-O banco de dados do RestoPlatform é responsável por armazenar e gerenciar todos os dados de um sistema SaaS multi-tenant para gestão de restaurantes. Ele suporta:
+O banco de dados da Plataforma Ativa é responsável por armazenar e gerenciar todos os dados de um sistema SaaS multi-tenant para gestão de restaurantes. Ele suporta:
 
 - **Gestão de cardápio** (categorias, produtos, personalizações)
 - **Pedidos de cozinha** com combinações customizáveis
