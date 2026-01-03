@@ -1,4 +1,5 @@
 import { Bell, Receipt, Users, User, Clock, LayoutGrid } from "lucide-react";
+import { isToday } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePendingServiceCalls, useAdminServiceCalls } from "@/hooks/useAdminServiceCalls";
@@ -132,22 +133,27 @@ const AdminWaiterCalls = () => {
             </CardContent>
           </Card>
 
-          {allCalls && allCalls.filter(c => c.status === 'completed').length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Histórico Recente</CardTitle>
-                <CardDescription>Últimos chamados finalizados</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {allCalls
-                  .filter(c => c.status === 'completed')
-                  .slice(0, 5)
-                  .map((call) => (
+          {(() => {
+            const todayCalls = allCalls?.filter(c => 
+              c.status === 'completed' && 
+              c.completed_at && 
+              isToday(new Date(c.completed_at))
+            ) || [];
+            
+            return todayCalls.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Histórico do Dia</CardTitle>
+                  <CardDescription>Chamados finalizados hoje</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {todayCalls.map((call) => (
                     <ServiceCallCard key={call.id} call={call} />
                   ))}
-              </CardContent>
-            </Card>
-          )}
+                </CardContent>
+              </Card>
+            );
+          })()}
         </TabsContent>
 
         <TabsContent value="sessions" className="space-y-4">
