@@ -1036,6 +1036,21 @@ export type Database = {
         }
         Returns: boolean
       }
+      search_reservations_by_phone: {
+        Args: { search_phone: string }
+        Returns: {
+          created_at: string
+          customer_name: string
+          id: string
+          notes: string
+          party_size: number
+          phone: string
+          reservation_code: string
+          reservation_date: string
+          reservation_time: string
+          status: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "manager" | "staff"
