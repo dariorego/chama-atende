@@ -148,25 +148,6 @@ const HubPage = () => {
                     <UtensilsCrossed className="h-10 w-10 text-muted-foreground" />
                   </div>
                 )}
-                
-                {/* Status badge inside */}
-                <div className={`absolute bottom-1 right-1 flex items-center gap-1 px-2 py-0.5 rounded-full ${
-                  isOpen ? 'bg-primary' : 'bg-muted'
-                }`}>
-                  <span className="relative flex h-2 w-2">
-                    {isOpen && (
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75" />
-                    )}
-                    <span className={`relative inline-flex rounded-full h-2 w-2 ${
-                      isOpen ? 'bg-primary-foreground' : 'bg-muted-foreground'
-                    }`} />
-                  </span>
-                  <span className={`text-xs font-semibold ${
-                    isOpen ? 'text-primary-foreground' : 'text-muted-foreground'
-                  }`}>
-                    {isOpen ? 'Aberto' : 'Fechado'}
-                  </span>
-                </div>
               </div>
             </div>
 
@@ -180,13 +161,25 @@ const HubPage = () => {
               </p>
             )}
 
-            {/* Opening hours - now using calculated status */}
-            {statusText && (
-              <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4 text-primary" />
-                <span className="text-foreground font-medium">{statusText}</span>
+            {/* Status badge - dynamic based on business hours */}
+            <div className="flex items-center gap-2 mt-3">
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full ${
+                isOpen 
+                  ? 'bg-primary/20 text-primary' 
+                  : 'bg-muted text-muted-foreground'
+              }`}>
+                <span className="relative flex h-2 w-2">
+                  {isOpen && (
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  )}
+                  <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                    isOpen ? 'bg-primary' : 'bg-muted-foreground'
+                  }`} />
+                </span>
+                <Clock className="h-4 w-4" />
+                <span className="text-sm font-medium">{statusText}</span>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Quick Action Buttons */}
