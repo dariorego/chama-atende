@@ -934,6 +934,27 @@ CREATE TABLE public.restaurant_modules (
 | Por dia da semana | Cada dia pode ter horário diferente ou estar marcado como fechado |
 | Fuso horário | Suporta todos os fusos brasileiros (UTC-2 a UTC-5) |
 | Fechamento após meia-noite | Horários como 11:30-02:00 são suportados |
+| Exibição no Hub | Badge animado mostra "Aberto até XX:XX" ou "Fechado" na página inicial |
+
+### 4.1.1 Módulos Dependentes do Horário
+
+Alguns módulos dependem da operação presencial do estabelecimento e ficam **desabilitados** quando o restaurante está fechado:
+
+| Módulo | Depende do Horário | Comportamento Quando Fechado |
+|--------|-------------------|------------------------------|
+| Cardápio Digital | ❌ Não | Sempre ativo (cliente pode visualizar) |
+| Pedir Atendimento | ✅ Sim | Visível mas não clicável |
+| Fila de Espera | ✅ Sim | Visível mas não clicável |
+| Pedido Cozinha | ✅ Sim | Visível mas não clicável |
+| Fazer Reserva | ❌ Não | Sempre ativo (pode reservar para outro dia) |
+| Avaliar Experiência | ❌ Não | Sempre ativo (pode avaliar após visita) |
+
+**Comportamento visual dos módulos desabilitados:**
+- Opacidade reduzida (`opacity-50`)
+- Cursor `not-allowed`
+- Descrição alterada para "Disponível no horário de funcionamento"
+- Sem efeitos de hover
+- Não navegável (renderiza `<div>` em vez de `<Link>`)
 
 ### 4.2 Pedidos de Cozinha
 
@@ -1081,7 +1102,7 @@ graph TD
 
 | Tela | Rota | Objetivo | Componentes Principais |
 |------|------|----------|----------------------|
-| Hub | `/` | Página inicial com acesso aos módulos | Cards de módulos, Logo, Status aberto/fechado |
+| Hub | `/` | Página inicial com acesso aos módulos | ActionCard (com suporte a disabled), Logo, StatusBadge animado |
 | Cardápio | `/cardapio` | Visualização do menu | Categorias, ProductCard, ProductDetailSheet |
 | Atendimento | `/atendimento/:tableId` | Chamadas de garçom | Botões de chamada, Status de chamadas ativas |
 | Reservas | `/reservas` | Criar/buscar reservas | Formulário de reserva, Busca por telefone |
@@ -1594,6 +1615,7 @@ src/
 │   └── ui/              # Componentes UI (shadcn)
 │       ├── button.tsx
 │       ├── card.tsx
+│       ├── action-card.tsx  # Card de ação com suporte a disabled
 │       ├── dialog.tsx
 │       └── ...
 ├── hooks/
