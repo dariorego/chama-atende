@@ -1,82 +1,117 @@
-import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { ArrowLeft, MoreHorizontal, ChefHat, Timer, Check, Bell, FileEdit, Headphones } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, ChefHat, Timer, Check, Bell, FileEdit, Headphones, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-
-const baseNames: Record<string, string> = {
-  tapioca: "Tapioca",
-  crepioca: "Crepioca",
-  omelete: "Omelete",
-  waffle: "Waffle",
-};
-
-const ingredientNames: Record<string, string> = {
-  mussarela: "Mussarela",
-  parmesao: "Parmesão",
-  coalho: "Queijo Coalho",
-  cottage: "Cottage",
-  presunto: "Presunto",
-  peito_peru: "Peito de Peru",
-  bacon: "Bacon",
-  frango: "Frango Desfiado",
-  tomate: "Tomate",
-  rucula: "Rúcula",
-  milho: "Milho",
-  palmito: "Palmito",
-  tradicional: "Molho Tradicional",
-  especial: "Molho Especial",
-  pimenta: "Pimenta",
-  ervas: "Ervas Finas",
-};
+import { useOrderStatus, useQueuePosition } from "@/hooks/useOrderStatus";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 
 const OrderStatusPage = () => {
   const navigate = useNavigate();
-  const { slug, baseId } = useParams<{ slug: string; baseId: string }>();
+  const { orderId } = useParams<{ orderId: string }>();
   const location = useLocation();
-  const orderData = location.state as {
-    base: string;
-    tableNumber: string;
-    observations: string;
-    ingredients: { id: string; name: string; quantity?: number }[];
-    orderNumber: number;
-    submittedAt: string;
-  } | null;
-
-  const orderNumber = orderData?.orderNumber || Math.floor(1000 + Math.random() * 9000);
-  const submittedAt = orderData?.submittedAt || new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  const tableNumber = orderData?.tableNumber || "12";
-  const baseName = baseNames[baseId || "tapioca"] || "Prato";
-  const ingredients = orderData?.ingredients || [];
-
-  const [queuePosition] = useState(3);
-  const [estimatedTime] = useState(15);
-  const [progressPercent] = useState(65);
-
-  const timelineSteps = [
-    {
-      id: "confirmed",
-      title: "Pedido Confirmado",
-      description: `Enviado para cozinha às ${submittedAt}`,
-      status: "completed" as const,
-    },
-    {
-      id: "preparing",
-      title: "Em Preparo",
-      description: "O Chef está trabalhando no seu prato",
-      status: "active" as const,
-    },
-    {
-      id: "ready",
-      title: "Pronto para entrega",
-      description: "Aguardando finalização",
-      status: "pending" as const,
-    },
-  ];
+  const locationState = location.state as { orderNumber?: number } | null;
+  
+  const { restaurant } = useAdminSettings();
+  const { data: order, isLoading } = useOrderStatus(orderId);
+  const { data: queueData } = useQueuePosition(orderId, restaurant?.id);
 
   const handleBack = () => {
-    navigate(`/${slug}/pedido-cozinha`);
+    navigate("/pedido-cozinha");
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <p className="text-muted-foreground mb-4">Pedido não encontrado</p>
+        <Button onClick={handleBack}>Voltar ao início</Button>
+      </div>
+    );
+  }
+
+  const orderNumber = locationState?.orderNumber || order.order_number;
+  const tableNumber = order.table_number || "N/A";
+  const status = order.status || "pending";
+
+  // Get first line item for display
+  const lineItem = order.order_line_items?.[0];
+  const itemName = lineItem?.item_name || "Pedido";
+  const selections = lineItem?.order_line_item_selections || [];
+
+  // Calculate progress and estimated time based on status
+  const getStatusInfo = (status: string) => {
+    switch (status) {
+      case "pending":
+        return { progress: 25, label: "Na fila", icon: Timer };
+      case "preparing":
+        return { progress: 60, label: "Em preparo", icon: ChefHat };
+      case "ready":
+        return { progress: 90, label: "Pronto!", icon: Check };
+      case "delivered":
+        return { progress: 100, label: "Entregue", icon: Check };
+      default:
+        return { progress: 0, label: "Aguardando", icon: Timer };
+    }
+  };
+
+  const statusInfo = getStatusInfo(status);
+  const queuePosition = queueData?.position || null;
+  const estimatedTime = queuePosition ? queuePosition * 5 : 10; // ~5 min per order
+
+  // Build timeline based on order timestamps
+  const getTimelineSteps = () => {
+    const createdTime = order.created_at 
+      ? new Date(order.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      : "--:--";
+
+    const getPreparingStatus = (): "pending" | "active" | "completed" => {
+      if (status === "pending") return "pending";
+      if (status === "preparing") return "active";
+      return "completed";
+    };
+
+    const getReadyStatus = (): "pending" | "active" | "completed" => {
+      if (status === "ready") return "active";
+      if (status === "delivered") return "completed";
+      return "pending";
+    };
+    
+    const steps = [
+      {
+        id: "confirmed",
+        title: "Pedido Confirmado",
+        description: `Enviado para cozinha às ${createdTime}`,
+        status: "completed" as const,
+      },
+      {
+        id: "preparing",
+        title: "Em Preparo",
+        description: order.preparing_at 
+          ? `Iniciado às ${new Date(order.preparing_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+          : "O Chef está trabalhando no seu prato",
+        status: getPreparingStatus(),
+      },
+      {
+        id: "ready",
+        title: "Pronto para entrega",
+        description: order.ready_at
+          ? `Finalizado às ${new Date(order.ready_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+          : "Aguardando finalização",
+        status: getReadyStatus(),
+      },
+    ];
+    
+    return steps;
+  };
+
+  const timelineSteps = getTimelineSteps();
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -99,41 +134,44 @@ const OrderStatusPage = () => {
       <div className="px-4">
         {/* Hero Section with Pulsing Icon */}
         <div className="flex flex-col items-center pt-8 pb-6">
-          <div className="w-24 h-24 rounded-full bg-card border-2 border-primary flex items-center justify-center mb-6 animate-pulse-ring">
-            <ChefHat className="w-12 h-12 text-primary" />
+          <div className={`w-24 h-24 rounded-full bg-card border-2 ${status === "ready" || status === "delivered" ? "border-green-500" : "border-primary"} flex items-center justify-center mb-6 ${status === "preparing" ? "animate-pulse" : ""}`}>
+            <statusInfo.icon className={`w-12 h-12 ${status === "ready" || status === "delivered" ? "text-green-500" : "text-primary"}`} />
           </div>
-          <h1 className="text-[28px] font-bold text-foreground mb-2">Em preparo</h1>
+          <h1 className="text-[28px] font-bold text-foreground mb-2">{statusInfo.label}</h1>
           <p className="text-muted-foreground text-center max-w-xs">
-            Sua refeição está sendo preparada com cuidado pelo Chef.
+            {status === "pending" && "Seu pedido está na fila aguardando preparo."}
+            {status === "preparing" && "Sua refeição está sendo preparada com cuidado pelo Chef."}
+            {status === "ready" && "Seu pedido está pronto! Em breve será entregue."}
+            {status === "delivered" && "Seu pedido foi entregue. Bom apetite!"}
           </p>
         </div>
 
-        {/* Queue Card */}
-        <div className="bg-card rounded-xl p-5 border border-border mb-6">
-          <div className="flex justify-between gap-4">
-            <div className="flex flex-col gap-1">
-              <p className="text-lg font-bold text-foreground">Fila de Espera</p>
-              <p className="text-primary text-sm font-medium flex items-center gap-1">
-                <Timer className="w-4 h-4" />
-                {queuePosition} pedidos à sua frente
-              </p>
+        {/* Queue Card - Only show if pending or preparing */}
+        {(status === "pending" || status === "preparing") && (
+          <div className="bg-card rounded-xl p-5 border border-border mb-6">
+            <div className="flex justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <p className="text-lg font-bold text-foreground">
+                  {status === "pending" ? "Fila de Espera" : "Progresso"}
+                </p>
+                <p className="text-primary text-sm font-medium flex items-center gap-1">
+                  <Timer className="w-4 h-4" />
+                  {queuePosition 
+                    ? `${queuePosition} pedido${queuePosition > 1 ? 's' : ''} à sua frente`
+                    : "Processando..."
+                  }
+                </p>
+              </div>
             </div>
-            <div
-              className="w-20 h-20 rounded-lg bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop')",
-              }}
-            />
-          </div>
-          <div className="mt-4">
-            <div className="flex justify-between text-xs mb-2">
-              <span className="text-muted-foreground">Progresso da fila</span>
-              <span className="font-bold text-foreground">~{estimatedTime} min</span>
+            <div className="mt-4">
+              <div className="flex justify-between text-xs mb-2">
+                <span className="text-muted-foreground">Progresso estimado</span>
+                <span className="font-bold text-foreground">~{estimatedTime} min</span>
+              </div>
+              <Progress value={statusInfo.progress} className="h-2" />
             </div>
-            <Progress value={progressPercent} className="h-2" />
           </div>
-        </div>
+        )}
 
         {/* Timeline */}
         <div className="mb-6">
@@ -200,15 +238,15 @@ const OrderStatusPage = () => {
             {/* Main dish */}
             <div className="flex items-start gap-4 p-3 rounded-lg bg-card border border-border">
               <div className="w-10 h-10 rounded-md bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                1x
+                {lineItem?.quantity || 1}x
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-sm text-foreground">
-                  {baseName} Personalizada
+                  {itemName} Personalizada
                 </p>
-                {ingredients.length > 0 && (
+                {selections.length > 0 && (
                   <p className="text-muted-foreground text-xs mt-1">
-                    {ingredients.map((ing) => ingredientNames[ing.id] || ing.name || ing.id).join(", ")}
+                    {selections.map((s) => s.option_name).join(", ")}
                   </p>
                 )}
               </div>
@@ -220,7 +258,7 @@ const OrderStatusPage = () => {
         <div className="flex items-center justify-center gap-2 p-4 rounded-xl bg-primary/10 border border-primary/20">
           <Bell className="w-5 h-5 text-primary" />
           <span className="text-sm font-bold text-foreground">
-            Entrega no Quarto {tableNumber}
+            Entrega na Mesa/Quarto {tableNumber}
           </span>
         </div>
       </div>
