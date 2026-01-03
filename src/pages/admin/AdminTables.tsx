@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Users, QrCode } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, QrCode, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,6 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAdminTables, useDeleteTable, Table as TableType } from "@/hooks/useAdminTables";
 import { TableFormDialog } from "@/components/admin/TableFormDialog";
 import { QRCodeDialog } from "@/components/admin/QRCodeDialog";
+import { BatchTableFormDialog } from "@/components/admin/BatchTableFormDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const statusConfig = {
@@ -24,6 +25,7 @@ const AdminTables = () => {
   const [editingTable, setEditingTable] = useState<TableType | null>(null);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [selectedTableForQR, setSelectedTableForQR] = useState<TableType | null>(null);
+  const [batchDialogOpen, setBatchDialogOpen] = useState(false);
 
   const handleEdit = (table: TableType) => {
     setEditingTable(table);
@@ -54,10 +56,16 @@ const AdminTables = () => {
           <h1 className="text-3xl font-bold tracking-tight">Mesas</h1>
           <p className="text-muted-foreground">Gerencie as mesas do estabelecimento</p>
         </div>
-        <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4 mr-2" />
-          Nova Mesa
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setBatchDialogOpen(true)}>
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Criar em Sequência
+          </Button>
+          <Button onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Mesa
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -255,6 +263,11 @@ const AdminTables = () => {
         open={qrDialogOpen}
         onOpenChange={setQrDialogOpen}
         table={selectedTableForQR}
+      />
+
+      <BatchTableFormDialog
+        open={batchDialogOpen}
+        onOpenChange={setBatchDialogOpen}
       />
     </div>
   );
