@@ -738,6 +738,7 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: string
+          identification_type: string | null
           is_active: boolean | null
           logo_url: string | null
           name: string
@@ -758,6 +759,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          identification_type?: string | null
           is_active?: boolean | null
           logo_url?: string | null
           name: string
@@ -778,6 +780,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          identification_type?: string | null
           is_active?: boolean | null
           logo_url?: string | null
           name?: string

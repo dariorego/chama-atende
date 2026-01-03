@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { ArrowLeft, HelpCircle, CheckCircle, FileEdit, MapPin, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, HelpCircle, CheckCircle, FileEdit, MapPin, Send, Loader2, User, Bed, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useSubmitOrder, OrderSelection } from "@/hooks/useSubmitOrder";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useClientOrderItem } from "@/hooks/useClientItemCombinations";
+import { IDENTIFICATION_CONFIG, IdentificationType } from "@/types/restaurant";
 
 interface LocationState {
   orderItemId: string;
@@ -27,15 +28,24 @@ const OrderReviewPage = () => {
   const submitOrder = useSubmitOrder();
 
   const [observations, setObservations] = useState(orderData?.notes || "");
-  const [tableNumber, setTableNumber] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [identification, setIdentification] = useState("");
+
+  const identificationType: IdentificationType = restaurant?.identification_type || 'table';
+  const idConfig = IDENTIFICATION_CONFIG[identificationType];
 
   const handleBack = () => {
     navigate(-1);
   };
 
   const handleSubmit = async () => {
-    if (!tableNumber.trim()) {
-      toast.error("Por favor, informe o número da mesa ou quarto");
+    if (!customerName.trim()) {
+      toast.error("Por favor, informe seu nome");
+      return;
+    }
+
+    if (!identification.trim()) {
+      toast.error(`Por favor, informe ${idConfig.label.toLowerCase()}`);
       return;
     }
 
@@ -49,7 +59,8 @@ const OrderReviewPage = () => {
         restaurantId: restaurant.id,
         orderItemId: baseId,
         orderItemName: orderData?.orderItemName || orderItem?.name || "Pedido",
-        tableNumber: tableNumber.trim(),
+        customerName: customerName.trim(),
+        tableNumber: identification.trim(),
         observations: observations.trim() || undefined,
         selections: orderData?.selections || [],
       });
@@ -71,6 +82,13 @@ const OrderReviewPage = () => {
     (sum, s) => sum + (s.additionalPrice * s.quantity),
     0
   );
+
+  // Icon based on identification type
+  const IdentificationIcon = identificationType === 'table' 
+    ? MapPin 
+    : identificationType === 'room' 
+      ? Bed 
+      : Smartphone;
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -171,20 +189,34 @@ const OrderReviewPage = () => {
           </div>
         </div>
 
-        {/* Identification */}
+        {/* Customer Name */}
         <div className="mb-6">
-          <h3 className="text-lg font-bold mb-2">Identificação</h3>
+          <h3 className="text-lg font-bold mb-2">Seu Nome</h3>
           <div className="relative">
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
-              placeholder="Número da Mesa ou Quarto"
-              value={tableNumber}
-              onChange={(e) => setTableNumber(e.target.value)}
+              placeholder="Como podemos chamar você?"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="pl-12 h-14 text-base bg-surface placeholder:text-surface-foreground border-border rounded-xl"
+            />
+          </div>
+        </div>
+
+        {/* Identification (Mesa/Quarto/Telefone) */}
+        <div className="mb-6">
+          <h3 className="text-lg font-bold mb-2">{idConfig.label}</h3>
+          <div className="relative">
+            <IdentificationIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              placeholder={idConfig.placeholder}
+              value={identification}
+              onChange={(e) => setIdentification(e.target.value)}
               className="pl-12 h-14 text-base bg-surface placeholder:text-surface-foreground border-border rounded-xl"
             />
           </div>
           <p className="text-xs text-muted-foreground mt-2 ml-1">
-            Usaremos esta informação para entregar seu pedido.
+            {idConfig.helpText}
           </p>
         </div>
       </div>

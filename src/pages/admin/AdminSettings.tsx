@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone } from 'lucide-react';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
-import { formatTime } from '@/types/restaurant';
+import { formatTime, IdentificationType } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
 import { hexToHsl, hslToHex, DEFAULT_COLORS } from '@/lib/color-utils';
+import { TableProperties } from 'lucide-react';
 
 const settingsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
@@ -23,6 +24,7 @@ const settingsSchema = z.object({
   status: z.enum(['open', 'closed']),
   opening_time: z.string().optional().nullable(),
   closing_time: z.string().optional().nullable(),
+  identification_type: z.enum(['table', 'room', 'phone']),
   wifi_network: z.string().max(100).optional(),
   wifi_password: z.string().max(100).optional(),
   instagram: z.string().max(200).optional(),
@@ -55,6 +57,7 @@ export default function AdminSettings() {
       status: 'closed',
       opening_time: '',
       closing_time: '',
+      identification_type: 'table',
       wifi_network: '',
       wifi_password: '',
       instagram: '',
@@ -74,6 +77,7 @@ export default function AdminSettings() {
         status: (restaurant.status as 'open' | 'closed') || 'closed',
         opening_time: formatTime(restaurant.opening_time) || '',
         closing_time: formatTime(restaurant.closing_time) || '',
+        identification_type: restaurant.identification_type || 'table',
         wifi_network: restaurant.wifi_info?.network || '',
         wifi_password: restaurant.wifi_info?.password || '',
         instagram: restaurant.social_links?.instagram || '',
@@ -110,6 +114,7 @@ export default function AdminSettings() {
       status: data.status,
       opening_time: data.opening_time || null,
       closing_time: data.closing_time || null,
+      identification_type: data.identification_type as IdentificationType,
       logo_url: logoUrl,
       cover_image_url: coverUrl,
       wifi_info: {
@@ -288,6 +293,60 @@ export default function AdminSettings() {
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="closed" id="closed" />
                           <Label htmlFor="closed" className="text-red-600 font-medium">Fechado</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Configurações de Pedido */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <ClipboardList className="h-5 w-5" />
+                Configurações de Pedido
+              </CardTitle>
+              <CardDescription>
+                Configure como os clientes se identificam ao fazer pedidos
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="identification_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de Identificação</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-col gap-3"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="table" id="id-table" />
+                          <Label htmlFor="id-table" className="flex items-center gap-2 cursor-pointer">
+                            <TableProperties className="h-4 w-4" />
+                            Mesa
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="room" id="id-room" />
+                          <Label htmlFor="id-room" className="flex items-center gap-2 cursor-pointer">
+                            <Bed className="h-4 w-4" />
+                            Quarto
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="phone" id="id-phone" />
+                          <Label htmlFor="id-phone" className="flex items-center gap-2 cursor-pointer">
+                            <Smartphone className="h-4 w-4" />
+                            Telefone Celular
+                          </Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
