@@ -66,7 +66,8 @@ export function ThemeProvider({
     localStorage.setItem(storageKey, theme);
   }, [theme, storageKey]);
 
-  // Apply custom theme colors
+  // Apply custom theme colors - only primary/accent (works in both themes)
+  // Background and card colors are handled by CSS per light/dark theme
   useEffect(() => {
     const root = document.documentElement;
     const colors = themeColors || {};
@@ -81,24 +82,12 @@ export function ThemeProvider({
       root.style.setProperty('--ring', DEFAULT_COLORS.primary!);
     }
     
-    if (colors.background) {
-      root.style.setProperty('--background', colors.background);
-    } else {
-      root.style.removeProperty('--background');
-    }
-    
-    if (colors.card) {
-      root.style.setProperty('--card', colors.card);
-    } else {
-      root.style.removeProperty('--card');
-    }
+    // DO NOT apply background/card from database - let CSS handle per theme
 
     return () => {
       root.style.removeProperty('--primary');
       root.style.removeProperty('--accent');
       root.style.removeProperty('--ring');
-      root.style.removeProperty('--background');
-      root.style.removeProperty('--card');
     };
   }, [themeColors]);
 
