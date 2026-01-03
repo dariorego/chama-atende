@@ -231,7 +231,7 @@ const ReservationsPage = () => {
             </p>
 
             {/* Details Card */}
-            <div className="w-full max-w-sm p-6 bg-surface-dark rounded-2xl border border-border/50">
+            <div className="w-full max-w-sm p-6 bg-surface rounded-2xl border border-border/50">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="w-5 h-5 text-primary" />
@@ -351,7 +351,7 @@ const ReservationsPage = () => {
       {/* Tabs */}
       <div className="px-4 -mt-4 relative z-10">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1">
+          <TabsList className="w-full h-12 bg-surface/80 backdrop-blur-sm rounded-2xl p-1">
             <TabsTrigger value="new" className="flex-1 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Fazer Reserva
             </TabsTrigger>
@@ -366,7 +366,7 @@ const ReservationsPage = () => {
               {/* Section: Date */}
               <div className="space-y-3">
                 <h2 className="text-xl font-bold text-foreground">Escolha uma data</h2>
-                <div className="bg-surface-dark rounded-2xl p-4 border border-border/30">
+                <div className="bg-surface rounded-2xl p-4 border border-border/30">
                   <Calendar
                     mode="single"
                     selected={date}
@@ -428,7 +428,7 @@ const ReservationsPage = () => {
                           "px-5 py-3 rounded-full text-sm font-medium transition-all whitespace-nowrap",
                           time === slot
                             ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
-                            : "bg-surface-dark text-foreground hover:bg-white/10 border border-border/30"
+                            : "bg-surface text-foreground hover:bg-white/10 border border-border/30"
                         )}
                       >
                         {slot}
@@ -440,7 +440,7 @@ const ReservationsPage = () => {
 
               {/* Section: Party Size Counter */}
               <div className="space-y-3">
-                <div className="bg-surface-dark rounded-2xl p-5 border border-border/30">
+                <div className="bg-surface rounded-2xl p-5 border border-border/30">
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-lg font-bold text-foreground">Quantas pessoas?</h2>
@@ -502,7 +502,7 @@ const ReservationsPage = () => {
                     onChange={(e) => setName(e.target.value)}
                     onFocus={() => setNameFocused(true)}
                     onBlur={() => setNameFocused(false)}
-                    className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                    className="h-14 pl-12 bg-surface border-border/30 rounded-xl text-base text-foreground placeholder:text-surface-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                   />
                 </div>
 
@@ -522,7 +522,7 @@ const ReservationsPage = () => {
                     onFocus={() => setPhoneFocused(true)}
                     onBlur={() => setPhoneFocused(false)}
                     maxLength={15}
-                    className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                    className="h-14 pl-12 bg-surface border-border/30 rounded-xl text-base text-foreground placeholder:text-surface-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                   />
                 </div>
 
@@ -540,7 +540,7 @@ const ReservationsPage = () => {
                     onChange={(e) => setObservation(e.target.value)}
                     onFocus={() => setObservationFocused(true)}
                     onBlur={() => setObservationFocused(false)}
-                    className="min-h-[100px] pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
+                    className="min-h-[100px] pl-12 bg-surface border-border/30 rounded-xl text-base text-foreground placeholder:text-surface-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
                   />
                 </div>
               </div>
@@ -583,7 +583,7 @@ const ReservationsPage = () => {
                     onFocus={() => setSearchPhoneFocused(true)}
                     onBlur={() => setSearchPhoneFocused(false)}
                     maxLength={15}
-                    className="h-14 pl-12 bg-surface-dark border-border/30 rounded-xl text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                    className="h-14 pl-12 bg-surface border-border/30 rounded-xl text-base text-foreground placeholder:text-surface-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                   />
                 </div>
               </div>
@@ -597,7 +597,7 @@ const ReservationsPage = () => {
                 )}
 
                 {!isSearching && searchPhone.length >= 10 && foundReservations?.length === 0 && (
-                  <Card className="bg-surface-dark border-border/30">
+                  <Card className="bg-surface border-border/30">
                     <CardContent className="p-6 text-center">
                       <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground/50 mb-2" />
                       <p className="text-muted-foreground">Nenhuma reserva encontrada para este telefone.</p>
@@ -610,7 +610,7 @@ const ReservationsPage = () => {
                   const reservationDate = new Date(reservation.reservation_date + 'T12:00:00');
                   
                   return (
-                    <Card key={reservation.id} className="bg-surface-dark border-border/30">
+                    <Card key={reservation.id} className="bg-surface border-border/30">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div>
