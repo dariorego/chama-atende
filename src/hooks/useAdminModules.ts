@@ -16,7 +16,7 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     icon: "UtensilsCrossed",
   },
   waiter_call: {
-    label: "Chamar Garçom",
+    label: "Chamar Atendente",
     description: "Permite que clientes chamem o garçom pela mesa",
     icon: "Bell",
   },
@@ -45,12 +45,14 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
 export function useAdminModules() {
   const queryClient = useQueryClient();
 
-  const { data: modules, isLoading, error } = useQuery({
-    queryKey: ['admin-modules'],
+  const {
+    data: modules,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["admin-modules"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('restaurant_modules')
-        .select('id, module_name, is_active, settings');
+      const { data, error } = await supabase.from("restaurant_modules").select("id, module_name, is_active, settings");
 
       if (error) throw error;
       return data as RestaurantModule[];
@@ -59,20 +61,17 @@ export function useAdminModules() {
 
   const toggleModuleMutation = useMutation({
     mutationFn: async ({ moduleId, isActive }: { moduleId: string; isActive: boolean }) => {
-      const { error } = await supabase
-        .from('restaurant_modules')
-        .update({ is_active: isActive })
-        .eq('id', moduleId);
+      const { error } = await supabase.from("restaurant_modules").update({ is_active: isActive }).eq("id", moduleId);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-modules'] });
-      queryClient.invalidateQueries({ queryKey: ['restaurant-modules'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-modules"] });
+      queryClient.invalidateQueries({ queryKey: ["restaurant-modules"] });
       toast.success("Módulo atualizado com sucesso!");
     },
     onError: (error) => {
-      console.error('Error toggling module:', error);
+      console.error("Error toggling module:", error);
       toast.error("Erro ao atualizar módulo");
     },
   });
