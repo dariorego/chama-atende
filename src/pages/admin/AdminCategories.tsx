@@ -21,6 +21,7 @@ import {
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
+  useReorderCategories,
   type MenuCategory,
 } from '@/hooks/useAdminCategories';
 import { CategoryFormDialog, type CategoryFormData } from '@/components/admin/CategoryFormDialog';
@@ -42,6 +43,9 @@ export default function AdminCategories() {
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
+  const reorderCategories = useReorderCategories();
+
+  const isFiltered = statusFilter !== 'all' || searchQuery !== '';
 
   const filteredCategories = useMemo(() => {
     if (!categories) return [];
@@ -123,6 +127,21 @@ export default function AdminCategories() {
     }
   };
 
+  const handleReorder = async (reorderedCategories: MenuCategory[]) => {
+    const updates = reorderedCategories.map((cat, index) => ({
+      id: cat.id,
+      display_order: index,
+    }));
+
+    try {
+      await reorderCategories.mutateAsync(updates);
+      toast.success('Ordem atualizada!');
+    } catch (error) {
+      toast.error('Erro ao reordenar categorias');
+      console.error(error);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -171,11 +190,19 @@ export default function AdminCategories() {
             </Tabs>
           </div>
 
+          {isFiltered && (
+            <p className="text-xs text-muted-foreground">
+              💡 Limpe os filtros para reordenar as categorias
+            </p>
+          )}
+
           <CategoriesTable
             categories={filteredCategories}
             isLoading={isLoading}
             onEdit={handleOpenEdit}
             onDelete={handleOpenDelete}
+            onReorder={handleReorder}
+            isDragDisabled={isFiltered}
           />
         </CardContent>
       </Card>
