@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -16,16 +16,62 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { supabase } from "@/integrations/supabase/client";
+
+interface TableData {
+  id: string;
+  number: number;
+  name: string | null;
+  capacity: number | null;
+  status: string | null;
+}
 
 const WaiterCallPage = () => {
   const navigate = useNavigate();
+  const { tableId } = useParams<{ tableId: string }>();
   const { toast } = useToast();
-  const [tableNumber] = useState("05");
+  const [tableData, setTableData] = useState<TableData | null>(null);
+  const [isLoadingTable, setIsLoadingTable] = useState(!!tableId);
   const [isWaiterCalled, setIsWaiterCalled] = useState(false);
   const [isBillRequested, setIsBillRequested] = useState(false);
   const [activeTab, setActiveTab] = useState("atendimento");
 
   const { restaurant, isLoading } = useAdminSettings();
+
+  // Fetch table data when tableId is in URL
+  useEffect(() => {
+    if (!tableId) {
+      setIsLoadingTable(false);
+      return;
+    }
+
+    const fetchTable = async () => {
+      setIsLoadingTable(true);
+      const { data, error } = await supabase
+        .from("tables")
+        .select("id, number, name, capacity, status")
+        .eq("id", tableId)
+        .eq("is_active", true)
+        .single();
+
+      if (error || !data) {
+        toast({
+          title: "Mesa não encontrada",
+          description: "O QR Code pode estar inválido ou a mesa foi desativada.",
+          variant: "destructive",
+        });
+        navigate("/solicitar-atendimento");
+        return;
+      }
+
+      setTableData(data);
+      setIsLoadingTable(false);
+    };
+
+    fetchTable();
+  }, [tableId, navigate, toast]);
+
+  const tableNumber = tableData?.number?.toString().padStart(2, "0") || "00";
 
   const handleCallWaiter = () => {
     setIsWaiterCalled(true);
@@ -54,10 +100,21 @@ const WaiterCallPage = () => {
 
   const isRequestActive = isWaiterCalled || isBillRequested;
 
-  if (isLoading) {
+  if (isLoading || isLoadingTable) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (tableId && !tableData) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Mesa não encontrada</h1>
+        <p className="text-muted-foreground text-center">
+          O QR Code pode estar inválido ou a mesa foi desativada.
+        </p>
       </div>
     );
   }

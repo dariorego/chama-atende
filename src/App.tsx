@@ -45,6 +45,7 @@ const App = () => (
           {/* Public pages */}
           <Route path="/" element={<HubPage />} />
           <Route path="/cardapio" element={<MenuPage />} />
+          <Route path="/atendimento/:tableId" element={<WaiterCallPage />} />
           <Route path="/solicitar-atendimento" element={<WaiterCallPage />} />
           <Route path="/reservas" element={<ReservationsPage />} />
           <Route path="/fila" element={<QueuePage />} />

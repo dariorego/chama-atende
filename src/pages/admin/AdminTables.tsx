@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Users } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useAdminTables, useDeleteTable, Table as TableType } from "@/hooks/useAdminTables";
 import { TableFormDialog } from "@/components/admin/TableFormDialog";
+import { QRCodeDialog } from "@/components/admin/QRCodeDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const statusConfig = {
@@ -21,6 +22,8 @@ const AdminTables = () => {
   const deleteTable = useDeleteTable();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<TableType | null>(null);
+  const [qrDialogOpen, setQrDialogOpen] = useState(false);
+  const [selectedTableForQR, setSelectedTableForQR] = useState<TableType | null>(null);
 
   const handleEdit = (table: TableType) => {
     setEditingTable(table);
@@ -30,6 +33,11 @@ const AdminTables = () => {
   const handleCreate = () => {
     setEditingTable(null);
     setDialogOpen(true);
+  };
+
+  const handleShowQR = (table: TableType) => {
+    setSelectedTableForQR(table);
+    setQrDialogOpen(true);
   };
 
   const stats = {
@@ -120,6 +128,16 @@ const AdminTables = () => {
                       'border-gray-300 bg-gray-100 opacity-50'
                     }`}
                   >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShowQR(table);
+                      }}
+                      className="absolute top-1 right-1 p-1 rounded hover:bg-black/10 transition-colors"
+                      title="Ver QR Code"
+                    >
+                      <QrCode className="h-3 w-3 text-muted-foreground" />
+                    </button>
                     <div className="text-lg font-bold">{table.number.toString().padStart(2, '0')}</div>
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                       <Users className="h-3 w-3" />
@@ -186,6 +204,9 @@ const AdminTables = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => handleShowQR(table)} title="QR Code">
+                            <QrCode className="h-4 w-4" />
+                          </Button>
                           <Button size="sm" variant="ghost" onClick={() => handleEdit(table)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -228,6 +249,12 @@ const AdminTables = () => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         table={editingTable}
+      />
+
+      <QRCodeDialog
+        open={qrDialogOpen}
+        onOpenChange={setQrDialogOpen}
+        table={selectedTableForQR}
       />
     </div>
   );
