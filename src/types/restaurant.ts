@@ -11,6 +11,13 @@ export interface WifiInfo {
   password?: string;
 }
 
+export interface ThemeColors {
+  primary?: string;
+  background?: string;
+  card?: string;
+  accent?: string;
+}
+
 export interface ModulesMap {
   menu: boolean;
   waiterCall: boolean;
