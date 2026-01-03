@@ -75,12 +75,12 @@ const WaiterCallPage = () => {
         callType: "waiter",
       });
       toast({
-        title: "Garçom chamado!",
+        title: "Atendente chamado!",
         description: "Um atendente está a caminho da sua mesa.",
       });
     } catch (error) {
       toast({
-        title: "Erro ao chamar garçom",
+        title: "Erro ao chamar atendente",
         description: "Tente novamente.",
         variant: "destructive",
       });
@@ -136,7 +136,7 @@ const WaiterCallPage = () => {
 
   const getCallTypeLabel = (type: string) => {
     switch (type) {
-      case "waiter": return "Garçom";
+      case "waiter": return "Atendente";
       case "bill": return "Conta";
       case "help": return "Ajuda";
       default: return type;
@@ -326,8 +326,8 @@ const WaiterCallPage = () => {
                   <Bell className="h-7 w-7 text-primary" />
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="font-semibold text-foreground text-lg">Solicitar Atendimento</h3>
-                  <p className="text-sm text-muted-foreground">Chamar garçom na mesa</p>
+                  <h3 className="font-semibold text-foreground text-lg">Chamar Atendente</h3>
+                  <p className="text-sm text-muted-foreground">Solicitar atendimento na mesa</p>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               </button>
