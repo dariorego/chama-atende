@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
+import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
 import { Loader2 } from 'lucide-react';
 import type { MenuProduct } from '@/hooks/useAdminProducts';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
@@ -39,7 +40,7 @@ const productSchema = z.object({
   category_id: z.string().min(1, 'Categoria é obrigatória'),
   price: z.coerce.number().positive('Preço deve ser maior que zero'),
   promotional_price: z.coerce.number().positive().optional().nullable(),
-  image_url: z.string().url('URL inválida').optional().nullable().or(z.literal('')),
+  image_url: z.string().optional().nullable(),
   is_highlight: z.boolean().default(false),
   is_active: z.boolean().default(true),
   display_order: z.coerce.number().int().min(0).default(0),
@@ -255,18 +256,14 @@ export function ProductFormDialog({
               name="image_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL da Imagem</FormLabel>
+                  <FormLabel>Imagem do Produto</FormLabel>
                   <FormControl>
-                    <Input
-                      type="url"
-                      placeholder="https://exemplo.com/imagem.jpg"
-                      {...field}
-                      value={field.value || ''}
+                    <ImageUploadWithCrop
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="produtos"
                     />
                   </FormControl>
-                  <FormDescription>
-                    Cole a URL de uma imagem do produto
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
