@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { ImageZoomDialog } from "./image-zoom-dialog";
+import { ZoomIn } from "lucide-react";
 
 interface ProductCardProps {
   name: string;
@@ -21,6 +24,8 @@ export function ProductCard({
   className,
   onClick,
 }: ProductCardProps) {
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  
   const formattedPrice = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
@@ -40,22 +45,41 @@ export function ProductCard({
     >
       {/* Image */}
       {image ? (
-        <div className="relative shrink-0">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsZoomOpen(true);
+          }}
+          className="relative shrink-0 cursor-zoom-in group"
+        >
           <img
             src={image}
             alt={name}
             className="w-20 h-20 rounded-lg object-cover"
           />
+          <div className="absolute bottom-1 right-1 p-1 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+            <ZoomIn className="h-3 w-3 text-white" />
+          </div>
           {highlight && (
             <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded-full">
               Chef
             </span>
           )}
-        </div>
+        </button>
       ) : (
         <div className="w-20 h-20 rounded-lg bg-secondary shrink-0 flex items-center justify-center">
           <span className="text-2xl">🍽️</span>
         </div>
+      )}
+
+      {image && (
+        <ImageZoomDialog
+          src={image}
+          alt={name}
+          open={isZoomOpen}
+          onOpenChange={setIsZoomOpen}
+        />
       )}
 
       {/* Content */}

@@ -1,10 +1,12 @@
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { ImageZoomDialog } from "./image-zoom-dialog";
+import { ZoomIn } from "lucide-react";
 
 interface Product {
   id: string;
@@ -27,6 +29,8 @@ export function ProductDetailSheet({
   open,
   onOpenChange,
 }: ProductDetailSheetProps) {
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+
   if (!product) return null;
 
   const formattedPrice = new Intl.NumberFormat("pt-BR", {
@@ -40,11 +44,20 @@ export function ProductDetailSheet({
         {/* Image */}
         <div className="relative w-full aspect-[16/10] bg-secondary">
           {product.image ? (
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
+            <button
+              type="button"
+              onClick={() => setIsZoomOpen(true)}
+              className="w-full h-full cursor-zoom-in group"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-3 right-3 p-2 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                <ZoomIn className="h-4 w-4 text-white" />
+              </div>
+            </button>
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <span className="text-6xl">🍽️</span>
@@ -52,7 +65,7 @@ export function ProductDetailSheet({
           )}
           
           {/* Badges overlay */}
-          <div className="absolute top-4 left-4 flex gap-2">
+          <div className="absolute top-4 left-4 flex gap-2 pointer-events-none">
             {product.highlight && (
               <span className="px-3 py-1 text-xs font-bold bg-primary text-primary-foreground rounded-full">
                 ⭐ Sugestão do Chef
@@ -65,6 +78,15 @@ export function ProductDetailSheet({
             )}
           </div>
         </div>
+
+        {product.image && (
+          <ImageZoomDialog
+            src={product.image}
+            alt={product.name}
+            open={isZoomOpen}
+            onOpenChange={setIsZoomOpen}
+          />
+        )}
 
         {/* Content */}
         <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(85vh-40vw)]">
