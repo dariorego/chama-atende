@@ -186,6 +186,363 @@ export type Database = {
           },
         ]
       }
+      order_combination_groups: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          is_required: boolean | null
+          max_selections: number | null
+          min_selections: number | null
+          name: string
+          restaurant_id: string
+          selection_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_required?: boolean | null
+          max_selections?: number | null
+          min_selections?: number | null
+          name: string
+          restaurant_id: string
+          selection_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_required?: boolean | null
+          max_selections?: number | null
+          min_selections?: number | null
+          name?: string
+          restaurant_id?: string
+          selection_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_combination_groups_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_combination_options: {
+        Row: {
+          additional_price: number | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          emoji: string | null
+          group_id: string
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          additional_price?: number | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          emoji?: string | null
+          group_id: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          additional_price?: number | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          emoji?: string | null
+          group_id?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_combination_options_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "order_combination_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_item_groups: {
+        Row: {
+          combination_group_id: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_required: boolean | null
+          order_item_id: string
+        }
+        Insert: {
+          combination_group_id: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_required?: boolean | null
+          order_item_id: string
+        }
+        Update: {
+          combination_group_id?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_required?: boolean | null
+          order_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_item_groups_combination_group_id_fkey"
+            columns: ["combination_group_id"]
+            isOneToOne: false
+            referencedRelation: "order_combination_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_item_groups_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          price: number | null
+          restaurant_id: string
+          tags: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          price?: number | null
+          restaurant_id: string
+          tags?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          price?: number | null
+          restaurant_id?: string
+          tags?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_line_item_selections: {
+        Row: {
+          additional_price: number | null
+          combination_option_id: string
+          created_at: string | null
+          id: string
+          line_item_id: string
+          option_name: string
+          quantity: number | null
+        }
+        Insert: {
+          additional_price?: number | null
+          combination_option_id: string
+          created_at?: string | null
+          id?: string
+          line_item_id: string
+          option_name: string
+          quantity?: number | null
+        }
+        Update: {
+          additional_price?: number | null
+          combination_option_id?: string
+          created_at?: string | null
+          id?: string
+          line_item_id?: string
+          option_name?: string
+          quantity?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_line_item_selections_combination_option_id_fkey"
+            columns: ["combination_option_id"]
+            isOneToOne: false
+            referencedRelation: "order_combination_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_line_item_selections_line_item_id_fkey"
+            columns: ["line_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_line_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_line_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_name: string
+          observations: string | null
+          order_id: string
+          order_item_id: string
+          quantity: number | null
+          unit_price: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_name: string
+          observations?: string | null
+          order_id: string
+          order_item_id: string
+          quantity?: number | null
+          unit_price?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_name?: string
+          observations?: string | null
+          order_id?: string
+          order_item_id?: string
+          quantity?: number | null
+          unit_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_line_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_line_items_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          cancelled_at: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          customer_name: string | null
+          delivered_at: string | null
+          id: string
+          observations: string | null
+          order_number: number
+          preparing_at: string | null
+          ready_at: string | null
+          restaurant_id: string
+          status: string | null
+          table_id: string | null
+          table_number: string | null
+          total_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          customer_name?: string | null
+          delivered_at?: string | null
+          id?: string
+          observations?: string | null
+          order_number?: number
+          preparing_at?: string | null
+          ready_at?: string | null
+          restaurant_id: string
+          status?: string | null
+          table_id?: string | null
+          table_number?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          customer_name?: string | null
+          delivered_at?: string | null
+          id?: string
+          observations?: string | null
+          order_number?: number
+          preparing_at?: string | null
+          ready_at?: string | null
+          restaurant_id?: string
+          status?: string | null
+          table_id?: string | null
+          table_number?: string | null
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null

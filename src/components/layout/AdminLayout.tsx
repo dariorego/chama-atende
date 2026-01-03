@@ -26,6 +26,8 @@ import {
   Users,
   LogOut,
   ChefHat,
+  Package,
+  Layers,
   ExternalLink,
   Bell,
   Calendar,
@@ -64,6 +66,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'queue', title: 'Fila', url: '/admin/fila', icon: Users },
     { moduleName: 'customer_review', title: 'Avaliações', url: '/admin/avaliacoes', icon: Star },
     { moduleName: 'kitchen_order', title: 'Pedidos', url: '/admin/pedidos', icon: ChefHat },
+    { moduleName: 'kitchen_order', title: 'Itens do Pedido', url: '/admin/itens-pedido', icon: Package },
+    { moduleName: 'kitchen_order', title: 'Combinações', url: '/admin/combinacoes', icon: Layers },
   ].filter((item) => isModuleActive(item.moduleName));
 
   const menuGroups = [

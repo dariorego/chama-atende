@@ -31,6 +31,8 @@ import AdminReservations from "./pages/admin/AdminReservations";
 import AdminQueue from "./pages/admin/AdminQueue";
 import AdminReviews from "./pages/admin/AdminReviews";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminOrderItems from "./pages/admin/AdminOrderItems";
+import AdminCombinationGroups from "./pages/admin/AdminCombinationGroups";
 import AdminMetrics from "./pages/admin/AdminMetrics";
 
 const queryClient = new QueryClient();
@@ -186,6 +188,26 @@ const App = () => (
               <AuthGuard requireAdmin>
                 <AdminLayout>
                   <AdminOrders />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/admin/itens-pedido"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminOrderItems />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/admin/combinacoes"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminCombinationGroups />
                 </AdminLayout>
               </AuthGuard>
             }
