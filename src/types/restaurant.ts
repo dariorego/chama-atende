@@ -1,5 +1,29 @@
 // Types for JSONB fields from Supabase
 
+export type IdentificationType = 'table' | 'room' | 'phone';
+
+export const IDENTIFICATION_CONFIG: Record<IdentificationType, { 
+  label: string; 
+  placeholder: string; 
+  helpText: string;
+}> = {
+  table: { 
+    label: 'Mesa', 
+    placeholder: 'Número da Mesa',
+    helpText: 'Usaremos esta informação para entregar seu pedido.'
+  },
+  room: { 
+    label: 'Quarto', 
+    placeholder: 'Número do Quarto',
+    helpText: 'Usaremos esta informação para entregar seu pedido.'
+  },
+  phone: { 
+    label: 'Telefone', 
+    placeholder: '(11) 99999-9999',
+    helpText: 'Usaremos para entrar em contato sobre seu pedido.'
+  },
+};
+
 export interface SocialLinks {
   instagram?: string;
   facebook?: string;

@@ -13,6 +13,7 @@ export interface SubmitOrderData {
   restaurantId: string;
   orderItemId: string;
   orderItemName: string;
+  customerName: string;
   tableNumber: string;
   observations?: string;
   selections: OrderSelection[];
@@ -31,6 +32,7 @@ export function useSubmitOrder() {
         .from("orders")
         .insert({
           restaurant_id: data.restaurantId,
+          customer_name: data.customerName || null,
           table_number: data.tableNumber,
           observations: data.observations,
           status: "pending",
