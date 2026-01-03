@@ -56,7 +56,7 @@ export default function QueuePage() {
   }, [queueEntry]);
 
   const handleJoinQueue = async () => {
-    if (!name.trim()) {
+    if (!name.trim() || !phone.trim()) {
       return;
     }
 
@@ -357,7 +357,7 @@ export default function QueuePage() {
             {/* Name input */}
             <div className="space-y-2 mb-4">
               <Label htmlFor="name" className="text-muted-foreground">
-                Nome
+                Nome <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -374,7 +374,7 @@ export default function QueuePage() {
             {/* Phone input */}
             <div className="space-y-2 mb-4">
               <Label htmlFor="phone" className="text-muted-foreground">
-                Telefone (opcional)
+                Telefone <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
