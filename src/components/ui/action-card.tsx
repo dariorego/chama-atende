@@ -12,6 +12,7 @@ interface ActionCardProps {
   badge?: string;
   image?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export function ActionCard({
@@ -23,6 +24,7 @@ export function ActionCard({
   badge,
   image,
   className,
+  disabled = false,
 }: ActionCardProps) {
   // Hero variant - large card with image
   if (variant === "hero") {
@@ -103,6 +105,56 @@ export function ActionCard({
 
     const colors = colorClasses[variant as keyof typeof colorClasses];
 
+    const content = (
+      <div className="flex items-center gap-4">
+        <div
+          className={cn(
+            "p-3 rounded-full shrink-0",
+            colors.iconBg
+          )}
+        >
+          <Icon className={cn("h-5 w-5", colors.iconColor)} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className={cn(
+              "font-semibold transition-colors",
+              disabled ? "text-muted-foreground" : "text-foreground group-hover:text-primary"
+            )}>
+              {title}
+            </h3>
+            {badge && (
+              <span className="px-2 py-0.5 text-xs font-medium bg-secondary text-muted-foreground rounded-full">
+                {badge}
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
+            {description}
+          </p>
+        </div>
+        <ChevronRight className={cn(
+          "h-5 w-5 shrink-0 transition-colors",
+          disabled ? "text-muted-foreground/50" : "text-muted-foreground group-hover:text-primary"
+        )} />
+      </div>
+    );
+
+    if (disabled) {
+      return (
+        <div
+          className={cn(
+            "block p-4 rounded-xl border border-border",
+            "bg-card opacity-50 cursor-not-allowed",
+            "animate-fade-in",
+            className
+          )}
+        >
+          {content}
+        </div>
+      );
+    }
+
     return (
       <Link
         to={to}
@@ -113,32 +165,7 @@ export function ActionCard({
           className
         )}
       >
-        <div className="flex items-center gap-4">
-          <div
-            className={cn(
-              "p-3 rounded-full shrink-0",
-              colors.iconBg
-            )}
-          >
-            <Icon className={cn("h-5 w-5", colors.iconColor)} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                {title}
-              </h3>
-              {badge && (
-                <span className="px-2 py-0.5 text-xs font-medium bg-secondary text-muted-foreground rounded-full">
-                  {badge}
-                </span>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
-              {description}
-            </p>
-          </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-        </div>
+        {content}
       </Link>
     );
   }
