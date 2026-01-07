@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { ActionCard } from "@/components/ui/action-card";
 import {
   UtensilsCrossed,
@@ -21,24 +21,47 @@ import {
   Star,
   Loader2,
   Settings,
+  X,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
 import { useRestaurantStatus } from "@/hooks/useRestaurantStatus";
+import { useTableContext } from "@/hooks/useTableContext";
 import { SocialLinks, WifiInfo, LocationCoordinates } from "@/types/restaurant";
 import { toast } from "sonner";
 import { generateGoogleMapsUrl } from "@/lib/google-maps-utils";
 
 const HubPage = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 
   // Fetch data from Supabase
   const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
   const { data: modules, isLoading: isLoadingModules } = useRestaurantModules();
+  const { table, tableNumber, tableName, hasTable, isLoading: isLoadingTable, setTable, clearTable } = useTableContext();
 
-  const isLoading = isLoadingRestaurant || isLoadingModules;
+  const isLoading = isLoadingRestaurant || isLoadingModules || isLoadingTable;
+
+  // Capture table from URL parameter
+  const mesaParam = searchParams.get("mesa");
+  
+  useEffect(() => {
+    if (mesaParam) {
+      setTable(mesaParam).then((success) => {
+        if (success) {
+          toast.success("Mesa identificada com sucesso!");
+          // Remove parameter from URL
+          navigate("/", { replace: true });
+        } else {
+          toast.error("Mesa não encontrada ou inativa");
+          navigate("/", { replace: true });
+        }
+      });
+    }
+  }, [mesaParam, setTable, navigate]);
 
   // Parse JSONB fields
   const socialLinks = (restaurant?.social_links as SocialLinks) ?? {};
@@ -180,6 +203,28 @@ const HubPage = () => {
                 <span className="text-sm font-medium">{statusText}</span>
               </div>
             </div>
+
+            {/* Table Badge */}
+            {hasTable && (
+              <div className="flex items-center gap-2 mt-3 px-4 py-2 rounded-xl bg-secondary border border-border">
+                <MapPin className="h-4 w-4 text-primary" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    Mesa {tableNumber?.toString().padStart(2, "0")}
+                  </p>
+                  {tableName && (
+                    <p className="text-xs text-muted-foreground">{tableName}</p>
+                  )}
+                </div>
+                <button
+                  onClick={clearTable}
+                  className="p-1 rounded-full hover:bg-muted transition-colors"
+                  title="Trocar mesa"
+                >
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Quick Action Buttons */}

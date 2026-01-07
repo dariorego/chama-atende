@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowLeft, HelpCircle, CheckCircle, FileEdit, MapPin, Send, Loader2, User, Bed, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useSubmitOrder, OrderSelection } from "@/hooks/useSubmitOrder";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useClientOrderItem } from "@/hooks/useClientItemCombinations";
+import { useTableContext } from "@/hooks/useTableContext";
 import { IDENTIFICATION_CONFIG, IdentificationType } from "@/types/restaurant";
 
 interface LocationState {
@@ -25,6 +26,7 @@ const OrderReviewPage = () => {
 
   const { restaurant } = useAdminSettings();
   const { data: orderItem } = useClientOrderItem(baseId);
+  const { tableNumber } = useTableContext();
   const submitOrder = useSubmitOrder();
 
   const [observations, setObservations] = useState(orderData?.notes || "");
@@ -33,6 +35,13 @@ const OrderReviewPage = () => {
 
   const identificationType: IdentificationType = restaurant?.identification_type || 'table';
   const idConfig = IDENTIFICATION_CONFIG[identificationType];
+
+  // Pre-fill identification with table number if available and type is 'table'
+  useEffect(() => {
+    if (tableNumber && identificationType === 'table' && !identification) {
+      setIdentification(tableNumber.toString());
+    }
+  }, [tableNumber, identificationType, identification]);
 
   const handleBack = () => {
     navigate(-1);

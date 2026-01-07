@@ -25,7 +25,7 @@ export const QRCodeDialog = ({ open, onOpenChange, table }: QRCodeDialogProps) =
   if (!table) return null;
 
   const baseUrl = window.location.origin;
-  const tableUrl = `${baseUrl}/atendimento/${table.id}`;
+  const tableUrl = `${baseUrl}/?mesa=${table.id}`;
 
   const handleCopyUrl = async () => {
     try {
@@ -122,7 +122,7 @@ export const QRCodeDialog = ({ open, onOpenChange, table }: QRCodeDialogProps) =
             <h1>Mesa ${table.number.toString().padStart(2, "0")}</h1>
             ${table.name ? `<p>${table.name}</p>` : ""}
             <div class="qr-code">${svgData}</div>
-            <p>Escaneie para chamar o atendente</p>
+            <p>Escaneie para acessar o restaurante</p>
             <p class="url">${tableUrl}</p>
           </div>
           <script>
