@@ -99,7 +99,7 @@ export function useCreateClientReservation() {
 
       const normalizedPhone = normalizePhone(data.phone);
 
-      const { data: reservation, error } = await supabase
+      const { error } = await supabase
         .from('reservations')
         .insert({
           reservation_code,
@@ -110,12 +110,23 @@ export function useCreateClientReservation() {
           reservation_time: data.reservation_time,
           notes: data.notes || null,
           status: 'pending',
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
-      return reservation as Reservation;
+      
+      // Retornar dados localmente para evitar conflito com RLS no SELECT
+      return {
+        id: '', // ID gerado pelo banco, não precisamos dele aqui
+        reservation_code,
+        customer_name: data.customer_name,
+        phone: normalizedPhone,
+        party_size: data.party_size,
+        reservation_date: data.reservation_date,
+        reservation_time: data.reservation_time,
+        notes: data.notes || null,
+        status: 'pending',
+        created_at: new Date().toISOString(),
+      } as Reservation;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client-reservations'] });
