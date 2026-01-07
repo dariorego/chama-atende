@@ -17,7 +17,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useTableContext } from "@/hooks/useTableContext";
-import { supabase } from "@/integrations/supabase/client";
+import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 
 interface TableData {
   id: string;
@@ -35,11 +35,19 @@ const WaiterCallPage = () => {
   
   const [tableData, setTableData] = useState<TableData | null>(null);
   const [isLoadingTable, setIsLoadingTable] = useState(!!urlTableId);
-  const [isWaiterCalled, setIsWaiterCalled] = useState(false);
-  const [isBillRequested, setIsBillRequested] = useState(false);
   const [activeTab, setActiveTab] = useState("atendimento");
 
   const { restaurant, isLoading } = useAdminSettings();
+  
+  // Hook for service calls - uses tableData.id when available
+  const { 
+    pendingCalls,
+    hasActiveCall, 
+    createCall, 
+    cancelCall, 
+    isCreatingCall,
+    isCancellingCall,
+  } = useClientServiceCall(tableData?.id || null);
 
   // Redirect old QR codes to new format
   useEffect(() => {
@@ -66,32 +74,76 @@ const WaiterCallPage = () => {
 
   const tableNumber = tableData?.number?.toString().padStart(2, "0") || "00";
 
-  const handleCallWaiter = () => {
-    setIsWaiterCalled(true);
-    toast({
-      title: "Garçom chamado!",
-      description: "Um atendente está a caminho da sua mesa.",
-    });
-  };
-
-  const handleRequestBill = () => {
-    setIsBillRequested(true);
-    toast({
-      title: "Conta solicitada!",
-      description: "Aguarde, a conta está sendo preparada.",
-    });
-  };
-
-  const handleCancelRequest = () => {
-    setIsWaiterCalled(false);
-    setIsBillRequested(false);
-    toast({
-      title: "Solicitação cancelada",
-      description: "Sua solicitação foi cancelada com sucesso.",
-    });
-  };
-
+  // Derive state from hook
+  const isWaiterCalled = hasActiveCall("waiter");
+  const isBillRequested = hasActiveCall("bill");
   const isRequestActive = isWaiterCalled || isBillRequested;
+
+  const handleCallWaiter = async () => {
+    if (!tableData?.id) return;
+    
+    try {
+      await createCall({
+        tableId: tableData.id,
+        sessionId: null,
+        callType: "waiter",
+      });
+      toast({
+        title: "Garçom chamado!",
+        description: "Um atendente está a caminho da sua mesa.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao chamar garçom",
+        description: "Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRequestBill = async () => {
+    if (!tableData?.id) return;
+    
+    try {
+      await createCall({
+        tableId: tableData.id,
+        sessionId: null,
+        callType: "bill",
+      });
+      toast({
+        title: "Conta solicitada!",
+        description: "Aguarde, a conta está sendo preparada.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao solicitar conta",
+        description: "Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    const activeCalls = pendingCalls.filter(c => 
+      ["pending", "acknowledged", "in_progress"].includes(c.status || "")
+    );
+    
+    try {
+      for (const call of activeCalls) {
+        await cancelCall(call.id);
+      }
+      toast({
+        title: "Solicitação cancelada",
+        description: "Sua solicitação foi cancelada com sucesso.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao cancelar",
+        description: "Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading || isLoadingTable || isLoadingContext) {
     return (
@@ -240,11 +292,15 @@ const WaiterCallPage = () => {
           {/* Call Waiter Card */}
           <button
             onClick={handleCallWaiter}
-            disabled={isRequestActive}
+            disabled={isRequestActive || isCreatingCall}
             className="w-full p-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center gap-4 hover:from-primary/30 hover:to-primary/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/30 transition-colors">
-              <Bell className="h-7 w-7 text-primary" />
+              {isCreatingCall ? (
+                <Loader2 className="h-7 w-7 text-primary animate-spin" />
+              ) : (
+                <Bell className="h-7 w-7 text-primary" />
+              )}
             </div>
             <div className="flex-1 text-left">
               <h3 className="font-semibold text-foreground text-lg">Solicitar Atendimento</h3>
@@ -256,11 +312,15 @@ const WaiterCallPage = () => {
           {/* Request Bill Card */}
           <button
             onClick={handleRequestBill}
-            disabled={isRequestActive}
+            disabled={isRequestActive || isCreatingCall}
             className="w-full p-4 rounded-2xl bg-secondary/50 border border-border flex items-center gap-4 hover:bg-secondary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-muted/80 transition-colors">
-              <Receipt className="h-7 w-7 text-muted-foreground" />
+              {isCreatingCall ? (
+                <Loader2 className="h-7 w-7 text-muted-foreground animate-spin" />
+              ) : (
+                <Receipt className="h-7 w-7 text-muted-foreground" />
+              )}
             </div>
             <div className="flex-1 text-left">
               <h3 className="font-semibold text-foreground text-lg">Pedir a Conta</h3>
@@ -288,9 +348,14 @@ const WaiterCallPage = () => {
             </div>
             <button
               onClick={handleCancelRequest}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive text-destructive-foreground font-medium text-sm hover:bg-destructive/90 transition-colors"
+              disabled={isCancellingCall}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive text-destructive-foreground font-medium text-sm hover:bg-destructive/90 transition-colors disabled:opacity-50"
             >
-              <X className="h-4 w-4" />
+              {isCancellingCall ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <X className="h-4 w-4" />
+              )}
               Cancelar
             </button>
           </div>
