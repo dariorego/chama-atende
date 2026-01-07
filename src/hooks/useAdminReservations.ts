@@ -162,7 +162,7 @@ export function useCreateReservation() {
     }) => {
       const reservation_code = await generateReservationCode();
 
-      const { data: reservation, error } = await supabase
+      const { error } = await supabase
         .from('reservations')
         .insert({
           reservation_code,
@@ -173,12 +173,28 @@ export function useCreateReservation() {
           reservation_time: data.reservation_time,
           notes: data.notes || null,
           status: 'pending',
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
-      return reservation as Reservation;
+
+      // Evita conflito de RLS no SELECT (PostgREST return=representation)
+      return {
+        id: '',
+        reservation_code,
+        customer_name: data.customer_name,
+        phone: data.phone,
+        party_size: data.party_size,
+        reservation_date: data.reservation_date,
+        reservation_time: data.reservation_time,
+        notes: data.notes || null,
+        admin_notes: null,
+        status: 'pending',
+        confirmed_at: null,
+        cancelled_at: null,
+        completed_at: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as Reservation;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-reservations'] });
