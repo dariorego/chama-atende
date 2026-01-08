@@ -3,7 +3,8 @@ import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
 import { ProductDetailSheet } from "@/components/ui/product-detail-sheet";
 import { Input } from "@/components/ui/input";
-import { Search, ChefHat, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, ChefHat, Loader2, Bell, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Carousel,
@@ -11,8 +12,27 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useMenuCategories } from "@/hooks/useMenuCategories";
 import { useMenuProducts, calculatePromotion, type MenuProduct } from "@/hooks/useMenuProducts";
+import { useRestaurantModules } from "@/hooks/useRestaurantModules";
+import { useTableContext } from "@/hooks/useTableContext";
+import { useClientServiceCall } from "@/hooks/useClientServiceCall";
+import { usePublicTables } from "@/hooks/usePublicTables";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: string;
@@ -46,10 +66,66 @@ const MenuPage = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const [selectedTableId, setSelectedTableId] = useState<string>("");
+
+  const { toast } = useToast();
 
   // Fetch data from Supabase
   const { data: categoriesData, isLoading: isLoadingCategories } = useMenuCategories();
   const { data: productsData, isLoading: isLoadingProducts } = useMenuProducts();
+
+  // Waiter call functionality
+  const { data: modules } = useRestaurantModules();
+  const { table, setTable } = useTableContext();
+  const { data: tables, isLoading: isLoadingTables } = usePublicTables();
+  const { hasActiveCall, createCall, isCreatingCall } = useClientServiceCall(table?.id || null);
+
+  const isWaiterCalled = hasActiveCall("waiter");
+
+  const handleQuickWaiterCall = async (tableId?: string) => {
+    const targetTableId = tableId || table?.id;
+    
+    if (!targetTableId) {
+      setIsTableModalOpen(true);
+      return;
+    }
+    
+    try {
+      await createCall({
+        tableId: targetTableId,
+        sessionId: null,
+        callType: "waiter",
+      });
+      toast({
+        title: "Atendente chamado!",
+        description: "Aguarde, estamos a caminho.",
+      });
+      setIsTableModalOpen(false);
+      setSelectedTableId("");
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível chamar o atendente.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTableSelectAndCall = async () => {
+    if (!selectedTableId) return;
+    
+    const success = await setTable(selectedTableId);
+    if (success) {
+      await handleQuickWaiterCall(selectedTableId);
+    } else {
+      toast({
+        title: "Erro",
+        description: "Não foi possível identificar a mesa.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const isLoading = isLoadingCategories || isLoadingProducts;
 
@@ -242,6 +318,86 @@ const MenuPage = () => {
           <p className="text-muted-foreground">Nenhum item encontrado</p>
         </div>
       )}
+
+      {/* Floating Waiter Call Button */}
+      {modules?.waiterCall && (
+        <button
+          onClick={() => handleQuickWaiterCall()}
+          disabled={isCreatingCall || isWaiterCalled}
+          className={cn(
+            "fixed bottom-6 right-6 z-50",
+            "w-14 h-14 rounded-full",
+            "shadow-lg hover:shadow-xl",
+            "flex items-center justify-center",
+            "transition-all duration-300",
+            isWaiterCalled
+              ? "bg-green-600 text-white cursor-default"
+              : "bg-primary text-primary-foreground hover:scale-105",
+            isCreatingCall && "opacity-70"
+          )}
+          aria-label="Chamar atendente"
+        >
+          {isCreatingCall ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : isWaiterCalled ? (
+            <Check className="h-6 w-6" />
+          ) : (
+            <Bell className="h-6 w-6" />
+          )}
+        </button>
+      )}
+
+      {/* Table Selection Modal */}
+      <Dialog open={isTableModalOpen} onOpenChange={setIsTableModalOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Qual é sua mesa?</DialogTitle>
+            <DialogDescription>
+              Selecione sua mesa para chamar o atendente
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 pt-2">
+            <Select value={selectedTableId} onValueChange={setSelectedTableId}>
+              <SelectTrigger className="w-full h-14 text-lg bg-surface border-border">
+                <SelectValue placeholder="Selecione a mesa" />
+              </SelectTrigger>
+              <SelectContent>
+                {isLoadingTables ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (
+                  tables?.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      Mesa {t.number.toString().padStart(2, "0")}
+                      {t.name ? ` - ${t.name}` : ""}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+
+            <Button
+              onClick={handleTableSelectAndCall}
+              disabled={!selectedTableId || isCreatingCall}
+              className="w-full h-12"
+            >
+              {isCreatingCall ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Chamando...
+                </>
+              ) : (
+                <>
+                  <Bell className="h-4 w-4 mr-2" />
+                  Chamar Atendente
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </ClientLayout>
   );
 };
