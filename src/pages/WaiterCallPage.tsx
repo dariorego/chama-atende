@@ -12,12 +12,16 @@ import {
   X,
   Hourglass,
   Loader2,
+  UtensilsCrossed,
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
+import { usePublicTables } from "@/hooks/usePublicTables";
 
 interface TableData {
   id: string;
@@ -31,13 +35,16 @@ const WaiterCallPage = () => {
   const navigate = useNavigate();
   const { tableId: urlTableId } = useParams<{ tableId: string }>();
   const { toast } = useToast();
-  const { table: contextTable, isLoading: isLoadingContext } = useTableContext();
+  const { table: contextTable, isLoading: isLoadingContext, setTable } = useTableContext();
   
   const [tableData, setTableData] = useState<TableData | null>(null);
   const [isLoadingTable, setIsLoadingTable] = useState(!!urlTableId);
   const [activeTab, setActiveTab] = useState("atendimento");
+  const [selectedTableId, setSelectedTableId] = useState<string>("");
+  const [isSettingTable, setIsSettingTable] = useState(false);
 
   const { restaurant, isLoading } = useAdminSettings();
+  const { data: tables, isLoading: isLoadingTables } = usePublicTables();
   
   // Hook for service calls - uses tableData.id when available
   const { 
@@ -153,19 +160,98 @@ const WaiterCallPage = () => {
     );
   }
 
+  const handleSelectTable = async () => {
+    if (!selectedTableId) return;
+    setIsSettingTable(true);
+    const success = await setTable(selectedTableId);
+    if (success) {
+      const selectedTable = tables?.find(t => t.id === selectedTableId);
+      if (selectedTable) {
+        setTableData({
+          id: selectedTable.id,
+          number: selectedTable.number,
+          name: selectedTable.name,
+          capacity: selectedTable.capacity,
+          status: selectedTable.status,
+        });
+      }
+    }
+    setIsSettingTable(false);
+  };
+
   if (!tableData) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Mesa não identificada</h1>
-        <p className="text-muted-foreground text-center mb-4">
-          Escaneie o QR Code da sua mesa para solicitar atendimento.
-        </p>
-        <button
-          onClick={() => navigate("/")}
-          className="text-primary font-medium hover:underline"
-        >
-          Voltar ao início
-        </button>
+        <div className="w-full max-w-sm space-y-6">
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <UtensilsCrossed className="h-8 w-8 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground mb-2">
+              Qual é sua mesa?
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Selecione sua mesa para solicitar atendimento
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <Select value={selectedTableId} onValueChange={setSelectedTableId}>
+              <SelectTrigger className="w-full h-14 text-lg bg-surface border-border">
+                <SelectValue placeholder="Selecione a mesa" />
+              </SelectTrigger>
+              <SelectContent>
+                {isLoadingTables ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (
+                  tables?.map((table) => (
+                    <SelectItem key={table.id} value={table.id}>
+                      Mesa {table.number.toString().padStart(2, "0")}
+                      {table.name ? ` - ${table.name}` : ""}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+
+            <Button
+              onClick={handleSelectTable}
+              disabled={!selectedTableId || isSettingTable}
+              className="w-full h-12"
+            >
+              {isSettingTable ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Confirmando...
+                </>
+              ) : (
+                "Confirmar Mesa"
+              )}
+            </Button>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">ou</span>
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground">
+            Escaneie o QR Code da sua mesa para identificação automática
+          </p>
+
+          <button
+            onClick={() => navigate("/")}
+            className="w-full text-primary font-medium hover:underline text-center"
+          >
+            Voltar ao início
+          </button>
+        </div>
       </div>
     );
   }
