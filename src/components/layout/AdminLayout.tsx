@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   SidebarProvider,
@@ -35,15 +35,35 @@ import {
   BarChart3,
   LayoutGrid,
   User,
+  Music,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { useAdminModules } from '@/hooks/useAdminModules';
+import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface AdminLayoutProps {
   children: ReactNode;
+}
+
+// Converte URL do Spotify para formato embed
+function getSpotifyEmbedUrl(url: string): string | null {
+  if (!url) return null;
+  
+  if (url.includes('open.spotify.com/embed')) {
+    return url;
+  }
+  
+  const match = url.match(/open\.spotify\.com\/(playlist|album|track|artist)\/([a-zA-Z0-9]+)/);
+  if (match) {
+    return `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
+  }
+  
+  return null;
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
@@ -53,6 +73,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { profile } = useCurrentUser();
   const { restaurant } = useAdminAccess();
   const { modules } = useAdminModules();
+  const { restaurant: restaurantSettings } = useAdminSettings();
+  
+  const [isPlayerExpanded, setIsPlayerExpanded] = useState(true);
+  
+  // Get Spotify URL from settings
+  const spotifyUrl = restaurantSettings?.social_links?.spotify_playlist || '';
+  const spotifyEmbedUrl = getSpotifyEmbedUrl(spotifyUrl);
 
   // Get active modules
   const activeModules = modules?.filter((m) => m.is_active) || [];
@@ -218,6 +245,37 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
+
+          {/* Spotify Player - Persistente */}
+          {spotifyEmbedUrl && (
+            <div className="border-t border-border/50 p-3">
+              <button
+                onClick={() => setIsPlayerExpanded(!isPlayerExpanded)}
+                className="flex items-center justify-between w-full text-xs text-muted-foreground hover:text-foreground transition-colors mb-2"
+              >
+                <div className="flex items-center gap-2">
+                  <Music className="h-3 w-3 text-green-500" />
+                  <span>Música Ambiente</span>
+                </div>
+                {isPlayerExpanded ? (
+                  <ChevronDown className="h-3 w-3" />
+                ) : (
+                  <ChevronUp className="h-3 w-3" />
+                )}
+              </button>
+              {isPlayerExpanded && (
+                <iframe
+                  src={spotifyEmbedUrl}
+                  width="100%"
+                  height="80"
+                  allow="autoplay; clipboard-write; encrypted-media"
+                  loading="lazy"
+                  className="rounded-lg"
+                  title="Spotify Player"
+                />
+              )}
+            </div>
+          )}
 
           <SidebarFooter className="border-t border-border/50 p-4">
             <div className="flex items-center gap-3">

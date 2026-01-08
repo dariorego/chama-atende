@@ -87,7 +87,7 @@ export default function AdminDashboard() {
         <p className="text-muted-foreground text-lg">{restaurant?.name}</p>
       </div>
 
-      {/* Spotify Player */}
+      {/* Spotify Config */}
       <Card className="border-green-500/20 bg-green-500/5">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -97,7 +97,11 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <CardTitle className="text-lg">Música Ambiente</CardTitle>
-                <CardDescription>Player do Spotify integrado</CardDescription>
+                <CardDescription>
+                  {spotifyEmbedUrl 
+                    ? "Player ativo na sidebar (continua tocando ao navegar)" 
+                    : "Configure uma playlist do Spotify"}
+                </CardDescription>
               </div>
             </div>
             <Button 
@@ -105,12 +109,12 @@ export default function AdminDashboard() {
               size="sm"
               onClick={() => setIsEditingSpotify(!isEditingSpotify)}
             >
-              {isEditingSpotify ? "Cancelar" : "Editar"}
+              {isEditingSpotify ? "Cancelar" : "Configurar"}
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {isEditingSpotify && (
+        {(isEditingSpotify || !spotifyEmbedUrl) && (
+          <CardContent className="space-y-4">
             <div className="flex gap-2">
               <Input
                 placeholder="Cole a URL do Spotify (playlist, álbum ou música)"
@@ -122,24 +126,11 @@ export default function AdminDashboard() {
                 <Save className="h-4 w-4" />
               </Button>
             </div>
-          )}
-          
-          {spotifyEmbedUrl ? (
-            <iframe
-              src={spotifyEmbedUrl}
-              width="100%"
-              height="152"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-              className="rounded-xl"
-              title="Spotify Player"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-24 rounded-xl bg-muted/50 text-muted-foreground text-sm">
-              Clique em "Editar" para adicionar uma playlist do Spotify
-            </div>
-          )}
-        </CardContent>
+            <p className="text-xs text-muted-foreground">
+              O player aparecerá na sidebar e continuará tocando enquanto você navega pelo painel.
+            </p>
+          </CardContent>
+        )}
       </Card>
 
       <div className="space-y-4">
