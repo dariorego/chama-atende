@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe, MapPin, Check, X } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe, MapPin, Check, X, Music } from 'lucide-react';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS, LocationCoordinates } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
@@ -32,6 +32,7 @@ const settingsSchema = z.object({
   instagram: z.string().max(200).optional(),
   facebook: z.string().max(200).optional(),
   website: z.string().max(200).optional(),
+  spotify_playlist: z.string().max(500).optional(),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -80,6 +81,7 @@ export default function AdminSettings() {
       instagram: '',
       facebook: '',
       website: '',
+      spotify_playlist: '',
     },
   });
 
@@ -97,6 +99,7 @@ export default function AdminSettings() {
         instagram: restaurant.social_links?.instagram || '',
         facebook: restaurant.social_links?.facebook || '',
         website: restaurant.social_links?.website || '',
+        spotify_playlist: restaurant.social_links?.spotify_playlist || '',
       });
       
       // Load images
@@ -196,6 +199,7 @@ export default function AdminSettings() {
         instagram: data.instagram || undefined,
         facebook: data.facebook || undefined,
         website: data.website || undefined,
+        spotify_playlist: data.spotify_playlist || undefined,
       },
       theme_colors: {
         primary: primaryColor,
@@ -709,6 +713,25 @@ export default function AdminSettings() {
                     <FormControl>
                       <Input {...field} placeholder="https://seurestaurante.com.br" />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="spotify_playlist"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Music className="h-4 w-4 text-green-500" />
+                      Spotify - Música Ambiente
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Cole a URL da playlist, álbum ou música" className="bg-surface" />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">
+                      O player aparecerá na sidebar do painel admin
+                    </p>
                     <FormMessage />
                   </FormItem>
                 )}
