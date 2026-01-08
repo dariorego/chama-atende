@@ -33,6 +33,7 @@ export interface SocialLinks {
   instagram?: string;
   facebook?: string;
   website?: string;
+  spotify_playlist?: string;
 }
 
 export interface WifiInfo {
