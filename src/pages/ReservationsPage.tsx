@@ -80,12 +80,47 @@ const ReservationsPage = () => {
   // Search state
   const [searchPhone, setSearchPhone] = useState("");
   const [searchPhoneFocused, setSearchPhoneFocused] = useState(false);
+  const [showPastReservations, setShowPastReservations] = useState(false);
   
   const { toast } = useToast();
   const { restaurant, isLoading } = useAdminSettings();
   const createReservation = useCreateClientReservation();
   const { data: foundReservations, isLoading: isSearching } = useSearchReservations(searchPhone);
   const cancelReservation = useCancelReservation();
+
+  // Filter reservations: by default show only confirmed + future dates
+  const filteredReservations = foundReservations?.filter((reservation) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const reservationDate = new Date(reservation.reservation_date + 'T12:00:00');
+    const isFuture = reservationDate >= today;
+
+    if (showPastReservations) {
+      return true; // Show all reservations
+    }
+    return reservation.status === 'confirmed' && isFuture;
+  });
+
+  // Handle WhatsApp share
+  const handleShareWhatsApp = (reservation: Reservation) => {
+    const reservationDate = new Date(reservation.reservation_date + 'T12:00:00');
+    const formattedDate = format(reservationDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+    const formattedTime = reservation.reservation_time.slice(0, 5);
+    
+    const socialLinks = restaurant?.social_links as { instagram?: string } | null;
+    
+    const message = `Olá! Nosso encontro será aqui:
+
+📅 Data e hora: ${formattedDate} às ${formattedTime}
+🏠 Nome do estabelecimento: ${restaurant?.name || ''}
+📍 Endereço: ${restaurant?.address || 'Não informado'}
+📞 Telefone: ${restaurant?.phone || 'Não informado'}
+📸 Instagram: ${socialLinks?.instagram || 'Não informado'}`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   const formatPhoneInput = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -586,6 +621,21 @@ const ReservationsPage = () => {
                     className="h-14 pl-12 bg-surface border-border/30 rounded-xl text-base text-foreground placeholder:text-surface-foreground focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                   />
                 </div>
+
+                {/* Filter toggle */}
+                {searchPhone.length >= 10 && (
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showPastReservations}
+                      onChange={(e) => setShowPastReservations(e.target.checked)}
+                      className="w-4 h-4 rounded border-border bg-surface text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      Mostrar reservas passadas e canceladas
+                    </span>
+                  </label>
+                )}
               </div>
 
               {/* Results */}
@@ -596,16 +646,20 @@ const ReservationsPage = () => {
                   </div>
                 )}
 
-                {!isSearching && searchPhone.length >= 10 && foundReservations?.length === 0 && (
+                {!isSearching && searchPhone.length >= 10 && filteredReservations?.length === 0 && (
                   <Card className="bg-surface border-border/30">
                     <CardContent className="p-6 text-center">
                       <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground/50 mb-2" />
-                      <p className="text-muted-foreground">Nenhuma reserva encontrada para este telefone.</p>
+                      <p className="text-muted-foreground">
+                        {showPastReservations 
+                          ? "Nenhuma reserva encontrada para este telefone."
+                          : "Nenhuma reserva confirmada futura encontrada. Ative o filtro acima para ver todas."}
+                      </p>
                     </CardContent>
                   </Card>
                 )}
 
-                {foundReservations?.map((reservation) => {
+                {filteredReservations?.map((reservation) => {
                   const status = statusConfig[reservation.status] || statusConfig.pending;
                   const reservationDate = new Date(reservation.reservation_date + 'T12:00:00');
                   
@@ -650,7 +704,32 @@ const ReservationsPage = () => {
                           )}
                         </div>
 
-                        {(reservation.status === 'pending' || reservation.status === 'confirmed') && (
+                        {/* Action buttons */}
+                        {reservation.status === 'confirmed' && (
+                          <div className="flex gap-2 mt-4">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleShareWhatsApp(reservation)}
+                              className="flex-1"
+                            >
+                              <Share2 className="h-4 w-4 mr-1" />
+                              Compartilhar
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleCancelReservation(reservation.id)}
+                              disabled={cancelReservation.isPending}
+                              className="flex-1"
+                            >
+                              <XCircle className="h-4 w-4 mr-1" />
+                              Cancelar
+                            </Button>
+                          </div>
+                        )}
+
+                        {reservation.status === 'pending' && (
                           <Button
                             variant="destructive"
                             size="sm"
