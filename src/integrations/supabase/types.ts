@@ -543,6 +543,122 @@ export type Database = {
           },
         ]
       }
+      pre_order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          observations: string | null
+          pre_order_id: string
+          product_id: string
+          product_name: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          observations?: string | null
+          pre_order_id: string
+          product_id: string
+          product_name: string
+          quantity?: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          observations?: string | null
+          pre_order_id?: string
+          product_id?: string
+          product_name?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_order_items_pre_order_id_fkey"
+            columns: ["pre_order_id"]
+            isOneToOne: false
+            referencedRelation: "pre_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pre_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "menu_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pre_orders: {
+        Row: {
+          cancelled_at: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          customer_name: string
+          customer_phone: string
+          delivered_at: string | null
+          id: string
+          observations: string | null
+          order_number: number
+          pickup_date: string
+          pickup_time: string
+          preparing_at: string | null
+          ready_at: string | null
+          restaurant_id: string
+          status: string
+          total_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          customer_name: string
+          customer_phone: string
+          delivered_at?: string | null
+          id?: string
+          observations?: string | null
+          order_number?: number
+          pickup_date: string
+          pickup_time: string
+          preparing_at?: string | null
+          ready_at?: string | null
+          restaurant_id: string
+          status?: string
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivered_at?: string | null
+          id?: string
+          observations?: string | null
+          order_number?: number
+          pickup_date?: string
+          pickup_time?: string
+          preparing_at?: string | null
+          ready_at?: string | null
+          restaurant_id?: string
+          status?: string
+          total_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_orders_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
