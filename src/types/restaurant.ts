@@ -114,6 +114,7 @@ export interface ModulesMap {
   queue: boolean;
   kitchenOrder: boolean;
   customerReview: boolean;
+  preOrders: boolean;
 }
 
 // Module name mapping from snake_case (DB) to camelCase (frontend)
@@ -124,6 +125,7 @@ export const MODULE_NAME_MAP: Record<string, keyof ModulesMap> = {
   'queue': 'queue',
   'kitchen_order': 'kitchenOrder',
   'customer_review': 'customerReview',
+  'pre_orders': 'preOrders',
 };
 
 // Format time from database (HH:MM:SS) to display format (HH:MM)

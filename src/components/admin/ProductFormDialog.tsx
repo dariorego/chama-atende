@@ -43,6 +43,7 @@ const productSchema = z.object({
   image_url: z.string().optional().nullable(),
   is_highlight: z.boolean().default(false),
   is_active: z.boolean().default(true),
+  is_orderable: z.boolean().default(false),
   display_order: z.coerce.number().int().min(1, 'Ordem mínima é 1').default(1),
 }).refine((data) => {
   if (data.promotional_price && data.promotional_price >= data.price) {
@@ -88,6 +89,7 @@ export function ProductFormDialog({
       image_url: '',
       is_highlight: false,
       is_active: true,
+      is_orderable: false,
       display_order: suggestedOrder ?? 1,
     },
   });
@@ -104,6 +106,7 @@ export function ProductFormDialog({
           image_url: product.image_url || '',
           is_highlight: product.is_highlight ?? false,
           is_active: product.is_active ?? true,
+          is_orderable: (product as MenuProduct & { is_orderable?: boolean }).is_orderable ?? false,
           display_order: product.display_order ?? 0,
         });
       } else {
@@ -116,6 +119,7 @@ export function ProductFormDialog({
           image_url: '',
           is_highlight: false,
           is_active: true,
+          is_orderable: false,
           display_order: suggestedOrder ?? 1,
         });
       }
@@ -293,7 +297,7 @@ export function ProductFormDialog({
               )}
             />
 
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-6">
               <FormField
                 control={form.control}
                 name="is_highlight"
@@ -325,6 +329,24 @@ export function ProductFormDialog({
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">
                       Ativo
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="is_orderable"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2 space-y-0">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Encomenda
                     </FormLabel>
                   </FormItem>
                 )}

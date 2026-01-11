@@ -38,6 +38,7 @@ import {
   Music,
   ChevronUp,
   ChevronDown,
+  ShoppingBag,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -94,6 +95,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'queue', title: 'Fila', url: '/admin/fila', icon: Users },
     { moduleName: 'customer_review', title: 'Avaliações', url: '/admin/avaliacoes', icon: Star },
     { moduleName: 'kitchen_order', title: 'Pedidos', url: '/admin/pedidos', icon: ChefHat },
+    { moduleName: 'pre_orders', title: 'Encomendas', url: '/admin/encomendas', icon: ShoppingBag },
   ].filter((item) => isModuleActive(item.moduleName));
 
   // Composição items (subitems of kitchen_order)
