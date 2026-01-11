@@ -27,7 +27,7 @@ export default function AdminPreOrders() {
   };
 
   const pendingOrders = filterByStatus('pending');
-  const confirmedOrders = filterByStatus(['confirmed', 'preparing']);
+  const confirmedOrders = filterByStatus('confirmed');
   const readyOrders = filterByStatus('ready');
   const historyOrders = filterByStatus(['delivered', 'cancelled']);
 

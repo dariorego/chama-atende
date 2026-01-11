@@ -70,8 +70,7 @@ export function PreOrderCard({
   const getNextStatus = () => {
     const statusFlow: Record<string, string> = {
       pending: 'confirmed',
-      confirmed: 'preparing',
-      preparing: 'ready',
+      confirmed: 'ready',
       ready: 'delivered',
     };
     return statusFlow[preOrder.status];
@@ -80,7 +79,6 @@ export function PreOrderCard({
   const getNextStatusLabel = () => {
     const labels: Record<string, string> = {
       confirmed: 'Confirmar',
-      preparing: 'Iniciar Preparo',
       ready: 'Marcar como Pronta',
       delivered: 'Marcar como Entregue',
     };

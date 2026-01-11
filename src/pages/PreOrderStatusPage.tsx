@@ -37,7 +37,7 @@ const PAYMENT_METHOD_CONFIG: Record<string, { label: string; icon: typeof Credit
   card: { label: 'Cartão', icon: CreditCard, color: 'text-blue-500' },
 };
 
-const STATUS_ORDER = ['pending', 'confirmed', 'preparing', 'ready', 'delivered'];
+const STATUS_ORDER = ['pending', 'confirmed', 'ready', 'delivered'];
 
 export default function PreOrderStatusPage() {
   const { orderId } = useParams();
@@ -152,7 +152,7 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {STATUS_ORDER.slice(0, 4).map((status, index) => {
+                {STATUS_ORDER.slice(0, 3).map((status, index) => {
                   const config = STATUS_CONFIG[status];
                   const Icon = config.icon;
                   const isCompleted = index <= currentStatusIndex;
