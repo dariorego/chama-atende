@@ -22,6 +22,7 @@ import {
   Loader2,
   Settings,
   X,
+  ShoppingBag,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -329,6 +330,16 @@ const HubPage = () => {
               description="Compartilhe sua opinião sobre nosso serviço"
               to="/avaliacao"
               variant="amber"
+            />
+          )}
+
+          {modules?.preOrders && (
+            <ActionCard
+              icon={ShoppingBag}
+              title="Fazer Encomenda"
+              description="Peça com antecedência e retire no horário combinado"
+              to="/encomendas"
+              variant="primary"
             />
           )}
         </div>

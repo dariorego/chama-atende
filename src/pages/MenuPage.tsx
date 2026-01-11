@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
 import { ProductDetailSheet } from "@/components/ui/product-detail-sheet";
-import { CartButton } from "@/components/ui/cart-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ChefHat, Loader2, Bell, Check, ShoppingBag, Plus } from "lucide-react";
+import { Search, ChefHat, Loader2, Bell, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Carousel,
@@ -33,7 +32,6 @@ import { useRestaurantModules } from "@/hooks/useRestaurantModules";
 import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
-import { usePreOrderCart } from "@/hooks/usePreOrderCart";
 import { useToast } from "@/hooks/use-toast";
 
 interface Product {
@@ -45,7 +43,6 @@ interface Product {
   image?: string;
   highlight?: boolean;
   promotion?: string;
-  isOrderable?: boolean;
 }
 
 // Transform Supabase product to local Product interface
@@ -59,7 +56,6 @@ function transformProduct(product: MenuProduct): Product {
     image: product.image_url ?? undefined,
     highlight: product.is_highlight ?? false,
     promotion: calculatePromotion(Number(product.price), product.promotional_price ? Number(product.promotional_price) : null),
-    isOrderable: (product as MenuProduct & { is_orderable?: boolean }).is_orderable ?? false,
   };
 }
 
@@ -84,10 +80,8 @@ const MenuPage = () => {
   const { table, setTable } = useTableContext();
   const { data: tables, isLoading: isLoadingTables } = usePublicTables();
   const { hasActiveCall, createCall, isCreatingCall } = useClientServiceCall(table?.id || null);
-  const { addItem, totalItems } = usePreOrderCart();
 
   const isWaiterCalled = hasActiveCall("waiter");
-  const isPreOrdersActive = modules?.preOrders ?? false;
 
   const handleQuickWaiterCall = async (tableId?: string) => {
     const targetTableId = tableId || table?.id;
@@ -149,18 +143,6 @@ const MenuPage = () => {
     setIsSheetOpen(true);
   };
 
-  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Find original product data
-    const originalProduct = productsData?.find(p => p.id === product.id);
-    if (originalProduct) {
-      addItem(originalProduct);
-      toast({
-        title: "Adicionado ao carrinho",
-        description: product.name,
-      });
-    }
-  };
   // Setup carousel API listener
   useEffect(() => {
     if (!carouselApi) return;
@@ -317,8 +299,6 @@ const MenuPage = () => {
               price={product.price}
               image={product.image}
               promotion={product.promotion}
-              isOrderable={isPreOrdersActive && product.isOrderable}
-              onAddToCart={isPreOrdersActive && product.isOrderable ? (e) => handleAddToCart(product, e) : undefined}
               onClick={() => handleProductClick(product)}
             />
           </div>
@@ -339,19 +319,13 @@ const MenuPage = () => {
         </div>
       )}
 
-      {/* Floating Cart Button */}
-      {isPreOrdersActive && totalItems > 0 && (
-        <CartButton itemCount={totalItems} />
-      )}
-
       {/* Floating Waiter Call Button */}
       {modules?.waiterCall && (
         <button
           onClick={() => handleQuickWaiterCall()}
           disabled={isCreatingCall || isWaiterCalled}
           className={cn(
-            "fixed bottom-6 z-50",
-            isPreOrdersActive && totalItems > 0 ? "right-24" : "right-6",
+            "fixed bottom-6 right-6 z-50",
             "w-14 h-14 rounded-full",
             "shadow-lg hover:shadow-xl",
             "flex items-center justify-center",
