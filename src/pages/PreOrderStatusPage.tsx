@@ -17,6 +17,9 @@ import {
   Calendar,
   User,
   Phone,
+  CreditCard,
+  QrCode,
+  MessageSquare,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +30,11 @@ const STATUS_CONFIG: Record<string, { label: string; icon: typeof Clock; color: 
   ready: { label: 'Pronta', icon: Package, color: 'text-green-500' },
   delivered: { label: 'Entregue', icon: CheckCircle2, color: 'text-green-600' },
   cancelled: { label: 'Cancelada', icon: XCircle, color: 'text-destructive' },
+};
+
+const PAYMENT_METHOD_CONFIG: Record<string, { label: string; icon: typeof CreditCard; color: string }> = {
+  pix: { label: 'PIX', icon: QrCode, color: 'text-green-500' },
+  card: { label: 'Cartão', icon: CreditCard, color: 'text-blue-500' },
 };
 
 const STATUS_ORDER = ['pending', 'confirmed', 'preparing', 'ready', 'delivered'];
@@ -50,10 +58,13 @@ export default function PreOrderStatusPage() {
     const formattedDate = format(pickupDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
     const formattedTime = preOrder.pickup_time.slice(0, 5);
 
+    const paymentLabel = preOrder.payment_method === 'pix' ? 'PIX' : preOrder.payment_method === 'card' ? 'Cartão' : 'Não informado';
+
     const message = `Olá! Fiz uma encomenda:
 
 📋 Encomenda #${preOrder.order_number.toString().padStart(3, '0')}
 📅 Retirada: ${formattedDate} às ${formattedTime}
+💳 Pagamento: ${paymentLabel}
 🏠 ${restaurant.name}
 📍 ${restaurant.address || 'Endereço não informado'}
 📞 ${restaurant.phone || 'Telefone não informado'}
@@ -97,6 +108,9 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
   const currentStatusIndex = STATUS_ORDER.indexOf(preOrder.status);
   const isCancelled = preOrder.status === 'cancelled';
 
+  const paymentConfig = preOrder.payment_method ? PAYMENT_METHOD_CONFIG[preOrder.payment_method] : null;
+  const PaymentIcon = paymentConfig?.icon || CreditCard;
+
   return (
     <ClientLayout title="Status da Encomenda" showBack backTo="/">
       <div className="space-y-6">
@@ -114,6 +128,21 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
             </div>
           </CardContent>
         </Card>
+
+        {/* Admin Response */}
+        {preOrder.admin_response && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-primary" />
+                Mensagem do Estabelecimento
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm">{preOrder.admin_response}</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Status Timeline */}
         {!isCancelled && (
@@ -184,6 +213,12 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
               <Phone className="h-4 w-4 text-muted-foreground" />
               <span>{preOrder.customer_phone}</span>
             </div>
+            {paymentConfig && (
+              <div className="flex items-center gap-2">
+                <PaymentIcon className={cn("h-4 w-4", paymentConfig.color)} />
+                <span>Pagamento: {paymentConfig.label}</span>
+              </div>
+            )}
           </CardContent>
         </Card>
 

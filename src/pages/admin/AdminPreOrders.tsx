@@ -18,7 +18,7 @@ const ADVANCE_HOUR_OPTIONS = [
 
 export default function AdminPreOrders() {
   const [activeTab, setActiveTab] = useState('pending');
-  const { preOrders, isLoading, updateStatus, isUpdating } = usePreOrders();
+  const { preOrders, isLoading, updateStatus, isUpdating, saveResponse, isSavingResponse } = usePreOrders();
   const { settings, updateSettings, isUpdating: isUpdatingSettings } = usePreOrderModuleSettings();
 
   const filterByStatus = (status: string | string[]) => {
@@ -123,7 +123,9 @@ export default function AdminPreOrders() {
                 key={order.id}
                 preOrder={order}
                 onUpdateStatus={updateStatus}
+                onSaveResponse={saveResponse}
                 isUpdating={isUpdating}
+                isSavingResponse={isSavingResponse}
               />
             ))
           )}
@@ -138,7 +140,9 @@ export default function AdminPreOrders() {
                 key={order.id}
                 preOrder={order}
                 onUpdateStatus={updateStatus}
+                onSaveResponse={saveResponse}
                 isUpdating={isUpdating}
+                isSavingResponse={isSavingResponse}
               />
             ))
           )}
@@ -153,7 +157,9 @@ export default function AdminPreOrders() {
                 key={order.id}
                 preOrder={order}
                 onUpdateStatus={updateStatus}
+                onSaveResponse={saveResponse}
                 isUpdating={isUpdating}
+                isSavingResponse={isSavingResponse}
               />
             ))
           )}
@@ -168,7 +174,9 @@ export default function AdminPreOrders() {
                 key={order.id}
                 preOrder={order}
                 onUpdateStatus={updateStatus}
+                onSaveResponse={saveResponse}
                 isUpdating={isUpdating}
+                isSavingResponse={isSavingResponse}
               />
             ))
           )}

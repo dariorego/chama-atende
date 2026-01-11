@@ -596,6 +596,7 @@ export type Database = {
       }
       pre_orders: {
         Row: {
+          admin_response: string | null
           cancelled_at: string | null
           confirmed_at: string | null
           created_at: string | null
@@ -605,6 +606,7 @@ export type Database = {
           id: string
           observations: string | null
           order_number: number
+          payment_method: string | null
           pickup_date: string
           pickup_time: string
           preparing_at: string | null
@@ -615,6 +617,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          admin_response?: string | null
           cancelled_at?: string | null
           confirmed_at?: string | null
           created_at?: string | null
@@ -624,6 +627,7 @@ export type Database = {
           id?: string
           observations?: string | null
           order_number?: number
+          payment_method?: string | null
           pickup_date: string
           pickup_time: string
           preparing_at?: string | null
@@ -634,6 +638,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          admin_response?: string | null
           cancelled_at?: string | null
           confirmed_at?: string | null
           created_at?: string | null
@@ -643,6 +648,7 @@ export type Database = {
           id?: string
           observations?: string | null
           order_number?: number
+          payment_method?: string | null
           pickup_date?: string
           pickup_time?: string
           preparing_at?: string | null
@@ -1160,6 +1166,23 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      search_pre_orders_by_phone: {
+        Args: { search_phone: string }
+        Returns: {
+          admin_response: string
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          observations: string
+          order_number: number
+          payment_method: string
+          pickup_date: string
+          pickup_time: string
+          status: string
+          total_amount: number
+        }[]
       }
       search_reservations_by_phone: {
         Args: { search_phone: string }
