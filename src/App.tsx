@@ -36,6 +36,7 @@ import AdminOrderItems from "./pages/admin/AdminOrderItems";
 import AdminCombinationGroups from "./pages/admin/AdminCombinationGroups";
 import AdminMetrics from "./pages/admin/AdminMetrics";
 import AdminPreOrders from "./pages/admin/AdminPreOrders";
+import PreOrderMenuPage from "./pages/PreOrderMenuPage";
 import PreOrderCartPage from "./pages/PreOrderCartPage";
 import PreOrderCheckoutPage from "./pages/PreOrderCheckoutPage";
 import PreOrderStatusPage from "./pages/PreOrderStatusPage";
@@ -57,6 +58,7 @@ function ClientPages() {
         <Route path="/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
         <Route path="/pedido-cozinha/status/:orderId" element={<OrderStatusPage />} />
         <Route path="/avaliacao" element={<CustomerReviewPage />} />
+        <Route path="/encomendas" element={<PreOrderMenuPage />} />
         <Route path="/encomendas/carrinho" element={<PreOrderCartPage />} />
         <Route path="/encomendas/checkout" element={<PreOrderCheckoutPage />} />
         <Route path="/encomendas/status/:orderId" element={<PreOrderStatusPage />} />
