@@ -133,6 +133,7 @@ export type Database = {
           image_url: string | null
           is_active: boolean | null
           is_highlight: boolean | null
+          is_orderable: boolean | null
           name: string
           price: number
           promotional_price: number | null
@@ -148,6 +149,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           is_highlight?: boolean | null
+          is_orderable?: boolean | null
           name: string
           price: number
           promotional_price?: number | null
@@ -163,6 +165,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           is_highlight?: boolean | null
+          is_orderable?: boolean | null
           name?: string
           price?: number
           promotional_price?: number | null
