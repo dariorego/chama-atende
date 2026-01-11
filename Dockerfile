@@ -14,7 +14,7 @@ WORKDIR /app
 # Copiar arquivos de dependências primeiro (melhor cache)
 COPY package*.json ./
 
-# Instalar dependências
+# Instalar todas as dependências (incluindo devDependencies para build)
 # --legacy-peer-deps para resolver conflitos de peer dependencies
 RUN npm ci --legacy-peer-deps
 
@@ -22,18 +22,23 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # Variáveis de ambiente para o build do Vite
-# Estas são injetadas durante o build e ficam no bundle final
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_PUBLISHABLE_KEY
 ARG VITE_SUPABASE_PROJECT_ID
 
-# Definir as variáveis de ambiente para o processo de build
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
 ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID
 
-# Executar build de produção
-RUN npm run build
+# ============================================
+# Processo completo de build npm
+# ============================================
+
+# 1. Verificação de tipos TypeScript
+RUN npm run build -- --mode production
+
+# Listar arquivos gerados para debug (opcional)
+RUN ls -la dist/
 
 # ============================================
 # Stage 2: Servidor Nginx para produção
