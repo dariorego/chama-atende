@@ -12,6 +12,8 @@ export interface PreOrder {
   status: string;
   observations: string | null;
   total_amount: number;
+  payment_method: string | null;
+  admin_response: string | null;
   created_at: string;
   updated_at: string;
   confirmed_at: string | null;
@@ -87,11 +89,38 @@ export function usePreOrders() {
     },
   });
 
+  const saveResponseMutation = useMutation({
+    mutationFn: async ({ 
+      id, 
+      adminResponse 
+    }: { 
+      id: string; 
+      adminResponse: string;
+    }) => {
+      const { error } = await supabase
+        .from('pre_orders')
+        .update({ admin_response: adminResponse })
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-pre-orders'] });
+      toast.success('Resposta salva com sucesso!');
+    },
+    onError: (error) => {
+      console.error('Error saving admin response:', error);
+      toast.error('Erro ao salvar resposta');
+    },
+  });
+
   return {
     preOrders,
     isLoading,
     error,
     updateStatus: updateStatusMutation.mutate,
     isUpdating: updateStatusMutation.isPending,
+    saveResponse: saveResponseMutation.mutate,
+    isSavingResponse: saveResponseMutation.isPending,
   };
 }

@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Form,
   FormControl,
@@ -34,7 +36,7 @@ import {
 import { usePreOrderCart } from '@/hooks/usePreOrderCart';
 import { useSubmitPreOrder } from '@/hooks/useSubmitPreOrder';
 import { usePreOrderModuleSettings } from '@/hooks/usePreOrderModuleSettings';
-import { CalendarIcon, Loader2, Clock, ShoppingBag } from 'lucide-react';
+import { CalendarIcon, Loader2, Clock, ShoppingBag, CreditCard, QrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const checkoutSchema = z.object({
@@ -44,6 +46,7 @@ const checkoutSchema = z.object({
     .regex(/^[\d\s()-]+$/, 'Formato de telefone inválido'),
   pickupDate: z.date({ required_error: 'Selecione uma data' }),
   pickupTime: z.string().min(1, 'Selecione um horário'),
+  paymentMethod: z.enum(['pix', 'card'], { required_error: 'Selecione a forma de pagamento' }),
   observations: z.string().optional(),
 });
 
@@ -128,6 +131,7 @@ export default function PreOrderCheckoutPage() {
         customerPhone: data.customerPhone,
         pickupDate: format(data.pickupDate, 'yyyy-MM-dd'),
         pickupTime: data.pickupTime,
+        paymentMethod: data.paymentMethod,
         observations: data.observations,
         items,
       });
@@ -260,6 +264,69 @@ export default function PreOrderCheckoutPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Payment Method */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                Forma de Pagamento
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="paymentMethod"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="space-y-3"
+                      >
+                        <div className={cn(
+                          "flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-colors",
+                          field.value === 'pix' 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        )}>
+                          <RadioGroupItem value="pix" id="pix" />
+                          <Label htmlFor="pix" className="flex items-center gap-3 cursor-pointer flex-1">
+                            <div className="p-2 bg-green-500/10 rounded-lg">
+                              <QrCode className="h-5 w-5 text-green-500" />
+                            </div>
+                            <div>
+                              <span className="font-medium">PIX</span>
+                              <p className="text-xs text-muted-foreground">Pagamento instantâneo</p>
+                            </div>
+                          </Label>
+                        </div>
+                        <div className={cn(
+                          "flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-colors",
+                          field.value === 'card' 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        )}>
+                          <RadioGroupItem value="card" id="card" />
+                          <Label htmlFor="card" className="flex items-center gap-3 cursor-pointer flex-1">
+                            <div className="p-2 bg-blue-500/10 rounded-lg">
+                              <CreditCard className="h-5 w-5 text-blue-500" />
+                            </div>
+                            <div>
+                              <span className="font-medium">Cartão</span>
+                              <p className="text-xs text-muted-foreground">Débito ou crédito na retirada</p>
+                            </div>
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

@@ -8,6 +8,7 @@ interface SubmitPreOrderData {
   customerPhone: string;
   pickupDate: string;
   pickupTime: string;
+  paymentMethod: 'pix' | 'card';
   observations?: string;
   items: CartItem[];
 }
@@ -38,6 +39,7 @@ export function useSubmitPreOrder() {
           customer_phone: data.customerPhone.replace(/\D/g, ''),
           pickup_date: data.pickupDate,
           pickup_time: data.pickupTime,
+          payment_method: data.paymentMethod,
           observations: data.observations || null,
           total_amount: totalAmount,
           status: 'pending',
