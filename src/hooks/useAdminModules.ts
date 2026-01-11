@@ -40,6 +40,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Coletar avaliações dos clientes",
     icon: "Star",
   },
+  pre_orders: {
+    label: "Encomendas",
+    description: "Sistema de encomendas antecipadas",
+    icon: "ShoppingBag",
+  },
 };
 
 export function useAdminModules() {

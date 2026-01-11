@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ImageZoomDialog } from "./image-zoom-dialog";
-import { ZoomIn, CameraOff } from "lucide-react";
+import { ZoomIn, CameraOff, Plus, ShoppingBag } from "lucide-react";
+import { Button } from "./button";
 
 interface ProductCardProps {
   name: string;
@@ -10,8 +11,10 @@ interface ProductCardProps {
   image?: string;
   highlight?: boolean;
   promotion?: string;
+  isOrderable?: boolean;
   className?: string;
   onClick?: () => void;
+  onAddToCart?: (e: React.MouseEvent) => void;
 }
 
 export function ProductCard({
@@ -21,8 +24,10 @@ export function ProductCard({
   image,
   highlight,
   promotion,
+  isOrderable,
   className,
   onClick,
+  onAddToCart,
 }: ProductCardProps) {
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   
@@ -86,18 +91,39 @@ export function ProductCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h4 className="font-semibold text-foreground line-clamp-1">{name}</h4>
-          {promotion && (
-            <span className="shrink-0 px-2 py-0.5 text-[10px] font-medium bg-warning/20 text-warning rounded-full border border-warning/30">
-              {promotion}
-            </span>
-          )}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {isOrderable && (
+              <span className="px-2 py-0.5 text-[10px] font-medium bg-primary/20 text-primary rounded-full border border-primary/30 flex items-center gap-1">
+                <ShoppingBag className="h-3 w-3" />
+                Encomenda
+              </span>
+            )}
+            {promotion && (
+              <span className="px-2 py-0.5 text-[10px] font-medium bg-warning/20 text-warning rounded-full border border-warning/30">
+                {promotion}
+              </span>
+            )}
+          </div>
         </div>
         {description && (
           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
             {description}
           </p>
         )}
-        <p className="text-primary font-bold mt-2">{formattedPrice}</p>
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-primary font-bold">{formattedPrice}</p>
+          {isOrderable && onAddToCart && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 px-3 text-xs"
+              onClick={onAddToCart}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1" />
+              Adicionar
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

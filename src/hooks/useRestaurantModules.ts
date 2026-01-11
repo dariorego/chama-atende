@@ -9,6 +9,7 @@ const DEFAULT_MODULES: ModulesMap = {
   queue: false,
   kitchenOrder: false,
   customerReview: false,
+  preOrders: false,
 };
 
 export function useRestaurantModules() {

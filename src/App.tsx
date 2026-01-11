@@ -35,7 +35,10 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminOrderItems from "./pages/admin/AdminOrderItems";
 import AdminCombinationGroups from "./pages/admin/AdminCombinationGroups";
 import AdminMetrics from "./pages/admin/AdminMetrics";
-
+import AdminPreOrders from "./pages/admin/AdminPreOrders";
+import PreOrderCartPage from "./pages/PreOrderCartPage";
+import PreOrderCheckoutPage from "./pages/PreOrderCheckoutPage";
+import PreOrderStatusPage from "./pages/PreOrderStatusPage";
 const queryClient = new QueryClient();
 
 // Client pages wrapper with client theme
@@ -54,6 +57,9 @@ function ClientPages() {
         <Route path="/pedido-cozinha/:baseId/revisao" element={<OrderReviewPage />} />
         <Route path="/pedido-cozinha/status/:orderId" element={<OrderStatusPage />} />
         <Route path="/avaliacao" element={<CustomerReviewPage />} />
+        <Route path="/encomendas/carrinho" element={<PreOrderCartPage />} />
+        <Route path="/encomendas/checkout" element={<PreOrderCheckoutPage />} />
+        <Route path="/encomendas/status/:orderId" element={<PreOrderStatusPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
       </Routes>
@@ -222,6 +228,16 @@ function AdminPages() {
             <AuthGuard requireAdmin>
               <AdminLayout>
                 <AdminMetrics />
+              </AdminLayout>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/encomendas"
+          element={
+            <AuthGuard requireAdmin>
+              <AdminLayout>
+                <AdminPreOrders />
               </AdminLayout>
             </AuthGuard>
           }
