@@ -19,7 +19,7 @@ export default function PreOrderCartPage() {
 
   if (items.length === 0) {
     return (
-      <ClientLayout title="Carrinho de Encomendas" showBack backTo="/cardapio">
+      <ClientLayout title="Carrinho de Encomendas" showBack backTo="/encomendas">
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
             <ShoppingBag className="h-10 w-10 text-muted-foreground" />
@@ -29,7 +29,7 @@ export default function PreOrderCartPage() {
             Adicione produtos disponíveis para encomenda
           </p>
           <Button asChild>
-            <Link to="/cardapio">Ver Cardápio</Link>
+            <Link to="/encomendas">Ver Produtos</Link>
           </Button>
         </div>
       </ClientLayout>
@@ -37,7 +37,7 @@ export default function PreOrderCartPage() {
   }
 
   return (
-    <ClientLayout title="Carrinho de Encomendas" showBack backTo="/cardapio">
+    <ClientLayout title="Carrinho de Encomendas" showBack backTo="/encomendas">
       <div className="space-y-4">
         {items.map((item) => (
           <Card key={item.productId} className="overflow-hidden">
