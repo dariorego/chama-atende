@@ -26,6 +26,10 @@ export interface RestaurantSettings {
   timezone: string;
   google_maps_url: string | null;
   location_coordinates: LocationCoordinates | null;
+  plan: string | null;
+  custom_domain: string | null;
+  max_users: number | null;
+  features: Record<string, boolean> | null;
 }
 
 export interface UpdateRestaurantData {
@@ -51,19 +55,29 @@ export interface UpdateRestaurantData {
   location_coordinates?: LocationCoordinates | null;
 }
 
-export function useAdminSettings() {
+/**
+ * Hook for admin settings - now supports multi-tenant via restaurantId parameter
+ * @param restaurantId - Optional restaurant ID. If not provided, uses TenantContext or falls back to first restaurant.
+ */
+export function useAdminSettings(restaurantId?: string) {
   const queryClient = useQueryClient();
 
   const { data: restaurant, isLoading, error } = useQuery({
-    queryKey: ['admin-restaurant'],
+    queryKey: ['admin-restaurant', restaurantId],
     queryFn: async () => {
-      // Get the first active restaurant (single-tenant)
-      const { data, error } = await supabase
+      let query = supabase
         .from('restaurants')
-        .select('*')
-        .eq('is_active', true)
-        .limit(1)
-        .maybeSingle();
+        .select('*');
+
+      // If restaurantId provided, fetch specific restaurant
+      if (restaurantId) {
+        query = query.eq('id', restaurantId);
+      } else {
+        // Fallback: get first active restaurant (legacy single-tenant behavior)
+        query = query.eq('is_active', true);
+      }
+
+      const { data, error } = await query.limit(1).maybeSingle();
 
       if (error) throw error;
       
@@ -79,25 +93,30 @@ export function useAdminSettings() {
         timezone: (data.timezone as string) || 'America/Sao_Paulo',
         google_maps_url: (data.google_maps_url as string) || null,
         location_coordinates: (data.location_coordinates as unknown as LocationCoordinates) || null,
+        plan: data.plan || 'starter',
+        custom_domain: data.custom_domain || null,
+        max_users: data.max_users || 3,
+        features: (data.features as Record<string, boolean>) || {},
       } as RestaurantSettings : null;
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateRestaurantData) => {
-      if (!restaurant?.id) throw new Error("Restaurant not found");
+      const targetId = restaurantId || restaurant?.id;
+      if (!targetId) throw new Error("Restaurant not found");
       
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await supabase
         .from('restaurants')
         .update(updates as any)
-        .eq('id', restaurant.id);
+        .eq('id', targetId);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-restaurant'] });
-      queryClient.invalidateQueries({ queryKey: ['restaurant'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-restaurant', restaurantId] });
+      queryClient.invalidateQueries({ queryKey: ['tenant'] });
       toast.success("Configurações salvas com sucesso!");
     },
     onError: (error) => {
@@ -113,4 +132,16 @@ export function useAdminSettings() {
     updateRestaurant: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
   };
+}
+
+/**
+ * Hook that uses TenantContext to get the current restaurant settings
+ * Use this in components wrapped by TenantProvider
+ */
+export function useTenantSettings() {
+  // Dynamic import to avoid circular dependencies
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { useTenant } = require('@/hooks/useTenant');
+  const { tenantId } = useTenant();
+  return useAdminSettings(tenantId ?? undefined);
 }
