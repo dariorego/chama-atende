@@ -16,10 +16,10 @@ COPY package-lock.json* npm-shrinkwrap.json* ./
 # - se tiver lockfile -> npm ci (reprodutível)
 # - se não tiver -> npm install (fallback)
 RUN if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then \
-      npm ci --legacy-peer-deps; \
-    else \
-      npm install --legacy-peer-deps; \
-    fi
+  npm ci --legacy-peer-deps; \
+  else \
+  npm install --legacy-peer-deps; \
+  fi
 
 # Copia o restante do projeto
 COPY . .
@@ -31,9 +31,9 @@ ARG VITE_SUPABASE_PROJECT_ID
 
 # Executa build com VITE_* somente no comando (sem gravar ENV na imagem)
 RUN VITE_SUPABASE_URL="$VITE_SUPABASE_URL" \
-    VITE_SUPABASE_PUBLISHABLE_KEY="$VITE_SUPABASE_PUBLISHABLE_KEY" \
-    VITE_SUPABASE_PROJECT_ID="$VITE_SUPABASE_PROJECT_ID" \
-    npm run build
+  VITE_SUPABASE_PUBLISHABLE_KEY="$VITE_SUPABASE_PUBLISHABLE_KEY" \
+  VITE_SUPABASE_PROJECT_ID="$VITE_SUPABASE_PROJECT_ID" \
+  npm run build
 
 # Listar arquivos gerados para debug
 RUN ls -la dist/
@@ -53,7 +53,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copia configuração customizada do Nginx (mais completa com gzip, cache, segurança)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
