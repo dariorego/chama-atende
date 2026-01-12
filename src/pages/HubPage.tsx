@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { ActionCard } from "@/components/ui/action-card";
 import {
   UtensilsCrossed,
@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { useTenant } from "@/hooks/useTenant";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
 import { useRestaurantStatus } from "@/hooks/useRestaurantStatus";
 import { useTableContext } from "@/hooks/useTableContext";
@@ -37,43 +37,43 @@ import { generateGoogleMapsUrl } from "@/lib/google-maps-utils";
 const HubPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const [scrolled, setScrolled] = useState(false);
 
-  // Fetch data from Supabase
-  const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
+  // Use TenantContext instead of useAdminSettings
+  const { tenant, isLoading: isLoadingTenant, error: tenantError } = useTenant();
   const { data: modules, isLoading: isLoadingModules } = useRestaurantModules();
   const { table, tableNumber, tableName, hasTable, isLoading: isLoadingTable, setTable, clearTable } = useTableContext();
 
-  const isLoading = isLoadingRestaurant || isLoadingModules || isLoadingTable;
+  const isLoading = isLoadingTenant || isLoadingModules || isLoadingTable;
 
   // Capture table from URL parameter
   const mesaParam = searchParams.get("mesa");
   
   useEffect(() => {
-    if (mesaParam) {
+    if (mesaParam && slug) {
       setTable(mesaParam).then((success) => {
         if (success) {
           toast.success("Mesa identificada com sucesso!");
-          // Remove parameter from URL
-          navigate("/", { replace: true });
+          // Remove parameter from URL, keep slug
+          navigate(`/${slug}`, { replace: true });
         } else {
           toast.error("Mesa não encontrada ou inativa");
-          navigate("/", { replace: true });
+          navigate(`/${slug}`, { replace: true });
         }
       });
     }
-  }, [mesaParam, setTable, navigate]);
+  }, [mesaParam, setTable, navigate, slug]);
 
-  // Parse JSONB fields
-  const socialLinks = (restaurant?.social_links as SocialLinks) ?? {};
-  const wifiInfo = (restaurant?.wifi_info as WifiInfo) ?? {};
-  const locationCoordinates = (restaurant?.location_coordinates as LocationCoordinates) ?? null;
+  // Parse JSONB fields from tenant
+  const socialLinks = (tenant?.social_links as SocialLinks) ?? {};
+  const wifiInfo = (tenant?.wifi_info as WifiInfo) ?? {};
+  const locationCoordinates = (tenant?.location_coordinates as unknown as LocationCoordinates) ?? null;
   
   // Calculate automatic status based on business hours
-  // Hook must be called unconditionally before any returns
   const { isOpen, statusText } = useRestaurantStatus(
-    restaurant?.business_hours,
-    restaurant?.timezone
+    tenant?.business_hours as unknown as Record<string, unknown> | null,
+    tenant?.timezone
   );
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const HubPage = () => {
   const handleShare = async () => {
     if (navigator.share) {
       await navigator.share({
-        title: restaurant?.name ?? '',
+        title: tenant?.name ?? '',
         url: window.location.href,
       });
     }
@@ -108,13 +108,21 @@ const HubPage = () => {
     );
   }
 
-  if (!restaurant) {
+  if (tenantError || !tenant) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Restaurante não encontrado</p>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <p className="text-muted-foreground">
+          {tenantError?.message || 'Estabelecimento não encontrado'}
+        </p>
+        <Button variant="outline" onClick={() => navigate('/')}>
+          Voltar ao início
+        </Button>
       </div>
     );
   }
+
+  // Build routes with slug prefix
+  const buildRoute = (path: string) => `/${slug}${path}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -126,7 +134,7 @@ const HubPage = () => {
       >
         <div className="container mx-auto px-4 max-w-lg">
           <div className="flex items-center justify-between h-14">
-            <Button variant="ghost" size="icon" className="text-foreground">
+            <Button variant="ghost" size="icon" className="text-foreground" onClick={() => navigate('/')}>
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <span
@@ -134,7 +142,7 @@ const HubPage = () => {
                 scrolled ? "opacity-100" : "opacity-0"
               }`}
             >
-              {restaurant.name}
+              {tenant.name}
             </span>
             <div className="flex items-center gap-1">
               <ThemeToggle />
@@ -161,10 +169,10 @@ const HubPage = () => {
               
               {/* Logo container */}
               <div className="relative w-28 h-28 rounded-full border-4 border-primary/40 overflow-hidden shadow-glow">
-                {restaurant.logo_url ? (
+                {tenant.logo_url ? (
                   <img
-                    src={restaurant.logo_url}
-                    alt={restaurant.name}
+                    src={tenant.logo_url}
+                    alt={tenant.name}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -177,11 +185,11 @@ const HubPage = () => {
 
             {/* Name and subtitle */}
             <h1 className="mt-5 text-2xl font-bold text-foreground">
-              {restaurant.name}
+              {tenant.name}
             </h1>
-            {restaurant.subtitle && (
+            {tenant.subtitle && (
               <p className="text-muted-foreground text-sm mt-1">
-                {restaurant.subtitle}
+                {tenant.subtitle}
               </p>
             )}
 
@@ -236,8 +244,8 @@ const HubPage = () => {
               </div>
               <span className="text-xs text-muted-foreground">Fotos</span>
             </button>
-            {restaurant.phone && (
-              <a href={`https://wa.me/${restaurant.phone.replace(/\D/g, "")}`} className="flex flex-col items-center gap-1.5 group">
+            {tenant.phone && (
+              <a href={`https://wa.me/${tenant.phone.replace(/\D/g, "")}`} className="flex flex-col items-center gap-1.5 group">
                 <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/20 transition-colors">
                   <MessageCircle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
@@ -273,7 +281,7 @@ const HubPage = () => {
               icon={UtensilsCrossed}
               title="Cardápio Digital"
               description="Explore nosso menu completo com fotos e descrições detalhadas"
-              to="/cardapio"
+              to={buildRoute('/cardapio')}
               variant="hero"
               badge="DESTAQUE"
             />
@@ -285,7 +293,7 @@ const HubPage = () => {
               icon={Bell}
               title="Pedir Atendimento"
               description={isOpen ? "Solicite atendimento na sua mesa" : "Disponível no horário de funcionamento"}
-              to="/solicitar-atendimento"
+              to={buildRoute('/solicitar-atendimento')}
               variant="amber"
               disabled={!isOpen}
             />
@@ -296,7 +304,7 @@ const HubPage = () => {
               icon={CalendarCheck}
               title="Fazer Reserva"
               description="Reserve sua mesa com antecedência"
-              to="/reservas"
+              to={buildRoute('/reservas')}
               variant="purple"
             />
           )}
@@ -306,7 +314,7 @@ const HubPage = () => {
               icon={Users}
               title="Fila de Espera"
               description={isOpen ? "Entre na fila e acompanhe sua posição" : "Disponível no horário de funcionamento"}
-              to="/fila"
+              to={buildRoute('/fila')}
               variant="blue"
               disabled={!isOpen}
             />
@@ -317,7 +325,7 @@ const HubPage = () => {
               icon={ChefHat}
               title="Pedido Cozinha"
               description={isOpen ? "Monte seu prato personalizado" : "Disponível no horário de funcionamento"}
-              to="/pedido-cozinha"
+              to={buildRoute('/pedido-cozinha')}
               variant="rose"
               disabled={!isOpen}
             />
@@ -328,7 +336,7 @@ const HubPage = () => {
               icon={Star}
               title="Avaliar Experiência"
               description="Compartilhe sua opinião sobre nosso serviço"
-              to="/avaliacao"
+              to={buildRoute('/avaliacao')}
               variant="amber"
             />
           )}
@@ -338,20 +346,20 @@ const HubPage = () => {
               icon={ShoppingBag}
               title="Fazer Encomenda"
               description="Peça com antecedência e retire no horário combinado"
-              to="/encomendas"
+              to={buildRoute('/encomendas')}
               variant="primary"
             />
           )}
         </div>
 
         {/* Map Card - Usa coordenadas se disponíveis, senão usa endereço */}
-        {(locationCoordinates || restaurant.address) && (
+        {(locationCoordinates || tenant.address) && (
           <div className="mt-6">
             <a
               href={
                 locationCoordinates 
                   ? generateGoogleMapsUrl(locationCoordinates)
-                  : `https://maps.google.com/?q=${encodeURIComponent(restaurant.address || '')}`
+                  : `https://maps.google.com/?q=${encodeURIComponent(tenant.address || '')}`
               }
               target="_blank"
               rel="noopener noreferrer"
@@ -373,7 +381,7 @@ const HubPage = () => {
                 <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between">
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <p className="text-sm text-foreground font-medium">{restaurant.address || 'Ver no mapa'}</p>
+                    <p className="text-sm text-foreground font-medium">{tenant.address || 'Ver no mapa'}</p>
                   </div>
                   <Button size="icon" variant="secondary" className="shrink-0">
                     <Navigation className="h-4 w-4" />
@@ -413,14 +421,14 @@ const HubPage = () => {
         {/* Footer */}
         <div className="mt-8 pt-6 border-t border-border text-center">
           <p className="text-xs text-muted-foreground">
-            Powered by <span className="text-primary font-medium">Plataforma Ativa</span>
+            Powered by <span className="text-primary font-medium">Chama Atende</span>
           </p>
           <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
             <a href="/termos" className="hover:text-primary transition-colors">TERMOS</a>
             <span>•</span>
             <a href="/privacidade" className="hover:text-primary transition-colors">PRIVACIDADE</a>
             <span>•</span>
-            <Link to="/admin" className="hover:text-primary transition-colors flex items-center gap-1">
+            <Link to={`/admin/${slug}`} className="hover:text-primary transition-colors flex items-center gap-1">
               <Settings className="h-3 w-3" />
               ADMIN
             </Link>

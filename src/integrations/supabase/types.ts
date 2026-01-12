@@ -721,6 +721,7 @@ export type Database = {
           phone: string | null
           position: number | null
           queue_code: string
+          restaurant_id: string | null
           seated_at: string | null
           status: string
           updated_at: string | null
@@ -739,6 +740,7 @@ export type Database = {
           phone?: string | null
           position?: number | null
           queue_code: string
+          restaurant_id?: string | null
           seated_at?: string | null
           status?: string
           updated_at?: string | null
@@ -757,11 +759,20 @@ export type Database = {
           phone?: string | null
           position?: number | null
           queue_code?: string
+          restaurant_id?: string | null
           seated_at?: string | null
           status?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "queue_entries_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reservations: {
         Row: {
@@ -778,6 +789,7 @@ export type Database = {
           reservation_code: string
           reservation_date: string
           reservation_time: string
+          restaurant_id: string | null
           status: string
           updated_at: string | null
         }
@@ -795,6 +807,7 @@ export type Database = {
           reservation_code: string
           reservation_date: string
           reservation_time: string
+          restaurant_id?: string | null
           status?: string
           updated_at?: string | null
         }
@@ -812,10 +825,19 @@ export type Database = {
           reservation_code?: string
           reservation_date?: string
           reservation_time?: string
+          restaurant_id?: string | null
           status?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "reservations_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       restaurant_modules: {
         Row: {
@@ -862,17 +884,22 @@ export type Database = {
           closing_time: string | null
           cover_image_url: string | null
           created_at: string | null
+          custom_domain: string | null
           email: string | null
+          features: Json | null
           google_maps_url: string | null
           id: string
           identification_type: string | null
           is_active: boolean | null
           location_coordinates: Json | null
           logo_url: string | null
+          max_users: number | null
           name: string
           notification_settings: Json | null
           opening_time: string | null
+          owner_id: string | null
           phone: string | null
+          plan: string | null
           slug: string
           social_links: Json | null
           status: string | null
@@ -889,17 +916,22 @@ export type Database = {
           closing_time?: string | null
           cover_image_url?: string | null
           created_at?: string | null
+          custom_domain?: string | null
           email?: string | null
+          features?: Json | null
           google_maps_url?: string | null
           id?: string
           identification_type?: string | null
           is_active?: boolean | null
           location_coordinates?: Json | null
           logo_url?: string | null
+          max_users?: number | null
           name: string
           notification_settings?: Json | null
           opening_time?: string | null
+          owner_id?: string | null
           phone?: string | null
+          plan?: string | null
           slug: string
           social_links?: Json | null
           status?: string | null
@@ -916,17 +948,22 @@ export type Database = {
           closing_time?: string | null
           cover_image_url?: string | null
           created_at?: string | null
+          custom_domain?: string | null
           email?: string | null
+          features?: Json | null
           google_maps_url?: string | null
           id?: string
           identification_type?: string | null
           is_active?: boolean | null
           location_coordinates?: Json | null
           logo_url?: string | null
+          max_users?: number | null
           name?: string
           notification_settings?: Json | null
           opening_time?: string | null
+          owner_id?: string | null
           phone?: string | null
+          plan?: string | null
           slug?: string
           social_links?: Json | null
           status?: string | null
@@ -948,6 +985,7 @@ export type Database = {
           created_at: string | null
           id: string
           response_time_seconds: number | null
+          restaurant_id: string | null
           status: string | null
           table_id: string
           table_session_id: string | null
@@ -962,6 +1000,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           response_time_seconds?: number | null
+          restaurant_id?: string | null
           status?: string | null
           table_id: string
           table_session_id?: string | null
@@ -976,6 +1015,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           response_time_seconds?: number | null
+          restaurant_id?: string | null
           status?: string | null
           table_id?: string
           table_session_id?: string | null
@@ -983,6 +1023,13 @@ export type Database = {
           waiter_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "service_calls_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_calls_table_id_fkey"
             columns: ["table_id"]
@@ -1015,6 +1062,7 @@ export type Database = {
           id: string
           notes: string | null
           opened_at: string | null
+          restaurant_id: string | null
           status: string | null
           table_id: string
           updated_at: string | null
@@ -1028,6 +1076,7 @@ export type Database = {
           id?: string
           notes?: string | null
           opened_at?: string | null
+          restaurant_id?: string | null
           status?: string | null
           table_id: string
           updated_at?: string | null
@@ -1041,12 +1090,20 @@ export type Database = {
           id?: string
           notes?: string | null
           opened_at?: string | null
+          restaurant_id?: string | null
           status?: string | null
           table_id?: string
           updated_at?: string | null
           waiter_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "table_sessions_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "table_sessions_table_id_fkey"
             columns: ["table_id"]
@@ -1071,6 +1128,7 @@ export type Database = {
           is_active: boolean | null
           name: string | null
           number: number
+          restaurant_id: string | null
           status: string | null
           updated_at: string | null
         }
@@ -1081,6 +1139,7 @@ export type Database = {
           is_active?: boolean | null
           name?: string | null
           number: number
+          restaurant_id?: string | null
           status?: string | null
           updated_at?: string | null
         }
@@ -1091,10 +1150,51 @@ export type Database = {
           is_active?: boolean | null
           name?: string | null
           number?: number
+          restaurant_id?: string | null
           status?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tables_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          restaurant_id: string
+          role: Database["public"]["Enums"]["tenant_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          restaurant_id: string
+          role: Database["public"]["Enums"]["tenant_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          restaurant_id?: string
+          role?: Database["public"]["Enums"]["tenant_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_user_roles_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -1124,6 +1224,7 @@ export type Database = {
           is_active: boolean | null
           is_available: boolean | null
           name: string
+          restaurant_id: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -1133,6 +1234,7 @@ export type Database = {
           is_active?: boolean | null
           is_available?: boolean | null
           name: string
+          restaurant_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -1142,10 +1244,18 @@ export type Database = {
           is_active?: boolean | null
           is_available?: boolean | null
           name?: string
+          restaurant_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "waiters_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "waiters_user_id_fkey"
             columns: ["user_id"]
@@ -1160,10 +1270,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_restaurant_id: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
+        }
+        Returns: boolean
+      }
+      has_tenant_access: { Args: { _restaurant_id: string }; Returns: boolean }
+      has_tenant_role: {
+        Args: {
+          _restaurant_id: string
+          _role: Database["public"]["Enums"]["tenant_role"]
         }
         Returns: boolean
       }
@@ -1202,6 +1321,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "manager" | "staff"
+      tenant_role:
+        | "owner"
+        | "admin"
+        | "manager"
+        | "staff"
+        | "kitchen"
+        | "waiter"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1330,6 +1456,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "manager", "staff"],
+      tenant_role: ["owner", "admin", "manager", "staff", "kitchen", "waiter"],
     },
   },
 } as const
