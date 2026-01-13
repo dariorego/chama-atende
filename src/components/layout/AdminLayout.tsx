@@ -1,5 +1,5 @@
 import { ReactNode, useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link, useParams } from 'react-router-dom';
 import {
   SidebarProvider,
   Sidebar,
@@ -70,6 +70,10 @@ function getSpotifyEmbedUrl(url: string): string | null {
 export function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { slug } = useParams<{ slug: string }>();
+  
+  // Base path for admin routes with tenant slug
+  const adminBase = `/admin/${slug}`;
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
   const { restaurant } = useAdminAccess();
@@ -88,34 +92,34 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Build dynamic menu based on active modules
   const moduleMenuItems = [
-    { moduleName: 'waiter_call', title: 'Atendimentos', url: '/admin/atendimentos', icon: Bell },
-    { moduleName: 'waiter_call', title: 'Mesas', url: '/admin/mesas', icon: LayoutGrid },
-    { moduleName: 'waiter_call', title: 'Atendentes', url: '/admin/atendentes', icon: User },
-    { moduleName: 'reservations', title: 'Reservas', url: '/admin/reservas', icon: Calendar },
-    { moduleName: 'queue', title: 'Fila', url: '/admin/fila', icon: Users },
-    { moduleName: 'customer_review', title: 'Avaliações', url: '/admin/avaliacoes', icon: Star },
-    { moduleName: 'kitchen_order', title: 'Pedidos', url: '/admin/pedidos', icon: ChefHat },
-    { moduleName: 'pre_orders', title: 'Encomendas', url: '/admin/encomendas', icon: ShoppingBag },
+    { moduleName: 'waiter_call', title: 'Atendimentos', url: `${adminBase}/atendimentos`, icon: Bell },
+    { moduleName: 'waiter_call', title: 'Mesas', url: `${adminBase}/mesas`, icon: LayoutGrid },
+    { moduleName: 'waiter_call', title: 'Atendentes', url: `${adminBase}/atendentes`, icon: User },
+    { moduleName: 'reservations', title: 'Reservas', url: `${adminBase}/reservas`, icon: Calendar },
+    { moduleName: 'queue', title: 'Fila', url: `${adminBase}/fila`, icon: Users },
+    { moduleName: 'customer_review', title: 'Avaliações', url: `${adminBase}/avaliacoes`, icon: Star },
+    { moduleName: 'kitchen_order', title: 'Pedidos', url: `${adminBase}/pedidos`, icon: ChefHat },
+    { moduleName: 'pre_orders', title: 'Encomendas', url: `${adminBase}/encomendas`, icon: ShoppingBag },
   ].filter((item) => isModuleActive(item.moduleName));
 
   // Composição items (subitems of kitchen_order)
   const compositionMenuItems = isModuleActive('kitchen_order') ? [
-    { title: 'Itens do Pedido', url: '/admin/itens-pedido', icon: Package },
-    { title: 'Combinações', url: '/admin/combinacoes', icon: Layers },
+    { title: 'Itens do Pedido', url: `${adminBase}/itens-pedido`, icon: Package },
+    { title: 'Combinações', url: `${adminBase}/combinacoes`, icon: Layers },
   ] : [];
 
   const menuGroups = [
     {
       label: null,
       items: [
-        { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
+        { title: 'Dashboard', url: adminBase, icon: LayoutDashboard },
       ],
     },
     {
       label: 'Cardápio',
       items: [
-        { title: 'Produtos', url: '/admin/produtos', icon: UtensilsCrossed },
-        { title: 'Categorias', url: '/admin/categorias', icon: FolderTree },
+        { title: 'Produtos', url: `${adminBase}/produtos`, icon: UtensilsCrossed },
+        { title: 'Categorias', url: `${adminBase}/categorias`, icon: FolderTree },
       ],
     },
     ...(moduleMenuItems.length > 0 ? [{
@@ -129,10 +133,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     {
       label: 'Gestão',
       items: [
-        { title: 'Métricas', url: '/admin/metricas', icon: BarChart3 },
-        { title: 'Módulos', url: '/admin/modulos', icon: Puzzle },
-        { title: 'Usuários', url: '/admin/usuarios', icon: Users },
-        { title: 'Configurações', url: '/admin/configuracoes', icon: Settings },
+        { title: 'Métricas', url: `${adminBase}/metricas`, icon: BarChart3 },
+        { title: 'Módulos', url: `${adminBase}/modulos`, icon: Puzzle },
+        { title: 'Usuários', url: `${adminBase}/usuarios`, icon: Users },
+        { title: 'Configurações', url: `${adminBase}/configuracoes`, icon: Settings },
       ],
     },
   ];
@@ -188,7 +192,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       <SidebarMenuButton asChild>
                         <NavLink
                           to={item.url}
-                          end={item.url === '/admin'}
+                          end={item.url === adminBase}
                           className="flex items-center gap-2 hover:bg-muted/50"
                           activeClassName="bg-primary/10 text-primary font-medium"
                         >
@@ -212,7 +216,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         <SidebarMenuButton asChild>
                           <NavLink
                             to={item.url}
-                            end={item.url === '/admin'}
+                            end={item.url === adminBase}
                             className="flex items-center gap-2 hover:bg-muted/50"
                             activeClassName="bg-primary/10 text-primary font-medium"
                           >
@@ -234,7 +238,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link
-                        to="/"
+                        to={`/${slug}`}
                         target="_blank"
                         className="flex items-center gap-2 hover:bg-muted/50"
                       >
@@ -312,7 +316,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <h1 className="font-semibold flex-1">
               {allMenuItems.find((item) => 
                 location.pathname === item.url || 
-                (item.url !== '/admin' && location.pathname.startsWith(item.url))
+                (item.url !== adminBase && location.pathname.startsWith(item.url))
               )?.title ?? 'Dashboard'}
             </h1>
             <ThemeToggle />
