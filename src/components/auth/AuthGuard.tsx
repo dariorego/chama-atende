@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { Loader2 } from 'lucide-react';
@@ -11,6 +11,7 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const { hasAccess, isLoading: accessLoading } = useAdminAccess();
 
@@ -20,14 +21,18 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
     if (isLoading) return;
 
     if (!isAuthenticated) {
-      navigate('/login', { replace: true });
+      // Preserve current URL to redirect back after login
+      navigate('/login', { 
+        replace: true, 
+        state: { from: location.pathname } 
+      });
       return;
     }
 
     if (requireAdmin && !hasAccess) {
       navigate('/', { replace: true });
     }
-  }, [isAuthenticated, hasAccess, isLoading, requireAdmin, navigate]);
+  }, [isAuthenticated, hasAccess, isLoading, requireAdmin, navigate, location.pathname]);
 
   if (isLoading) {
     return (
