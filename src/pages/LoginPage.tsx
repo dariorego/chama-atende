@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,9 +20,13 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const { restaurant, isLoading: restaurantLoading } = useAdminSettings();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get the original URL the user was trying to access
+  const from = (location.state as { from?: string })?.from || '/';
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -37,9 +41,10 @@ export default function LoginPage() {
     if (authLoading) return;
     
     if (isAuthenticated) {
-      navigate('/admin', { replace: true });
+      // Redirect to the original URL they were trying to access
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, authLoading, navigate]);
+  }, [isAuthenticated, authLoading, navigate, from]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
@@ -47,7 +52,8 @@ export default function LoginPage() {
     setIsSubmitting(false);
 
     if (!error) {
-      navigate('/admin', { replace: true });
+      // Redirect to the original URL they were trying to access
+      navigate(from, { replace: true });
     }
   };
 

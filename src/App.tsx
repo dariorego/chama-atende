@@ -254,17 +254,11 @@ function AdminTenantPages() {
   );
 }
 
-// Global pages without tenant context (login, signup, tenant selection)
+// Global pages wrapper (tenant selection only)
 function GlobalPages() {
   return (
     <ThemeProvider storageKey="client-theme" defaultTheme="dark">
-      <Routes>
-        <Route path="/" element={<TenantSelectPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        {/* Legacy redirect: /admin without slug goes to tenant selection */}
-        <Route path="/admin" element={<Navigate to="/login" replace />} />
-      </Routes>
+      <TenantSelectPage />
     </ThemeProvider>
   );
 }
@@ -276,16 +270,22 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Admin routes with tenant slug: /admin/:slug/* */}
+          {/* Global auth routes FIRST (most specific) */}
+          <Route path="/login" element={<ThemeProvider><LoginPage /></ThemeProvider>} />
+          <Route path="/signup" element={<ThemeProvider><SignupPage /></ThemeProvider>} />
+          
+          {/* Admin routes with tenant slug */}
           <Route path="/admin/:slug/*" element={<AdminTenantPages />} />
           
-          {/* Client routes with tenant slug: /:slug/* */}
+          {/* Legacy redirect for /admin without slug */}
+          <Route path="/admin" element={<Navigate to="/" replace />} />
+          
+          {/* Tenant selection page */}
+          <Route path="/" element={<GlobalPages />} />
+          
+          {/* Client routes with tenant slug (AFTER specific routes) */}
           <Route path="/:slug/*" element={<ClientTenantPages />} />
           
-          {/* Global routes without tenant (login, signup, home) */}
-          <Route path="/*" element={<GlobalPages />} />
-          
-          {/* 404 fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

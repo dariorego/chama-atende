@@ -119,6 +119,14 @@ export function TenantProvider({ children, slug: propSlug }: TenantProviderProps
 }
 
 /**
+ * Reserved routes that should NOT be treated as tenant slugs
+ */
+const RESERVED_ROUTES = [
+  'login', 'signup', 'onboarding', 'admin', 'api', 'auth', 
+  'settings', 'profile', 'dashboard', 'health', 'status'
+];
+
+/**
  * Extract slug from pathname
  * e.g., /dengo/cardapio -> dengo
  */
@@ -139,11 +147,11 @@ function extractSlugFromPath(pathname: string): string | null {
   const match = pathname.match(/^\/([^/]+)/);
   if (match) {
     const potentialSlug = match[1];
-    // Exclude known non-slug routes
-    const nonSlugRoutes = ['login', 'signup', 'onboarding', 'admin'];
-    if (!nonSlugRoutes.includes(potentialSlug)) {
-      return potentialSlug;
+    // Exclude reserved routes - these are NOT tenant slugs
+    if (RESERVED_ROUTES.includes(potentialSlug.toLowerCase())) {
+      return null;
     }
+    return potentialSlug;
   }
   
   return null;
