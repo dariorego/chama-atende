@@ -30,7 +30,7 @@ import { useTenant } from "@/hooks/useTenant";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
 import { useRestaurantStatus } from "@/hooks/useRestaurantStatus";
 import { useTableContext } from "@/hooks/useTableContext";
-import { SocialLinks, WifiInfo, LocationCoordinates } from "@/types/restaurant";
+import { SocialLinks, WifiInfo, LocationCoordinates, BusinessHours } from "@/types/restaurant";
 import { toast } from "sonner";
 import { generateGoogleMapsUrl } from "@/lib/google-maps-utils";
 
@@ -71,9 +71,10 @@ const HubPage = () => {
   const locationCoordinates = (tenant?.location_coordinates as unknown as LocationCoordinates) ?? null;
   
   // Calculate automatic status based on business hours
+  const businessHours = (tenant?.business_hours as unknown) as BusinessHours | null;
   const { isOpen, statusText } = useRestaurantStatus(
-    tenant?.business_hours as unknown as Record<string, unknown> | null,
-    tenant?.timezone
+    businessHours || undefined,
+    tenant?.timezone || 'America/Sao_Paulo'
   );
 
   useEffect(() => {
