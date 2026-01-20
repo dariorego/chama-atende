@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import TenantSelectPage from "./pages/TenantSelectPage";
+import OnboardingPage from "./pages/OnboardingPage";
 import { AuthGuard } from "./components/auth/AuthGuard";
 import { AdminLayout } from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -273,6 +274,7 @@ const App = () => (
           {/* Global auth routes FIRST (most specific) */}
           <Route path="/login" element={<ThemeProvider><LoginPage /></ThemeProvider>} />
           <Route path="/signup" element={<ThemeProvider><SignupPage /></ThemeProvider>} />
+          <Route path="/onboarding" element={<ThemeProvider><OnboardingPage /></ThemeProvider>} />
           
           {/* Admin routes with tenant slug */}
           <Route path="/admin/:slug/*" element={<AdminTenantPages />} />
