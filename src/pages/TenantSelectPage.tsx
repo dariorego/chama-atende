@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, Store, ArrowRight, Shield } from 'lucide-react';
+import { Loader2, Search, Store, ArrowRight, Shield, Plus } from 'lucide-react';
 
 interface Restaurant {
   id: string;
@@ -71,10 +71,16 @@ export default function TenantSelectPage() {
                 <p className="text-sm text-muted-foreground">Plataforma SaaS para Restaurantes</p>
               </div>
             </div>
-            <Button variant="outline" onClick={() => navigate('/login')} className="gap-2">
-              <Shield className="h-4 w-4" />
-              Admin
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="default" onClick={() => navigate('/onboarding')} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Criar Restaurante
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/login')} className="gap-2">
+                <Shield className="h-4 w-4" />
+                Admin
+              </Button>
+            </div>
           </div>
         </div>
       </header>
