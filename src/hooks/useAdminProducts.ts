@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
+import { useTenant } from "@/hooks/useTenant";
 
 export type MenuProduct = Tables<'menu_products'>;
 export type MenuProductInsert = TablesInsert<'menu_products'>;
@@ -13,12 +14,17 @@ export interface ProductFilters {
 }
 
 export function useAdminProducts(filters?: ProductFilters) {
+  const { tenantId } = useTenant();
+
   return useQuery({
-    queryKey: ['admin-products', filters],
+    queryKey: ['admin-products', tenantId, filters],
     queryFn: async () => {
+      if (!tenantId) return [];
+
       let query = supabase
         .from('menu_products')
         .select('*')
+        .eq('restaurant_id', tenantId)
         .order('display_order')
         .order('name');
 
@@ -39,6 +45,7 @@ export function useAdminProducts(filters?: ProductFilters) {
       if (error) throw error;
       return data;
     },
+    enabled: !!tenantId,
   });
 }
 

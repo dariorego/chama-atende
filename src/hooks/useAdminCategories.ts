@@ -1,18 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
+import { useTenant } from "@/hooks/useTenant";
 
 export type MenuCategory = Tables<'menu_categories'>;
 export type CategoryInsert = TablesInsert<'menu_categories'>;
 export type CategoryUpdate = TablesUpdate<'menu_categories'>;
 
 export function useAdminCategories(includeInactive = true) {
+  const { tenantId } = useTenant();
+
   return useQuery({
-    queryKey: ['admin-categories', includeInactive],
+    queryKey: ['admin-categories', tenantId, includeInactive],
     queryFn: async () => {
+      if (!tenantId) return [];
+
       let query = supabase
         .from('menu_categories')
         .select('*')
+        .eq('restaurant_id', tenantId)
         .order('display_order')
         .order('name');
 
@@ -25,6 +31,7 @@ export function useAdminCategories(includeInactive = true) {
       if (error) throw error;
       return data;
     },
+    enabled: !!tenantId,
   });
 }
 
