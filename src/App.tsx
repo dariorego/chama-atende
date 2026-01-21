@@ -273,6 +273,7 @@ const App = () => (
         <Routes>
           {/* Global auth routes FIRST (most specific) */}
           <Route path="/login" element={<ThemeProvider><LoginPage /></ThemeProvider>} />
+          <Route path="/login/:slug" element={<TenantProvider><ThemeProvider><LoginPage /></ThemeProvider></TenantProvider>} />
           <Route path="/signup" element={<ThemeProvider><SignupPage /></ThemeProvider>} />
           <Route path="/onboarding" element={<ThemeProvider><OnboardingPage /></ThemeProvider>} />
           

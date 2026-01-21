@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/useAuth';
-import { useAdminSettings } from '@/hooks/useAdminSettings';
+import { useTenant } from '@/hooks/useTenant';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,12 +21,26 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams<{ slug?: string }>();
   const { login, isAuthenticated, loading: authLoading } = useAuth();
-  const { restaurant, isLoading: restaurantLoading } = useAdminSettings();
+  
+  // Try to get tenant from context (when wrapped in TenantProvider)
+  let tenant = null;
+  let tenantLoading = false;
+  try {
+    const tenantContext = useTenant();
+    tenant = tenantContext.tenant;
+    tenantLoading = tenantContext.isLoading;
+  } catch {
+    // Not inside TenantProvider, tenant context not available
+  }
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get the original URL the user was trying to access
-  const from = (location.state as { from?: string })?.from || '/';
+  // Determine redirect destination
+  const tenantSlug = params.slug || tenant?.slug;
+  const from = (location.state as { from?: string })?.from || 
+    (tenantSlug ? `/admin/${tenantSlug}` : '/');
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -38,13 +52,12 @@ export default function LoginPage() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || tenantLoading) return;
     
     if (isAuthenticated) {
-      // Redirect to the original URL they were trying to access
       navigate(from, { replace: true });
     }
-  }, [isAuthenticated, authLoading, navigate, from]);
+  }, [isAuthenticated, authLoading, tenantLoading, navigate, from]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
@@ -52,12 +65,11 @@ export default function LoginPage() {
     setIsSubmitting(false);
 
     if (!error) {
-      // Redirect to the original URL they were trying to access
       navigate(from, { replace: true });
     }
   };
 
-  if (authLoading || restaurantLoading) {
+  if (authLoading || tenantLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -65,15 +77,19 @@ export default function LoginPage() {
     );
   }
 
+  // Use tenant info if available
+  const displayName = tenant?.name || 'ChamaAtende';
+  const logoUrl = tenant?.logo_url;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/30 p-4">
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            {restaurant?.logo_url ? (
+            {logoUrl ? (
               <img 
-                src={restaurant.logo_url} 
-                alt={restaurant.name} 
+                src={logoUrl} 
+                alt={displayName} 
                 className="w-full h-full object-cover rounded-full"
               />
             ) : (
@@ -81,7 +97,7 @@ export default function LoginPage() {
             )}
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">{restaurant?.name || 'Admin'}</CardTitle>
+            <CardTitle className="text-2xl font-bold">{displayName}</CardTitle>
             <CardDescription className="mt-2">
               Entre na sua conta para acessar o painel administrativo
             </CardDescription>
@@ -148,7 +164,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <Link 
-              to="/" 
+              to={tenantSlug ? `/${tenantSlug}` : '/'} 
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               ← Voltar ao site
