@@ -45,6 +45,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { useAdminModules } from '@/hooks/useAdminModules';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
+import { useTenant } from '@/hooks/useTenant';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface AdminLayoutProps {
@@ -76,9 +77,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const adminBase = `/admin/${slug}`;
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
-  const { restaurant } = useAdminAccess();
+  const { tenant, tenantId } = useTenant();
   const { modules } = useAdminModules();
-  const { restaurant: restaurantSettings } = useAdminSettings();
+  const { restaurant: restaurantSettings } = useAdminSettings(tenantId ?? undefined);
+  
+  // Use tenant data for display (more reliable as it comes from URL context)
+  const restaurant = tenant;
   
   const [isPlayerExpanded, setIsPlayerExpanded] = useState(true);
   
