@@ -1,23 +1,38 @@
 import { useMemo } from 'react';
 import { useCurrentUser } from './useCurrentUser';
 import { useAdminSettings } from './useAdminSettings';
+import { useTenantAccess } from './useTenantAccess';
 
 export function useAdminAccess() {
-  const { profile, roles, isLoading: isLoadingUser, isAdmin, isManager } = useCurrentUser();
+  const { profile, roles, isLoading: isLoadingUser, isAdmin: isGlobalAdmin, isManager: isGlobalManager } = useCurrentUser();
   const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
+  const { 
+    hasAccess: hasTenantAccess, 
+    isAdmin: isTenantAdmin, 
+    isManager: isTenantManager,
+    tenantRole,
+    isLoading: isLoadingTenantAccess 
+  } = useTenantAccess();
 
   const hasAccess = useMemo(() => {
     if (!profile) return false;
     
-    // User must be admin or manager
-    return isAdmin || isManager;
-  }, [profile, isAdmin, isManager]);
+    // User must have access to this specific tenant
+    // OR be a global admin (for backward compatibility during migration)
+    return hasTenantAccess || isGlobalAdmin;
+  }, [profile, hasTenantAccess, isGlobalAdmin]);
 
   const accessLevel = useMemo(() => {
-    if (isAdmin) return 'admin';
-    if (isManager) return 'manager';
+    // Prioritize tenant-specific role
+    if (tenantRole === 'owner' || tenantRole === 'admin') return 'admin';
+    if (tenantRole === 'manager') return 'manager';
+    if (tenantRole === 'staff') return 'staff';
+    
+    // Fallback to global roles
+    if (isGlobalAdmin) return 'admin';
+    if (isGlobalManager) return 'manager';
     return 'staff';
-  }, [isAdmin, isManager]);
+  }, [tenantRole, isGlobalAdmin, isGlobalManager]);
 
   return {
     hasAccess,
@@ -25,6 +40,7 @@ export function useAdminAccess() {
     profile,
     restaurant,
     roles,
-    isLoading: isLoadingUser || isLoadingRestaurant,
+    tenantRole,
+    isLoading: isLoadingUser || isLoadingRestaurant || isLoadingTenantAccess,
   };
 }
