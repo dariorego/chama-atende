@@ -43,6 +43,7 @@ import PreOrderMenuPage from "./pages/PreOrderMenuPage";
 import PreOrderCartPage from "./pages/PreOrderCartPage";
 import PreOrderCheckoutPage from "./pages/PreOrderCheckoutPage";
 import PreOrderStatusPage from "./pages/PreOrderStatusPage";
+import SalesPage from "./pages/SalesPage";
 
 const queryClient = new QueryClient();
 
@@ -272,6 +273,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Global auth routes FIRST (most specific) */}
+          <Route path="/vendas" element={<ThemeProvider><SalesPage /></ThemeProvider>} />
           <Route path="/login" element={<ThemeProvider><LoginPage /></ThemeProvider>} />
           <Route path="/login/:slug" element={<TenantProvider><ThemeProvider><LoginPage /></ThemeProvider></TenantProvider>} />
           <Route path="/signup" element={<ThemeProvider><SignupPage /></ThemeProvider>} />
