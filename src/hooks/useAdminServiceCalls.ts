@@ -205,7 +205,7 @@ export function useUpdateServiceCall() {
 
       const { data, error } = await supabase
         .from("service_calls")
-        .update({ ...updates, response_time_seconds })
+        .update({ ...updates, response_time_seconds } as never)
         .eq("id", id)
         .select()
         .single();

@@ -241,7 +241,7 @@ export function useUpdateReservation() {
 
       const { data, error } = await supabase
         .from('reservations')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single();
