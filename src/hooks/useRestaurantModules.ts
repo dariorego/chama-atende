@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ModulesMap, MODULE_NAME_MAP } from "@/types/restaurant";
+import { useTenant } from "@/hooks/useTenant";
 
 const DEFAULT_MODULES: ModulesMap = {
   menu: false,
@@ -53,9 +54,6 @@ export function useRestaurantModules(restaurantId?: string) {
  * Hook that uses TenantContext to get modules for current tenant
  */
 export function useTenantModules() {
-  // Dynamic import to avoid circular dependencies
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useTenant } = require('@/hooks/useTenant');
   const { tenantId } = useTenant();
   return useRestaurantModules(tenantId ?? undefined);
 }
