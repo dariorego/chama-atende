@@ -139,9 +139,8 @@ export function useAdminSettings(restaurantId?: string) {
  * Use this in components wrapped by TenantProvider
  */
 export function useTenantSettings() {
-  // Dynamic import to avoid circular dependencies
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useTenant } = require('@/hooks/useTenant');
-  const { tenantId } = useTenant();
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const useTenantHook = (require('@/hooks/useTenant') as { useTenant: () => { tenantId?: string } }).useTenant;
+  const { tenantId } = useTenantHook();
   return useAdminSettings(tenantId ?? undefined);
 }
