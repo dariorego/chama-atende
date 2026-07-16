@@ -79,6 +79,21 @@ export type Database = {
           },
         ]
       }
+      keep_alive: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
       menu_categories: {
         Row: {
           created_at: string | null
