@@ -265,6 +265,7 @@ const AdminTables = () => {
         open={qrDialogOpen}
         onOpenChange={setQrDialogOpen}
         table={selectedTableForQR}
+        restaurantName={restaurant?.name}
       />
 
       <BatchTableFormDialog
