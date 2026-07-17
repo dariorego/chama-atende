@@ -63,8 +63,10 @@ export function useOrderStatus(orderId?: string) {
   useEffect(() => {
     if (!orderId) return;
 
+    const channelName = `order-status-${orderId}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel(`order-status-${orderId}`)
+      .channel(channelName)
       .on(
         "postgres_changes",
         {
