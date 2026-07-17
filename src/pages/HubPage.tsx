@@ -276,7 +276,7 @@ const HubPage = () => {
       <div className="container mx-auto px-4 pb-8 max-w-lg">
         <div className="mb-5 flex items-center gap-3">
           <div className="h-px flex-1 bg-emerald-deep/15" />
-          <span className="editorial-label text-emerald-deep/60">Nossos serviços</span>
+          <span className="editorial-label text-emerald-deep">Nossos serviços</span>
           <div className="h-px flex-1 bg-emerald-deep/15" />
         </div>
         <div className="space-y-3">
