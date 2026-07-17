@@ -37,8 +37,8 @@ const StarRating = ({ rating, onRatingChange }: StarRatingProps) => (
         <Star
           className={`w-8 h-8 transition-colors ${
             star <= rating
-              ? "text-[#FFB400] fill-[#FFB400]"
-              : "text-muted-foreground"
+              ? "text-gold fill-gold"
+              : "text-emerald-deep/25"
           }`}
         />
       </button>
@@ -57,17 +57,17 @@ const RatingCard = ({ icon, title, rating, onRatingChange }: RatingCardProps) =>
   const { label, isPrimary } = getRatingLabel(rating);
   
   return (
-    <div className="bg-card rounded-xl p-4 border border-border space-y-4">
+    <div className="bg-cream-soft rounded-2xl p-5 border border-emerald-deep/10 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-emerald-deep/5 border border-gold/40 flex items-center justify-center">
             {icon}
           </div>
-          <span className="font-bold text-base">{title}</span>
+          <span className="font-serif-editorial text-xl text-emerald-deep">{title}</span>
         </div>
         <Badge 
           variant={isPrimary ? "default" : "secondary"}
-          className={isPrimary ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}
+          className={isPrimary ? "bg-emerald-deep text-cream border border-gold/40 font-sans-editorial" : "bg-emerald-deep/10 text-emerald-deep font-sans-editorial"}
         >
           {label}
         </Badge>
@@ -138,17 +138,17 @@ const CustomerReviewPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-deep" />
       </div>
     );
   }
 
   if (!restaurant) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Restaurante não encontrado</h1>
-        <p className="text-muted-foreground text-center">
+      <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-4">
+        <h1 className="text-3xl font-serif-editorial text-emerald-deep mb-2">Restaurante não encontrado</h1>
+        <p className="text-emerald-deep/60 text-center font-sans-editorial">
           O restaurante que você está procurando não existe ou está inativo.
         </p>
       </div>
@@ -156,7 +156,7 @@ const CustomerReviewPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-cream">
       {/* Hero Header */}
       <div className="relative h-80">
         <img
@@ -164,7 +164,7 @@ const CustomerReviewPage = () => {
           alt={restaurant.name}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-cream via-emerald-deep/40 to-emerald-deep/20" />
 
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
@@ -186,26 +186,26 @@ const CustomerReviewPage = () => {
 
         {/* Restaurant info over image */}
         <div className="absolute bottom-6 left-4 right-4">
-          {/* Open badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-medium text-primary">
+          <p className="editorial-label text-gold mb-2">Sua experiência</p>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/20 backdrop-blur-sm border border-gold mb-3">
+            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+            <span className="text-xs font-sans-editorial text-white uppercase tracking-wider">
               {restaurant.status === "open" ? "Aberto agora" : "Fechado"}
             </span>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-1">{restaurant.name}</h1>
-          
+          <h1 className="text-4xl font-serif-editorial text-white mb-1">{restaurant.name}</h1>
+
           <div className="flex items-center gap-4">
             {restaurant.address && (
               <div className="flex items-center gap-1 text-white/80">
                 <MapPin className="h-4 w-4" />
-                <span className="text-sm">{restaurant.address.split(",")[0]}</span>
+                <span className="text-sm font-sans-editorial">{restaurant.address.split(",")[0]}</span>
               </div>
             )}
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
-              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-medium text-white">4.8</span>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-gold/40">
+              <Star className="h-4 w-4 text-gold fill-gold" />
+              <span className="text-sm font-sans-editorial text-white">4.8</span>
             </div>
           </div>
         </div>
@@ -213,36 +213,41 @@ const CustomerReviewPage = () => {
 
       {/* Title Tab */}
       <div className="px-4 -mt-4 relative z-10">
-        <div className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1 flex items-center justify-center">
-          <span className="text-foreground font-semibold">Avaliação do Cliente</span>
+        <div className="w-full h-12 bg-cream-soft border border-emerald-deep/10 rounded-2xl p-1 flex items-center justify-center shadow-[0_20px_60px_-30px_rgba(6,78,59,0.35)]">
+          <span className="editorial-label text-emerald-deep">Avaliação do cliente</span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="px-4 py-6 pb-28 space-y-6">
-        {/* Intro text */}
-        <p className="text-muted-foreground text-sm text-center">
-          Compartilhe sua experiência conosco. Sua opinião ajuda a melhorarmos nosso serviço.
-        </p>
+      <div className="px-4 py-8 pb-28 space-y-6">
+        {/* Intro */}
+        <div className="text-center">
+          <p className="editorial-label text-gold">Nos conte tudo</p>
+          <h2 className="text-3xl font-serif-editorial text-emerald-deep leading-tight mt-1">Como foi sua visita?</h2>
+          <p className="text-emerald-deep/60 text-sm font-sans-editorial mt-2 max-w-xs mx-auto">
+            Sua opinião ajuda a refinarmos cada detalhe da experiência.
+          </p>
+          <div className="mx-auto w-16 h-px bg-gold/60 mt-4" />
+        </div>
 
         {/* Rating Cards */}
         <div className="space-y-4">
           <RatingCard
-            icon={<Store className="w-5 h-5 text-primary" />}
+            icon={<Store className="w-5 h-5 text-gold" />}
             title="Ambiente"
             rating={ambienteRating}
             onRatingChange={setAmbienteRating}
           />
           
           <RatingCard
-            icon={<HeadphonesIcon className="w-5 h-5 text-primary" />}
+            icon={<HeadphonesIcon className="w-5 h-5 text-gold" />}
             title="Atendimento"
             rating={atendimentoRating}
             onRatingChange={setAtendimentoRating}
           />
           
           <RatingCard
-            icon={<UtensilsCrossed className="w-5 h-5 text-primary" />}
+            icon={<UtensilsCrossed className="w-5 h-5 text-gold" />}
             title="Comida"
             rating={comidaRating}
             onRatingChange={setComidaRating}
@@ -251,42 +256,42 @@ const CustomerReviewPage = () => {
 
         {/* Observations */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold">Observações</label>
+          <label className="editorial-label text-emerald-deep/70">Observações</label>
           <div className="relative">
             <Textarea
               placeholder="Conte-nos mais detalhes sobre sua visita..."
               value={observations}
               onChange={(e) => setObservations(e.target.value)}
-              className="min-h-[120px] resize-none pr-10 bg-card border-border"
+              className="min-h-[120px] resize-none pr-10 bg-cream-soft border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus:ring-2 focus:ring-gold rounded-2xl"
               rows={4}
             />
-            <FileEdit className="absolute bottom-3 right-3 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <FileEdit className="absolute bottom-3 right-3 w-4 h-4 text-emerald-deep/40 pointer-events-none" />
           </div>
         </div>
 
         {/* Personal Data */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold">Seus Dados</h3>
+          <h3 className="editorial-label text-emerald-deep/70">Seus dados</h3>
           
           {/* Full Name (required) */}
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-deep/50" />
             <Input
               placeholder="Nome completo *"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="pl-10 h-12 bg-card border-border"
+              className="pl-12 h-14 bg-cream-soft border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus:ring-2 focus:ring-gold rounded-2xl"
             />
           </div>
           
           {/* Phone (optional) */}
           <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-deep/50" />
             <Input
               placeholder="Telefone (Opcional)"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="pl-10 h-12 bg-card border-border"
+              className="pl-12 h-14 bg-cream-soft border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus:ring-2 focus:ring-gold rounded-2xl"
               type="tel"
             />
           </div>
@@ -294,10 +299,10 @@ const CustomerReviewPage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-border/50 p-4">
+      <footer className="fixed bottom-0 left-0 right-0 bg-cream/90 backdrop-blur-lg border-t border-emerald-deep/10 p-4">
         <Button
           onClick={handleSubmit}
-          className="w-full h-14 rounded-xl text-base font-bold gap-2 shadow-lg shadow-primary/20"
+          className="w-full h-14 rounded-full text-base font-sans-editorial gap-2 bg-emerald-deep text-cream border border-gold/40 hover:bg-emerald-deep/90 shadow-[0_20px_40px_-15px_rgba(6,78,59,0.6)]"
           disabled={!isFormValid || submitReview.isPending}
         >
           {submitReview.isPending ? (
