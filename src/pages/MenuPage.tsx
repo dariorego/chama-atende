@@ -62,8 +62,6 @@ function transformProduct(product: MenuProduct): Product {
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
