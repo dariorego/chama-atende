@@ -20,6 +20,7 @@ import {
   Zap,
   Globe,
   Smartphone,
+  ChevronDown,
 } from "lucide-react";
 
 const modules = [
@@ -115,9 +116,37 @@ const steps = [
   },
 ];
 
+const faqs = [
+  {
+    q: "O que é a ChamaAtende?",
+    a: "É uma plataforma SaaS multi-tenant para restaurantes. Reúne cardápio digital, pedidos, reservas, fila de espera, chamado de garçom e métricas em um só lugar.",
+  },
+  {
+    q: "Meus clientes precisam baixar algum aplicativo?",
+    a: "Não. O cardápio e os serviços são acessados diretamente pelo navegador do celular, escaneando o QR Code da mesa.",
+  },
+  {
+    q: "Quais formas de pagamento são aceitas?",
+    a: "O sistema aceita Pix e cartão de crédito/débito para encomendas e pedidos, de forma integrada e segura.",
+  },
+  {
+    q: "Posso usar a plataforma em mais de um estabelecimento?",
+    a: "Sim. Cada restaurante é isolado em um tenant próprio com autenticação, RLS e controle de acesso independente.",
+  },
+  {
+    q: "Existe contrato de fidelidade ou taxa por pedido?",
+    a: "Não há fidelidade. O plano gratuito já inclui as funcionalidades essenciais e módulos avançados podem ser ativados conforme a necessidade.",
+  },
+  {
+    q: "Como faço para começar?",
+    a: "Basta clicar em 'Começar grátis', preencher o onboarding e configurar mesas e módulos. Em poucos minutos seu restaurante já pode atender pelo QR Code.",
+  },
+];
+
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -445,6 +474,76 @@ export default function LandingPage() {
               Criar meu estabelecimento <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="py-24 md:py-32 bg-card/40 border-y border-border/50">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <div className="editorial-label text-accent mb-4">Dúvidas</div>
+            <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              Perguntas frequentes
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Respostas claras para você decidir com segurança.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div
+                  key={i}
+                  className={`rounded-2xl border transition-all ${
+                    isOpen
+                      ? "bg-background border-accent/40 shadow-card"
+                      : "bg-background/60 border-border/60 hover:border-accent/30"
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                    className="w-full flex items-center justify-between gap-4 p-5 text-left"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="font-display font-semibold text-lg">{faq.q}</span>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+                        isOpen ? "bg-accent text-accent-foreground" : "bg-accent/15 text-accent"
+                      }`}
+                    >
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </div>
+                  </button>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <p className="px-5 pb-5 text-muted-foreground leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-muted-foreground mb-4">
+              Ainda tem dúvidas? Fale com nosso time de vendas.
+            </p>
+            <Link to="/vendas">
+              <Button variant="outline" className="border-border hover:border-accent/50">
+                Falar com vendas
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
