@@ -16,9 +16,10 @@ interface QRCodeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   table: Table | null;
+  restaurantName?: string | null;
 }
 
-export const QRCodeDialog = ({ open, onOpenChange, table }: QRCodeDialogProps) => {
+export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName }: QRCodeDialogProps) => {
   const { toast } = useToast();
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +84,7 @@ export const QRCodeDialog = ({ open, onOpenChange, table }: QRCodeDialogProps) =
       <!DOCTYPE html>
       <html>
         <head>
-          <title>QR Code - Mesa ${table.number.toString().padStart(2, "0")}</title>
+          <title>QR Code - ${restaurantName || "Mesa " + table.number.toString().padStart(2, "0")}</title>
           <style>
             body {
               display: flex;
@@ -98,32 +99,40 @@ export const QRCodeDialog = ({ open, onOpenChange, table }: QRCodeDialogProps) =
               text-align: center;
               padding: 40px;
             }
-            h1 {
+            .restaurant-name {
               font-size: 32px;
+              font-weight: 700;
               margin-bottom: 8px;
+              color: #000;
             }
-            p {
+            .table-name {
+              font-size: 18px;
               color: #666;
               margin-bottom: 24px;
             }
             .qr-code {
-              margin: 24px 0;
+              margin: 8px 0 24px;
             }
-            .url {
-              font-size: 12px;
-              color: #999;
-              word-break: break-all;
-              max-width: 300px;
+            .table-number {
+              font-size: 28px;
+              font-weight: 600;
+              color: #000;
+              margin-bottom: 8px;
+            }
+            .hint {
+              font-size: 14px;
+              color: #666;
+              margin-bottom: 0;
             }
           </style>
         </head>
         <body>
           <div class="container">
-            <h1>Mesa ${table.number.toString().padStart(2, "0")}</h1>
-            ${table.name ? `<p>${table.name}</p>` : ""}
+            <div class="restaurant-name">${restaurantName || ""}</div>
+            ${table.name ? `<div class="table-name">${table.name}</div>` : ""}
             <div class="qr-code">${svgData}</div>
-            <p>Escaneie para acessar o restaurante</p>
-            <p class="url">${tableUrl}</p>
+            <div class="table-number">Mesa ${table.number.toString().padStart(2, "0")}</div>
+            <p class="hint">Escaneie para acessar o restaurante</p>
           </div>
           <script>
             window.onload = function() {

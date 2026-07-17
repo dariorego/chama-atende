@@ -10,6 +10,7 @@ import { TableFormDialog } from "@/components/admin/TableFormDialog";
 import { QRCodeDialog } from "@/components/admin/QRCodeDialog";
 import { BatchTableFormDialog } from "@/components/admin/BatchTableFormDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTenantSettings } from "@/hooks/useAdminSettings";
 
 const statusConfig = {
   available: { label: "Disponível", variant: "default" as const, color: "bg-green-500" },
@@ -20,6 +21,7 @@ const statusConfig = {
 
 const AdminTables = () => {
   const { data: tables, isLoading } = useAdminTables();
+  const { restaurant } = useTenantSettings();
   const deleteTable = useDeleteTable();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<TableType | null>(null);
@@ -263,6 +265,7 @@ const AdminTables = () => {
         open={qrDialogOpen}
         onOpenChange={setQrDialogOpen}
         table={selectedTableForQR}
+        restaurantName={restaurant?.name}
       />
 
       <BatchTableFormDialog
