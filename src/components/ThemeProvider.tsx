@@ -77,9 +77,10 @@ export function ThemeProvider({
       root.style.setProperty('--accent', colors.primary);
       root.style.setProperty('--ring', colors.primary);
     } else {
-      root.style.setProperty('--primary', DEFAULT_COLORS.primary!);
-      root.style.setProperty('--accent', DEFAULT_COLORS.accent!);
-      root.style.setProperty('--ring', DEFAULT_COLORS.primary!);
+      // No custom color: clear overrides so index.css tokens (per light/dark) apply
+      root.style.removeProperty('--primary');
+      root.style.removeProperty('--accent');
+      root.style.removeProperty('--ring');
     }
     
     // DO NOT apply background/card from database - let CSS handle per theme
