@@ -1,172 +1,55 @@
+# Fase 2 — Componentes compartilhados no padrão Emerald Prestige
 
+## Objetivo
+Propagar automaticamente a linguagem editorial (creme + verde profundo + dourado + Instrument Serif) para todas as telas do cliente ajustando os 3 componentes reutilizáveis que aparecem no Hub, Cardápio, Encomendas e demais fluxos.
 
-## Plano: Criar Landing Page de Vendas em `/vendas`
+## Componentes a ajustar
 
-### Objetivo
-Criar uma página de vendas profissional e moderna que apresente a plataforma Chama Atende, seus módulos, benefícios e planos, incentivando novos restaurantes a se cadastrar.
+### 1. `src/components/ui/action-card.tsx`
+Cards de módulo usados no Hub (Cardápio, Reserva, Fila, Garçom, Avaliação, Encomenda).
 
----
+- Fundo creme suave (`bg-cream-soft`) com borda fina verde profundo
+- Título em Instrument Serif verde profundo (não mais bold sans branco)
+- Descrição em Work Sans cinza-esverdeado
+- Ícone dentro de um círculo com borda dourada
+- Variante `hero` (Cardápio em destaque): fundo verde profundo, texto creme, badge "DESTAQUE" em dourado, botão "Ver Cardápio" dourado
+- Variantes coloridas (`amber`, `purple`, `blue`, `rose`, `primary`) unificadas em duas: **default** (creme com borda) e **hero** (verde profundo). Cores individuais viram apenas um pequeno filete dourado no ícone para diferenciação sutil.
+- Estado `disabled`: opacidade reduzida, cursor bloqueado, sem hover
 
-### 1. Configuração de Rota
+### 2. `src/components/ui/product-card.tsx`
+Card de produto do Cardápio e Encomendas.
 
-**Arquivo:** `src/App.tsx`
+- Fundo `bg-cream-soft` com borda verde profundo/10
+- Imagem à esquerda com cantos arredondados
+- Nome do prato em Instrument Serif verde profundo
+- Descrição em Work Sans, cor `text-emerald-deep/60`
+- Preço em Instrument Serif dourado, maior
+- Badge de promoção: fundo dourado, texto verde profundo, tracking wide
+- Hover: leve elevação e borda passa a dourada
 
-Adicionar a rota `/vendas` como rota global (antes das rotas de tenant):
+### 3. `src/components/ui/product-detail-sheet.tsx`
+Sheet lateral/inferior de detalhes do produto.
 
-```tsx
-<Route path="/vendas" element={<ThemeProvider><SalesPage /></ThemeProvider>} />
-```
+- Fundo creme, header com título serif verde profundo
+- Preço em serif dourado
+- Botão "Adicionar" em verde profundo com texto creme e detalhe dourado
+- Controles de quantidade (+/-) com borda dourada
+- Chips de combinações no mesmo estilo dos chips de horário da reserva
 
-Também adicionar `/vendas` à lista de `RESERVED_ROUTES` (se existir) para evitar conflito com slugs de tenant.
+## Verificação
+- Screenshot mobile do `/bistro-verde` (Hub) confirmando cards editoriais
+- Screenshot mobile do `/bistro-verde/cardapio` confirmando ProductCards editoriais e destaque do Chef
+- Screenshot da sheet de detalhe (clicando em um produto)
 
----
+## Não incluído nesta fase
+- Páginas de Encomendas, Fila, Garçom, Avaliação, Pedido (ficam para Fases 3-5)
+- Painel administrativo
+- Layouts split-screen específicos por página
 
-### 2. Criar Componente SalesPage
-
-**Arquivo:** `src/pages/SalesPage.tsx`
-
-#### Estrutura da Página:
-
-```
-Header (fixo com scroll)
-├── Logo + Nome
-├── Links de navegação (scroll suave)
-└── CTA "Começar Grátis"
-
-Hero Section
-├── Título principal com gradiente
-├── Subtítulo descritivo
-├── 2 CTAs (Criar Restaurante + Ver Demonstração)
-└── Badges de destaque (100% Web, Tempo Real, Multi-Tenant)
-
-Section: Problema & Solução
-├── Ícone ilustrativo
-├── Texto do problema
-└── Como a plataforma resolve
-
-Section: Módulos (Grid de Cards)
-├── Cardápio Digital
-├── Chamar Atendente
-├── Sistema de Reservas
-├── Fila de Espera
-├── Pedido para Cozinha
-├── Avaliações
-└── Sistema de Encomendas
-
-Section: Como Funciona (Steps)
-├── 1. Crie sua conta
-├── 2. Configure seu restaurante
-├── 3. Gere QR Codes
-└── 4. Comece a atender
-
-Section: Diferenciais
-├── Cards com ícones
-├── Hub Centralizado
-├── QR Code Inteligente
-├── Tempo Real
-├── Multi-Tenant Seguro
-└── Painel Admin Completo
-
-Section: Planos e Preços
-├── Card Starter (Grátis)
-├── Card Professional (R$ 99/mês)
-└── Card Enterprise (R$ 299/mês)
-
-Section: CTA Final
-├── Título motivacional
-├── Botão "Criar Restaurante Grátis"
-└── Link para demonstração
-
-Footer
-├── Links úteis
-├── Redes sociais
-└── Copyright
-```
-
----
-
-### 3. Componentes de UI a Utilizar
-
-Reutilizar componentes existentes:
-- `Button` - CTAs e ações
-- `Card` - Módulos e planos
-- `Badge` - Destaques e tags
-- Ícones do `lucide-react`
-
-Estilos do design system:
-- `bg-background`, `bg-surface`, `bg-card`
-- `text-foreground`, `text-muted-foreground`
-- `border-border`, `border-primary`
-- Classes utilitárias: `text-gradient`, `shadow-glow`, `glass`
-- Animações: `animate-fade-in`, `animate-slide-up`
-
----
-
-### 4. Conteúdo das Seções
-
-#### Hero
-```
-Título: "Transforme seu Restaurante com Tecnologia Inteligente"
-Subtítulo: "Cardápio digital, pedidos, reservas, fila de espera e muito mais. 
-           Tudo em uma única plataforma 100% web."
-```
-
-#### Módulos (7 cards)
-Cada módulo com:
-- Ícone específico
-- Título
-- Descrição curta
-- Lista de funcionalidades (3-4 itens)
-- Tag de plano (Grátis / Pro / Enterprise)
-
-#### Planos
-| Plano | Preço | Usuários | Módulos | Features |
-|-------|-------|----------|---------|----------|
-| Starter | Grátis | 3 | Básicos | Cardápio, Chamar Atendente |
-| Professional | R$ 99/mês | 10 | Todos | + Reservas, Fila, Pedidos, Relatórios |
-| Enterprise | R$ 299/mês | Ilimitado | Todos | + API, Domínio próprio, Suporte prioritário |
-
----
-
-### 5. Interatividade
-
-- **Scroll suave** para navegação interna
-- **Animações on-scroll** usando classes CSS existentes
-- **Hover effects** nos cards
-- **Links funcionais:**
-  - "Criar Restaurante" → `/onboarding`
-  - "Ver Demonstração" → `/bistro-verde` (restaurante demo)
-  - "Fazer Login" → `/login`
-
----
-
-### 6. Responsividade
-
-- **Mobile:** Layout em coluna única, menu hambúrguer
-- **Tablet:** Grid 2 colunas para módulos/planos
-- **Desktop:** Grid 3-4 colunas, layout expandido
-
----
-
-### 7. SEO e Acessibilidade
-
-- Tags semânticas (`<header>`, `<main>`, `<section>`, `<footer>`)
-- Atributos `aria-label` em elementos interativos
-- Meta tags no `index.html` (título, descrição)
-- Alt text em imagens
-
----
-
-### Arquivos a Criar/Modificar
+## Arquivos a modificar
 
 | Arquivo | Ação |
-|---------|------|
-| `src/pages/SalesPage.tsx` | **Criar** - Componente principal |
-| `src/App.tsx` | **Modificar** - Adicionar rota `/vendas` |
-
----
-
-### Estimativa de Implementação
-
-A página será criada como um único componente `SalesPage.tsx` com aproximadamente 400-500 linhas, utilizando os componentes UI existentes e seguindo o design system estabelecido.
-
+|---|---|
+| `src/components/ui/action-card.tsx` | Reescrever variantes |
+| `src/components/ui/product-card.tsx` | Reescrever estilos |
+| `src/components/ui/product-detail-sheet.tsx` | Ajustar estilos e tipografia |
