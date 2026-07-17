@@ -51,6 +51,11 @@ function AdminRedirect() {
   return <Navigate to={`/login/${slug}`} replace state={{ from: `/admin/${slug}` }} />;
 }
 
+function LoginRedirect() {
+  const { slug } = useParams<{ slug: string }>();
+  return <Navigate to={`/login/${slug}`} replace />;
+}
+
 const queryClient = new QueryClient();
 
 // Client pages wrapper with tenant context and client theme
@@ -75,6 +80,7 @@ function ClientTenantPages() {
           <Route path="encomendas/checkout" element={<PreOrderCheckoutPage />} />
           <Route path="encomendas/status/:orderId" element={<PreOrderStatusPage />} />
           <Route path="admin" element={<AdminRedirect />} />
+          <Route path="login" element={<LoginRedirect />} />
         </Routes>
       </ThemeProvider>
     </TenantProvider>
