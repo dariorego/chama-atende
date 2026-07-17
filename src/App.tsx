@@ -44,7 +44,7 @@ import PreOrderCartPage from "./pages/PreOrderCartPage";
 import PreOrderCheckoutPage from "./pages/PreOrderCheckoutPage";
 import PreOrderStatusPage from "./pages/PreOrderStatusPage";
 import SalesPage from "./pages/SalesPage";
-import { Navigate as RRNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function AdminRedirect() {
   const { slug } = useParams<{ slug: string }>();
