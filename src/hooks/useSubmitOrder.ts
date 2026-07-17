@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { callPublicApi } from "@/lib/publicApi";
@@ -56,36 +55,19 @@ export function useSubmitOrder() {
         },
       );
 
-      // 2. Create line item
-      const { data: lineItem, error: lineError } = await supabase
-        .from("order_line_items")
-        .insert({
-          order_id: order.id,
-          order_item_id: validated.orderItemId,
-          item_name: validated.orderItemName,
-          quantity: 1,
-        })
-        .select()
-        .single();
-
-      if (lineError) throw lineError;
-
-      // 3. Create selections
-      if (validated.selections.length > 0) {
-        const { error: selError } = await supabase
-          .from("order_line_item_selections")
-          .insert(
-            validated.selections.map((s) => ({
-              line_item_id: lineItem.id,
-              combination_option_id: s.optionId,
-              option_name: s.optionName,
-              quantity: s.quantity,
-              additional_price: s.additionalPrice,
-            }))
-          );
-
-        if (selError) throw selError;
-      }
+      // 2. Create line item + selections via edge function — the server
+      // fetches authoritative prices; any client-supplied unit_price /
+      // additional_price is ignored to prevent price tampering.
+      await callPublicApi("create-order-line-item", {
+        orderId: order.id,
+        orderItemId: validated.orderItemId,
+        quantity: 1,
+        observations: validated.observations || null,
+        selections: validated.selections.map((s) => ({
+          optionId: s.optionId,
+          quantity: s.quantity,
+        })),
+      });
 
       return { orderId: order.id, orderNumber: order.order_number };
     },
