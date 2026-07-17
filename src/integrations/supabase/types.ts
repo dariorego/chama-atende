@@ -898,7 +898,6 @@ export type Database = {
           business_hours: Json | null
           closing_time: string | null
           cover_image_url: string | null
-          cover_url: string | null
           created_at: string | null
           custom_domain: string | null
           email: string | null
@@ -931,7 +930,6 @@ export type Database = {
           business_hours?: Json | null
           closing_time?: string | null
           cover_image_url?: string | null
-          cover_url?: string | null
           created_at?: string | null
           custom_domain?: string | null
           email?: string | null
@@ -964,7 +962,6 @@ export type Database = {
           business_hours?: Json | null
           closing_time?: string | null
           cover_image_url?: string | null
-          cover_url?: string | null
           created_at?: string | null
           custom_domain?: string | null
           email?: string | null
