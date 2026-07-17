@@ -186,6 +186,7 @@ export function ImageUploadWithCrop({
             'hover:border-primary hover:text-primary transition-colors',
             'disabled:opacity-50 disabled:cursor-not-allowed bg-surface'
           )}
+          style={previewClassName ? { aspectRatio: `${aspectRatio}` } : undefined}
         >
           {isUploading ? (
             <Loader2 className="h-8 w-8 animate-spin" />
