@@ -155,6 +155,7 @@ Deno.serve(async (req) => {
       'kitchen_orders',
       'customer_reviews',
       'pre_orders',
+      'vitrine_digital',
     ];
 
     const modulesToInsert = defaultModules.map((moduleName) => ({
