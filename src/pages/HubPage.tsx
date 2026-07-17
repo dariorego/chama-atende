@@ -424,16 +424,16 @@ const HubPage = () => {
         )}
 
         {/* Footer */}
-        <div className="mt-8 pt-6 border-t border-border text-center">
-          <p className="text-xs text-muted-foreground">
-            Powered by <span className="text-primary font-medium">Chama Atende</span>
+        <div className="mt-10 pt-6 border-t border-emerald-deep/10 text-center">
+          <p className="text-xs text-emerald-deep/60">
+            Powered by <span className="text-gold font-medium">Chama Atende</span>
           </p>
-          <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
-            <a href="/termos" className="hover:text-primary transition-colors">TERMOS</a>
+          <div className="flex items-center justify-center gap-2 mt-2 text-[10px] tracking-widest text-emerald-deep/50">
+            <a href="/termos" className="hover:text-gold transition-colors">TERMOS</a>
             <span>•</span>
-            <a href="/privacidade" className="hover:text-primary transition-colors">PRIVACIDADE</a>
+            <a href="/privacidade" className="hover:text-gold transition-colors">PRIVACIDADE</a>
             <span>•</span>
-            <Link to={`/admin/${slug}`} className="hover:text-primary transition-colors flex items-center gap-1">
+            <Link to={`/admin/${slug}`} className="hover:text-gold transition-colors flex items-center gap-1">
               <Settings className="h-3 w-3" />
               ADMIN
             </Link>
