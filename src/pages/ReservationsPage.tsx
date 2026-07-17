@@ -154,8 +154,8 @@ const ReservationsPage = () => {
     setIsSuccess(true);
   };
 
-  const handleCancelReservation = async (id: string) => {
-    await cancelReservation.mutateAsync(id);
+  const handleCancelReservation = async (reservation: { id: string; phone: string }) => {
+    await cancelReservation.mutateAsync({ id: reservation.id, phone: reservation.phone });
   };
 
   const decrementPartySize = () => {
@@ -663,7 +663,7 @@ const ReservationsPage = () => {
                             Compartilhar
                           </button>
                           <button
-                            onClick={() => handleCancelReservation(reservation.id)}
+                            onClick={() => handleCancelReservation(reservation)}
                             disabled={cancelReservation.isPending}
                             className="flex-1 py-2.5 rounded-lg bg-red-900/10 text-red-800 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-red-900/15 transition-colors flex items-center justify-center gap-1 disabled:opacity-60"
                           >
@@ -675,7 +675,7 @@ const ReservationsPage = () => {
 
                       {reservation.status === 'pending' && (
                         <button
-                          onClick={() => handleCancelReservation(reservation.id)}
+                          onClick={() => handleCancelReservation(reservation)}
                           disabled={cancelReservation.isPending}
                           className="mt-4 w-full py-2.5 rounded-lg bg-red-900/10 text-red-800 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-red-900/15 transition-colors flex items-center justify-center gap-1 disabled:opacity-60"
                         >
