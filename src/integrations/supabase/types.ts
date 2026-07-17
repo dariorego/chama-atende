@@ -14,6 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
+      comandas: {
+        Row: {
+          bill_requested_at: string | null
+          closed_at: string | null
+          code: string
+          created_at: string
+          customer_name: string | null
+          id: string
+          notes: string | null
+          opened_at: string
+          restaurant_id: string
+          sequence: number
+          status: string
+          table_id: string | null
+          table_session_id: string | null
+          total_amount: number
+          updated_at: string
+          waiter_id: string | null
+        }
+        Insert: {
+          bill_requested_at?: string | null
+          closed_at?: string | null
+          code: string
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          notes?: string | null
+          opened_at?: string
+          restaurant_id: string
+          sequence?: number
+          status?: string
+          table_id?: string | null
+          table_session_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          waiter_id?: string | null
+        }
+        Update: {
+          bill_requested_at?: string | null
+          closed_at?: string | null
+          code?: string
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          notes?: string | null
+          opened_at?: string
+          restaurant_id?: string
+          sequence?: number
+          status?: string
+          table_id?: string | null
+          table_session_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          waiter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comandas_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comandas_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comandas_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comandas_waiter_id_fkey"
+            columns: ["waiter_id"]
+            isOneToOne: false
+            referencedRelation: "waiters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_reviews: {
         Row: {
           admin_response: string | null
@@ -446,6 +532,7 @@ export type Database = {
       }
       order_line_items: {
         Row: {
+          comanda_id: string | null
           created_at: string | null
           id: string
           item_name: string
@@ -456,6 +543,7 @@ export type Database = {
           unit_price: number | null
         }
         Insert: {
+          comanda_id?: string | null
           created_at?: string | null
           id?: string
           item_name: string
@@ -466,6 +554,7 @@ export type Database = {
           unit_price?: number | null
         }
         Update: {
+          comanda_id?: string | null
           created_at?: string | null
           id?: string
           item_name?: string
@@ -476,6 +565,13 @@ export type Database = {
           unit_price?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "order_line_items_comanda_id_fkey"
+            columns: ["comanda_id"]
+            isOneToOne: false
+            referencedRelation: "comandas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "order_line_items_order_id_fkey"
             columns: ["order_id"]
@@ -1291,6 +1387,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_comanda_code: {
+        Args: { _restaurant_id: string; _table_id: string }
+        Returns: {
+          code: string
+          sequence: number
+        }[]
+      }
       get_user_restaurant_id: { Args: never; Returns: string }
       has_role: {
         Args: {

@@ -1,47 +1,80 @@
-## Módulo Vitrine Digital
+## Módulo Comanda Digital
 
-Novo módulo que exibe produtos do cardápio em uma TV, em rotação automática. Cada produto ganha um switch para entrar/sair da vitrine, e o admin escolhe entre 3 modelos visuais de exibição.
+Objetivo: permitir várias comandas abertas simultaneamente em uma mesma mesa (ex.: Mesa 10 → 10.01, 10.02, 10.03), acumulando pedidos por comanda e fechando individualmente ou em conjunto.
 
-### 1. Banco de dados
-- Adicionar coluna `show_on_display boolean NOT NULL DEFAULT false` em `menu_products`.
-- Inserir módulo `vitrine_digital` em `restaurant_modules` para todos os tenants existentes (inativo por padrão) e incluí-lo na função `create-tenant` para novos tenants.
-- Settings do módulo (`restaurant_modules.settings`): `{ display_model: 'cinema' | 'split' | 'mosaico', interval_seconds: number, show_price: boolean }`.
+### Banco de dados (migration)
 
-### 2. Admin — controles
-- **AdminProducts**: nova coluna/switch **"Exibir na Vitrine"** em cada produto (grava `show_on_display`).
-- **Nova página `/admin/:slug/vitrine`** (item no sidebar quando o módulo estiver ativo):
-  - Seletor visual dos 3 modelos com preview em miniatura.
-  - Slider de intervalo de rotação (5s–15s).
-  - Toggle "Exibir preço".
-  - Contador de produtos elegíveis (ativos + `show_on_display=true`).
-  - Botão **"Abrir na TV"** → abre `/:slug/vitrine` em nova aba, tela cheia.
-- **AdminModules**: card do novo módulo `vitrine_digital` com ícone `Tv`.
+Nova tabela `comandas`:
+- `id uuid pk`
+- `restaurant_id uuid` (FK restaurants, RLS por tenant)
+- `table_id uuid` (FK tables, nullable para comandas avulsas/balcão)
+- `table_session_id uuid` (FK table_sessions, opcional — vincula à sessão da mesa)
+- `code text` — gerado como `{mesa}.{seq}` ex. `10.01`
+- `sequence int` — sequencial por mesa/sessão
+- `customer_name text` (opcional — "João", "Mesa Amigos 1")
+- `status text` — `open` | `bill_requested` | `closed` | `cancelled`
+- `waiter_id uuid` (FK waiters, nullable)
+- `opened_at`, `closed_at`, `bill_requested_at`
+- `total_amount numeric default 0`
+- `notes text`
 
-### 3. Tela pública `/:slug/vitrine`
-- Rota fullscreen sem chrome do cliente (sem header/back).
-- Busca produtos ativos com `show_on_display=true` do tenant, respeitando o modelo escolhido nas settings.
-- Rotação automática por `interval_seconds`, com fade/slide entre itens.
-- Header discreto com logo + nome do estabelecimento no topo; rodapé com "chamaatende.com".
-- Usa as cores do tenant (primary/secondary/background) já implementadas.
+Alterar `order_line_items` (ou `orders`):
+- adicionar `comanda_id uuid null` (FK comandas) para vincular cada pedido a uma comanda específica.
 
-### 4. Três modelos de exibição
+Function/trigger:
+- `generate_comanda_code(_table_id, _restaurant_id)` — retorna próximo `NN.SS` baseado em número da mesa + próximo sequencial de comandas abertas naquela mesa.
+- Trigger em `order_line_items` para recalcular `comandas.total_amount`.
 
-**Modelo 1 — Cinema (foto imersiva)**
-Imagem ocupa a tela inteira com gradiente escuro na base. Nome do produto em display serif grande, descrição curta e preço em destaque dourado no canto inferior esquerdo. Transição fade suave. Ideal para pratos com foto profissional.
+RLS + GRANTs:
+- SELECT/INSERT/UPDATE/DELETE para `authenticated` restrito por `has_tenant_access(restaurant_id)`.
+- Admin/manager/owner: gestão total via `has_tenant_admin`.
+- Registro no `restaurant_modules` como `digital_comanda`.
 
-**Modelo 2 — Split (editorial)**
-Layout dividido 60/40: foto à esquerda, painel à direita com kicker (categoria), nome, descrição completa e preço grande. Transição slide horizontal. Ideal para destacar detalhes e ingredientes.
+### Backend/Hooks
 
-**Modelo 3 — Mosaico (grid)**
-Grid 2×2 mostrando 4 produtos simultâneos com foto quadrada, nome e preço abaixo. Troca o conjunto inteiro a cada intervalo. Ideal para vitrines de padaria/confeitaria com muitos itens.
+`src/hooks/useComandas.ts`:
+- `useComandas(restaurantId, { status?, tableId? })` — lista com realtime.
+- `useOpenComanda()` — cria comanda para uma mesa (chama RPC para gerar código).
+- `useCloseComanda()` — encerra e move status.
+- `useRequestBill()` — marca `bill_requested`.
+- `useMoveItemsToComanda()` — divide conta transferindo line items entre comandas.
 
-### 5. Detalhes técnicos
-- Registrar `vitrine_digital` em `MODULE_INFO`, `MODULE_NAME_MAP` e `ModulesMap`.
-- Hook `useVitrineProducts(restaurantId)` com Realtime em `menu_products` para refletir mudanças na TV sem reload.
-- Página `/:slug/vitrine` fora do `ClientLayout` (renderizada como rota fullscreen dentro de `ClientTenantPages`).
-- Sidebar do admin ganha item **"Vitrine Digital"** com ícone `Tv`, visível quando o módulo está ativo.
+Extensão do fluxo de pedidos:
+- `useSubmitOrder` passa a aceitar `comandaId` opcional.
+- Edge function `public-api` (create-order-line-item) valida `comanda_id` e associa.
 
-### Fora do escopo
-- Playlist manual ou ordenação customizada (usa a ordem do cardápio).
-- Vídeos ou anúncios entre produtos.
-- Múltiplas vitrines por tenant (uma única por enquanto).
+### Admin UI
+
+Nova página `src/pages/admin/AdminComandas.tsx`:
+- Cabeçalho com filtro por mesa e status.
+- Lista agrupada por mesa: cada card de mesa mostra as comandas abertas (10.01, 10.02…) com totais, tempo aberto e botão "Nova comanda".
+- Ações por comanda: ver itens, pedir conta, encerrar, imprimir, dividir/mover itens.
+- Modal "Nova comanda": escolher mesa, opcional nome do cliente e garçom.
+
+Sidebar: novo item "Comandas" (ícone `Receipt`) — visível quando módulo `digital_comanda` ativo.
+
+`AdminModules.tsx` + `useAdminModules.ts`:
+- Adicionar entrada `digital_comanda` com label "Comanda Digital".
+
+### UI Cliente (mesa)
+
+`src/pages/MenuPage.tsx`:
+- Quando existir contexto de mesa e módulo ativo, exibir seletor "Sua comanda" (lista comandas abertas da mesa + botão "Abrir nova comanda").
+- Persistir `comandaId` em `localStorage` junto ao contexto de mesa.
+- Ao enviar pedido, incluir `comandaId`.
+
+### Impressão / Fechamento
+
+- Botão "Imprimir comanda" gera layout com código (10.01), itens, subtotais, opcional 10% garçom.
+- Botão "Fechar mesa" fecha todas as comandas em `bill_requested` da mesa e encerra a sessão.
+
+### Fora do escopo desta entrega
+
+- Pagamento integrado (POS) — próximo módulo.
+- Divisão automática por pessoa — apenas transferência manual de itens entre comandas.
+
+### Detalhes técnicos
+
+- Realtime: canal por `restaurant_id` com nome único (`comandas-${restaurantId}-${Date.now()}-${rand}`) seguindo padrão dos hooks existentes.
+- Tokens semânticos do design system (bg-surface, text-foreground) para todos formulários.
+- Sem quebra: pedidos existentes sem `comanda_id` continuam válidos (nullable).

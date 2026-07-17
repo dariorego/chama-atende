@@ -12,6 +12,7 @@ const DEFAULT_MODULES: ModulesMap = {
   customerReview: false,
   preOrders: false,
   vitrineDigital: false,
+  digitalComanda: false,
 };
 
 /**
