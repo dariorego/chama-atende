@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+import { callPublicApi } from "@/lib/publicApi";
 import { Reservation } from "./useAdminReservations";
 
 // Normalizar telefone removendo caracteres especiais
@@ -31,19 +33,9 @@ export function useCancelReservation() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (id: string) => {
-      const { data, error } = await supabase
-        .from('reservations')
-        .update({
-          status: 'cancelled',
-          cancelled_at: new Date().toISOString(),
-        })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Reservation;
+    mutationFn: async ({ id, phone }: { id: string; phone: string }) => {
+      await callPublicApi('cancel-reservation', { id, phone });
+      return { id } as unknown as Reservation;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client-reservations'] });
@@ -67,6 +59,15 @@ export function useCreateClientReservation() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  const schema = z.object({
+    customer_name: z.string().trim().min(1).max(100),
+    phone: z.string().trim().min(8).max(20),
+    party_size: z.number().int().min(1).max(50),
+    reservation_date: z.string().min(1),
+    reservation_time: z.string().min(1),
+    notes: z.string().trim().max(500).optional(),
+  });
+
   return useMutation({
     mutationFn: async (data: {
       customer_name: string;
@@ -76,6 +77,7 @@ export function useCreateClientReservation() {
       reservation_time: string;
       notes?: string;
     }) => {
+      const validated = schema.parse(data);
       // Gerar código da reserva
       const today = new Date().toISOString().split('T')[0];
       
@@ -97,18 +99,18 @@ export function useCreateClientReservation() {
         }
       }
 
-      const normalizedPhone = normalizePhone(data.phone);
+      const normalizedPhone = normalizePhone(validated.phone);
 
       const { error } = await supabase
         .from('reservations')
         .insert({
           reservation_code,
-          customer_name: data.customer_name,
+          customer_name: validated.customer_name,
           phone: normalizedPhone,
-          party_size: data.party_size,
-          reservation_date: data.reservation_date,
-          reservation_time: data.reservation_time,
-          notes: data.notes || null,
+          party_size: validated.party_size,
+          reservation_date: validated.reservation_date,
+          reservation_time: validated.reservation_time,
+          notes: validated.notes || null,
           status: 'pending',
         });
 
@@ -118,12 +120,12 @@ export function useCreateClientReservation() {
       return {
         id: '', // ID gerado pelo banco, não precisamos dele aqui
         reservation_code,
-        customer_name: data.customer_name,
+        customer_name: validated.customer_name,
         phone: normalizedPhone,
-        party_size: data.party_size,
-        reservation_date: data.reservation_date,
-        reservation_time: data.reservation_time,
-        notes: data.notes || null,
+        party_size: validated.party_size,
+        reservation_date: validated.reservation_date,
+        reservation_time: validated.reservation_time,
+        notes: validated.notes || null,
         status: 'pending',
         created_at: new Date().toISOString(),
       } as Reservation;
