@@ -20,6 +20,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import TenantSelectPage from "./pages/TenantSelectPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import LandingPage from "./pages/LandingPage";
 import { AuthGuard } from "./components/auth/AuthGuard";
 import { AdminLayout } from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -278,6 +279,14 @@ function GlobalPages() {
   );
 }
 
+function LandingWrapper() {
+  return (
+    <ThemeProvider storageKey="landing-theme" defaultTheme="dark">
+      <LandingPage />
+    </ThemeProvider>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -302,8 +311,11 @@ const App = () => (
           <Route path="/:slug/admin" element={<AdminRedirect />} />
           <Route path="/:slug/login" element={<LoginRedirect />} />
           
-          {/* Tenant selection page */}
-          <Route path="/" element={<GlobalPages />} />
+          {/* Landing page (marketing) */}
+          <Route path="/" element={<LandingWrapper />} />
+
+          {/* Tenant selector (list of establishments) */}
+          <Route path="/estabelecimentos" element={<GlobalPages />} />
           
           {/* Client routes with tenant slug (AFTER specific routes) */}
           <Route path="/:slug/*" element={<ClientTenantPages />} />
