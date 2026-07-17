@@ -73,6 +73,14 @@
     --sidebar-accent-foreground: 220 20% 10%;
     --sidebar-border: 220 10% 85%;
     --sidebar-ring: 142 85% 42%;
+
+    /* Editorial "Emerald Prestige" tokens — light */
+    --ed-bg: 40 43% 93%;         /* cream #f5efe4 */
+    --ed-surface: 43 55% 95%;    /* cream-soft #faf6ec */
+    --ed-fg: 158 85% 16%;        /* emerald-deep #064e3b */
+    --ed-gold: 43 55% 54%;       /* gold #c9a84c */
+    --ed-hero: 158 85% 16%;      /* hero card bg */
+    --ed-hero-fg: 45 65% 95%;    /* hero card text */
   }
 
   /* Dark theme */
@@ -138,6 +146,14 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 220 15% 20%;
     --sidebar-ring: 142 85% 49%;
+
+    /* Editorial "Emerald Prestige" tokens — dark (Emerald noturno) */
+    --ed-bg: 165 76% 8%;         /* #04241c */
+    --ed-surface: 160 71% 14%;   /* #0a3a2c */
+    --ed-fg: 45 60% 92%;         /* light cream text */
+    --ed-gold: 43 55% 54%;       /* gold stays */
+    --ed-hero: 160 71% 11%;
+    --ed-hero-fg: 45 65% 95%;
   }
 }
 
@@ -169,30 +185,6 @@
   }
   .font-sans-editorial {
     font-family: 'Work Sans', system-ui, sans-serif;
-  }
-  .bg-cream {
-    background-color: #f5efe4;
-  }
-  .bg-cream-soft {
-    background-color: #faf6ec;
-  }
-  .text-emerald-deep {
-    color: #064e3b;
-  }
-  .bg-emerald-deep {
-    background-color: #064e3b;
-  }
-  .text-gold {
-    color: #c9a84c;
-  }
-  .bg-gold {
-    background-color: #c9a84c;
-  }
-  .border-gold {
-    border-color: #c9a84c;
-  }
-  .border-emerald-deep {
-    border-color: #064e3b;
   }
   .editorial-label {
     font-family: 'Work Sans', system-ui, sans-serif;
