@@ -324,18 +324,10 @@ const MenuPage = () => {
               price={product.price}
               image={product.image}
               promotion={product.promotion}
-              onClick={() => handleProductClick(product)}
             />
           </div>
         ))}
       </div>
-
-      {/* Product Detail Sheet */}
-      <ProductDetailSheet
-        product={selectedProduct}
-        open={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-      />
 
       {/* Empty State */}
       {filteredProducts.length === 0 && !isLoading && (
