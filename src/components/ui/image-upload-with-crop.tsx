@@ -135,12 +135,13 @@ export function ImageUploadWithCrop({
 
       {value ? (
         <div className={cn("relative group w-full", previewClassName ?? "max-w-[200px]") }>
-          <div className={cn(
-            "w-full overflow-hidden border border-border bg-muted",
-            previewRounded === 'full' ? 'rounded-full' : 'rounded-lg',
-            !previewClassName && 'aspect-square',
-          )}
-          style={previewClassName ? undefined : undefined}
+          <div
+            className={cn(
+              "w-full h-full overflow-hidden border border-border bg-muted",
+              previewRounded === 'full' ? 'rounded-full' : 'rounded-lg',
+              !previewClassName && 'aspect-square',
+            )}
+            style={previewClassName ? { aspectRatio: `${aspectRatio}` } : undefined}
           >
             <img
               src={value}
