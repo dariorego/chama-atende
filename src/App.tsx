@@ -27,6 +27,7 @@ import { AdminLayout } from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminImport from "./pages/admin/AdminImport";
 import AdminModules from "./pages/admin/AdminModules";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
@@ -126,6 +127,16 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin>
                 <AdminLayout>
                   <AdminCategories />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="importar"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminImport />
                 </AdminLayout>
               </AuthGuard>
             }

@@ -40,6 +40,7 @@ import {
   ChevronDown,
   ShoppingBag,
   Tv,
+  Upload,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -126,6 +127,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       items: [
         { title: 'Produtos', url: `${adminBase}/produtos`, icon: UtensilsCrossed },
         { title: 'Categorias', url: `${adminBase}/categorias`, icon: FolderTree },
+        { title: 'Importar CSV', url: `${adminBase}/importar`, icon: Upload },
       ],
     },
     ...(moduleMenuItems.length > 0 ? [{
