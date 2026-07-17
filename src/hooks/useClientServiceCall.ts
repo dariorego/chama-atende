@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { callPublicApi } from "@/lib/publicApi";
 import { Tables } from "@/integrations/supabase/types";
 
 export type ServiceCall = Tables<"service_calls">;
@@ -14,20 +14,11 @@ export function useClientServiceCall(tableId: string | null) {
     queryKey: ["client-session", tableId],
     queryFn: async () => {
       if (!tableId) return null;
-      
-      const { data, error } = await supabase
-        .from("table_sessions")
-        .select("*")
-        .eq("table_id", tableId)
-        .eq("status", "open")
-        .order("opened_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      
-      if (error) throw error;
+      const { data } = await callPublicApi<{ data: TableSession | null }>("get-table-session", { tableId });
       return data;
     },
     enabled: !!tableId,
+    refetchInterval: 15000,
   });
 
   // Fetch pending calls for this table
@@ -35,18 +26,11 @@ export function useClientServiceCall(tableId: string | null) {
     queryKey: ["client-calls", tableId],
     queryFn: async () => {
       if (!tableId) return [];
-      
-      const { data, error } = await supabase
-        .from("service_calls")
-        .select("*")
-        .eq("table_id", tableId)
-        .in("status", ["pending", "acknowledged", "in_progress"])
-        .order("called_at", { ascending: false });
-      
-      if (error) throw error;
-      return data;
+      const { data } = await callPublicApi<{ data: ServiceCall[] }>("get-service-calls", { tableId });
+      return data ?? [];
     },
     enabled: !!tableId,
+    refetchInterval: 10000,
   });
 
   // Create or get session
@@ -110,44 +94,13 @@ export function useClientServiceCall(tableId: string | null) {
   // Cancel service call
   const cancelCallMutation = useMutation({
     mutationFn: async (callId: string) => {
-      const { error } = await supabase
-        .from("service_calls")
-        .update({ status: "cancelled" })
-        .eq("id", callId);
-      
-      if (error) throw error;
+      if (!tableId) throw new Error("tableId required");
+      await callPublicApi("cancel-service-call", { callId, tableId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["client-calls", tableId] });
     },
   });
-
-  // Real-time subscription for call updates
-  useEffect(() => {
-    if (!tableId) return;
-
-    const channelName = `client-calls-${tableId}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "service_calls",
-          filter: `table_id=eq.${tableId}`,
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["client-calls", tableId] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [tableId, queryClient]);
 
   // Helper to check if there's an active call of a specific type
   const hasActiveCall = (callType: string) => {
