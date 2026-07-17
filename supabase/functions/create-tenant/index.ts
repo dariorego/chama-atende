@@ -141,20 +141,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Also give user the admin app_role if they don't have it
-    const { data: existingRole } = await supabaseAdmin
-      .from('user_roles')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('role', 'admin')
-      .maybeSingle();
-
-    if (!existingRole) {
-      await supabaseAdmin.from('user_roles').insert({
-        user_id: user.id,
-        role: 'admin',
-      });
-    }
+    // NOTE: Do NOT grant the global `admin` app_role here.
+    // Tenant-level authorization is enforced exclusively through
+    // `tenant_user_roles` (owner/admin/manager/staff) so users can only
+    // access data for restaurants they explicitly belong to.
 
     // Create default modules for the restaurant
     const defaultModules = [
