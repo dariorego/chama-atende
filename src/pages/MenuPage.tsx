@@ -266,7 +266,7 @@ const MenuPage = () => {
                         {product.description}
                       </p>
                     </div>
-                  </button>
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
