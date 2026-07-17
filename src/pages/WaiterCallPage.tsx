@@ -22,6 +22,7 @@ import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
+import { useTenant } from "@/hooks/useTenant";
 
 interface TableData {
   id: string;
@@ -33,6 +34,7 @@ interface TableData {
 
 const WaiterCallPage = () => {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const { tableId: urlTableId } = useParams<{ tableId: string }>();
   const { toast } = useToast();
   const { table: contextTable, isLoading: isLoadingContext, setTable } = useTableContext();
@@ -247,7 +249,7 @@ const WaiterCallPage = () => {
           </p>
 
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(tenant?.slug ? `/${tenant.slug}` : "/")}
             className="w-full text-emerald-deep font-sans-editorial hover:underline text-center underline-offset-4"
           >
             Voltar ao início
@@ -285,7 +287,7 @@ const WaiterCallPage = () => {
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(tenant?.slug ? `/${tenant.slug}` : "/")}
             className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
             <ArrowLeft className="h-5 w-5 text-white" />
@@ -340,7 +342,7 @@ const WaiterCallPage = () => {
             <TabsTrigger
               value="menu"
               className="flex-1 h-10 rounded-xl font-sans-editorial text-emerald-deep/70 data-[state=active]:bg-emerald-deep data-[state=active]:text-cream"
-              onClick={() => navigate("/cardapio")}
+              onClick={() => navigate(tenant?.slug ? `/${tenant.slug}/cardapio` : "/cardapio")}
             >
               Cardápio
             </TabsTrigger>

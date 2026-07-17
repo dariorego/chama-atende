@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronRight, HelpCircle, Loader2, CameraOff } from "lucide-react";
 import { useClientOrderItems, OrderItemTag } from "@/hooks/useClientOrderItems";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { useTenant } from "@/hooks/useTenant";
 
 const tagStyles: Record<string, string> = {
   positive: "bg-primary/20 text-primary",
@@ -12,12 +13,13 @@ const tagStyles: Record<string, string> = {
 
 const KitchenOrderPage = () => {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const { restaurant } = useAdminSettings();
   const { data: orderItems, isLoading } = useClientOrderItems(restaurant?.id);
   const [selectedBase, setSelectedBase] = useState<string | null>(null);
 
   const handleBack = () => {
-    navigate("/");
+    navigate(tenant?.slug ? `/${tenant.slug}` : "/");
   };
 
   const handleSelectBase = (baseId: string) => {

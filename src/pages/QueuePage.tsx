@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Share2, MoreHorizontal, MapPin, Star, User, Phone, Bell, Clock, X, ChevronRight, Zap, MessageSquare, Minus, Plus, Loader2, Search, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { useTenant } from "@/hooks/useTenant";
 import {
   useClientQueueEntry,
   useQueuePosition,
@@ -23,6 +24,7 @@ import {
 
 export default function QueuePage() {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const [activeTab, setActiveTab] = useState("join");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -126,7 +128,7 @@ export default function QueuePage() {
 
         {/* Header */}
         <header className="relative z-10 flex items-center justify-between p-4 border-b border-emerald-deep/10">
-          <button onClick={() => navigate('/')} className="w-10 h-10 rounded-full bg-cream-soft border border-emerald-deep/15 flex items-center justify-center">
+          <button onClick={() => navigate(tenant?.slug ? `/${tenant.slug}` : '/')} className="w-10 h-10 rounded-full bg-cream-soft border border-emerald-deep/15 flex items-center justify-center">
             <ArrowLeft className="h-5 w-5 text-emerald-deep" />
           </button>
           <div className="text-center">
@@ -289,7 +291,7 @@ export default function QueuePage() {
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(tenant?.slug ? `/${tenant.slug}` : '/')}
             className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-white/10"
           >
             <ArrowLeft className="h-5 w-5 text-white" />

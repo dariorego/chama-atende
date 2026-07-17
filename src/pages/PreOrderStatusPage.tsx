@@ -5,6 +5,7 @@ import { ClientLayout } from '@/components/layout/ClientLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { usePreOrderStatus } from '@/hooks/usePreOrderStatus';
+import { useTenant } from '@/hooks/useTenant';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import {
   Loader2,
@@ -41,6 +42,7 @@ const STATUS_ORDER = ['pending', 'confirmed', 'ready', 'delivered'];
 
 export default function PreOrderStatusPage() {
   const { orderId } = useParams();
+  const { tenant } = useTenant();
   const { data: preOrder, isLoading, error } = usePreOrderStatus(orderId);
   const { restaurant } = useAdminSettings();
 
@@ -81,7 +83,7 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
 
   if (isLoading) {
     return (
-      <ClientLayout title="Status da Encomenda" showBack backTo="/">
+      <ClientLayout title="Status da Encomenda" showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -91,7 +93,7 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
 
   if (error || !preOrder) {
     return (
-      <ClientLayout title="Status da Encomenda" showBack backTo="/">
+      <ClientLayout title="Status da Encomenda" showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
         <div className="text-center py-12">
           <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="editorial-title text-3xl text-[#064e3b] mb-2">Encomenda não encontrada</h2>
@@ -112,7 +114,7 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
   const PaymentIcon = paymentConfig?.icon || CreditCard;
 
   return (
-    <ClientLayout title="Status da Encomenda" showBack backTo="/">
+    <ClientLayout title="Status da Encomenda" showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
       <div className="space-y-6">
         {/* Order Header */}
         <Card className="bg-[#064e3b] border-[#c9a84c]/40">

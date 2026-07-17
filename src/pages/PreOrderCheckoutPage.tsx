@@ -36,6 +36,7 @@ import {
 import { usePreOrderCart } from '@/hooks/usePreOrderCart';
 import { useSubmitPreOrder } from '@/hooks/useSubmitPreOrder';
 import { usePreOrderModuleSettings } from '@/hooks/usePreOrderModuleSettings';
+import { useTenant } from '@/hooks/useTenant';
 import { CalendarIcon, Loader2, Clock, ShoppingBag, CreditCard, QrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -60,6 +61,7 @@ const TIME_SLOTS = Array.from({ length: 15 }, (_, i) => {
 
 export default function PreOrderCheckoutPage() {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const { items, totalAmount, clearCart } = usePreOrderCart();
   const { mutateAsync: submitPreOrder, isPending } = useSubmitPreOrder();
   const { settings } = usePreOrderModuleSettings();
@@ -79,9 +81,9 @@ export default function PreOrderCheckoutPage() {
   // Redirect if cart is empty
   useEffect(() => {
     if (items.length === 0) {
-      navigate('/encomendas/carrinho');
+      navigate(tenant?.slug ? `/${tenant.slug}/encomendas/carrinho` : '/encomendas/carrinho');
     }
-  }, [items.length, navigate]);
+  }, [items.length, navigate, tenant?.slug]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -137,7 +139,7 @@ export default function PreOrderCheckoutPage() {
       });
 
       clearCart();
-      navigate(`/encomendas/status/${preOrder.id}`);
+      navigate(tenant?.slug ? `/${tenant.slug}/encomendas/status/${preOrder.id}` : `/encomendas/status/${preOrder.id}`);
     } catch (error) {
       console.error('Error submitting pre-order:', error);
     }
@@ -151,7 +153,7 @@ export default function PreOrderCheckoutPage() {
   }
 
   return (
-    <ClientLayout title="Finalizar Encomenda" showBack backTo="/encomendas/carrinho">
+    <ClientLayout title="Finalizar Encomenda" showBack backTo={tenant?.slug ? `/${tenant.slug}/encomendas/carrinho` : "/encomendas/carrinho"}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Order Summary */}

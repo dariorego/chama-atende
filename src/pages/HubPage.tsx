@@ -135,7 +135,7 @@ const HubPage = () => {
       >
         <div className="container mx-auto px-4 max-w-lg">
           <div className="flex items-center justify-between h-14">
-            <Button variant="ghost" size="icon" className="text-emerald-deep hover:bg-emerald-deep/5" onClick={() => navigate('/')}>
+            <Button variant="ghost" size="icon" className="text-emerald-deep hover:bg-emerald-deep/5" onClick={() => navigate(`/${slug}`)}>
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <span

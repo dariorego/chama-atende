@@ -2,12 +2,14 @@ import { ClientLayout } from '@/components/layout/ClientLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePreOrderCart } from '@/hooks/usePreOrderCart';
+import { useTenant } from '@/hooks/useTenant';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 export default function PreOrderCartPage() {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const { items, updateQuantity, removeItem, totalAmount, clearCart } = usePreOrderCart();
 
   const formatPrice = (price: number) => {
@@ -19,7 +21,7 @@ export default function PreOrderCartPage() {
 
   if (items.length === 0) {
     return (
-      <ClientLayout title="Carrinho de Encomendas" showBack backTo="/encomendas">
+      <ClientLayout title="Carrinho de Encomendas" showBack backTo={tenant?.slug ? `/${tenant.slug}/encomendas` : "/encomendas"}>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-24 h-24 rounded-full bg-[#faf6ec] border border-[#c9a84c]/40 flex items-center justify-center mb-4">
             <ShoppingBag className="h-10 w-10 text-[#c9a84c]" />
@@ -29,7 +31,7 @@ export default function PreOrderCartPage() {
             Adicione produtos disponíveis para encomenda
           </p>
           <Button asChild className="bg-[#064e3b] hover:bg-[#064e3b]/90 text-[#faf6ec] border border-[#c9a84c]/40 tracking-widest uppercase text-xs">
-            <Link to="/encomendas">Ver Produtos</Link>
+            <Link to={tenant?.slug ? `/${tenant.slug}/encomendas` : "/encomendas"}>Ver Produtos</Link>
           </Button>
         </div>
       </ClientLayout>
@@ -37,7 +39,7 @@ export default function PreOrderCartPage() {
   }
 
   return (
-    <ClientLayout title="Carrinho de Encomendas" showBack backTo="/encomendas">
+    <ClientLayout title="Carrinho de Encomendas" showBack backTo={tenant?.slug ? `/${tenant.slug}/encomendas` : "/encomendas"}>
       <div className="space-y-4">
         {items.map((item) => (
           <Card key={item.productId} className="overflow-hidden bg-[#faf6ec]/70 border-[#064e3b]/10">
@@ -109,7 +111,7 @@ export default function PreOrderCartPage() {
           <Button
             size="lg"
             className="w-full bg-[#064e3b] hover:bg-[#064e3b]/90 text-[#faf6ec] border border-[#c9a84c]/40 tracking-widest uppercase text-xs h-14"
-            onClick={() => navigate('/encomendas/checkout')}
+            onClick={() => navigate(tenant?.slug ? `/${tenant.slug}/encomendas/checkout` : "/encomendas/checkout")}
           >
             Continuar Encomenda
           </Button>

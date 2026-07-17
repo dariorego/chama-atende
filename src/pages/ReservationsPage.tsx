@@ -34,6 +34,7 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { useTenant } from "@/hooks/useTenant";
 import { useCreateClientReservation, useSearchReservations, useCancelReservation } from "@/hooks/useClientReservation";
 import { Reservation } from "@/hooks/useAdminReservations";
 
@@ -62,6 +63,7 @@ const statusConfig: Record<string, { label: string; className: string; icon: Rea
 
 const ReservationsPage = () => {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const [activeTab, setActiveTab] = useState("new");
   
   // New reservation state
@@ -275,7 +277,7 @@ const ReservationsPage = () => {
           {/* Top controls */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(tenant?.slug ? `/${tenant.slug}` : '/')}
               className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-black/50 transition"
               aria-label="Voltar"
             >
