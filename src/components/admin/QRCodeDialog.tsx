@@ -16,9 +16,10 @@ interface QRCodeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   table: Table | null;
+  restaurantName?: string | null;
 }
 
-export const QRCodeDialog = ({ open, onOpenChange, table }: QRCodeDialogProps) => {
+export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName }: QRCodeDialogProps) => {
   const { toast } = useToast();
   const qrRef = useRef<HTMLDivElement>(null);
 
