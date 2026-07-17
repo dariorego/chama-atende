@@ -152,36 +152,36 @@ const PreOrderMenuPage = () => {
   return (
     <ClientLayout title="Encomendas" showBack backTo="/">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="order">Fazer Encomenda</TabsTrigger>
-          <TabsTrigger value="search">Consultar</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 mb-6 bg-[#faf6ec] border border-[#064e3b]/10 p-1 rounded-full h-auto">
+          <TabsTrigger value="order" className="rounded-full data-[state=active]:bg-[#064e3b] data-[state=active]:text-[#faf6ec] text-[#064e3b]/70 text-xs tracking-widest uppercase font-medium py-2">Fazer Encomenda</TabsTrigger>
+          <TabsTrigger value="search" className="rounded-full data-[state=active]:bg-[#064e3b] data-[state=active]:text-[#faf6ec] text-[#064e3b]/70 text-xs tracking-widest uppercase font-medium py-2">Consultar</TabsTrigger>
         </TabsList>
 
         {/* Tab: Fazer Encomenda */}
         <TabsContent value="order" className="mt-0">
           {!productsData || productsData.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+              <AlertCircle className="h-12 w-12 text-[#064e3b]/30 mb-4" />
+              <h2 className="editorial-title text-2xl text-[#064e3b] mb-2">
                 Nenhum produto disponível
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-[#064e3b]/60 font-sans-editorial">
                 No momento não há produtos disponíveis para encomenda.
               </p>
             </div>
           ) : (
             <>
               {/* Info Banner */}
-              <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-6">
+              <div className="bg-[#faf6ec] border border-[#c9a84c]/30 rounded-xl p-4 mb-6">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-primary/20 rounded-lg">
-                    <Clock className="h-5 w-5 text-primary" />
+                  <div className="p-2 bg-[#c9a84c]/15 border border-[#c9a84c]/40 rounded-lg">
+                    <Clock className="h-5 w-5 text-[#c9a84c]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Encomendas com Antecedência</h3>
-                    <p className="text-sm text-muted-foreground mt-0.5">
+                    <h3 className="editorial-title text-lg text-[#064e3b]">Encomendas com Antecedência</h3>
+                    <p className="text-sm text-[#064e3b]/70 mt-0.5 font-sans-editorial">
                       Pedidos devem ser feitos com pelo menos{" "}
-                      <span className="font-medium text-primary">
+                      <span className="font-semibold text-[#c9a84c]">
                         {settings.min_advance_hours} horas
                       </span>{" "}
                       de antecedência
@@ -192,13 +192,13 @@ const PreOrderMenuPage = () => {
 
               {/* Search */}
               <div className="relative mb-6">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#064e3b]/40" />
                 <Input
                   type="search"
                   placeholder="Buscar produtos..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-surface border-border placeholder:text-surface-foreground"
+                  className="pl-10 bg-[#faf6ec] border-[#064e3b]/15 text-[#064e3b] placeholder:text-[#064e3b]/40 focus-visible:ring-[#064e3b]/30"
                 />
               </div>
 
@@ -209,10 +209,10 @@ const PreOrderMenuPage = () => {
                     key={category.id}
                     onClick={() => setActiveCategory(category.slug)}
                     className={cn(
-                      "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all",
+                      "px-4 py-2 rounded-full text-xs tracking-widest uppercase font-medium whitespace-nowrap transition-all border",
                       activeCategory === category.slug
-                        ? "bg-primary text-primary-foreground shadow-md"
-                        : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                        ? "bg-[#064e3b] text-[#faf6ec] border-[#064e3b]"
+                        : "bg-transparent text-[#064e3b]/60 border-[#064e3b]/15 hover:border-[#c9a84c] hover:text-[#064e3b]"
                     )}
                   >
                     {category.name}
@@ -251,7 +251,7 @@ const PreOrderMenuPage = () => {
               {/* Empty State */}
               {filteredProducts.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">Nenhum produto encontrado</p>
+                  <p className="editorial-title text-2xl text-[#064e3b]/50">Nenhum produto encontrado</p>
                 </div>
               )}
 
@@ -264,11 +264,11 @@ const PreOrderMenuPage = () => {
 
               {/* Floating Cart Bar */}
               {totalItems > 0 && (
-                <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-md border-t border-border z-50">
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#f5efe4]/95 backdrop-blur-md border-t border-[#c9a84c]/30 z-50">
                   <div className="container mx-auto max-w-lg">
                     <Button
                       onClick={() => navigate("/encomendas/carrinho")}
-                      className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                      className="w-full h-14 text-sm tracking-widest uppercase font-semibold shadow-lg hover:shadow-xl transition-all bg-[#064e3b] hover:bg-[#064e3b]/90 text-[#faf6ec] border border-[#c9a84c]/40"
                     >
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ const PreOrderMenuPage = () => {
                             <ShoppingBag className="h-5 w-5" />
                             <Badge 
                               variant="secondary" 
-                              className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-primary-foreground text-primary"
+                              className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-[#c9a84c] text-[#064e3b]"
                             >
                               {totalItems}
                             </Badge>
@@ -298,18 +298,18 @@ const PreOrderMenuPage = () => {
           <div className="space-y-6">
             {/* Phone Search */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Digite seu telefone para consultar</label>
+              <label className="editorial-label text-[#064e3b]/70">Digite seu telefone para consultar</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#064e3b]/40" />
                 <Input
                   type="tel"
                   placeholder="(00) 00000-0000"
                   value={phoneSearch}
                   onChange={handlePhoneChange}
-                  className="pl-10 bg-surface border-border placeholder:text-surface-foreground"
+                  className="pl-10 bg-[#faf6ec] border-[#064e3b]/15 text-[#064e3b] placeholder:text-[#064e3b]/40 focus-visible:ring-[#064e3b]/30"
                 />
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#064e3b]/60 font-sans-editorial">
                 Informe o telefone cadastrado na encomenda
               </p>
             </div>
@@ -317,14 +317,14 @@ const PreOrderMenuPage = () => {
             {/* Loading State */}
             {isSearching && (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <Loader2 className="h-6 w-6 animate-spin text-[#c9a84c]" />
               </div>
             )}
 
             {/* Search Results */}
             {!isSearching && searchResults && searchResults.length > 0 && (
               <div className="space-y-4">
-                <h3 className="font-medium text-sm text-muted-foreground">
+                <h3 className="editorial-label text-[#064e3b]/60">
                   {searchResults.length} encomenda{searchResults.length > 1 ? 's' : ''} encontrada{searchResults.length > 1 ? 's' : ''}
                 </h3>
                 {searchResults.map((order) => (
@@ -336,9 +336,9 @@ const PreOrderMenuPage = () => {
             {/* Empty Results */}
             {!isSearching && phoneSearch.replace(/\D/g, '').length >= 10 && (!searchResults || searchResults.length === 0) && (
               <div className="text-center py-12">
-                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Nenhuma encomenda encontrada</h3>
-                <p className="text-muted-foreground text-sm">
+                <AlertCircle className="h-12 w-12 text-[#064e3b]/30 mx-auto mb-4" />
+                <h3 className="editorial-title text-2xl text-[#064e3b] mb-2">Nenhuma encomenda encontrada</h3>
+                <p className="text-[#064e3b]/60 text-sm font-sans-editorial">
                   Não encontramos encomendas ativas para este telefone.
                 </p>
               </div>
@@ -347,9 +347,9 @@ const PreOrderMenuPage = () => {
             {/* Initial State */}
             {!isSearching && phoneSearch.replace(/\D/g, '').length < 10 && (
               <div className="text-center py-12">
-                <Phone className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Consulte suas encomendas</h3>
-                <p className="text-muted-foreground text-sm">
+                <Phone className="h-12 w-12 text-[#064e3b]/30 mx-auto mb-4" />
+                <h3 className="editorial-title text-2xl text-[#064e3b] mb-2">Consulte suas encomendas</h3>
+                <p className="text-[#064e3b]/60 text-sm font-sans-editorial">
                   Digite seu telefone para ver o status das suas encomendas.
                 </p>
               </div>
