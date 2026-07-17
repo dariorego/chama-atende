@@ -163,7 +163,7 @@ const MenuPage = () => {
 
   if (isLoading) {
     return (
-      <ClientLayout title="Cardápio" showBack backTo="/">
+      <ClientLayout title="Cardápio" showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
