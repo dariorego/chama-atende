@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
-import { ProductDetailSheet } from "@/components/ui/product-detail-sheet";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ChefHat, Loader2, Bell, Check } from "lucide-react";
