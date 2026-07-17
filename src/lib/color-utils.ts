@@ -9,10 +9,10 @@ export interface ThemeColors {
 
 // Default theme colors (HSL format without hsl() wrapper)
 export const DEFAULT_COLORS: ThemeColors = {
-  primary: '142 85% 49%',
-  background: '220 20% 8%',
-  card: '220 18% 12%',
-  accent: '142 85% 49%',
+  primary: '43 55% 54%',     // gold — editorial fallback
+  background: '165 76% 8%',  // emerald noturno
+  card: '160 71% 11%',
+  accent: '43 55% 54%',
 };
 
 /**
