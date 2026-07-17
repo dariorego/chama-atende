@@ -160,6 +160,15 @@ export const QRCodeDialog = ({ open, onOpenChange, table }: QRCodeDialogProps) =
             />
           </div>
 
+          <div className="mt-4 text-center">
+            <p className="text-sm font-semibold text-foreground">
+              Mesa {table.number.toString().padStart(2, "0")}
+            </p>
+            {table.name && (
+              <p className="text-xs text-muted-foreground">{table.name}</p>
+            )}
+          </div>
+
           <p className="text-xs text-muted-foreground mt-4 text-center break-all max-w-full px-4">
             {tableUrl}
           </p>
