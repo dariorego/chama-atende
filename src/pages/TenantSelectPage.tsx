@@ -57,26 +57,34 @@ export default function TenantSelectPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-cream flex flex-col">
       {/* Header */}
-      <header className="border-b border-border bg-surface/50 backdrop-blur-sm">
+      <header className="border-b border-emerald-deep/10 bg-cream-soft/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Store className="h-5 w-5 text-primary" />
+              <div className="w-11 h-11 rounded-xl bg-emerald-deep border border-gold/40 flex items-center justify-center">
+                <Store className="h-5 w-5 text-gold" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Chama Atende</h1>
-                <p className="text-sm text-muted-foreground">Plataforma SaaS para Restaurantes</p>
+                <p className="editorial-label text-gold leading-none">Plataforma</p>
+                <h1 className="text-2xl font-serif-editorial text-emerald-deep leading-none mt-0.5">Chama Atende</h1>
+                <p className="text-xs text-emerald-deep/60 font-sans-editorial mt-0.5">SaaS para restaurantes</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="default" onClick={() => navigate('/onboarding')} className="gap-2">
+              <Button
+                onClick={() => navigate('/onboarding')}
+                className="gap-2 rounded-full bg-emerald-deep text-cream border border-gold/40 hover:bg-emerald-deep/90 font-sans-editorial"
+              >
                 <Plus className="h-4 w-4" />
                 Criar Restaurante
               </Button>
-              <Button variant="outline" onClick={() => navigate('/login')} className="gap-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/login')}
+                className="gap-2 rounded-full bg-cream-soft border-emerald-deep/15 text-emerald-deep hover:border-gold/40 hover:bg-cream-soft font-sans-editorial"
+              >
                 <Shield className="h-4 w-4" />
                 Admin
               </Button>
@@ -85,19 +93,29 @@ export default function TenantSelectPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-10 flex-1">
+        {/* Editorial intro */}
+        <div className="mb-10 max-w-2xl">
+          <p className="editorial-label text-gold">Bem-vindo</p>
+          <h2 className="text-4xl md:text-5xl font-serif-editorial text-emerald-deep leading-[1.05] mt-1">
+            Encontre seu estabelecimento
+          </h2>
+          <div className="w-16 h-px bg-gold/60 mt-4" />
+        </div>
+
         {/* Direct Access */}
-        <Card className="mb-8 bg-surface border-border">
+        <Card className="mb-8 bg-cream-soft border-emerald-deep/10 rounded-2xl shadow-[0_20px_60px_-30px_rgba(6,78,59,0.35)]">
           <CardHeader>
-            <CardTitle className="text-lg">Acesso Direto</CardTitle>
-            <CardDescription>
-              Digite o código do estabelecimento para acessar diretamente
+            <p className="editorial-label text-gold">Já sabe o código?</p>
+            <CardTitle className="text-2xl font-serif-editorial text-emerald-deep">Acesso direto</CardTitle>
+            <CardDescription className="text-emerald-deep/60 font-sans-editorial">
+              Digite o código do estabelecimento para acessar diretamente.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gold font-serif-editorial text-lg">
                   /
                 </span>
                 <Input
@@ -105,10 +123,14 @@ export default function TenantSelectPage() {
                   value={slugInput}
                   onChange={(e) => setSlugInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  className="pl-6 bg-background border-border"
+                  className="pl-8 h-12 rounded-xl bg-cream border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus:ring-2 focus:ring-gold"
                 />
               </div>
-              <Button onClick={handleNavigateToSlug} disabled={!slugInput.trim()}>
+              <Button
+                onClick={handleNavigateToSlug}
+                disabled={!slugInput.trim()}
+                className="h-12 px-5 rounded-xl bg-emerald-deep text-cream border border-gold/40 hover:bg-emerald-deep/90"
+              >
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -117,13 +139,14 @@ export default function TenantSelectPage() {
 
         {/* Search */}
         <div className="mb-6">
+          <p className="editorial-label text-emerald-deep/70 mb-2">Explore</p>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-deep/50" />
             <Input
               placeholder="Buscar estabelecimentos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-surface border-border"
+              className="pl-11 h-12 rounded-xl bg-cream-soft border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus:ring-2 focus:ring-gold"
             />
           </div>
         </div>
@@ -131,63 +154,69 @@ export default function TenantSelectPage() {
         {/* Restaurants Grid */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-deep" />
           </div>
         ) : filteredRestaurants && filteredRestaurants.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredRestaurants.map((restaurant) => (
               <Card
                 key={restaurant.id}
-                className="bg-surface border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                className="bg-cream-soft border-emerald-deep/10 hover:border-gold/60 rounded-2xl transition-all cursor-pointer group shadow-[0_10px_40px_-25px_rgba(6,78,59,0.35)] hover:shadow-[0_20px_60px_-25px_rgba(6,78,59,0.45)]"
                 onClick={() => navigate(`/${restaurant.slug}`)}
               >
-                <CardContent className="p-4">
+                <CardContent className="p-5">
                   <div className="flex items-start gap-4">
                     {restaurant.logo_url ? (
                       <img
                         src={restaurant.logo_url}
                         alt={restaurant.name}
-                        className="w-12 h-12 rounded-lg object-cover"
+                        className="w-14 h-14 rounded-xl object-cover border border-gold/40"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Store className="h-6 w-6 text-primary" />
+                      <div className="w-14 h-14 rounded-xl bg-emerald-deep border border-gold/40 flex items-center justify-center">
+                        <Store className="h-6 w-6 text-gold" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground truncate">
+                        <h3 className="font-serif-editorial text-xl text-emerald-deep truncate leading-tight">
                           {restaurant.name}
                         </h3>
                         <Badge
                           variant={restaurant.status === 'open' ? 'default' : 'secondary'}
-                          className="text-xs shrink-0"
+                          className={
+                            restaurant.status === 'open'
+                              ? 'text-[10px] shrink-0 bg-emerald-deep text-cream border border-gold/40 font-sans-editorial uppercase tracking-wider'
+                              : 'text-[10px] shrink-0 bg-emerald-deep/10 text-emerald-deep border border-emerald-deep/15 font-sans-editorial uppercase tracking-wider'
+                          }
                         >
                           {restaurant.status === 'open' ? 'Aberto' : 'Fechado'}
                         </Badge>
                       </div>
                       {restaurant.subtitle && (
-                        <p className="text-sm text-muted-foreground line-clamp-1">
+                        <p className="text-sm text-emerald-deep/70 font-sans-editorial line-clamp-1">
                           {restaurant.subtitle}
                         </p>
                       )}
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-gold mt-1 font-sans-editorial tracking-wide">
                         /{restaurant.slug}
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                    <ArrowRight className="h-5 w-5 text-emerald-deep/40 group-hover:text-gold group-hover:translate-x-0.5 transition-all shrink-0" />
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <Store className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">
+          <div className="text-center py-16">
+            <div className="w-16 h-16 rounded-full bg-cream-soft border border-gold flex items-center justify-center mx-auto mb-4">
+              <Store className="h-8 w-8 text-gold" />
+            </div>
+            <h3 className="text-2xl font-serif-editorial text-emerald-deep mb-2">
               Nenhum estabelecimento encontrado
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-emerald-deep/60 font-sans-editorial">
               {searchQuery
                 ? 'Tente buscar com outros termos'
                 : 'Ainda não há estabelecimentos cadastrados'}
@@ -197,8 +226,8 @@ export default function TenantSelectPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-auto py-6">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-emerald-deep/10 mt-auto py-6 bg-cream-soft/40">
+        <div className="container mx-auto px-4 text-center text-sm text-emerald-deep/60 font-sans-editorial">
           <p>© {new Date().getFullYear()} Chama Atende. Todos os direitos reservados.</p>
         </div>
       </footer>
