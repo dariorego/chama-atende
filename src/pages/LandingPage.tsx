@@ -20,6 +20,7 @@ import {
   Zap,
   Globe,
   Smartphone,
+  ChevronDown,
 } from "lucide-react";
 
 const modules = [
