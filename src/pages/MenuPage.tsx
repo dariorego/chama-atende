@@ -180,7 +180,39 @@ const MenuPage = () => {
   }
 
   return (
-    <ClientLayout title="Cardápio" showBack backTo="/">
+    <ClientLayout showBack backTo="/">
+      {/* Hero: cover image + circular logo */}
+      <div className="-mx-4 mb-16">
+        <div className="relative w-full aspect-[16/6] bg-gradient-to-br from-emerald-deep/20 to-emerald-deep/5 overflow-hidden">
+          {tenant?.cover_image_url ? (
+            <img
+              src={tenant.cover_image_url}
+              alt={`Capa ${tenant?.name ?? ""}`}
+              className="w-full h-full object-cover"
+            />
+          ) : null}
+          {/* Logo overlay */}
+          <div className="absolute left-1/2 -bottom-12 -translate-x-1/2">
+            <div className="w-24 h-24 rounded-full border-4 border-cream bg-cream shadow-lg overflow-hidden flex items-center justify-center">
+              {tenant?.logo_url ? (
+                <img
+                  src={tenant.logo_url}
+                  alt={`Logo ${tenant?.name ?? ""}`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <ChefHat className="h-10 w-10 text-emerald-deep" />
+              )}
+            </div>
+          </div>
+        </div>
+        {tenant?.name && (
+          <div className="mt-16 text-center px-4">
+            <h1 className="editorial-title text-2xl text-emerald-deep">{tenant.name}</h1>
+          </div>
+        )}
+      </div>
+
       {/* Search */}
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-deep/40" />
