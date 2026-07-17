@@ -116,6 +116,33 @@ const steps = [
   },
 ];
 
+const faqs = [
+  {
+    q: "O que é a ChamaAtende?",
+    a: "É uma plataforma SaaS multi-tenant para restaurantes. Reúne cardápio digital, pedidos, reservas, fila de espera, chamado de garçom e métricas em um só lugar.",
+  },
+  {
+    q: "Meus clientes precisam baixar algum aplicativo?",
+    a: "Não. O cardápio e os serviços são acessados diretamente pelo navegador do celular, escaneando o QR Code da mesa.",
+  },
+  {
+    q: "Quais formas de pagamento são aceitas?",
+    a: "O sistema aceita Pix e cartão de crédito/débito para encomendas e pedidos, de forma integrada e segura.",
+  },
+  {
+    q: "Posso usar a plataforma em mais de um estabelecimento?",
+    a: "Sim. Cada restaurante é isolado em um tenant próprio com autenticação, RLS e controle de acesso independente.",
+  },
+  {
+    q: "Existe contrato de fidelidade ou taxa por pedido?",
+    a: "Não há fidelidade. O plano gratuito já inclui as funcionalidades essenciais e módulos avançados podem ser ativados conforme a necessidade.",
+  },
+  {
+    q: "Como faço para começar?",
+    a: "Basta clicar em 'Começar grátis', preencher o onboarding e configurar mesas e módulos. Em poucos minutos seu restaurante já pode atender pelo QR Code.",
+  },
+];
+
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
