@@ -376,25 +376,25 @@ function PreOrderSearchCard({ order }: { order: PreOrderSearchResult }) {
 
   return (
     <Link to={`/encomendas/status/${order.id}`}>
-      <Card className="hover:border-primary/30 transition-colors">
+      <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10 hover:border-[#c9a84c]/50 transition-colors">
         <CardContent className="p-4 space-y-3">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
-              <span className="font-bold text-lg">
+              <span className="editorial-title text-2xl text-[#064e3b]">
                 #{order.order_number.toString().padStart(3, '0')}
               </span>
               <Badge className={cn('ml-2 border', statusConfig.color)}>
                 {statusConfig.label}
               </Badge>
             </div>
-            <span className="font-semibold text-primary">
+            <span className="editorial-title text-2xl text-[#c9a84c]">
               {formatPrice(Number(order.total_amount))}
             </span>
           </div>
 
           {/* Pickup Info */}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-4 text-sm text-[#064e3b]/60 font-sans-editorial">
             <div className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />
               <span>{formattedDate}</span>
@@ -413,10 +413,10 @@ function PreOrderSearchCard({ order }: { order: PreOrderSearchResult }) {
 
           {/* Admin Response */}
           {order.admin_response && (
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+            <div className="bg-[#faf6ec] border border-[#c9a84c]/30 rounded-lg p-3">
               <div className="flex items-start gap-2">
-                <MessageSquare className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-foreground">{order.admin_response}</p>
+                <MessageSquare className="h-4 w-4 text-[#c9a84c] mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-[#064e3b] font-sans-editorial italic">{order.admin_response}</p>
               </div>
             </div>
           )}
