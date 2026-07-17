@@ -24,17 +24,17 @@ import {
 import { cn } from '@/lib/utils';
 
 const STATUS_CONFIG: Record<string, { label: string; icon: typeof Clock; color: string }> = {
-  pending: { label: 'Pendente', icon: Clock, color: 'text-yellow-500' },
-  confirmed: { label: 'Confirmada', icon: CheckCircle2, color: 'text-blue-500' },
-  preparing: { label: 'Em Preparo', icon: ChefHat, color: 'text-orange-500' },
-  ready: { label: 'Pronta', icon: Package, color: 'text-green-500' },
-  delivered: { label: 'Entregue', icon: CheckCircle2, color: 'text-green-600' },
+  pending: { label: 'Pendente', icon: Clock, color: 'text-[#c9a84c]' },
+  confirmed: { label: 'Confirmada', icon: CheckCircle2, color: 'text-[#064e3b]' },
+  preparing: { label: 'Em Preparo', icon: ChefHat, color: 'text-[#c9a84c]' },
+  ready: { label: 'Pronta', icon: Package, color: 'text-[#064e3b]' },
+  delivered: { label: 'Entregue', icon: CheckCircle2, color: 'text-[#064e3b]' },
   cancelled: { label: 'Cancelada', icon: XCircle, color: 'text-destructive' },
 };
 
 const PAYMENT_METHOD_CONFIG: Record<string, { label: string; icon: typeof CreditCard; color: string }> = {
-  pix: { label: 'PIX', icon: QrCode, color: 'text-green-500' },
-  card: { label: 'Cartão', icon: CreditCard, color: 'text-blue-500' },
+  pix: { label: 'PIX', icon: QrCode, color: 'text-[#c9a84c]' },
+  card: { label: 'Cartão', icon: CreditCard, color: 'text-[#c9a84c]' },
 };
 
 const STATUS_ORDER = ['pending', 'confirmed', 'ready', 'delivered'];
@@ -94,8 +94,8 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
       <ClientLayout title="Status da Encomenda" showBack backTo="/">
         <div className="text-center py-12">
           <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Encomenda não encontrada</h2>
-          <p className="text-muted-foreground">
+          <h2 className="editorial-title text-3xl text-[#064e3b] mb-2">Encomenda não encontrada</h2>
+          <p className="text-[#064e3b]/60 font-sans-editorial">
             Verifique se o link está correto ou entre em contato conosco.
           </p>
         </div>
@@ -115,14 +115,17 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
     <ClientLayout title="Status da Encomenda" showBack backTo="/">
       <div className="space-y-6">
         {/* Order Header */}
-        <Card className="border-primary/20">
+        <Card className="bg-[#064e3b] border-[#c9a84c]/40">
           <CardContent className="pt-6">
             <div className="text-center">
-              <StatusIcon className={cn('h-12 w-12 mx-auto mb-3', statusConfig.color)} />
-              <h2 className="text-xl font-bold mb-1">
+              <div className="inline-flex p-4 rounded-full bg-[#c9a84c]/15 border border-[#c9a84c]/40 mb-3">
+                <StatusIcon className="h-8 w-8 text-[#c9a84c]" />
+              </div>
+              <p className="editorial-label text-[#c9a84c] mb-1">Encomenda</p>
+              <h2 className="editorial-title text-4xl text-[#faf6ec] mb-2">
                 Encomenda #{preOrder.order_number.toString().padStart(3, '0')}
               </h2>
-              <span className={cn('text-sm font-medium', statusConfig.color)}>
+              <span className="text-xs tracking-widest uppercase font-medium text-[#faf6ec]/80">
                 {statusConfig.label}
               </span>
             </div>
@@ -131,24 +134,24 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
 
         {/* Admin Response */}
         {preOrder.admin_response && (
-          <Card className="border-primary/30 bg-primary/5">
+          <Card className="border-[#c9a84c]/30 bg-[#faf6ec]">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-primary" />
+              <CardTitle className="editorial-title text-xl text-[#064e3b] flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-[#c9a84c]" />
                 Mensagem do Estabelecimento
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm">{preOrder.admin_response}</p>
+              <p className="text-sm text-[#064e3b] italic font-sans-editorial">{preOrder.admin_response}</p>
             </CardContent>
           </Card>
         )}
 
         {/* Status Timeline */}
         {!isCancelled && (
-          <Card>
+          <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Acompanhamento</CardTitle>
+              <CardTitle className="editorial-title text-2xl text-[#064e3b]">Acompanhamento</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -162,22 +165,22 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
                     <div key={status} className="flex items-center gap-3">
                       <div
                         className={cn(
-                          'w-8 h-8 rounded-full flex items-center justify-center',
-                          isCompleted ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                          'w-10 h-10 rounded-full flex items-center justify-center border',
+                          isCompleted ? 'bg-[#064e3b] text-[#faf6ec] border-[#c9a84c]' : 'bg-[#faf6ec] text-[#064e3b]/30 border-[#064e3b]/10'
                         )}
                       >
                         <Icon className="h-4 w-4" />
                       </div>
                       <span
                         className={cn(
-                          'text-sm',
-                          isCurrent ? 'font-medium text-foreground' : 'text-muted-foreground'
+                          'font-sans-editorial',
+                          isCurrent ? 'editorial-title text-lg text-[#064e3b]' : 'text-sm text-[#064e3b]/50'
                         )}
                       >
                         {config.label}
                       </span>
                       {isCurrent && (
-                        <span className="ml-auto text-xs text-primary">Atual</span>
+                        <span className="ml-auto editorial-label text-[#c9a84c]">Atual</span>
                       )}
                     </div>
                   );
@@ -188,16 +191,16 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
         )}
 
         {/* Pickup Info */}
-        <Card>
+        <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
+            <CardTitle className="editorial-title text-2xl text-[#064e3b] flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-[#c9a84c]" />
               Retirada
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm">
+          <CardContent className="space-y-2 text-sm text-[#064e3b] font-sans-editorial">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Clock className="h-4 w-4 text-[#c9a84c]" />
               <span>
                 {format(new Date(preOrder.pickup_date + 'T12:00:00'), "dd 'de' MMMM 'de' yyyy", {
                   locale: ptBR,
@@ -206,16 +209,16 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
+              <User className="h-4 w-4 text-[#c9a84c]" />
               <span>{preOrder.customer_name}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
+              <Phone className="h-4 w-4 text-[#c9a84c]" />
               <span>{preOrder.customer_phone}</span>
             </div>
             {paymentConfig && (
               <div className="flex items-center gap-2">
-                <PaymentIcon className={cn("h-4 w-4", paymentConfig.color)} />
+                <PaymentIcon className="h-4 w-4 text-[#c9a84c]" />
                 <span>Pagamento: {paymentConfig.label}</span>
               </div>
             )}
@@ -223,34 +226,34 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
         </Card>
 
         {/* Order Items */}
-        <Card>
+        <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Itens da Encomenda</CardTitle>
+            <CardTitle className="editorial-title text-2xl text-[#064e3b]">Itens da Encomenda</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {preOrder.items?.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm">
-                <span className="text-muted-foreground">
+              <div key={item.id} className="flex justify-between text-sm font-sans-editorial">
+                <span className="text-[#064e3b]/70">
                   {item.quantity}x {item.product_name}
                 </span>
-                <span>{formatPrice(Number(item.unit_price) * item.quantity)}</span>
+                <span className="text-[#064e3b] font-medium">{formatPrice(Number(item.unit_price) * item.quantity)}</span>
               </div>
             ))}
-            <div className="border-t pt-2 mt-2 flex justify-between font-semibold">
-              <span>Total</span>
-              <span className="text-primary">{formatPrice(Number(preOrder.total_amount))}</span>
+            <div className="border-t border-[#064e3b]/10 pt-3 mt-2 flex justify-between items-baseline">
+              <span className="editorial-label text-[#064e3b]/60">Total</span>
+              <span className="editorial-title text-3xl text-[#c9a84c]">{formatPrice(Number(preOrder.total_amount))}</span>
             </div>
           </CardContent>
         </Card>
 
         {/* Observations */}
         {preOrder.observations && (
-          <Card>
+          <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Observações</CardTitle>
+              <CardTitle className="editorial-title text-2xl text-[#064e3b]">Observações</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">{preOrder.observations}</p>
+              <p className="text-sm text-[#064e3b]/70 font-sans-editorial italic">{preOrder.observations}</p>
             </CardContent>
           </Card>
         )}
@@ -259,7 +262,7 @@ ${preOrder.items?.map((item) => `• ${item.quantity}x ${item.product_name}`).jo
         <Button
           variant="outline"
           size="lg"
-          className="w-full"
+          className="w-full h-14 border-[#064e3b]/20 text-[#064e3b] hover:bg-[#c9a84c]/10 hover:border-[#c9a84c] tracking-widest uppercase text-xs"
           onClick={handleShareWhatsApp}
         >
           <MessageCircle className="mr-2 h-4 w-4" />

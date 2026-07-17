@@ -155,39 +155,39 @@ export default function PreOrderCheckoutPage() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Order Summary */}
-          <Card>
+          <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4" />
+              <CardTitle className="editorial-title text-2xl text-[#064e3b] flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 text-[#c9a84c]" />
                 Resumo da Encomenda
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {items.map((item) => (
-                <div key={item.productId} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
+                <div key={item.productId} className="flex justify-between text-sm font-sans-editorial">
+                  <span className="text-[#064e3b]/70">
                     {item.quantity}x {item.productName}
                   </span>
-                  <span>{formatPrice(item.unitPrice * item.quantity)}</span>
+                  <span className="text-[#064e3b] font-medium">{formatPrice(item.unitPrice * item.quantity)}</span>
                 </div>
               ))}
-              <div className="border-t pt-2 mt-2 flex justify-between font-semibold">
-                <span>Total</span>
-                <span className="text-primary">{formatPrice(totalAmount)}</span>
+              <div className="border-t border-[#064e3b]/10 pt-3 mt-2 flex justify-between items-baseline">
+                <span className="editorial-label text-[#064e3b]/60">Total</span>
+                <span className="editorial-title text-3xl text-[#c9a84c]">{formatPrice(totalAmount)}</span>
               </div>
             </CardContent>
           </Card>
 
           {/* Pickup Date & Time */}
-          <Card>
+          <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Clock className="h-4 w-4" />
+              <CardTitle className="editorial-title text-2xl text-[#064e3b] flex items-center gap-2">
+                <Clock className="h-4 w-4 text-[#c9a84c]" />
                 Data e Horário de Retirada
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[#064e3b]/60 font-sans-editorial">
                 Antecedência mínima: {minAdvanceHours} horas
               </p>
 
@@ -203,8 +203,8 @@ export default function PreOrderCheckoutPage() {
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
+                              'w-full pl-3 text-left font-normal bg-[#faf6ec] border-[#064e3b]/15 text-[#064e3b] hover:bg-[#faf6ec]',
+                              !field.value && 'text-[#064e3b]/40'
                             )}
                           >
                             {field.value ? (
@@ -212,7 +212,7 @@ export default function PreOrderCheckoutPage() {
                             ) : (
                               <span>Selecione uma data</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="ml-auto h-4 w-4 text-[#c9a84c]" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -252,7 +252,7 @@ export default function PreOrderCheckoutPage() {
                       disabled={!selectedDate}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-[#faf6ec] border-[#064e3b]/15 text-[#064e3b]">
                           <SelectValue placeholder="Selecione um horário" />
                         </SelectTrigger>
                       </FormControl>
@@ -272,10 +272,10 @@ export default function PreOrderCheckoutPage() {
           </Card>
 
           {/* Payment Method */}
-          <Card>
+          <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <CreditCard className="h-4 w-4" />
+              <CardTitle className="editorial-title text-2xl text-[#064e3b] flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-[#c9a84c]" />
                 Forma de Pagamento
               </CardTitle>
             </CardHeader>
@@ -294,34 +294,34 @@ export default function PreOrderCheckoutPage() {
                         <div className={cn(
                           "flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-colors",
                           field.value === 'pix' 
-                            ? "border-primary bg-primary/5" 
-                            : "border-border hover:border-primary/50"
+                            ? "border-[#c9a84c] bg-[#c9a84c]/5" 
+                            : "border-[#064e3b]/15 bg-[#faf6ec] hover:border-[#c9a84c]/50"
                         )}>
                           <RadioGroupItem value="pix" id="pix" />
                           <Label htmlFor="pix" className="flex items-center gap-3 cursor-pointer flex-1">
-                            <div className="p-2 bg-green-500/10 rounded-lg">
-                              <QrCode className="h-5 w-5 text-green-500" />
+                            <div className="p-2 bg-[#c9a84c]/15 border border-[#c9a84c]/40 rounded-lg">
+                              <QrCode className="h-5 w-5 text-[#c9a84c]" />
                             </div>
                             <div>
-                              <span className="font-medium">PIX</span>
-                              <p className="text-xs text-muted-foreground">Pagamento instantâneo</p>
+                              <span className="editorial-title text-xl text-[#064e3b]">PIX</span>
+                              <p className="text-xs text-[#064e3b]/60 font-sans-editorial">Pagamento instantâneo</p>
                             </div>
                           </Label>
                         </div>
                         <div className={cn(
                           "flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-colors",
                           field.value === 'card' 
-                            ? "border-primary bg-primary/5" 
-                            : "border-border hover:border-primary/50"
+                            ? "border-[#c9a84c] bg-[#c9a84c]/5" 
+                            : "border-[#064e3b]/15 bg-[#faf6ec] hover:border-[#c9a84c]/50"
                         )}>
                           <RadioGroupItem value="card" id="card" />
                           <Label htmlFor="card" className="flex items-center gap-3 cursor-pointer flex-1">
-                            <div className="p-2 bg-blue-500/10 rounded-lg">
-                              <CreditCard className="h-5 w-5 text-blue-500" />
+                            <div className="p-2 bg-[#c9a84c]/15 border border-[#c9a84c]/40 rounded-lg">
+                              <CreditCard className="h-5 w-5 text-[#c9a84c]" />
                             </div>
                             <div>
-                              <span className="font-medium">Cartão</span>
-                              <p className="text-xs text-muted-foreground">Débito ou crédito na retirada</p>
+                              <span className="editorial-title text-xl text-[#064e3b]">Cartão</span>
+                              <p className="text-xs text-[#064e3b]/60 font-sans-editorial">Débito ou crédito na retirada</p>
                             </div>
                           </Label>
                         </div>
@@ -335,9 +335,9 @@ export default function PreOrderCheckoutPage() {
           </Card>
 
           {/* Customer Info */}
-          <Card>
+          <Card className="bg-[#faf6ec]/70 border-[#064e3b]/10">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Seus Dados</CardTitle>
+              <CardTitle className="editorial-title text-2xl text-[#064e3b]">Seus Dados</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -347,7 +347,7 @@ export default function PreOrderCheckoutPage() {
                   <FormItem>
                     <FormLabel>Nome Completo *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Seu nome" {...field} />
+                      <Input placeholder="Seu nome" {...field} className="bg-[#faf6ec] border-[#064e3b]/15 text-[#064e3b] placeholder:text-[#064e3b]/40" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -364,6 +364,7 @@ export default function PreOrderCheckoutPage() {
                       <Input 
                         placeholder="(00) 00000-0000" 
                         {...field}
+                        className="bg-[#faf6ec] border-[#064e3b]/15 text-[#064e3b] placeholder:text-[#064e3b]/40"
                         onChange={(e) => {
                           // Simple phone formatting
                           let value = e.target.value.replace(/\D/g, '');
@@ -393,7 +394,7 @@ export default function PreOrderCheckoutPage() {
                     <FormControl>
                       <Textarea
                         placeholder="Alguma observação especial?"
-                        className="resize-none"
+                        className="resize-none bg-[#faf6ec] border-[#064e3b]/15 text-[#064e3b] placeholder:text-[#064e3b]/40"
                         {...field}
                       />
                     </FormControl>
@@ -408,7 +409,7 @@ export default function PreOrderCheckoutPage() {
           <Button
             type="submit"
             size="lg"
-            className="w-full"
+            className="w-full h-14 bg-[#064e3b] hover:bg-[#064e3b]/90 text-[#faf6ec] border border-[#c9a84c]/40 tracking-widest uppercase text-xs"
             disabled={isPending}
           >
             {isPending ? (
