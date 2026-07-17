@@ -146,6 +146,7 @@ const faqs = [
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
