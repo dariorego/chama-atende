@@ -239,10 +239,10 @@ const HubPage = () => {
           {/* Quick Action Buttons */}
           <div className="flex items-center justify-center gap-6 mt-8">
             <button className="flex flex-col items-center gap-1.5 group">
-              <div className="p-3 bg-cream-soft border border-emerald-deep/10 rounded-full group-hover:border-gold group-hover:bg-[#c9a84c]/10 transition-all">
-                <Camera className="h-5 w-5 text-emerald-deep/70 group-hover:text-gold transition-colors" />
+              <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
+                <Camera className="h-5 w-5 text-gold transition-colors" />
               </div>
-              <span className="text-[10px] tracking-widest uppercase text-emerald-deep/60">Fotos</span>
+              <span className="text-[10px] tracking-widest uppercase text-emerald-deep">Fotos</span>
             </button>
             {tenant.phone && (
               <a href={`https://wa.me/${tenant.phone.replace(/\D/g, "")}`} className="flex flex-col items-center gap-1.5 group">
