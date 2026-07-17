@@ -50,6 +50,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Exibe produtos em rotação em uma TV",
     icon: "Tv",
   },
+  digital_comanda: {
+    label: "Comanda Digital",
+    description: "Várias comandas por mesa (ex.: 10.01, 10.02) com fechamento individual",
+    icon: "Receipt",
+  },
 };
 
 export function useAdminModules() {
