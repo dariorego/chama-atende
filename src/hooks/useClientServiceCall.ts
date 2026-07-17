@@ -36,25 +36,12 @@ export function useClientServiceCall(tableId: string | null) {
   // Create or get session
   const createSessionMutation = useMutation({
     mutationFn: async (tableId: string) => {
-      // First check if session exists
-      const { data: existing } = await supabase
-        .from("table_sessions")
-        .select("*")
-        .eq("table_id", tableId)
-        .eq("status", "open")
-        .maybeSingle();
-      
-      if (existing) return existing;
-      
-      // Create new session
-      const { data, error } = await supabase
-        .from("table_sessions")
-        .insert({ table_id: tableId })
-        .select()
-        .single();
-      
+      const { data } = await callPublicApi<{ data: TableSession | null }>("get-table-session", { tableId });
+      if (data) return data;
+      const { error } = await supabase.from("table_sessions").insert({ table_id: tableId });
       if (error) throw error;
-      return data;
+      const { data: created } = await callPublicApi<{ data: TableSession | null }>("get-table-session", { tableId });
+      return created!;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["client-session", tableId] });
@@ -72,19 +59,14 @@ export function useClientServiceCall(tableId: string | null) {
       sessionId: string | null; 
       callType: "waiter" | "bill" | "help";
     }) => {
-      const { data, error } = await supabase
-        .from("service_calls")
-        .insert({
-          table_id: tableId,
-          table_session_id: sessionId,
-          call_type: callType,
-          status: "pending",
-        })
-        .select()
-        .single();
-      
+      const { error } = await supabase.from("service_calls").insert({
+        table_id: tableId,
+        table_session_id: sessionId,
+        call_type: callType,
+        status: "pending",
+      });
       if (error) throw error;
-      return data;
+      return { table_id: tableId, table_session_id: sessionId, call_type: callType, status: "pending" };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["client-calls", tableId] });
