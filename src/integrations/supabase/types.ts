@@ -1078,6 +1078,7 @@ export type Database = {
           notes: string | null
           opened_at: string | null
           restaurant_id: string | null
+          session_token: string | null
           status: string | null
           table_id: string
           updated_at: string | null
@@ -1092,6 +1093,7 @@ export type Database = {
           notes?: string | null
           opened_at?: string | null
           restaurant_id?: string | null
+          session_token?: string | null
           status?: string | null
           table_id: string
           updated_at?: string | null
@@ -1106,6 +1108,7 @@ export type Database = {
           notes?: string | null
           opened_at?: string | null
           restaurant_id?: string | null
+          session_token?: string | null
           status?: string | null
           table_id?: string
           updated_at?: string | null
