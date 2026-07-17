@@ -14,6 +14,7 @@ import {
   Star,
   BarChart3,
   ShoppingBag,
+  Tv,
   Menu as MenuIcon,
   X,
   ShieldCheck,
@@ -71,7 +72,14 @@ const modules = [
     icon: BarChart3,
     title: "Métricas em Tempo Real",
     desc: "Faturamento, ticket médio, pratos que mais vendem e horários de pico.",
+    span: "",
+  },
+  {
+    icon: Tv,
+    title: "Vitrine Digital",
+    desc: "Exiba seus produtos em uma TV com 3 modelos: Cinema, Split e Mosaico.",
     span: "md:col-span-2",
+    badge: "Novo",
   },
 ];
 
