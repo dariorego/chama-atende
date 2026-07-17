@@ -43,6 +43,7 @@ import AdminCombinationGroups from "./pages/admin/AdminCombinationGroups";
 import AdminMetrics from "./pages/admin/AdminMetrics";
 import AdminPreOrders from "./pages/admin/AdminPreOrders";
 import AdminVitrine from "./pages/admin/AdminVitrine";
+import AdminComandas from "./pages/admin/AdminComandas";
 import VitrineDisplayPage from "./pages/VitrineDisplayPage";
 import PreOrderMenuPage from "./pages/PreOrderMenuPage";
 import PreOrderCartPage from "./pages/PreOrderCartPage";
@@ -287,6 +288,16 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin>
                 <AdminLayout>
                   <AdminVitrine />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="comandas"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminComandas />
                 </AdminLayout>
               </AuthGuard>
             }
