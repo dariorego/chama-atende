@@ -425,7 +425,7 @@ const HubPage = () => {
 
         {/* Footer */}
         <div className="mt-10 pt-6 border-t border-emerald-deep/10 text-center">
-          <p className="text-xs text-emerald-deep/60">
+          <p className="text-xs text-emerald-deep">
             Powered by <span className="text-gold font-medium">Chama Atende</span>
           </p>
           <div className="flex items-center justify-center gap-2 mt-2 text-[10px] tracking-widest text-emerald-deep/50">
