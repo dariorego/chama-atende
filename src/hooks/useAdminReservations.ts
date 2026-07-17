@@ -65,7 +65,7 @@ export function useAdminReservations() {
 
   useEffect(() => {
     const channel = supabase
-      .channel('reservations-changes')
+      .channel(`reservations-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'reservations' },
