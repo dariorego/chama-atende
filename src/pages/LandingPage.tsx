@@ -203,8 +203,6 @@ export default function LandingPage() {
             A plataforma completa
             <br />
             para restaurantes
-            <br />
-            <span className="text-gradient bg-gradient-primary">que querem crescer.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-slide-up">
