@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useCurrentUser } from './useCurrentUser';
 import { useAdminSettings } from './useAdminSettings';
 import { useTenantAccess } from './useTenantAccess';
@@ -14,13 +16,27 @@ export function useAdminAccess() {
     isLoading: isLoadingTenantAccess 
   } = useTenantAccess();
 
+  // Server-side verification via SECURITY DEFINER function.
+  // This is enforced regardless of client-side state.
+  const { data: serverVerified, isLoading: isLoadingServer } = useQuery({
+    queryKey: ['verify-admin-access', profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return false;
+      const { data, error } = await supabase.rpc('verify_admin_access');
+      if (error) return false;
+      return Boolean(data);
+    },
+    enabled: !!profile?.id,
+    staleTime: 60_000,
+  });
+
   const hasAccess = useMemo(() => {
     if (!profile) return false;
-    
-    // User must have access to this specific tenant
-    // OR be a global admin (for backward compatibility during migration)
-    return hasTenantAccess || isGlobalAdmin;
-  }, [profile, hasTenantAccess, isGlobalAdmin]);
+    // Server verification is authoritative; client checks are UI convenience.
+    const clientAccess = hasTenantAccess || isGlobalAdmin;
+    if (serverVerified === false) return false;
+    return clientAccess;
+  }, [profile, hasTenantAccess, isGlobalAdmin, serverVerified]);
 
   const accessLevel = useMemo(() => {
     // Prioritize tenant-specific role
@@ -41,6 +57,6 @@ export function useAdminAccess() {
     restaurant,
     roles,
     tenantRole,
-    isLoading: isLoadingUser || isLoadingRestaurant || isLoadingTenantAccess,
+    isLoading: isLoadingUser || isLoadingRestaurant || isLoadingTenantAccess || isLoadingServer,
   };
 }

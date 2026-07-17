@@ -1333,6 +1333,7 @@ export type Database = {
           status: string
         }[]
       }
+      verify_admin_access: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "manager" | "staff"
