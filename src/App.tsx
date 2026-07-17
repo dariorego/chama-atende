@@ -132,6 +132,16 @@ function AdminTenantPages() {
             }
           />
           <Route
+            path="importar"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminImport />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
             path="modulos"
             element={
               <AuthGuard requireAdmin>
