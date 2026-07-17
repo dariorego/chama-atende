@@ -36,8 +36,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Pencil, Trash2, Star, CameraOff, GripVertical } from 'lucide-react';
+import { Pencil, Trash2, Star, CameraOff, GripVertical, Tv } from 'lucide-react';
 import type { MenuProduct } from '@/hooks/useAdminProducts';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
 
@@ -50,6 +51,7 @@ interface ProductsTableProps {
   isDeleting?: boolean;
   onReorder?: (products: MenuProduct[]) => void;
   isDragDisabled?: boolean;
+  onToggleShowOnDisplay?: (product: MenuProduct, show: boolean) => void;
 }
 
 function formatPrice(value: number) {
@@ -69,6 +71,7 @@ interface SortableProductRowProps {
   onEdit: (product: MenuProduct) => void;
   onDeleteClick: (product: MenuProduct) => void;
   isDragDisabled?: boolean;
+  onToggleShowOnDisplay?: (product: MenuProduct, show: boolean) => void;
 }
 
 function SortableProductRow({
@@ -77,6 +80,7 @@ function SortableProductRow({
   onEdit,
   onDeleteClick,
   isDragDisabled,
+  onToggleShowOnDisplay,
 }: SortableProductRowProps) {
   const {
     attributes,
@@ -162,6 +166,15 @@ function SortableProductRow({
         <Badge variant={product.is_active ? 'default' : 'secondary'}>
           {product.is_active ? 'Ativo' : 'Inativo'}
         </Badge>
+      </TableCell>
+      <TableCell className="text-center">
+        <div className="flex items-center justify-center">
+          <Switch
+            checked={!!product.show_on_display}
+            onCheckedChange={(checked) => onToggleShowOnDisplay?.(product, checked)}
+            aria-label="Exibir na vitrine"
+          />
+        </div>
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1">
