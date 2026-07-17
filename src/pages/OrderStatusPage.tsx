@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useOrderStatus, useQueuePosition } from "@/hooks/useOrderStatus";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { useTenant } from "@/hooks/useTenant";
 
 const OrderStatusPage = () => {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const { orderId } = useParams<{ orderId: string }>();
   const location = useLocation();
   const locationState = location.state as { orderNumber?: number } | null;
@@ -16,7 +18,7 @@ const OrderStatusPage = () => {
   const { data: queueData } = useQueuePosition(orderId, restaurant?.id);
 
   const handleBack = () => {
-    navigate("/pedido-cozinha");
+    navigate(tenant?.slug ? `/${tenant.slug}/pedido-cozinha` : "/pedido-cozinha");
   };
 
   if (isLoading) {
