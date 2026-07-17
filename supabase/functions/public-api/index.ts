@@ -105,6 +105,28 @@ Deno.serve(async (req) => {
           recentSeated: recent ?? [],
         })
       }
+      case 'cancel-queue-entry': {
+        if (!isUuid(payload.id)) return json(400, { error: 'id required' })
+        const { error } = await supabase.from('queue_entries')
+          .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+          .eq('id', payload.id).eq('status', 'waiting')
+        if (error) return json(500, { error: error.message })
+        return json(200, { ok: true })
+      }
+      case 'search-queue-by-phone': {
+        const rawPhone = s(payload.phone, 20)
+        if (!rawPhone) return json(400, { error: 'phone required' })
+        const cleanPhone = normalizePhone(rawPhone)
+        if (cleanPhone.length < 8) return json(400, { error: 'phone too short' })
+        const today = new Date(); today.setHours(0,0,0,0)
+        const { data, error } = await supabase.from('queue_entries').select('*')
+          .gte('created_at', today.toISOString())
+          .ilike('phone', `%${cleanPhone}%`)
+          .in('status', ['waiting','called'])
+          .order('created_at', { ascending: false }).limit(1).maybeSingle()
+        if (error) return json(500, { error: error.message })
+        return json(200, { data })
+      }
 
       // ---------- RESERVATIONS ----------
       case 'cancel-reservation': {
