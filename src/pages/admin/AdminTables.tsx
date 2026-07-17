@@ -10,6 +10,7 @@ import { TableFormDialog } from "@/components/admin/TableFormDialog";
 import { QRCodeDialog } from "@/components/admin/QRCodeDialog";
 import { BatchTableFormDialog } from "@/components/admin/BatchTableFormDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTenantSettings } from "@/hooks/useAdminSettings";
 
 const statusConfig = {
   available: { label: "Disponível", variant: "default" as const, color: "bg-green-500" },
