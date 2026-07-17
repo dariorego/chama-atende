@@ -207,6 +207,7 @@ export function ProductsTable({
   isDeleting,
   onReorder,
   isDragDisabled,
+  onToggleShowOnDisplay,
 }: ProductsTableProps) {
   const [deleteProduct, setDeleteProduct] = useState<MenuProduct | null>(null);
 
@@ -275,6 +276,9 @@ export function ProductsTable({
                 <TableHead>Categoria</TableHead>
                 <TableHead className="text-right">Preço</TableHead>
                 <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center w-28">
+                  <span className="inline-flex items-center gap-1"><Tv className="h-3.5 w-3.5" />Vitrine</span>
+                </TableHead>
                 <TableHead className="w-24 text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -291,6 +295,7 @@ export function ProductsTable({
                     onEdit={onEdit}
                     onDeleteClick={setDeleteProduct}
                     isDragDisabled={isDragDisabled}
+                    onToggleShowOnDisplay={onToggleShowOnDisplay}
                   />
                 ))}
               </TableBody>

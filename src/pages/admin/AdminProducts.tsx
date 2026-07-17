@@ -131,6 +131,19 @@ export default function AdminProducts() {
     }
   };
 
+  const handleToggleShowOnDisplay = async (product: MenuProduct, show: boolean) => {
+    try {
+      await updateProduct.mutateAsync({ id: product.id, show_on_display: show });
+      toast({
+        title: show ? 'Adicionado à vitrine' : 'Removido da vitrine',
+        description: product.name,
+      });
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Erro ao atualizar vitrine.';
+      toast({ title: 'Erro', description: msg, variant: 'destructive' });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -179,6 +192,7 @@ export default function AdminProducts() {
             isDeleting={deleteProduct.isPending}
             onReorder={handleReorder}
             isDragDisabled={isDragDisabled}
+            onToggleShowOnDisplay={handleToggleShowOnDisplay}
           />
         </CardContent>
       </Card>
