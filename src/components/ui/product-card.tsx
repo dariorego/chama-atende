@@ -40,10 +40,10 @@ export function ProductCard({
     <div
       onClick={onClick}
       className={cn(
-        "flex gap-4 p-4 rounded-xl border bg-card transition-all duration-300",
+        "flex gap-4 p-4 rounded-xl border bg-[#faf6ec]/70 transition-all duration-300",
         highlight
-          ? "border-primary/50 bg-primary/5"
-          : "border-border hover:border-border/80",
+          ? "border-[#c9a84c]/50 bg-[#c9a84c]/5"
+          : "border-[#064e3b]/10 hover:border-[#c9a84c]/40 hover:bg-[#faf6ec]",
         onClick && "cursor-pointer active:scale-[0.98]",
         className
       )}
@@ -61,20 +61,20 @@ export function ProductCard({
           <img
             src={image}
             alt={name}
-            className="w-20 h-20 rounded-lg object-cover"
+            className="w-24 h-24 rounded-xl object-cover border border-[#064e3b]/10"
           />
-          <div className="absolute bottom-1 right-1 p-1 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-1 right-1 p-1 rounded-full bg-[#064e3b]/70 opacity-0 group-hover:opacity-100 transition-opacity">
             <ZoomIn className="h-3 w-3 text-white" />
           </div>
           {highlight && (
-            <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded-full">
+            <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] font-semibold tracking-widest uppercase bg-[#c9a84c] text-[#064e3b] rounded-full">
               Chef
             </span>
           )}
         </button>
       ) : (
-        <div className="w-20 h-20 rounded-lg bg-muted shrink-0 flex items-center justify-center">
-          <CameraOff className="h-8 w-8 text-muted-foreground" />
+        <div className="w-24 h-24 rounded-xl bg-[#faf6ec] border border-[#064e3b]/10 shrink-0 flex items-center justify-center">
+          <CameraOff className="h-8 w-8 text-[#064e3b]/30" />
         </div>
       )}
 
@@ -90,33 +90,32 @@ export function ProductCard({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="font-semibold text-foreground line-clamp-1">{name}</h4>
+          <h4 className="editorial-title text-xl text-[#064e3b] line-clamp-1">{name}</h4>
           <div className="flex items-center gap-1.5 shrink-0">
             {isOrderable && (
-              <span className="px-2 py-0.5 text-[10px] font-medium bg-primary/20 text-primary rounded-full border border-primary/30 flex items-center gap-1">
+              <span className="px-2 py-0.5 text-[10px] font-medium tracking-widest uppercase bg-[#064e3b]/5 text-[#064e3b] rounded-full border border-[#064e3b]/20 flex items-center gap-1">
                 <ShoppingBag className="h-3 w-3" />
                 Encomenda
               </span>
             )}
             {promotion && (
-              <span className="px-2 py-0.5 text-[10px] font-medium bg-warning/20 text-warning rounded-full border border-warning/30">
+              <span className="px-2 py-0.5 text-[10px] font-semibold tracking-widest uppercase bg-[#c9a84c] text-[#064e3b] rounded-full">
                 {promotion}
               </span>
             )}
           </div>
         </div>
         {description && (
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+          <p className="text-sm text-[#064e3b]/60 mt-1 line-clamp-2 font-sans-editorial">
             {description}
           </p>
         )}
-        <div className="flex items-center justify-between mt-2">
-          <p className="text-primary font-bold">{formattedPrice}</p>
+        <div className="flex items-center justify-between mt-3">
+          <p className="editorial-title text-2xl text-[#c9a84c]">{formattedPrice}</p>
           {isOrderable && onAddToCart && (
             <Button
               size="sm"
-              variant="outline"
-              className="h-8 px-3 text-xs"
+              className="h-9 px-4 text-xs tracking-widest uppercase bg-[#064e3b] hover:bg-[#064e3b]/90 text-[#faf6ec] border border-[#c9a84c]/40"
               onClick={onAddToCart}
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
