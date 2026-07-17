@@ -21,6 +21,7 @@ const statusConfig = {
 
 const AdminTables = () => {
   const { data: tables, isLoading } = useAdminTables();
+  const { restaurant } = useTenantSettings();
   const deleteTable = useDeleteTable();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<TableType | null>(null);
