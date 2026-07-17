@@ -350,6 +350,11 @@ export default function LandingPage() {
                   </div>
                 )}
                 <div className="relative flex flex-col h-full justify-between">
+                  {m.badge && (
+                    <span className="absolute top-0 right-0 text-[10px] tracking-widest uppercase font-semibold bg-accent text-accent-foreground px-2 py-1 rounded-full">
+                      {m.badge}
+                    </span>
+                  )}
                   <div
                     className={`w-11 h-11 rounded-xl flex items-center justify-center ${
                       m.featured ? "bg-accent/25 text-accent" : "bg-accent/15 text-accent"
