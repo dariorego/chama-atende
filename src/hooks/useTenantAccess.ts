@@ -26,7 +26,7 @@ export function useTenantAccess() {
         return null;
       }
 
-      return data?.role as TenantRole | null;
+      return (data?.role as TenantRole | undefined) ?? null;
     },
     enabled: !!user?.id && !!tenantId,
   });

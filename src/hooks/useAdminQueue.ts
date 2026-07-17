@@ -116,8 +116,10 @@ export function useAdminQueue() {
 
   // Realtime subscription
   useEffect(() => {
+    const channelName = `queue-changes-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel('queue-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {

@@ -87,8 +87,10 @@ export function useAdminOrders(restaurantId?: string, status?: string) {
   useEffect(() => {
     if (!restaurantId) return;
 
+    const channelName = `orders-realtime-${restaurantId}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel("orders-realtime")
+      .channel(channelName)
       .on(
         "postgres_changes",
         {

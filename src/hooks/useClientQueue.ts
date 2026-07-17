@@ -101,8 +101,10 @@ export function useClientQueueEntry(queueCode: string | null) {
   useEffect(() => {
     if (!queueCode) return;
 
+    const channelName = `client-queue-${queueCode}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel(`client-queue-${queueCode}`)
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -151,8 +153,10 @@ export function useQueuePosition(queueCode: string | null) {
   useEffect(() => {
     if (!queueCode) return;
 
+    const channelName = `queue-position-changes-${queueCode}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel('queue-position-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {

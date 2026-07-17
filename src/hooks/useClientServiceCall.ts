@@ -126,8 +126,10 @@ export function useClientServiceCall(tableId: string | null) {
   useEffect(() => {
     if (!tableId) return;
 
+    const channelName = `client-calls-${tableId}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel(`client-calls-${tableId}`)
+      .channel(channelName)
       .on(
         "postgres_changes",
         {
