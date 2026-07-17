@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
-import { ProductDetailSheet } from "@/components/ui/product-detail-sheet";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ChefHat, Loader2, Bell, Check } from "lucide-react";
@@ -63,8 +62,6 @@ function transformProduct(product: MenuProduct): Product {
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
@@ -139,11 +136,6 @@ const MenuPage = () => {
 
   // Transform products
   const products = productsData?.map(transformProduct) ?? [];
-
-  const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
-    setIsSheetOpen(true);
-  };
 
   // Setup carousel API listener
   useEffect(() => {
@@ -244,9 +236,8 @@ const MenuPage = () => {
           >
             <CarouselContent className="-ml-2 px-4">
               {highlightedProducts.map((product) => (
-                <CarouselItem key={product.id} className="pl-2 basis-[85%] md:basis-[60%]">
-                  <button
-                    onClick={() => handleProductClick(product)}
+              <CarouselItem key={product.id} className="pl-2 basis-[85%] md:basis-[60%]">
+                  <div
                     className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden group border border-emerald-deep/10"
                   >
                     {/* Background Image */}
@@ -275,7 +266,7 @@ const MenuPage = () => {
                         {product.description}
                       </p>
                     </div>
-                  </button>
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -333,18 +324,10 @@ const MenuPage = () => {
               price={product.price}
               image={product.image}
               promotion={product.promotion}
-              onClick={() => handleProductClick(product)}
             />
           </div>
         ))}
       </div>
-
-      {/* Product Detail Sheet */}
-      <ProductDetailSheet
-        product={selectedProduct}
-        open={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-      />
 
       {/* Empty State */}
       {filteredProducts.length === 0 && !isLoading && (
