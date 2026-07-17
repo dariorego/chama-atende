@@ -246,26 +246,26 @@ const HubPage = () => {
             </button>
             {tenant.phone && (
               <a href={`https://wa.me/${tenant.phone.replace(/\D/g, "")}`} className="flex flex-col items-center gap-1.5 group">
-                <div className="p-3 bg-cream-soft border border-emerald-deep/10 rounded-full group-hover:border-gold group-hover:bg-[#c9a84c]/10 transition-all">
-                  <MessageCircle className="h-5 w-5 text-emerald-deep/70 group-hover:text-gold transition-colors" />
+                <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
+                  <MessageCircle className="h-5 w-5 text-gold transition-colors" />
                 </div>
-                <span className="text-[10px] tracking-widest uppercase text-emerald-deep/60">Chat</span>
+                <span className="text-[10px] tracking-widest uppercase text-emerald-deep">Chat</span>
               </a>
             )}
             {socialLinks.website && (
               <a href={socialLinks.website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 group">
-                <div className="p-3 bg-cream-soft border border-emerald-deep/10 rounded-full group-hover:border-gold group-hover:bg-[#c9a84c]/10 transition-all">
-                  <Globe className="h-5 w-5 text-emerald-deep/70 group-hover:text-gold transition-colors" />
+                <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
+                  <Globe className="h-5 w-5 text-gold transition-colors" />
                 </div>
-                <span className="text-[10px] tracking-widest uppercase text-emerald-deep/60">Site</span>
+                <span className="text-[10px] tracking-widest uppercase text-emerald-deep">Site</span>
               </a>
             )}
             {wifiInfo.password && (
               <button onClick={copyWifiPassword} className="flex flex-col items-center gap-1.5 group">
-                <div className="p-3 bg-cream-soft border border-emerald-deep/10 rounded-full group-hover:border-gold group-hover:bg-[#c9a84c]/10 transition-all">
-                  <Wifi className="h-5 w-5 text-emerald-deep/70 group-hover:text-gold transition-colors" />
+                <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
+                  <Wifi className="h-5 w-5 text-gold transition-colors" />
                 </div>
-                <span className="text-[10px] tracking-widest uppercase text-emerald-deep/60">WiFi</span>
+                <span className="text-[10px] tracking-widest uppercase text-emerald-deep">WiFi</span>
               </button>
             )}
           </div>
