@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { TenantProvider } from "@/contexts/TenantContext";
+import { TenantThemeApplier } from "@/components/TenantThemeApplier";
 import HubPage from "./pages/HubPage";
 import MenuPage from "./pages/MenuPage";
 import WaiterCallPage from "./pages/WaiterCallPage";
