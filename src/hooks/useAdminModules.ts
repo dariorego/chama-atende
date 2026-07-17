@@ -45,6 +45,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Sistema de encomendas antecipadas",
     icon: "ShoppingBag",
   },
+  vitrine_digital: {
+    label: "Vitrine Digital",
+    description: "Exibe produtos em rotação em uma TV",
+    icon: "Tv",
+  },
 };
 
 export function useAdminModules() {
