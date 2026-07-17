@@ -47,6 +47,8 @@ export default function AdminSettings() {
   
   // Color states
   const [primaryColor, setPrimaryColor] = useState(DEFAULT_COLORS.primary!);
+  const [secondaryColor, setSecondaryColor] = useState(DEFAULT_COLORS.secondary!);
+  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background!);
   
   // Notification states
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -109,6 +111,8 @@ export default function AdminSettings() {
       // Load colors
       if (restaurant.theme_colors) {
         setPrimaryColor(restaurant.theme_colors.primary || DEFAULT_COLORS.primary!);
+        setSecondaryColor(restaurant.theme_colors.secondary || DEFAULT_COLORS.secondary!);
+        setBackgroundColor(restaurant.theme_colors.background || DEFAULT_COLORS.background!);
       }
       
       // Load notification settings
@@ -153,6 +157,8 @@ export default function AdminSettings() {
 
   const resetToDefaultColors = () => {
     setPrimaryColor(DEFAULT_COLORS.primary!);
+    setSecondaryColor(DEFAULT_COLORS.secondary!);
+    setBackgroundColor(DEFAULT_COLORS.background!);
   };
   
   // Handle Google Maps URL change
@@ -204,6 +210,8 @@ export default function AdminSettings() {
       theme_colors: {
         primary: primaryColor,
         accent: primaryColor,
+        secondary: secondaryColor,
+        background: backgroundColor,
       },
       notification_settings: {
         sound_enabled: soundEnabled,
@@ -866,10 +874,10 @@ export default function AdminSettings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Palette className="h-5 w-5" />
-                Cor Principal
+                Cores do Estabelecimento
               </CardTitle>
               <CardDescription>
-                Personalize a cor de destaque do seu site
+                Personalize a identidade visual — aplicada no cliente e no admin
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -893,22 +901,74 @@ export default function AdminSettings() {
                 />
               </div>
 
+              {/* Cor Secundária */}
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-12 h-12 rounded-lg border border-border shrink-0"
+                  style={{ backgroundColor: `hsl(${secondaryColor})` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <Label>Cor Secundária</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Superfícies e elementos de apoio
+                  </p>
+                </div>
+                <Input
+                  type="color"
+                  value={hslToHex(secondaryColor)}
+                  onChange={(e) => setSecondaryColor(hexToHsl(e.target.value))}
+                  className="w-16 h-10 p-1 cursor-pointer"
+                />
+              </div>
+
+              {/* Cor de Fundo */}
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-12 h-12 rounded-lg border border-border shrink-0"
+                  style={{ backgroundColor: `hsl(${backgroundColor})` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <Label>Cor de Fundo</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Fundo principal das páginas
+                  </p>
+                </div>
+                <Input
+                  type="color"
+                  value={hslToHex(backgroundColor)}
+                  onChange={(e) => setBackgroundColor(hexToHsl(e.target.value))}
+                  className="w-16 h-10 p-1 cursor-pointer"
+                />
+              </div>
+
               {/* Botão para resetar cores padrão */}
               <Button type="button" variant="outline" onClick={resetToDefaultColors}>
                 <RotateCcw className="h-4 w-4 mr-2" />
-                Restaurar cor padrão
+                Restaurar cores padrão
               </Button>
 
               {/* Preview em tempo real */}
-              <div className="p-4 rounded-lg border border-border bg-card">
-                <p className="text-sm mb-3 text-foreground">Preview:</p>
-                <Button 
-                  type="button"
-                  style={{ backgroundColor: `hsl(${primaryColor})` }}
-                  className="text-primary-foreground hover:opacity-90"
-                >
-                  Botão de Exemplo
-                </Button>
+              <div
+                className="p-4 rounded-lg border border-border"
+                style={{ backgroundColor: `hsl(${backgroundColor})` }}
+              >
+                <p className="text-sm mb-3" style={{ color: `hsl(${primaryColor})` }}>Preview:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    style={{ backgroundColor: `hsl(${primaryColor})` }}
+                    className="text-primary-foreground hover:opacity-90"
+                  >
+                    Botão Principal
+                  </Button>
+                  <Button
+                    type="button"
+                    style={{ backgroundColor: `hsl(${secondaryColor})` }}
+                    className="text-secondary-foreground hover:opacity-90"
+                  >
+                    Botão Secundário
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

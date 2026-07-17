@@ -1,8 +1,4 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { ThemeColors } from '@/types/restaurant';
-import { DEFAULT_COLORS } from '@/lib/color-utils';
 
 type Theme = 'light' | 'dark';
 
@@ -41,23 +37,6 @@ export function ThemeProvider({
     return defaultTheme;
   });
 
-  // Fetch restaurant theme colors (only for client theme)
-  const { data: themeColors } = useQuery({
-    queryKey: ['restaurant-theme'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('restaurants')
-        .select('theme_colors')
-        .eq('is_active', true)
-        .limit(1)
-        .maybeSingle();
-
-      if (error) throw error;
-      return (data?.theme_colors as ThemeColors) || {};
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-
   // Apply theme class to document
   useEffect(() => {
     const root = document.documentElement;
@@ -65,32 +44,6 @@ export function ThemeProvider({
     root.classList.add(theme);
     localStorage.setItem(storageKey, theme);
   }, [theme, storageKey]);
-
-  // Apply custom theme colors - only primary/accent (works in both themes)
-  // Background and card colors are handled by CSS per light/dark theme
-  useEffect(() => {
-    const root = document.documentElement;
-    const colors = themeColors || {};
-    
-    if (colors.primary) {
-      root.style.setProperty('--primary', colors.primary);
-      root.style.setProperty('--accent', colors.primary);
-      root.style.setProperty('--ring', colors.primary);
-    } else {
-      // No custom color: clear overrides so index.css tokens (per light/dark) apply
-      root.style.removeProperty('--primary');
-      root.style.removeProperty('--accent');
-      root.style.removeProperty('--ring');
-    }
-    
-    // DO NOT apply background/card from database - let CSS handle per theme
-
-    return () => {
-      root.style.removeProperty('--primary');
-      root.style.removeProperty('--accent');
-      root.style.removeProperty('--ring');
-    };
-  }, [themeColors]);
 
   const toggleTheme = () => {
     setThemeState(prev => prev === 'dark' ? 'light' : 'dark');
