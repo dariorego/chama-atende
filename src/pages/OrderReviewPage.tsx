@@ -9,6 +9,7 @@ import { useSubmitOrder, OrderSelection } from "@/hooks/useSubmitOrder";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useClientOrderItem } from "@/hooks/useClientItemCombinations";
 import { useTableContext } from "@/hooks/useTableContext";
+import { useTenant } from "@/hooks/useTenant";
 import { IDENTIFICATION_CONFIG, IdentificationType } from "@/types/restaurant";
 
 interface LocationState {
@@ -20,6 +21,7 @@ interface LocationState {
 
 const OrderReviewPage = () => {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const { baseId } = useParams<{ baseId: string }>();
   const location = useLocation();
   const orderData = location.state as LocationState | null;
@@ -44,7 +46,7 @@ const OrderReviewPage = () => {
   }, [tableNumber, identificationType, identification]);
 
   const handleBack = () => {
-    navigate(-1);
+    navigate(tenant?.slug ? `/${tenant.slug}` : "/");
   };
 
   const handleSubmit = async () => {
@@ -75,7 +77,7 @@ const OrderReviewPage = () => {
       });
 
       toast.success("Pedido enviado com sucesso!");
-      navigate(`/pedido-cozinha/status/${result.orderId}`, {
+      navigate(tenant?.slug ? `/${tenant.slug}/pedido-cozinha/status/${result.orderId}` : `/pedido-cozinha/status/${result.orderId}`, {
         state: { orderNumber: result.orderNumber },
       });
     } catch (error) {
