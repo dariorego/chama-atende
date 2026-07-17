@@ -49,8 +49,10 @@ export function useAdminServiceCalls() {
 
   // Subscribe to realtime updates
   useEffect(() => {
+    const channelName = `service-calls-changes-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel('service-calls-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -111,8 +113,10 @@ export function usePendingServiceCalls() {
 
   // Subscribe to realtime updates
   useEffect(() => {
+    const channelName = `pending-calls-changes-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
     const channel = supabase
-      .channel('pending-calls-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
