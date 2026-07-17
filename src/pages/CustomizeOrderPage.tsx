@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useTenant } from "@/hooks/useTenant";
 import { useClientItemCombinations, useClientOrderItem, CombinationGroup, CombinationOption } from "@/hooks/useClientItemCombinations";
 
 // Selection state types
@@ -25,6 +26,7 @@ type GroupSelection = MultipleSelection | QuantitySelection | SingleSelection;
 
 const CustomizeOrderPage = () => {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
   const { baseId } = useParams<{ baseId: string }>();
   
   const { data: orderItem, isLoading: itemLoading } = useClientOrderItem(baseId);
@@ -59,7 +61,7 @@ const CustomizeOrderPage = () => {
   }, [combinationGroups]);
 
   const handleBack = () => {
-    navigate("/pedido-cozinha");
+    navigate(tenant?.slug ? `/${tenant.slug}/pedido-cozinha` : "/pedido-cozinha");
   };
 
   // Multiple selection handler
