@@ -48,7 +48,7 @@ import { useParams } from "react-router-dom";
 
 function AdminRedirect() {
   const { slug } = useParams<{ slug: string }>();
-  return <Navigate to={`/admin/${slug}`} replace />;
+  return <Navigate to={`/login/${slug}`} replace state={{ from: `/admin/${slug}` }} />;
 }
 
 const queryClient = new QueryClient();
