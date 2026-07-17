@@ -40,9 +40,9 @@ export function ProductDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl p-0 overflow-hidden">
+      <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl p-0 overflow-hidden bg-[#f5efe4] border-t border-[#c9a84c]/30">
         {/* Image */}
-        <div className="relative w-full aspect-[16/10] bg-secondary">
+        <div className="relative w-full aspect-[16/10] bg-[#faf6ec]">
           {product.image ? (
             <button
               type="button"
@@ -54,25 +54,25 @@ export function ProductDetailSheet({
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-3 right-3 p-2 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute bottom-3 right-3 p-2 rounded-full bg-[#064e3b]/70 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ZoomIn className="h-4 w-4 text-white" />
               </div>
             </button>
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-muted">
-              <CameraOff className="h-16 w-16 text-muted-foreground" />
+            <div className="w-full h-full flex items-center justify-center bg-[#faf6ec]">
+              <CameraOff className="h-16 w-16 text-[#064e3b]/30" />
             </div>
           )}
           
           {/* Badges overlay */}
           <div className="absolute top-4 left-4 flex gap-2 pointer-events-none">
             {product.highlight && (
-              <span className="px-3 py-1 text-xs font-bold bg-primary text-primary-foreground rounded-full">
-                ⭐ Sugestão do Chef
+              <span className="px-3 py-1 text-[10px] font-semibold tracking-widest uppercase bg-[#c9a84c] text-[#064e3b] rounded-full">
+                Sugestão do Chef
               </span>
             )}
             {product.promotion && (
-              <span className="px-3 py-1 text-xs font-medium bg-warning/90 text-warning-foreground rounded-full">
+              <span className="px-3 py-1 text-[10px] font-semibold tracking-widest uppercase bg-[#064e3b] text-[#faf6ec] rounded-full">
                 {product.promotion}
               </span>
             )}
@@ -91,19 +91,20 @@ export function ProductDetailSheet({
         {/* Content */}
         <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(85vh-40vw)]">
           <SheetHeader className="text-left p-0">
-            <SheetTitle className="text-2xl font-bold text-foreground">
+            <SheetTitle className="editorial-title text-4xl text-[#064e3b]">
               {product.name}
             </SheetTitle>
           </SheetHeader>
 
           {product.description && (
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-[#064e3b]/70 leading-relaxed font-sans-editorial">
               {product.description}
             </p>
           )}
 
-          <div className="pt-4 border-t border-border">
-            <p className="text-3xl font-bold text-primary">{formattedPrice}</p>
+          <div className="pt-4 border-t border-[#064e3b]/10 flex items-baseline gap-3">
+            <span className="editorial-label text-[#064e3b]/50">Valor</span>
+            <p className="editorial-title text-4xl text-[#c9a84c]">{formattedPrice}</p>
           </div>
         </div>
       </SheetContent>
