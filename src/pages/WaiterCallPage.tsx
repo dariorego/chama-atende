@@ -154,8 +154,8 @@ const WaiterCallPage = () => {
 
   if (isLoading || isLoadingTable || isLoadingContext) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-deep" />
       </div>
     );
   }
@@ -181,29 +181,30 @@ const WaiterCallPage = () => {
 
   if (!tableData) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-sm space-y-6">
           <div className="text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <UtensilsCrossed className="h-8 w-8 text-primary" />
+            <div className="w-16 h-16 rounded-full bg-cream-soft border border-gold flex items-center justify-center mx-auto mb-4">
+              <UtensilsCrossed className="h-8 w-8 text-gold" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">
+            <p className="editorial-label text-gold mb-1">Identificação</p>
+            <h1 className="text-3xl font-serif-editorial text-emerald-deep mb-2">
               Qual é sua mesa?
             </h1>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-emerald-deep/60 text-sm font-sans-editorial">
               Selecione sua mesa para solicitar atendimento
             </p>
           </div>
 
           <div className="space-y-4">
             <Select value={selectedTableId} onValueChange={setSelectedTableId}>
-              <SelectTrigger className="w-full h-14 text-lg bg-surface border-border">
+              <SelectTrigger className="w-full h-14 text-lg bg-cream-soft border-emerald-deep/15 text-emerald-deep">
                 <SelectValue placeholder="Selecione a mesa" />
               </SelectTrigger>
               <SelectContent>
                 {isLoadingTables ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                    <Loader2 className="h-5 w-5 animate-spin text-emerald-deep" />
                   </div>
                 ) : (
                   tables?.map((table) => (
@@ -219,7 +220,7 @@ const WaiterCallPage = () => {
             <Button
               onClick={handleSelectTable}
               disabled={!selectedTableId || isSettingTable}
-              className="w-full h-12"
+              className="w-full h-14 rounded-full bg-emerald-deep text-cream font-sans-editorial border border-gold/40 hover:bg-emerald-deep/90"
             >
               {isSettingTable ? (
                 <>
@@ -234,20 +235,20 @@ const WaiterCallPage = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
+              <span className="w-full border-t border-emerald-deep/15" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">ou</span>
+              <span className="bg-cream px-2 text-emerald-deep/60 tracking-[0.28em] font-sans-editorial">ou</span>
             </div>
           </div>
 
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-emerald-deep/60 font-sans-editorial">
             Escaneie o QR Code da sua mesa para identificação automática
           </p>
 
           <button
             onClick={() => navigate("/")}
-            className="w-full text-primary font-medium hover:underline text-center"
+            className="w-full text-emerald-deep font-sans-editorial hover:underline text-center underline-offset-4"
           >
             Voltar ao início
           </button>
@@ -258,9 +259,9 @@ const WaiterCallPage = () => {
 
   if (!restaurant) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Restaurante não encontrado</h1>
-        <p className="text-muted-foreground text-center">
+      <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-4">
+        <h1 className="text-3xl font-serif-editorial text-emerald-deep mb-2">Restaurante não encontrado</h1>
+        <p className="text-emerald-deep/60 text-center font-sans-editorial">
           O restaurante que você está procurando não existe ou está inativo.
         </p>
       </div>
@@ -268,7 +269,7 @@ const WaiterCallPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-cream">
       {/* Hero Header */}
       <div className="relative h-80">
         <img
@@ -279,7 +280,7 @@ const WaiterCallPage = () => {
           alt={restaurant.name}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-cream via-emerald-deep/40 to-emerald-deep/20" />
 
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
@@ -301,26 +302,26 @@ const WaiterCallPage = () => {
 
         {/* Restaurant info over image */}
         <div className="absolute bottom-6 left-4 right-4">
-          {/* Open badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-medium text-primary">
+          <p className="editorial-label text-gold mb-2">Atendimento na mesa</p>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/20 backdrop-blur-sm border border-gold mb-3">
+            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+            <span className="text-xs font-sans-editorial text-white uppercase tracking-wider">
               {restaurant.status === "open" ? "Aberto agora" : "Fechado"}
             </span>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-1">{restaurant.name}</h1>
+          <h1 className="text-4xl font-serif-editorial text-white mb-1">{restaurant.name}</h1>
 
           <div className="flex items-center gap-4">
             {restaurant.address && (
               <div className="flex items-center gap-1 text-white/80">
                 <MapPin className="h-4 w-4" />
-                <span className="text-sm">{restaurant.address.split(",")[0]}</span>
+                <span className="text-sm font-sans-editorial">{restaurant.address.split(",")[0]}</span>
               </div>
             )}
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
-              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-medium text-white">4.8</span>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-gold/40">
+              <Star className="h-4 w-4 text-gold fill-gold" />
+              <span className="text-sm font-sans-editorial text-white">4.8</span>
             </div>
           </div>
         </div>
@@ -329,16 +330,16 @@ const WaiterCallPage = () => {
       {/* Tabs */}
       <div className="px-4 -mt-4 relative z-10">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full h-12 bg-surface-dark/80 backdrop-blur-sm rounded-2xl p-1">
+          <TabsList className="w-full h-12 bg-cream-soft border border-emerald-deep/10 rounded-2xl p-1 shadow-[0_20px_60px_-30px_rgba(6,78,59,0.35)]">
             <TabsTrigger
               value="atendimento"
-              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex-1 h-10 rounded-xl font-sans-editorial text-emerald-deep/70 data-[state=active]:bg-emerald-deep data-[state=active]:text-cream"
             >
               Solicitar Atendimento
             </TabsTrigger>
             <TabsTrigger
               value="menu"
-              className="flex-1 h-10 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex-1 h-10 rounded-xl font-sans-editorial text-emerald-deep/70 data-[state=active]:bg-emerald-deep data-[state=active]:text-cream"
               onClick={() => navigate("/cardapio")}
             >
               Cardápio
@@ -348,29 +349,25 @@ const WaiterCallPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 py-6 space-y-6 pb-32">
+      <div className="px-4 py-8 space-y-6 pb-32">
         {/* Status Badge */}
         <div className="flex justify-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Conectado</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-deep/5 border border-gold">
+            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+            <span className="editorial-label text-emerald-deep">Conectado</span>
           </div>
         </div>
 
         {/* Table Display */}
-        <div className="text-center space-y-2">
-          <p className="text-muted-foreground text-sm">Você está ocupando a</p>
-          <div className="flex items-baseline justify-center gap-2">
-            <span className="text-4xl font-bold text-foreground">Mesa</span>
-            <span
-              className="text-6xl font-black text-primary"
-              style={{
-                textShadow: "0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.3)",
-              }}
-            >
+        <div className="text-center space-y-2 py-4">
+          <p className="editorial-label text-gold">Você está ocupando a</p>
+          <div className="flex items-baseline justify-center gap-3">
+            <span className="text-5xl font-serif-editorial text-emerald-deep">Mesa</span>
+            <span className="text-7xl font-serif-editorial text-gold leading-none">
               {tableNumber}
             </span>
           </div>
+          <div className="mx-auto w-24 h-px bg-gold/60 mt-4" />
         </div>
 
         {/* Action Cards */}
@@ -379,63 +376,64 @@ const WaiterCallPage = () => {
           <button
             onClick={handleCallWaiter}
             disabled={isRequestActive || isCreatingCall}
-            className="w-full p-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center gap-4 hover:from-primary/30 hover:to-primary/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full p-5 rounded-2xl bg-emerald-deep text-cream border border-gold/40 flex items-center gap-4 hover:bg-emerald-deep/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group shadow-[0_20px_40px_-15px_rgba(6,78,59,0.6)]"
           >
-            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/30 transition-colors">
+            <div className="w-14 h-14 rounded-xl bg-gold/15 border border-gold flex items-center justify-center flex-shrink-0">
               {isCreatingCall ? (
-                <Loader2 className="h-7 w-7 text-primary animate-spin" />
+                <Loader2 className="h-7 w-7 text-gold animate-spin" />
               ) : (
-                <Bell className="h-7 w-7 text-primary" />
+                <Bell className="h-7 w-7 text-gold" />
               )}
             </div>
             <div className="flex-1 text-left">
-              <h3 className="font-semibold text-foreground text-lg">Solicitar Atendimento</h3>
-              <p className="text-sm text-muted-foreground">Chamar Atendente na mesa</p>
+              <p className="editorial-label text-gold mb-0.5">Destaque</p>
+              <h3 className="font-serif-editorial text-cream text-xl leading-tight">Solicitar Atendimento</h3>
+              <p className="text-sm text-cream/70 font-sans-editorial">Chamar atendente na mesa</p>
             </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            <ChevronRight className="h-5 w-5 text-gold" />
           </button>
 
           {/* Request Bill Card */}
           <button
             onClick={handleRequestBill}
             disabled={isRequestActive || isCreatingCall}
-            className="w-full p-4 rounded-2xl bg-secondary/50 border border-border flex items-center gap-4 hover:bg-secondary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full p-5 rounded-2xl bg-cream-soft border border-emerald-deep/10 flex items-center gap-4 hover:border-gold/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
-            <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-muted/80 transition-colors">
+            <div className="w-14 h-14 rounded-xl bg-emerald-deep/5 border border-emerald-deep/15 flex items-center justify-center flex-shrink-0 group-hover:border-gold/40 transition-colors">
               {isCreatingCall ? (
-                <Loader2 className="h-7 w-7 text-muted-foreground animate-spin" />
+                <Loader2 className="h-7 w-7 text-emerald-deep animate-spin" />
               ) : (
-                <Receipt className="h-7 w-7 text-muted-foreground" />
+                <Receipt className="h-7 w-7 text-emerald-deep" />
               )}
             </div>
             <div className="flex-1 text-left">
-              <h3 className="font-semibold text-foreground text-lg">Pedir a Conta</h3>
-              <p className="text-sm text-muted-foreground">Fechar e realizar pagamento</p>
+              <h3 className="font-serif-editorial text-emerald-deep text-xl leading-tight">Pedir a Conta</h3>
+              <p className="text-sm text-emerald-deep/60 font-sans-editorial">Fechar e realizar pagamento</p>
             </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            <ChevronRight className="h-5 w-5 text-emerald-deep/40 group-hover:text-gold transition-colors" />
           </button>
         </div>
       </div>
 
       {/* Active Request Bar */}
       {isRequestActive && (
-        <div className="fixed bottom-0 left-0 right-0 bg-primary p-4 animate-fade-in z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-emerald-deep border-t border-gold p-4 animate-fade-in z-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-                <Hourglass className="h-5 w-5 text-primary-foreground animate-pulse" />
+              <div className="w-10 h-10 rounded-full bg-gold/15 border border-gold flex items-center justify-center">
+                <Hourglass className="h-5 w-5 text-gold animate-pulse" />
               </div>
               <div>
-                <p className="font-semibold text-primary-foreground">
+                <p className="font-serif-editorial text-cream text-lg leading-tight">
                   {isWaiterCalled ? "Garçom a caminho..." : "Preparando sua conta..."}
                 </p>
-                <p className="text-xs text-primary-foreground/70">Aguarde um momento</p>
+                <p className="text-xs text-cream/70 font-sans-editorial">Aguarde um momento</p>
               </div>
             </div>
             <button
               onClick={handleCancelRequest}
               disabled={isCancellingCall}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive text-destructive-foreground font-medium text-sm hover:bg-destructive/90 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive text-destructive-foreground font-sans-editorial text-sm hover:bg-destructive/90 transition-colors disabled:opacity-50"
             >
               {isCancellingCall ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
