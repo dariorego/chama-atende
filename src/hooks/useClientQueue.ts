@@ -35,11 +35,15 @@ function estimatedWaitFrom(stats: QueueStats, position: number): number {
 
 // Hook to get client's queue entry by code with realtime updates
 export function useClientQueueEntry(queueCode: string | null) {
+  const phone = getStoredQueuePhone();
   return useQuery({
-    queryKey: ['client-queue-entry', queueCode],
+    queryKey: ['client-queue-entry', queueCode, phone],
     queryFn: async () => {
       if (!queueCode) return null;
-      const { data } = await callPublicApi<{ data: QueueEntry | null }>('get-queue-entry', { queueCode });
+      const { data } = await callPublicApi<{ data: QueueEntry | null }>('get-queue-entry', {
+        queueCode,
+        phone: phone || undefined,
+      });
       return data;
     },
     enabled: !!queueCode,
@@ -100,6 +104,7 @@ export function useJoinQueue() {
         });
 
       if (error) throw error;
+      if (validated.phone) saveQueuePhone(validated.phone);
       return { queue_code, position, estimated_wait_minutes } as unknown as QueueEntry;
     },
     onSuccess: (entry) => {
@@ -127,11 +132,14 @@ export function useLeaveQueue() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      await callPublicApi('cancel-queue-entry', { id });
+      const phone = getStoredQueuePhone();
+      if (!phone) throw new Error('Telefone necessário para sair da fila');
+      await callPublicApi('cancel-queue-entry', { id, phone });
       return { id } as unknown as QueueEntry;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client-queue-entry'] });
+      clearQueuePhone();
       toast({
         title: "Você saiu da fila",
         description: "Sua posição foi liberada.",
@@ -175,6 +183,7 @@ export function useSearchQueueByPhone() {
 
 // Local storage helpers for persisting queue code
 const QUEUE_CODE_KEY = 'queue_code';
+const QUEUE_PHONE_KEY = 'queue_phone';
 
 export function saveQueueCode(code: string) {
   localStorage.setItem(QUEUE_CODE_KEY, code);
@@ -186,4 +195,16 @@ export function getStoredQueueCode(): string | null {
 
 export function clearQueueCode() {
   localStorage.removeItem(QUEUE_CODE_KEY);
+}
+
+export function saveQueuePhone(phone: string) {
+  try { localStorage.setItem(QUEUE_PHONE_KEY, phone); } catch { /* ignore */ }
+}
+
+export function getStoredQueuePhone(): string | null {
+  try { return localStorage.getItem(QUEUE_PHONE_KEY); } catch { return null; }
+}
+
+export function clearQueuePhone() {
+  try { localStorage.removeItem(QUEUE_PHONE_KEY); } catch { /* ignore */ }
 }
