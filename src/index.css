@@ -161,6 +161,53 @@
     background-image: var(--gradient-primary);
   }
 
+  /* Editorial "Emerald Prestige" utilities — shared across client-facing pages */
+  .font-serif-editorial {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .font-sans-editorial {
+    font-family: 'Work Sans', system-ui, sans-serif;
+  }
+  .bg-cream {
+    background-color: #f5efe4;
+  }
+  .bg-cream-soft {
+    background-color: #faf6ec;
+  }
+  .text-emerald-deep {
+    color: #064e3b;
+  }
+  .bg-emerald-deep {
+    background-color: #064e3b;
+  }
+  .text-gold {
+    color: #c9a84c;
+  }
+  .bg-gold {
+    background-color: #c9a84c;
+  }
+  .border-gold {
+    border-color: #c9a84c;
+  }
+  .border-emerald-deep {
+    border-color: #064e3b;
+  }
+  .editorial-label {
+    font-family: 'Work Sans', system-ui, sans-serif;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+  .editorial-title {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }

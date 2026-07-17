@@ -74,7 +74,7 @@ export function usePreOrders() {
 
       const { error } = await supabase
         .from('pre_orders')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id);
 
       if (error) throw error;

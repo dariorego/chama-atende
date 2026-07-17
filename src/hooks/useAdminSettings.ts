@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SocialLinks, WifiInfo, ThemeColors, IdentificationType, NotificationSettings, ThemeSettings, BusinessHours, DEFAULT_BUSINESS_HOURS, LocationCoordinates } from "@/types/restaurant";
+import { useTenant } from "@/hooks/useTenant";
 
 export interface RestaurantSettings {
   id: string;
@@ -139,9 +140,6 @@ export function useAdminSettings(restaurantId?: string) {
  * Use this in components wrapped by TenantProvider
  */
 export function useTenantSettings() {
-  // Dynamic import to avoid circular dependencies
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useTenant } = require('@/hooks/useTenant');
   const { tenantId } = useTenant();
   return useAdminSettings(tenantId ?? undefined);
 }

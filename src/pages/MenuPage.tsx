@@ -181,13 +181,13 @@ const MenuPage = () => {
     <ClientLayout title="Cardápio" showBack backTo="/">
       {/* Search */}
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-deep/40" />
         <Input
           type="search"
           placeholder="Buscar no cardápio..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 bg-secondary border-border"
+          className="pl-10 bg-cream-soft border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus-visible:ring-emerald-deep/30"
         />
       </div>
 
@@ -195,7 +195,7 @@ const MenuPage = () => {
       {highlightedProducts.length > 0 && (
         <div className="mb-6 -mx-4">
           <div className="px-4 mb-3">
-            <h2 className="text-sm font-semibold text-primary flex items-center gap-2">
+            <h2 className="editorial-label text-gold flex items-center gap-2">
               <ChefHat className="h-4 w-4" /> Sugestão do Chef
             </h2>
           </div>
@@ -213,7 +213,7 @@ const MenuPage = () => {
                 <CarouselItem key={product.id} className="pl-2 basis-[85%] md:basis-[60%]">
                   <button
                     onClick={() => handleProductClick(product)}
-                    className="relative w-full aspect-[16/10] rounded-xl overflow-hidden group"
+                    className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden group border border-emerald-deep/10"
                   >
                     {/* Background Image */}
                     <div
@@ -222,22 +222,22 @@ const MenuPage = () => {
                     />
                     
                     {/* Dark Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#064e3b]/95 via-[#064e3b]/40 to-transparent" />
                     
                     {/* Badge */}
                     <div className="absolute top-3 left-3">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gold text-emerald-deep text-[10px] font-semibold tracking-widest uppercase">
                         <ChefHat className="h-3 w-3" />
-                        Sugestão do Chef
+                        Chef
                       </span>
                     </div>
                     
                     {/* Content */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
-                      <h3 className="text-lg font-bold text-white mb-1">
+                      <h3 className="editorial-title text-2xl text-white mb-1">
                         {product.name}
                       </h3>
-                      <p className="text-sm text-white/80 line-clamp-2">
+                      <p className="text-sm text-white/75 line-clamp-2 font-sans-editorial">
                         {product.description}
                       </p>
                     </div>
@@ -257,8 +257,8 @@ const MenuPage = () => {
                   className={cn(
                     "w-2 h-2 rounded-full transition-all",
                     currentSlide === index
-                      ? "bg-primary w-4"
-                      : "bg-muted-foreground/30"
+                      ? "bg-gold w-6"
+                      : "bg-emerald-deep/20"
                   )}
                 />
               ))}
@@ -274,10 +274,10 @@ const MenuPage = () => {
             key={category.id}
             onClick={() => setActiveCategory(category.id)}
             className={cn(
-              "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all",
+              "px-4 py-2 rounded-full text-xs tracking-widest uppercase font-medium whitespace-nowrap transition-all border",
               activeCategory === category.id
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-muted-foreground hover:text-foreground"
+                ? "bg-emerald-deep text-cream border-emerald-deep"
+                : "bg-transparent text-emerald-deep/60 border-emerald-deep/15 hover:border-gold hover:text-emerald-deep"
             )}
           >
             {category.name}
@@ -315,7 +315,7 @@ const MenuPage = () => {
       {/* Empty State */}
       {filteredProducts.length === 0 && !isLoading && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">Nenhum item encontrado</p>
+          <p className="editorial-title text-2xl text-emerald-deep/50">Nenhum item encontrado</p>
         </div>
       )}
 
@@ -326,13 +326,13 @@ const MenuPage = () => {
           disabled={isCreatingCall || isWaiterCalled}
           className={cn(
             "fixed bottom-6 right-6 z-50",
-            "w-14 h-14 rounded-full",
-            "shadow-lg hover:shadow-xl",
+            "w-16 h-16 rounded-full",
+            "shadow-xl hover:shadow-2xl",
             "flex items-center justify-center",
             "transition-all duration-300",
             isWaiterCalled
-              ? "bg-green-600 text-white cursor-default"
-              : "bg-primary text-primary-foreground hover:scale-105",
+              ? "bg-gold text-emerald-deep cursor-default"
+              : "bg-emerald-deep text-cream hover:scale-105 border-2 border-gold/40",
             isCreatingCall && "opacity-70"
           )}
           aria-label="Chamar atendente"

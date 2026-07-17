@@ -228,7 +228,7 @@ export function useRespondToReview() {
 
       const { error } = await supabase
         .from('customer_reviews')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id);
 
       if (error) throw error;

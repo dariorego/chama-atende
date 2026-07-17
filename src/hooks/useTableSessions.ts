@@ -136,7 +136,7 @@ export function useUpdateTableSession() {
     mutationFn: async ({ id, ...updates }: Partial<TableSession> & { id: string }) => {
       const { data, error } = await supabase
         .from("table_sessions")
-        .update(updates)
+        .update(updates as never)
         .eq("id", id)
         .select()
         .single();
