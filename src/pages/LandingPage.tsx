@@ -126,7 +126,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="landing-soft font-body min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="font-body min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* NAV */}
       <header
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
