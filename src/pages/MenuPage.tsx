@@ -172,7 +172,7 @@ const MenuPage = () => {
   }
 
   return (
-    <ClientLayout showBack backTo="/">
+    <ClientLayout showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
       {/* Hero: cover image + circular logo */}
       <div className="-mx-4 mb-16">
         <div className="relative w-full aspect-[16/6] bg-gradient-to-br from-emerald-deep/20 to-emerald-deep/5 overflow-hidden">
