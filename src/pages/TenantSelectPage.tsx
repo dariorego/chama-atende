@@ -103,40 +103,6 @@ export default function TenantSelectPage() {
           <div className="w-16 h-px bg-gold/60 mt-4" />
         </div>
 
-        {/* Direct Access */}
-        <Card className="mb-8 bg-cream-soft border-emerald-deep/10 rounded-2xl shadow-[0_20px_60px_-30px_rgba(6,78,59,0.35)]">
-          <CardHeader>
-            <p className="editorial-label text-gold">Já sabe o código?</p>
-            <CardTitle className="text-2xl font-serif-editorial text-emerald-deep">Acesso direto</CardTitle>
-            <CardDescription className="text-emerald-deep/60 font-sans-editorial">
-              Digite o código do estabelecimento para acessar diretamente.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gold font-serif-editorial text-lg">
-                  /
-                </span>
-                <Input
-                  placeholder="codigo-do-restaurante"
-                  value={slugInput}
-                  onChange={(e) => setSlugInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="pl-8 h-12 rounded-xl bg-cream border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus:ring-2 focus:ring-gold"
-                />
-              </div>
-              <Button
-                onClick={handleNavigateToSlug}
-                disabled={!slugInput.trim()}
-                className="h-12 px-5 rounded-xl bg-emerald-deep text-cream border border-gold/40 hover:bg-emerald-deep/90"
-              >
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Search */}
         <div className="mb-6">
           <p className="editorial-label text-emerald-deep/70 mb-2">Explore</p>
