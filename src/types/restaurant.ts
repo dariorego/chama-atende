@@ -43,6 +43,7 @@ export interface WifiInfo {
 
 export interface ThemeColors {
   primary?: string;
+  secondary?: string;
   background?: string;
   card?: string;
   accent?: string;
