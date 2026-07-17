@@ -1294,6 +1294,7 @@ export type Database = {
         Returns: boolean
       }
       has_tenant_access: { Args: { _restaurant_id: string }; Returns: boolean }
+      has_tenant_admin: { Args: { _restaurant_id: string }; Returns: boolean }
       has_tenant_role: {
         Args: {
           _restaurant_id: string
