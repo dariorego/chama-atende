@@ -47,6 +47,8 @@ export default function AdminSettings() {
   
   // Color states
   const [primaryColor, setPrimaryColor] = useState(DEFAULT_COLORS.primary!);
+  const [secondaryColor, setSecondaryColor] = useState(DEFAULT_COLORS.secondary!);
+  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background!);
   
   // Notification states
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -109,6 +111,8 @@ export default function AdminSettings() {
       // Load colors
       if (restaurant.theme_colors) {
         setPrimaryColor(restaurant.theme_colors.primary || DEFAULT_COLORS.primary!);
+        setSecondaryColor(restaurant.theme_colors.secondary || DEFAULT_COLORS.secondary!);
+        setBackgroundColor(restaurant.theme_colors.background || DEFAULT_COLORS.background!);
       }
       
       // Load notification settings
@@ -153,6 +157,8 @@ export default function AdminSettings() {
 
   const resetToDefaultColors = () => {
     setPrimaryColor(DEFAULT_COLORS.primary!);
+    setSecondaryColor(DEFAULT_COLORS.secondary!);
+    setBackgroundColor(DEFAULT_COLORS.background!);
   };
   
   // Handle Google Maps URL change
@@ -204,6 +210,8 @@ export default function AdminSettings() {
       theme_colors: {
         primary: primaryColor,
         accent: primaryColor,
+        secondary: secondaryColor,
+        background: backgroundColor,
       },
       notification_settings: {
         sound_enabled: soundEnabled,
