@@ -35,7 +35,10 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
     }
 
     if (requireAdmin && !hasAccess) {
-      navigate('/', { replace: true });
+      navigate(getTenantLoginPath(), {
+        replace: true,
+        state: { from: location.pathname },
+      });
     }
   }, [isAuthenticated, hasAccess, isLoading, requireAdmin, navigate, location.pathname]);
 
