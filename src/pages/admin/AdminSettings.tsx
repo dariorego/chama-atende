@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe, MapPin, Check, X, Music } from 'lucide-react';
-import { useAdminSettings } from '@/hooks/useAdminSettings';
+import { useTenantSettings } from '@/hooks/useAdminSettings';
 import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS, LocationCoordinates } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
 import { hexToHsl, hslToHex, DEFAULT_COLORS } from '@/lib/color-utils';
@@ -38,7 +38,7 @@ const settingsSchema = z.object({
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
 export default function AdminSettings() {
-  const { restaurant, isLoading, updateRestaurant, isUpdating } = useAdminSettings();
+  const { restaurant, isLoading, updateRestaurant, isUpdating } = useTenantSettings();
   const { playTestSound } = useNotificationSound();
   
   // Image states
