@@ -135,12 +135,13 @@ export function ImageUploadWithCrop({
 
       {value ? (
         <div className={cn("relative group w-full", previewClassName ?? "max-w-[200px]") }>
-          <div className={cn(
-            "w-full overflow-hidden border border-border bg-muted",
-            previewRounded === 'full' ? 'rounded-full' : 'rounded-lg',
-            !previewClassName && 'aspect-square',
-          )}
-          style={previewClassName ? undefined : undefined}
+          <div
+            className={cn(
+              "w-full h-full overflow-hidden border border-border bg-muted",
+              previewRounded === 'full' ? 'rounded-full' : 'rounded-lg',
+              !previewClassName && 'aspect-square',
+            )}
+            style={previewClassName ? { aspectRatio: `${aspectRatio}` } : undefined}
           >
             <img
               src={value}
@@ -185,6 +186,7 @@ export function ImageUploadWithCrop({
             'hover:border-primary hover:text-primary transition-colors',
             'disabled:opacity-50 disabled:cursor-not-allowed bg-surface'
           )}
+          style={previewClassName ? { aspectRatio: `${aspectRatio}` } : undefined}
         >
           {isUploading ? (
             <Loader2 className="h-8 w-8 animate-spin" />
