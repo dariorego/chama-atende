@@ -16,6 +16,7 @@ import { usePreOrderModuleSettings } from "@/hooks/usePreOrderModuleSettings";
 import { useSearchPreOrders, type PreOrderSearchResult } from "@/hooks/useClientPreOrder";
 import { useToast } from "@/hooks/use-toast";
 import { calculatePromotion } from "@/hooks/useMenuProducts";
+import { useTenant } from "@/hooks/useTenant";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -61,6 +62,8 @@ const PAYMENT_METHOD_LABELS: Record<string, { label: string; icon: typeof Credit
 const PreOrderMenuPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { tenant } = useTenant();
+  
   
   const [activeTab, setActiveTab] = useState("order");
   const [activeCategory, setActiveCategory] = useState("all");
@@ -141,7 +144,7 @@ const PreOrderMenuPage = () => {
 
   if (isLoading) {
     return (
-      <ClientLayout title="Encomendas" showBack backTo="/">
+      <ClientLayout title="Encomendas" showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -150,7 +153,7 @@ const PreOrderMenuPage = () => {
   }
 
   return (
-    <ClientLayout title="Encomendas" showBack backTo="/">
+    <ClientLayout title="Encomendas" showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6 bg-[#faf6ec] border border-[#064e3b]/10 p-1 rounded-full h-auto">
           <TabsTrigger value="order" className="rounded-full data-[state=active]:bg-[#064e3b] data-[state=active]:text-[#faf6ec] text-[#064e3b]/70 text-xs tracking-widest uppercase font-medium py-2">Fazer Encomenda</TabsTrigger>
@@ -267,7 +270,7 @@ const PreOrderMenuPage = () => {
                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#f5efe4]/95 backdrop-blur-md border-t border-[#c9a84c]/30 z-50">
                   <div className="container mx-auto max-w-lg">
                     <Button
-                      onClick={() => navigate("/encomendas/carrinho")}
+                      onClick={() => navigate(tenant?.slug ? `/${tenant.slug}/encomendas/carrinho` : "/encomendas/carrinho")}
                       className="w-full h-14 text-sm tracking-widest uppercase font-semibold shadow-lg hover:shadow-xl transition-all bg-[#064e3b] hover:bg-[#064e3b]/90 text-[#faf6ec] border border-[#c9a84c]/40"
                     >
                       <div className="flex items-center justify-between w-full">
