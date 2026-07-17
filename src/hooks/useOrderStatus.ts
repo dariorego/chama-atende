@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { callPublicApi } from "@/lib/publicApi";
 
 export interface OrderLineItemSelection {
   id: string;
@@ -36,55 +35,16 @@ export interface OrderStatus {
 }
 
 export function useOrderStatus(orderId?: string) {
-  const queryClient = useQueryClient();
-
   const query = useQuery({
     queryKey: ["order-status", orderId],
     queryFn: async (): Promise<OrderStatus> => {
-      const { data, error } = await supabase
-        .from("orders")
-        .select(`
-          *,
-          order_line_items (
-            *,
-            order_line_item_selections (*)
-          )
-        `)
-        .eq("id", orderId!)
-        .single();
-
-      if (error) throw error;
-      return data as OrderStatus;
+      const { data } = await callPublicApi<{ data: OrderStatus | null }>("get-order-status", { orderId });
+      if (!data) throw new Error("Pedido não encontrado");
+      return data;
     },
     enabled: !!orderId,
+    refetchInterval: 10000,
   });
-
-  // Realtime subscription for status updates
-  useEffect(() => {
-    if (!orderId) return;
-
-    const channelName = `order-status-${orderId}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "orders",
-          filter: `id=eq.${orderId}`,
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["order-status", orderId] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [orderId, queryClient]);
 
   return query;
 }
@@ -95,23 +55,12 @@ export function useQueuePosition(orderId?: string, restaurantId?: string) {
     queryKey: ["queue-position", orderId, restaurantId],
     queryFn: async () => {
       if (!orderId || !restaurantId) return null;
-
-      const { data, error } = await supabase
-        .from("orders")
-        .select("id, created_at")
-        .eq("restaurant_id", restaurantId)
-        .in("status", ["pending", "preparing"])
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-
-      const position = data.findIndex((order) => order.id === orderId);
-      return {
-        position: position >= 0 ? position + 1 : null,
-        totalPending: data.length,
-      };
+      return callPublicApi<{ position: number | null; totalPending: number }>(
+        "get-queue-position-for-order",
+        { orderId, restaurantId },
+      );
     },
     enabled: !!orderId && !!restaurantId,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 }
