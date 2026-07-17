@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -22,7 +22,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams<{ slug?: string }>();
-  const { login, isAuthenticated, loading: authLoading } = useAuth();
+  const { login, loading: authLoading } = useAuth();
   
   // Try to get tenant from context (when wrapped in TenantProvider)
   let tenant = null;
@@ -49,15 +49,6 @@ export default function LoginPage() {
       password: '',
     },
   });
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (authLoading || tenantLoading) return;
-    
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
-    }
-  }, [isAuthenticated, authLoading, tenantLoading, navigate, from]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);

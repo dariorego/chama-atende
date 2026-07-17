@@ -297,6 +297,10 @@ const App = () => (
           
           {/* Legacy redirect for /admin without slug */}
           <Route path="/admin" element={<Navigate to="/" replace />} />
+
+          {/* Legacy tenant-first routes */}
+          <Route path="/:slug/admin" element={<AdminRedirect />} />
+          <Route path="/:slug/login" element={<LoginRedirect />} />
           
           {/* Tenant selection page */}
           <Route path="/" element={<GlobalPages />} />
