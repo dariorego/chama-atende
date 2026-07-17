@@ -41,6 +41,7 @@ import {
   ShoppingBag,
   Tv,
   Upload,
+  Receipt,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -107,6 +108,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'kitchen_order', title: 'Pedidos', url: `${adminBase}/pedidos`, icon: ChefHat },
     { moduleName: 'pre_orders', title: 'Encomendas', url: `${adminBase}/encomendas`, icon: ShoppingBag },
     { moduleName: 'vitrine_digital', title: 'Vitrine Digital', url: `${adminBase}/vitrine`, icon: Tv },
+    { moduleName: 'digital_comanda', title: 'Comandas', url: `${adminBase}/comandas`, icon: Receipt },
   ].filter((item) => isModuleActive(item.moduleName));
 
   // Composição items (subitems of kitchen_order)
