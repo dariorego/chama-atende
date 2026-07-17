@@ -67,6 +67,17 @@ export default {
           DEFAULT: "hsl(var(--surface))",
           foreground: "hsl(var(--surface-foreground))",
         },
+        cream: {
+          DEFAULT: "hsl(var(--ed-bg))",
+          soft: "hsl(var(--ed-surface))",
+        },
+        "cream-soft": "hsl(var(--ed-surface))",
+        "emerald-deep": "hsl(var(--ed-fg))",
+        gold: "hsl(var(--ed-gold))",
+        "ed-hero": {
+          DEFAULT: "hsl(var(--ed-hero))",
+          foreground: "hsl(var(--ed-hero-fg))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
