@@ -10,26 +10,26 @@
 @layer base {
   /* Light theme (default) */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 20% 10%;
+    --background: 40 43% 93%;              /* cream */
+    --foreground: 158 85% 16%;             /* emerald-deep */
 
-    --card: 0 0% 98%;
-    --card-foreground: 220 20% 10%;
+    --card: 43 55% 95%;                    /* cream-soft */
+    --card-foreground: 158 85% 16%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover: 43 55% 95%;
+    --popover-foreground: 158 85% 16%;
 
-    --primary: 142 85% 42%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 158 85% 16%;                /* emerald-deep */
+    --primary-foreground: 43 55% 95%;
 
-    --secondary: 220 10% 94%;
-    --secondary-foreground: 220 20% 10%;
+    --secondary: 43 40% 90%;
+    --secondary-foreground: 158 85% 16%;
 
-    --muted: 220 10% 92%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 43 30% 88%;
+    --muted-foreground: 158 25% 30%;
 
-    --accent: 142 85% 42%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 43 55% 54%;                  /* gold */
+    --accent-foreground: 158 85% 16%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -40,22 +40,22 @@
     --warning: 38 92% 50%;
     --warning-foreground: 220 20% 10%;
 
-    --border: 220 10% 85%;
-    --input: 220 10% 85%;
-    --ring: 142 85% 42%;
+    --border: 158 20% 80%;
+    --input: 158 20% 80%;
+    --ring: 43 55% 54%;
 
     --radius: 0.75rem;
 
     /* Surface tokens */
-    --surface: 220 10% 94%;
-    --surface-foreground: 220 10% 55%;
+    --surface: 43 55% 95%;
+    --surface-foreground: 158 25% 35%;
 
     /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(142 85% 42%) 0%, hsl(142 85% 30%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 99%) 0%, hsl(0 0% 96%) 100%);
-    --shadow-glow: 0 0 20px hsl(142 85% 42% / 0.2);
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.1);
-    --shadow-glow-lg: 0 0 40px hsl(142 85% 42% / 0.3);
+    --gradient-primary: linear-gradient(135deg, hsl(158 85% 16%) 0%, hsl(43 55% 54%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(43 55% 96%) 0%, hsl(40 43% 93%) 100%);
+    --shadow-glow: 0 0 20px hsl(43 55% 54% / 0.25);
+    --shadow-card: 0 4px 24px hsl(158 85% 16% / 0.08);
+    --shadow-glow-lg: 0 0 40px hsl(43 55% 54% / 0.3);
 
     /* Module colors */
     --module-amber: 38 92% 50%;
@@ -65,14 +65,14 @@
     --module-blue: 210 80% 55%;
     --module-blue-bg: 210 80% 95%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 220 20% 10%;
-    --sidebar-primary: 142 85% 42%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 10% 94%;
-    --sidebar-accent-foreground: 220 20% 10%;
-    --sidebar-border: 220 10% 85%;
-    --sidebar-ring: 142 85% 42%;
+    --sidebar-background: 43 55% 96%;
+    --sidebar-foreground: 158 85% 16%;
+    --sidebar-primary: 158 85% 16%;
+    --sidebar-primary-foreground: 43 55% 95%;
+    --sidebar-accent: 43 40% 90%;
+    --sidebar-accent-foreground: 158 85% 16%;
+    --sidebar-border: 158 20% 80%;
+    --sidebar-ring: 43 55% 54%;
 
     /* Editorial "Emerald Prestige" tokens — light */
     --ed-bg: 40 43% 93%;         /* cream #f5efe4 */
@@ -85,26 +85,26 @@
 
   /* Dark theme */
   .dark {
-    --background: 220 20% 8%;
-    --foreground: 0 0% 98%;
+    --background: 165 76% 8%;              /* emerald noturno */
+    --foreground: 45 60% 92%;
 
-    --card: 220 18% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 160 71% 11%;
+    --card-foreground: 45 60% 92%;
 
-    --popover: 220 18% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 160 71% 11%;
+    --popover-foreground: 45 60% 92%;
 
-    --primary: 142 85% 49%;
-    --primary-foreground: 220 20% 8%;
+    --primary: 43 55% 54%;                 /* gold as primary in dark */
+    --primary-foreground: 165 76% 8%;
 
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 160 55% 16%;
+    --secondary-foreground: 45 60% 92%;
 
-    --muted: 220 15% 20%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 160 50% 14%;
+    --muted-foreground: 45 25% 70%;
 
-    --accent: 142 85% 49%;
-    --accent-foreground: 220 20% 8%;
+    --accent: 43 55% 54%;
+    --accent-foreground: 165 76% 8%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
@@ -115,20 +115,20 @@
     --warning: 38 92% 50%;
     --warning-foreground: 220 20% 8%;
 
-    --border: 220 15% 20%;
-    --input: 220 15% 20%;
-    --ring: 142 85% 49%;
+    --border: 160 40% 22%;
+    --input: 160 40% 22%;
+    --ring: 43 55% 54%;
 
     /* Surface tokens */
-    --surface: 220 15% 22%;
-    --surface-foreground: 220 10% 40%;
+    --surface: 160 55% 16%;
+    --surface-foreground: 45 25% 65%;
 
     /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(142 85% 49%) 0%, hsl(142 85% 35%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(220 18% 14%) 0%, hsl(220 18% 10%) 100%);
-    --shadow-glow: 0 0 20px hsl(142 85% 49% / 0.3);
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.3);
-    --shadow-glow-lg: 0 0 40px hsl(142 85% 49% / 0.4);
+    --gradient-primary: linear-gradient(135deg, hsl(158 85% 20%) 0%, hsl(43 55% 54%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(160 71% 13%) 0%, hsl(160 71% 10%) 100%);
+    --shadow-glow: 0 0 20px hsl(43 55% 54% / 0.3);
+    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.35);
+    --shadow-glow-lg: 0 0 40px hsl(43 55% 54% / 0.4);
 
     /* Module colors */
     --module-amber: 38 92% 50%;
@@ -138,14 +138,14 @@
     --module-blue: 210 80% 55%;
     --module-blue-bg: 210 80% 15%;
 
-    --sidebar-background: 220 18% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 142 85% 49%;
-    --sidebar-primary-foreground: 220 20% 8%;
-    --sidebar-accent: 220 15% 18%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 220 15% 20%;
-    --sidebar-ring: 142 85% 49%;
+    --sidebar-background: 160 71% 10%;
+    --sidebar-foreground: 45 60% 92%;
+    --sidebar-primary: 43 55% 54%;
+    --sidebar-primary-foreground: 165 76% 8%;
+    --sidebar-accent: 160 55% 16%;
+    --sidebar-accent-foreground: 45 60% 92%;
+    --sidebar-border: 160 40% 20%;
+    --sidebar-ring: 43 55% 54%;
 
     /* Editorial "Emerald Prestige" tokens — dark (Emerald noturno) */
     --ed-bg: 165 76% 8%;         /* #04241c */
