@@ -397,13 +397,6 @@ Deno.serve(async (req) => {
         const { session_token, ...safe } = created as any
         return json(200, { data: safe, sessionToken: session_token })
       }
-      async function verifySessionToken(tableId: string, sessionToken: unknown): Promise<{ id: string } | null> {
-        if (!isUuid(sessionToken)) return null
-        const { data } = await supabase.from('table_sessions')
-          .select('id').eq('table_id', tableId)
-          .eq('session_token', sessionToken).maybeSingle()
-        return data ?? null
-      }
       case 'get-service-calls': {
         if (!isUuid(payload.tableId)) return json(400, { error: 'tableId required' })
         if (!isUuid(payload.sessionToken)) return json(403, { error: 'sessionToken required' })
