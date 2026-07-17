@@ -11,6 +11,7 @@ const DEFAULT_MODULES: ModulesMap = {
   kitchenOrder: false,
   customerReview: false,
   preOrders: false,
+  vitrineDigital: false,
 };
 
 /**

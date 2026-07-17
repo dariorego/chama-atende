@@ -1,76 +1,47 @@
+## Módulo Vitrine Digital
 
-## Objetivo
-Adicionar um cabeçalho visual no topo da página do cardápio (`/:slug`) com:
-- **Imagem horizontal de capa** (banner) ocupando toda a largura.
-- **Logo circular sobreposto** e centralizado sobre a capa.
+Novo módulo que exibe produtos do cardápio em uma TV, em rotação automática. Cada produto ganha um switch para entrar/sair da vitrine, e o admin escolhe entre 3 modelos visuais de exibição.
 
-E permitir que o admin faça upload das duas imagens com sugestão de tamanho e recorte na própria ferramenta.
+### 1. Banco de dados
+- Adicionar coluna `show_on_display boolean NOT NULL DEFAULT false` em `menu_products`.
+- Inserir módulo `vitrine_digital` em `restaurant_modules` para todos os tenants existentes (inativo por padrão) e incluí-lo na função `create-tenant` para novos tenants.
+- Settings do módulo (`restaurant_modules.settings`): `{ display_model: 'cinema' | 'split' | 'mosaico', interval_seconds: number, show_price: boolean }`.
 
----
+### 2. Admin — controles
+- **AdminProducts**: nova coluna/switch **"Exibir na Vitrine"** em cada produto (grava `show_on_display`).
+- **Nova página `/admin/:slug/vitrine`** (item no sidebar quando o módulo estiver ativo):
+  - Seletor visual dos 3 modelos com preview em miniatura.
+  - Slider de intervalo de rotação (5s–15s).
+  - Toggle "Exibir preço".
+  - Contador de produtos elegíveis (ativos + `show_on_display=true`).
+  - Botão **"Abrir na TV"** → abre `/:slug/vitrine` em nova aba, tela cheia.
+- **AdminModules**: card do novo módulo `vitrine_digital` com ícone `Tv`.
 
-## 1. Banco de dados
-Adicionar coluna nova em `restaurants`:
-- `cover_url text null` — URL da capa horizontal.
-- O `logo_url` já existe e será reaproveitado.
+### 3. Tela pública `/:slug/vitrine`
+- Rota fullscreen sem chrome do cliente (sem header/back).
+- Busca produtos ativos com `show_on_display=true` do tenant, respeitando o modelo escolhido nas settings.
+- Rotação automática por `interval_seconds`, com fade/slide entre itens.
+- Header discreto com logo + nome do estabelecimento no topo; rodapé com "chamaatende.com".
+- Usa as cores do tenant (primary/secondary/background) já implementadas.
 
-Migration simples com `ALTER TABLE public.restaurants ADD COLUMN cover_url text`.
+### 4. Três modelos de exibição
 
----
+**Modelo 1 — Cinema (foto imersiva)**
+Imagem ocupa a tela inteira com gradiente escuro na base. Nome do produto em display serif grande, descrição curta e preço em destaque dourado no canto inferior esquerdo. Transição fade suave. Ideal para pratos com foto profissional.
 
-## 2. Componente de recorte de imagem
-Criar `src/components/ui/image-crop-dialog.tsx` usando **`react-easy-crop`** (adicionar dep):
-- Recebe: arquivo selecionado, `aspect` (número), `title`, `recommendedSize` (texto de dica).
-- Mostra preview com zoom/pan, controle de zoom (slider).
-- Ao confirmar: gera um `Blob` recortado (canvas) e devolve via callback.
-- Botão “Cancelar / Aplicar recorte”.
+**Modelo 2 — Split (editorial)**
+Layout dividido 60/40: foto à esquerda, painel à direita com kicker (categoria), nome, descrição completa e preço grande. Transição slide horizontal. Ideal para destacar detalhes e ingredientes.
 
-Ratios usados:
-- Capa: `16/6` (banner) — sugestão exibida: **1600×600px**.
-- Logo: `1/1` — sugestão exibida: **512×512px** (será exibido como círculo).
+**Modelo 3 — Mosaico (grid)**
+Grid 2×2 mostrando 4 produtos simultâneos com foto quadrada, nome e preço abaixo. Troca o conjunto inteiro a cada intervalo. Ideal para vitrines de padaria/confeitaria com muitos itens.
 
----
+### 5. Detalhes técnicos
+- Registrar `vitrine_digital` em `MODULE_INFO`, `MODULE_NAME_MAP` e `ModulesMap`.
+- Hook `useVitrineProducts(restaurantId)` com Realtime em `menu_products` para refletir mudanças na TV sem reload.
+- Página `/:slug/vitrine` fora do `ClientLayout` (renderizada como rota fullscreen dentro de `ClientTenantPages`).
+- Sidebar do admin ganha item **"Vitrine Digital"** com ícone `Tv`, visível quando o módulo está ativo.
 
-## 3. Admin — Configurações (`AdminSettings.tsx`)
-Na seção “Informações do restaurante”:
-- Manter o campo atual de **Logo** e passar a abri-lo pelo `ImageCropDialog` (1:1) antes de subir via `useImageUpload`.
-- Adicionar novo campo **Imagem de capa** logo abaixo, com:
-  - Preview horizontal (proporção 16:6).
-  - Botão “Enviar imagem” → abre `ImageCropDialog` (16:6).
-  - Botão “Remover”.
-  - Texto auxiliar: “Recomendado: 1600×600px — JPG ou PNG”.
-- Salvar `cover_url` no update do restaurante (junto de `logo_url`).
-
-Nenhuma outra área do admin muda.
-
----
-
-## 4. Página do cardápio (`MenuPage.tsx` + `ClientLayout.tsx`)
-Renderizar um novo bloco **Hero** no topo do conteúdo do menu, antes da busca:
-- Container `relative` largura total (usar `-mx-4` para escapar do padding do `ClientLayout` e manter o resto igual).
-- `<img src={restaurant.cover_url}>` em `aspect-[16/6] w-full object-cover`. Fallback: gradiente sutil `bg-emerald-deep/10` quando não houver capa.
-- Sobre a capa, `absolute` centralizado horizontalmente e deslocado para baixo (`-bottom-12`): logo circular `w-24 h-24 rounded-full border-4 border-cream object-cover shadow-lg`. Fallback: ícone `ChefHat` dentro do círculo.
-- Abaixo do hero, spacing `mt-16` para acomodar a metade do logo que sobra.
-- Nome do restaurante centralizado abaixo do logo (usa `restaurant.name`).
-- Ocultar o `title` atual “Cardápio” do `ClientLayout` nesta página (passar `title={undefined}`), já que o hero passa a ser a identidade visual.
-
-Buscar `restaurant` via hook já existente (usar `useTenant` ou um `useRestaurantPublic` similar aos hooks públicos — reaproveitar o que já traz `logo_url`/`name` do restaurante no cardápio; se não existir, adicionar select mínimo pelo `publicApi` / `useTenant`).
-
----
-
-## 5. Detalhes técnicos
-- Dependência nova: `react-easy-crop`.
-- Upload continua via `useImageUpload` para o bucket `imagens` em pastas `logos/` e `capas/`.
-- Ao trocar uma imagem existente, tentar deletar a antiga (best-effort com `deleteImage`).
-- Validar tipo (`image/*`) e tamanho máx (~5 MB) antes de abrir o cropper.
-- Sem mudanças em RLS/edge functions — `cover_url` é público como o `logo_url`.
-
----
-
-## Arquivos afetados
-- `supabase/migrations/<novo>.sql` (add `cover_url`)
-- `src/integrations/supabase/types.ts` (regenerado pela migration)
-- `src/components/ui/image-crop-dialog.tsx` (novo)
-- `src/pages/admin/AdminSettings.tsx` (novo campo de capa + crop no logo)
-- `src/pages/MenuPage.tsx` (bloco hero)
-- `src/components/layout/ClientLayout.tsx` (permitir remover o header padrão quando hero estiver ativo — já suporta via `title` opcional)
-- `package.json` (dep `react-easy-crop`)
+### Fora do escopo
+- Playlist manual ou ordenação customizada (usa a ordem do cardápio).
+- Vídeos ou anúncios entre produtos.
+- Múltiplas vitrines por tenant (uma única por enquanto).

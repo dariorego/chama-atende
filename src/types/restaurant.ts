@@ -116,6 +116,7 @@ export interface ModulesMap {
   kitchenOrder: boolean;
   customerReview: boolean;
   preOrders: boolean;
+  vitrineDigital: boolean;
 }
 
 // Module name mapping from snake_case (DB) to camelCase (frontend)
@@ -127,6 +128,7 @@ export const MODULE_NAME_MAP: Record<string, keyof ModulesMap> = {
   'kitchen_order': 'kitchenOrder',
   'customer_review': 'customerReview',
   'pre_orders': 'preOrders',
+  'vitrine_digital': 'vitrineDigital',
 };
 
 // Format time from database (HH:MM:SS) to display format (HH:MM)

@@ -153,6 +153,7 @@ export type Database = {
           price: number
           promotional_price: number | null
           restaurant_id: string
+          show_on_display: boolean
           updated_at: string | null
         }
         Insert: {
@@ -169,6 +170,7 @@ export type Database = {
           price: number
           promotional_price?: number | null
           restaurant_id: string
+          show_on_display?: boolean
           updated_at?: string | null
         }
         Update: {
@@ -185,6 +187,7 @@ export type Database = {
           price?: number
           promotional_price?: number | null
           restaurant_id?: string
+          show_on_display?: boolean
           updated_at?: string | null
         }
         Relationships: [
