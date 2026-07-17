@@ -51,6 +51,38 @@ Deno.serve(async (req) => {
         if (error) return json(500, { error: error.message })
         return json(200, { data })
       }
+      case 'create-order': {
+        if (!isUuid(payload.restaurantId)) return json(400, { error: 'restaurantId required' })
+        const customer_name = payload.customerName ? s(payload.customerName, 100) : null
+        const table_number = s(payload.tableNumber, 20)
+        if (!table_number) return json(400, { error: 'tableNumber required' })
+        const observations = payload.observations ? s(payload.observations, 1000) : null
+        const { data, error } = await supabase.from('orders').insert({
+          restaurant_id: payload.restaurantId,
+          customer_name,
+          table_number,
+          observations,
+          status: 'pending',
+        }).select('id, order_number').single()
+        if (error) return json(500, { error: error.message })
+        return json(200, { data })
+      }
+      case 'create-preorder': {
+        // Payload should include full pre_order row + items array
+        const body = payload.preOrder
+        const items = payload.items
+        if (!body || !Array.isArray(items)) return json(400, { error: 'preOrder and items required' })
+        if (!isUuid(body.restaurant_id)) return json(400, { error: 'restaurant_id required' })
+        if (!s(body.customer_name, 100)) return json(400, { error: 'customer_name required' })
+        const { data: created, error } = await supabase.from('pre_orders').insert(body).select('id, order_number').single()
+        if (error) return json(500, { error: error.message })
+        if (items.length > 0) {
+          const withOrder = items.map((it: any) => ({ ...it, pre_order_id: created.id }))
+          const { error: iErr } = await supabase.from('pre_order_items').insert(withOrder)
+          if (iErr) return json(500, { error: iErr.message })
+        }
+        return json(200, { data: created })
+      }
       case 'get-queue-position-for-order': {
         if (!isUuid(payload.orderId) || !isUuid(payload.restaurantId)) return json(400, { error: 'orderId, restaurantId required' })
         const { data, error } = await supabase.from('orders')
