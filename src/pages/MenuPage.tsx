@@ -137,11 +137,6 @@ const MenuPage = () => {
   // Transform products
   const products = productsData?.map(transformProduct) ?? [];
 
-  const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
-    setIsSheetOpen(true);
-  };
-
   // Setup carousel API listener
   useEffect(() => {
     if (!carouselApi) return;
