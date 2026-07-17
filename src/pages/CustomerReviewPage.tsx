@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { useAdminSettings } from "@/hooks/useAdminSettings";
 import { useSubmitReview } from "@/hooks/useAdminReviews";
+import { useTenant } from "@/hooks/useTenant";
 
 const getRatingLabel = (rating: number) => {
   switch (rating) {
@@ -79,6 +80,8 @@ const RatingCard = ({ icon, title, rating, onRatingChange }: RatingCardProps) =>
 
 const CustomerReviewPage = () => {
   const navigate = useNavigate();
+  const { tenant } = useTenant();
+  
   
   const [ambienteRating, setAmbienteRating] = useState(0);
   const [atendimentoRating, setAtendimentoRating] = useState(0);
@@ -91,7 +94,7 @@ const CustomerReviewPage = () => {
   const submitReview = useSubmitReview();
 
   const handleBack = () => {
-    navigate('/');
+    navigate(tenant?.slug ? `/${tenant.slug}` : '/');
   };
 
   const handleSubmit = async () => {
@@ -123,7 +126,7 @@ const CustomerReviewPage = () => {
       });
 
       setTimeout(() => {
-        navigate('/');
+        navigate(tenant?.slug ? `/${tenant.slug}` : '/');
       }, 1500);
     } catch (error) {
       toast({
