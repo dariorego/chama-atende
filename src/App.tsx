@@ -44,6 +44,12 @@ import PreOrderCartPage from "./pages/PreOrderCartPage";
 import PreOrderCheckoutPage from "./pages/PreOrderCheckoutPage";
 import PreOrderStatusPage from "./pages/PreOrderStatusPage";
 import SalesPage from "./pages/SalesPage";
+import { Navigate as RRNavigate, useParams } from "react-router-dom";
+
+function AdminRedirect() {
+  const { slug } = useParams<{ slug: string }>();
+  return <Navigate to={`/admin/${slug}`} replace />;
+}
 
 const queryClient = new QueryClient();
 
@@ -68,6 +74,7 @@ function ClientTenantPages() {
           <Route path="encomendas/carrinho" element={<PreOrderCartPage />} />
           <Route path="encomendas/checkout" element={<PreOrderCheckoutPage />} />
           <Route path="encomendas/status/:orderId" element={<PreOrderStatusPage />} />
+          <Route path="admin" element={<AdminRedirect />} />
         </Routes>
       </ThemeProvider>
     </TenantProvider>
