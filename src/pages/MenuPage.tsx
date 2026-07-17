@@ -33,6 +33,7 @@ import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
 import { useToast } from "@/hooks/use-toast";
+import { useTenant } from "@/hooks/useTenant";
 
 interface Product {
   id: string;
@@ -70,6 +71,7 @@ const MenuPage = () => {
   const [selectedTableId, setSelectedTableId] = useState<string>("");
 
   const { toast } = useToast();
+  const { tenant } = useTenant();
 
   // Fetch data from Supabase
   const { data: categoriesData, isLoading: isLoadingCategories } = useMenuCategories();
