@@ -291,27 +291,34 @@ export default function AdminSettings() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>Logo do Restaurante</Label>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Formato quadrado recomendado
-                  </p>
-                  <ImageUploadWithCrop
-                    value={logoUrl}
-                    onChange={setLogoUrl}
-                    folder="logos"
-                  />
-                </div>
+              <div className="space-y-6">
                 <div className="space-y-2">
                   <Label>Imagem de Capa</Label>
                   <p className="text-sm text-muted-foreground mb-2">
-                    Exibida no topo do site
+                    Banner horizontal exibido no topo do cardápio. Recomendado: 1600×600px (proporção 16:6).
                   </p>
                   <ImageUploadWithCrop
                     value={coverUrl}
                     onChange={setCoverUrl}
                     folder="covers"
+                    aspectRatio={16 / 6}
+                    previewClassName="w-full max-w-2xl aspect-[16/6]"
+                    helpText="JPG, PNG ou WebP. Máximo 5MB. Recomendado: 1600×600px."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Logo do Restaurante</Label>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Exibido como círculo sobre a capa. Recomendado: 512×512px (quadrado).
+                  </p>
+                  <ImageUploadWithCrop
+                    value={logoUrl}
+                    onChange={setLogoUrl}
+                    folder="logos"
+                    aspectRatio={1}
+                    previewRounded="full"
+                    previewClassName="w-40 h-40"
+                    helpText="JPG, PNG ou WebP. Máximo 5MB. Recomendado: 512×512px."
                   />
                 </div>
               </div>

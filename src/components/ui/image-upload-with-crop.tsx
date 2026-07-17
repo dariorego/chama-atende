@@ -12,6 +12,10 @@ interface ImageUploadWithCropProps {
   folder?: string;
   className?: string;
   disabled?: boolean;
+  aspectRatio?: number;
+  helpText?: string;
+  previewClassName?: string;
+  previewRounded?: 'lg' | 'full';
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -24,6 +28,10 @@ export function ImageUploadWithCrop({
   folder = 'produtos',
   className,
   disabled = false,
+  aspectRatio = 1,
+  helpText,
+  previewClassName,
+  previewRounded = 'lg',
 }: ImageUploadWithCropProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isCropModalOpen, setIsCropModalOpen] = useState(false);
@@ -126,15 +134,24 @@ export function ImageUploadWithCrop({
       />
 
       {value ? (
-        <div className="relative group">
-          <div className="aspect-square w-full max-w-[200px] rounded-lg overflow-hidden border border-border bg-muted">
+        <div className={cn("relative group w-full", previewClassName ?? "max-w-[200px]") }>
+          <div className={cn(
+            "w-full overflow-hidden border border-border bg-muted",
+            previewRounded === 'full' ? 'rounded-full' : 'rounded-lg',
+            !previewClassName && 'aspect-square',
+          )}
+          style={previewClassName ? undefined : undefined}
+          >
             <img
               src={value}
-              alt="Imagem do produto"
+              alt="Preview"
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="absolute inset-0 max-w-[200px] bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+          <div className={cn(
+            "absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2",
+            previewRounded === 'full' ? 'rounded-full' : 'rounded-lg',
+          )}>
             <Button
               type="button"
               size="sm"
@@ -161,7 +178,9 @@ export function ImageUploadWithCrop({
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || isUploading}
           className={cn(
-            'aspect-square w-full max-w-[200px] rounded-lg border-2 border-dashed border-border',
+            'w-full border-2 border-dashed border-border',
+            previewRounded === 'full' ? 'rounded-full' : 'rounded-lg',
+            previewClassName ?? 'aspect-square max-w-[200px]',
             'flex flex-col items-center justify-center gap-2 text-muted-foreground',
             'hover:border-primary hover:text-primary transition-colors',
             'disabled:opacity-50 disabled:cursor-not-allowed bg-surface'
@@ -179,7 +198,7 @@ export function ImageUploadWithCrop({
       )}
 
       <p className="text-xs text-muted-foreground">
-        JPG, PNG ou WebP. Máximo {MAX_SIZE_MB}MB. Formato quadrado.
+        {helpText ?? `JPG, PNG ou WebP. Máximo ${MAX_SIZE_MB}MB.`}
       </p>
 
       {selectedImage && (
@@ -188,7 +207,7 @@ export function ImageUploadWithCrop({
           onOpenChange={handleCropModalClose}
           imageSrc={selectedImage}
           onCropComplete={handleCropComplete}
-          aspectRatio={1}
+          aspectRatio={aspectRatio}
         />
       )}
     </div>
