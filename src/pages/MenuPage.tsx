@@ -236,9 +236,8 @@ const MenuPage = () => {
           >
             <CarouselContent className="-ml-2 px-4">
               {highlightedProducts.map((product) => (
-                <CarouselItem key={product.id} className="pl-2 basis-[85%] md:basis-[60%]">
-                  <button
-                    onClick={() => handleProductClick(product)}
+              <CarouselItem key={product.id} className="pl-2 basis-[85%] md:basis-[60%]">
+                  <div
                     className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden group border border-emerald-deep/10"
                   >
                     {/* Background Image */}
