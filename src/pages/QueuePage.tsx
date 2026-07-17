@@ -97,17 +97,17 @@ export default function QueuePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-deep" />
       </div>
     );
   }
 
   if (!restaurant) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Restaurante não encontrado</h1>
-        <p className="text-muted-foreground text-center">
+      <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-4">
+        <h1 className="text-3xl font-serif-editorial text-emerald-deep mb-2">Restaurante não encontrado</h1>
+        <p className="text-emerald-deep/60 text-center font-sans-editorial">
           O restaurante que você está procurando não existe ou está inativo.
         </p>
       </div>
@@ -120,79 +120,83 @@ export default function QueuePage() {
     const estimatedWait = queueEntry.estimated_wait_minutes || 10;
 
     return (
-      <div className="min-h-screen bg-background relative overflow-hidden">
-        {/* Decorative green blur */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
-        
+      <div className="min-h-screen bg-cream relative overflow-hidden">
+        {/* Decorative emerald blur */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-deep/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+
         {/* Header */}
-        <header className="relative z-10 flex items-center justify-between p-4">
-          <button onClick={() => navigate('/')} className="w-10 h-10 rounded-full bg-surface/80 backdrop-blur-sm flex items-center justify-center">
-            <ArrowLeft className="h-5 w-5 text-foreground" />
+        <header className="relative z-10 flex items-center justify-between p-4 border-b border-emerald-deep/10">
+          <button onClick={() => navigate('/')} className="w-10 h-10 rounded-full bg-cream-soft border border-emerald-deep/15 flex items-center justify-center">
+            <ArrowLeft className="h-5 w-5 text-emerald-deep" />
           </button>
-          <h1 className="font-semibold text-foreground">Fila de Espera</h1>
+          <div className="text-center">
+            <p className="editorial-label text-gold">Aguardando</p>
+            <h1 className="font-serif-editorial text-emerald-deep text-xl leading-none mt-0.5">Fila de espera</h1>
+          </div>
           <div className="w-10" />
         </header>
 
         <div className="relative z-10 px-4 pb-32">
           {/* Status badge */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-6 pt-6">
             {isCalled ? (
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 animate-pulse">
-                <Bell className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-primary">É a sua vez! Dirija-se ao balcão.</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/15 border border-gold animate-pulse">
+                <Bell className="h-4 w-4 text-gold" />
+                <span className="editorial-label text-emerald-deep">É a sua vez — dirija-se ao balcão</span>
               </div>
             ) : displayPosition <= 3 ? (
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 animate-bounce">
-                <Zap className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-primary">A fila está andando rápido!</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-deep/5 border border-emerald-deep/20">
+                <Zap className="h-4 w-4 text-gold" />
+                <span className="editorial-label text-emerald-deep">A fila está andando rápido</span>
               </div>
             ) : null}
           </div>
 
           {/* Main position card */}
-          <div className="relative bg-card rounded-[2.5rem] p-8 mb-6 overflow-hidden border border-border">
+          <div className="relative bg-cream-soft rounded-[2.5rem] p-8 mb-6 overflow-hidden border border-emerald-deep/10 shadow-[0_20px_60px_-30px_rgba(6,78,59,0.35)]">
             {/* Decorative circles */}
-            <div className="absolute top-4 right-4 w-24 h-24 rounded-full border border-primary/10" />
-            <div className="absolute top-8 right-8 w-16 h-16 rounded-full border border-primary/10" />
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-primary/5" />
+            <div className="absolute top-4 right-4 w-24 h-24 rounded-full border border-gold/25" />
+            <div className="absolute top-8 right-8 w-16 h-16 rounded-full border border-gold/40" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-emerald-deep/5" />
 
             <div className="relative z-10">
               {isCalled ? (
                 <>
                   <div className="flex items-center justify-center mb-4">
-                    <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
-                      <Bell className="h-10 w-10 text-primary" />
+                    <div className="w-20 h-20 rounded-full bg-gold/15 border border-gold flex items-center justify-center animate-pulse">
+                      <Bell className="h-10 w-10 text-gold" />
                     </div>
                   </div>
-                  <p className="text-center text-2xl font-bold text-foreground mb-2">É a sua vez!</p>
-                  <p className="text-center text-muted-foreground">Dirija-se ao balcão</p>
+                  <p className="editorial-label text-gold text-center mb-2">Chamado</p>
+                  <p className="text-center text-4xl font-serif-editorial text-emerald-deep mb-1">É a sua vez</p>
+                  <p className="text-center text-emerald-deep/60 font-sans-editorial">Dirija-se ao balcão</p>
                 </>
               ) : (
                 <>
+                  <p className="editorial-label text-gold text-center mb-3">Sua posição</p>
                   {/* Position number */}
                   <div className="flex items-start justify-center gap-1 mb-2">
-                    <span className="text-8xl font-bold text-foreground leading-none">{displayPosition}</span>
-                    <span className="text-4xl font-bold text-primary mt-2">º</span>
+                    <span className="text-8xl font-serif-editorial text-emerald-deep leading-none">{displayPosition}</span>
+                    <span className="text-4xl font-serif-editorial text-gold mt-2">º</span>
                   </div>
-                  <p className="text-center text-muted-foreground mb-6">na fila</p>
+                  <p className="text-center text-emerald-deep/60 font-sans-editorial mb-6">na fila</p>
 
                   {/* Estimated time highlight */}
                   <div className="flex justify-center mb-6">
-                    <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-primary/10 border border-primary/20">
-                      <Clock className="h-5 w-5 text-primary" />
+                    <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-emerald-deep/5 border border-gold/40">
+                      <Clock className="h-5 w-5 text-gold" />
                       <div>
-                        <p className="text-xs text-muted-foreground">Tempo estimado</p>
-                        <p className="text-xl font-bold text-primary">~{estimatedWait} min</p>
+                        <p className="editorial-label text-emerald-deep/60">Tempo estimado</p>
+                        <p className="text-xl font-serif-editorial text-emerald-deep">~{estimatedWait} min</p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Progress bar with glow */}
+                  {/* Progress bar */}
                   <div className="relative">
-                    <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-                    <Progress value={getProgress()} className="h-3 relative" />
+                    <Progress value={getProgress()} className="h-2 relative bg-emerald-deep/10 [&>div]:bg-gold" />
                   </div>
-                  <p className="text-center text-xs text-muted-foreground mt-2">
+                  <p className="text-center text-xs text-emerald-deep/60 font-sans-editorial mt-2">
                     {getProgress() > 0 ? `${Math.round(getProgress())}% do tempo de espera já passou` : 'Aguardando atendimento'}
                   </p>
                 </>
@@ -201,48 +205,46 @@ export default function QueuePage() {
           </div>
 
           {/* Queue code card */}
-          <div className="bg-card rounded-2xl p-4 mb-4 border border-border">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <MessageSquare className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Código da fila</p>
-                  <p className="text-xl font-bold text-foreground">{queueEntry.queue_code}</p>
-                </div>
+          <div className="bg-cream-soft rounded-2xl p-4 mb-4 border border-emerald-deep/10">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-emerald-deep/5 border border-gold/40 flex items-center justify-center">
+                <MessageSquare className="h-5 w-5 text-gold" />
+              </div>
+              <div>
+                <p className="editorial-label text-emerald-deep/60">Código da fila</p>
+                <p className="text-xl font-serif-editorial text-emerald-deep">{queueEntry.queue_code}</p>
               </div>
             </div>
           </div>
 
           {/* User info card */}
-          <div className="bg-card rounded-2xl p-4 mb-4 border border-border">
+          <div className="bg-cream-soft rounded-2xl p-4 mb-4 border border-emerald-deep/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center">
-                  <User className="h-5 w-5 text-muted-foreground" />
+                <div className="w-12 h-12 rounded-xl bg-emerald-deep/5 border border-emerald-deep/15 flex items-center justify-center">
+                  <User className="h-5 w-5 text-emerald-deep" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">{queueEntry.customer_name}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="font-serif-editorial text-emerald-deep text-lg">{queueEntry.customer_name}</p>
+                  <p className="text-sm text-emerald-deep/60 font-sans-editorial">
                     {queueEntry.party_size} {queueEntry.party_size === 1 ? "pessoa" : "pessoas"}
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="h-5 w-5 text-emerald-deep/40" />
             </div>
           </div>
 
           {/* Notifications card */}
-          <div className="bg-card rounded-2xl p-4 mb-6 border border-border">
+          <div className="bg-cream-soft rounded-2xl p-4 mb-6 border border-emerald-deep/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center">
-                  <Bell className="h-5 w-5 text-muted-foreground" />
+                <div className="w-12 h-12 rounded-xl bg-emerald-deep/5 border border-emerald-deep/15 flex items-center justify-center">
+                  <Bell className="h-5 w-5 text-emerald-deep" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">Notificações</p>
-                  <p className="text-sm text-muted-foreground">Avisar quando chegar a vez</p>
+                  <p className="font-serif-editorial text-emerald-deep text-lg">Notificações</p>
+                  <p className="text-sm text-emerald-deep/60 font-sans-editorial">Avisar quando chegar a vez</p>
                 </div>
               </div>
               <Switch checked={notificationsEnabled} onCheckedChange={setNotificationsEnabled} />
@@ -252,12 +254,12 @@ export default function QueuePage() {
 
         {/* Fixed bottom button */}
         {!isCalled && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pt-8">
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-cream via-cream to-transparent pt-8">
             <Button
               onClick={handleLeaveQueue}
               variant="outline"
               disabled={leaveQueue.isPending}
-              className="w-full h-14 rounded-full text-base font-medium border-destructive/30 text-destructive hover:bg-destructive/10"
+              className="w-full h-14 rounded-full text-base font-sans-editorial border-destructive/40 text-destructive hover:bg-destructive/10 bg-cream-soft"
             >
               {leaveQueue.isPending ? (
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
@@ -274,7 +276,7 @@ export default function QueuePage() {
 
   // Form to join queue
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-cream">
       {/* Hero Header */}
       <div className="relative h-80">
         <img
@@ -282,7 +284,7 @@ export default function QueuePage() {
           alt={restaurant.name}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-cream via-emerald-deep/40 to-emerald-deep/20" />
 
         {/* Floating buttons */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
@@ -304,26 +306,26 @@ export default function QueuePage() {
 
         {/* Restaurant info over image */}
         <div className="absolute bottom-6 left-4 right-4">
-          {/* Open badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-3">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-medium text-primary">
+          <p className="editorial-label text-gold mb-2">Fila de espera</p>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/20 backdrop-blur-sm border border-gold mb-3">
+            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+            <span className="text-xs font-sans-editorial text-white uppercase tracking-wider">
               {restaurant.status === "open" ? "Aberto agora" : "Fechado"}
             </span>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-1">{restaurant.name}</h1>
-          
+          <h1 className="text-4xl font-serif-editorial text-white mb-1">{restaurant.name}</h1>
+
           <div className="flex items-center gap-4">
             {restaurant.address && (
               <div className="flex items-center gap-1 text-white/80">
                 <MapPin className="h-4 w-4" />
-                <span className="text-sm">{restaurant.address.split(",")[0]}</span>
+                <span className="text-sm font-sans-editorial">{restaurant.address.split(",")[0]}</span>
               </div>
             )}
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm">
-              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-medium text-white">4.8</span>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-gold/40">
+              <Star className="h-4 w-4 text-gold fill-gold" />
+              <span className="text-sm font-sans-editorial text-white">4.8</span>
             </div>
           </div>
         </div>
@@ -332,16 +334,16 @@ export default function QueuePage() {
       {/* Tabs */}
       <div className="px-4 -mt-4 relative z-10">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full h-12 bg-surface/80 backdrop-blur-sm rounded-2xl p-1 grid grid-cols-2">
+          <TabsList className="w-full h-12 bg-cream-soft border border-emerald-deep/10 rounded-2xl p-1 grid grid-cols-2 shadow-[0_20px_60px_-30px_rgba(6,78,59,0.35)]">
             <TabsTrigger 
               value="join" 
-              className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="rounded-xl font-sans-editorial text-emerald-deep/70 data-[state=active]:bg-emerald-deep data-[state=active]:text-cream"
             >
               Entrar na Fila
             </TabsTrigger>
             <TabsTrigger 
               value="search"
-              className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="rounded-xl font-sans-editorial text-emerald-deep/70 data-[state=active]:bg-emerald-deep data-[state=active]:text-cream"
             >
               Consultar Posição
             </TabsTrigger>
@@ -353,48 +355,52 @@ export default function QueuePage() {
       {activeTab === "join" ? (
         <>
           {/* Join Queue Form */}
-          <div className="px-4 py-6 pb-32">
+          <div className="px-4 py-8 pb-32">
+            <div className="mb-6">
+              <p className="editorial-label text-gold">Reserve seu lugar</p>
+              <h2 className="text-3xl font-serif-editorial text-emerald-deep leading-tight">Entre para a lista</h2>
+            </div>
             {/* Name input */}
             <div className="space-y-2 mb-4">
-              <Label htmlFor="name" className="text-muted-foreground">
+              <Label htmlFor="name" className="editorial-label text-emerald-deep/70">
                 Nome <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-deep/50" />
                 <Input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Seu nome"
-                  className="h-14 pl-12 rounded-2xl bg-surface border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base placeholder:text-surface-foreground"
+                  className="h-14 pl-12 rounded-2xl bg-cream-soft border-emerald-deep/15 text-emerald-deep focus:ring-2 focus:ring-gold focus:border-transparent text-base placeholder:text-emerald-deep/40"
                 />
               </div>
             </div>
 
             {/* Phone input */}
             <div className="space-y-2 mb-4">
-              <Label htmlFor="phone" className="text-muted-foreground">
+              <Label htmlFor="phone" className="editorial-label text-emerald-deep/70">
                 Telefone <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-deep/50" />
                 <Input
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="(11) 99999-9999"
-                  className="h-14 pl-12 rounded-2xl bg-surface border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base placeholder:text-surface-foreground"
+                  className="h-14 pl-12 rounded-2xl bg-cream-soft border-emerald-deep/15 text-emerald-deep focus:ring-2 focus:ring-gold focus:border-transparent text-base placeholder:text-emerald-deep/40"
                 />
               </div>
             </div>
 
             {/* Party size */}
             <div className="space-y-3 mb-4">
-              <div className="bg-surface rounded-2xl p-5 border border-border/30">
+              <div className="bg-cream-soft rounded-2xl p-5 border border-emerald-deep/10">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-lg font-bold text-foreground">Quantas pessoas?</h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <h2 className="text-xl font-serif-editorial text-emerald-deep">Quantas pessoas?</h2>
+                    <p className="text-xs text-emerald-deep/60 font-sans-editorial mt-0.5">
                       Mesas acima de 8 pessoas requerem confirmação.
                     </p>
                   </div>
@@ -406,13 +412,13 @@ export default function QueuePage() {
                       className={cn(
                         "w-10 h-10 rounded-full flex items-center justify-center transition-all",
                         partySize <= 1
-                          ? "bg-white/5 text-muted-foreground cursor-not-allowed"
-                          : "bg-white/10 text-foreground hover:bg-white/20 active:scale-95"
+                          ? "bg-emerald-deep/5 text-emerald-deep/30 cursor-not-allowed border border-emerald-deep/10"
+                          : "bg-cream text-emerald-deep hover:bg-emerald-deep hover:text-cream border border-emerald-deep/15 active:scale-95"
                       )}
                     >
                       <Minus className="w-5 h-5" />
                     </button>
-                    <span className="text-2xl font-bold text-foreground w-8 text-center">
+                    <span className="text-3xl font-serif-editorial text-emerald-deep w-10 text-center">
                       {partySize}
                     </span>
                     <button
@@ -422,8 +428,8 @@ export default function QueuePage() {
                       className={cn(
                         "w-10 h-10 rounded-full flex items-center justify-center transition-all",
                         partySize >= 20
-                          ? "bg-primary/50 text-primary-foreground cursor-not-allowed"
-                          : "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/30"
+                          ? "bg-emerald-deep/40 text-cream cursor-not-allowed"
+                          : "bg-emerald-deep text-cream hover:bg-emerald-deep/90 active:scale-95 shadow-[0_10px_25px_-10px_rgba(6,78,59,0.6)]"
                       )}
                     >
                       <Plus className="w-5 h-5" />
@@ -435,7 +441,7 @@ export default function QueuePage() {
 
             {/* Observation */}
             <div className="space-y-2">
-              <Label htmlFor="observation" className="text-muted-foreground">
+              <Label htmlFor="observation" className="editorial-label text-emerald-deep/70">
                 Observações (opcional)
               </Label>
               <Textarea
@@ -443,17 +449,17 @@ export default function QueuePage() {
                 value={observation}
                 onChange={(e) => setObservation(e.target.value)}
                 placeholder="Ex: Cadeirinha para bebê, aniversário..."
-                className="min-h-[100px] rounded-2xl bg-surface border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-none placeholder:text-surface-foreground"
+                className="min-h-[100px] rounded-2xl bg-cream-soft border-emerald-deep/15 text-emerald-deep focus:ring-2 focus:ring-gold focus:border-transparent resize-none placeholder:text-emerald-deep/40"
               />
             </div>
           </div>
 
           {/* Fixed bottom submit button */}
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pt-8">
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-cream via-cream to-transparent pt-8">
             <Button
               onClick={handleJoinQueue}
               disabled={joinQueue.isPending || !name.trim()}
-              className="w-full h-14 rounded-full bg-primary text-primary-foreground text-base font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all group"
+              className="w-full h-14 rounded-full bg-emerald-deep text-cream font-sans-editorial text-base tracking-wide shadow-[0_20px_40px_-15px_rgba(6,78,59,0.6)] hover:bg-emerald-deep/90 transition-all group border border-gold/40"
             >
               {joinQueue.isPending ? (
                 <>
@@ -472,20 +478,24 @@ export default function QueuePage() {
       ) : (
         <>
           {/* Search Queue Form */}
-          <div className="px-4 py-6 pb-32">
+          <div className="px-4 py-8 pb-32">
+            <div className="mb-6">
+              <p className="editorial-label text-gold">Já está na lista?</p>
+              <h2 className="text-3xl font-serif-editorial text-emerald-deep leading-tight">Consulte sua posição</h2>
+            </div>
             {/* Phone search input */}
             <div className="space-y-2 mb-6">
-              <Label htmlFor="searchPhone" className="text-muted-foreground">
+              <Label htmlFor="searchPhone" className="editorial-label text-emerald-deep/70">
                 Telefone cadastrado
               </Label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-deep/50" />
                 <Input
                   id="searchPhone"
                   value={searchPhoneInput}
                   onChange={(e) => setSearchPhoneInput(e.target.value)}
                   placeholder="(11) 99999-9999"
-                  className="h-14 pl-12 pr-14 rounded-2xl bg-surface border-border focus:ring-2 focus:ring-primary focus:border-transparent text-base placeholder:text-surface-foreground"
+                  className="h-14 pl-12 pr-14 rounded-2xl bg-cream-soft border-emerald-deep/15 text-emerald-deep focus:ring-2 focus:ring-gold focus:border-transparent text-base placeholder:text-emerald-deep/40"
                 />
                 <button
                   onClick={() => searchByPhone(searchPhoneInput)}
@@ -493,8 +503,8 @@ export default function QueuePage() {
                   className={cn(
                     "absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all",
                     searchPhoneInput.replace(/\D/g, '').length >= 8
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
+                      ? "bg-emerald-deep text-cream"
+                      : "bg-emerald-deep/10 text-emerald-deep/40"
                   )}
                 >
                   <Search className="h-5 w-5" />
@@ -505,17 +515,17 @@ export default function QueuePage() {
             {/* Search Result */}
             {isSearching && (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-deep" />
               </div>
             )}
 
             {searchPhone && !isSearching && !searchResult && (
-              <div className="bg-surface rounded-2xl p-6 border border-border/30 text-center">
-                <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="h-8 w-8 text-muted-foreground" />
+              <div className="bg-cream-soft rounded-2xl p-8 border border-emerald-deep/10 text-center">
+                <div className="w-16 h-16 rounded-full bg-emerald-deep/5 border border-gold/40 flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="h-8 w-8 text-gold" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Nenhuma posição encontrada</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="text-2xl font-serif-editorial text-emerald-deep mb-2">Nenhuma posição encontrada</h3>
+                <p className="text-sm text-emerald-deep/60 font-sans-editorial">
                   Não encontramos nenhuma entrada na fila com este telefone.
                 </p>
               </div>
@@ -526,54 +536,54 @@ export default function QueuePage() {
                 {/* Status badge */}
                 <div className="flex justify-center">
                   {searchResult.status === 'called' ? (
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 animate-pulse">
-                      <Bell className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium text-primary">É a sua vez!</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/15 border border-gold animate-pulse">
+                      <Bell className="h-4 w-4 text-gold" />
+                      <span className="editorial-label text-emerald-deep">É a sua vez</span>
                     </div>
                   ) : (
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium text-foreground">Aguardando na fila</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-deep/5 border border-emerald-deep/20">
+                      <Clock className="h-4 w-4 text-emerald-deep" />
+                      <span className="editorial-label text-emerald-deep">Aguardando na fila</span>
                     </div>
                   )}
                 </div>
 
                 {/* Position card */}
-                <div className="bg-card rounded-2xl p-6 border border-border text-center">
-                  <p className="text-sm text-muted-foreground mb-2">Sua posição</p>
+                <div className="bg-cream-soft rounded-2xl p-8 border border-emerald-deep/10 text-center shadow-[0_20px_60px_-30px_rgba(6,78,59,0.35)]">
+                  <p className="editorial-label text-gold mb-2">Sua posição</p>
                   <div className="flex items-start justify-center gap-1 mb-2">
-                    <span className="text-6xl font-bold text-foreground leading-none">
+                    <span className="text-7xl font-serif-editorial text-emerald-deep leading-none">
                       {searchResult.position || 1}
                     </span>
-                    <span className="text-2xl font-bold text-primary mt-1">º</span>
+                    <span className="text-3xl font-serif-editorial text-gold mt-1">º</span>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-emerald-deep/60 font-sans-editorial">
                     Tempo estimado: ~{searchResult.estimated_wait_minutes || 10} min
                   </p>
                 </div>
 
                 {/* Queue code */}
-                <div className="bg-card rounded-2xl p-4 border border-border">
+                <div className="bg-cream-soft rounded-2xl p-4 border border-emerald-deep/10">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <MessageSquare className="h-5 w-5 text-primary" />
+                    <div className="w-12 h-12 rounded-xl bg-emerald-deep/5 border border-gold/40 flex items-center justify-center">
+                      <MessageSquare className="h-5 w-5 text-gold" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Código da fila</p>
-                      <p className="text-xl font-bold text-foreground">{searchResult.queue_code}</p>
+                      <p className="editorial-label text-emerald-deep/60">Código da fila</p>
+                      <p className="text-xl font-serif-editorial text-emerald-deep">{searchResult.queue_code}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* User info */}
-                <div className="bg-card rounded-2xl p-4 border border-border">
+                <div className="bg-cream-soft rounded-2xl p-4 border border-emerald-deep/10">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center">
-                      <User className="h-5 w-5 text-muted-foreground" />
+                    <div className="w-12 h-12 rounded-xl bg-emerald-deep/5 border border-emerald-deep/15 flex items-center justify-center">
+                      <User className="h-5 w-5 text-emerald-deep" />
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">{searchResult.customer_name}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-serif-editorial text-emerald-deep text-lg">{searchResult.customer_name}</p>
+                      <p className="text-sm text-emerald-deep/60 font-sans-editorial">
                         {searchResult.party_size} {searchResult.party_size === 1 ? "pessoa" : "pessoas"}
                       </p>
                     </div>
@@ -586,7 +596,7 @@ export default function QueuePage() {
                     saveQueueCode(searchResult.queue_code);
                     setQueueCode(searchResult.queue_code);
                   }}
-                  className="w-full h-14 rounded-full bg-primary text-primary-foreground text-base font-semibold"
+                  className="w-full h-14 rounded-full bg-emerald-deep text-cream font-sans-editorial text-base tracking-wide border border-gold/40 hover:bg-emerald-deep/90"
                 >
                   Ver detalhes completos
                   <ChevronRight className="h-5 w-5 ml-2" />
