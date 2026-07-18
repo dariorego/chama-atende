@@ -18,7 +18,12 @@ export interface Table {
   updated_at: string;
 }
 
-export type TableInsert = Omit<Table, 'id' | 'created_at' | 'updated_at'>;
+export type TableInsert = Omit<Table, 'id' | 'created_at' | 'updated_at' | 'area' | 'position_x' | 'position_y' | 'shape'> & {
+  area?: string;
+  position_x?: number;
+  position_y?: number;
+  shape?: 'square' | 'round' | 'rect';
+};
 export type TableUpdate = Partial<TableInsert>;
 
 export function useAdminTables() {
@@ -58,8 +63,9 @@ export function useUpdateTablePosition() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, position_x, position_y, area }: { id: string; position_x: number; position_y: number; area?: string }) => {
-      const payload: Record<string, unknown> = { position_x, position_y };
-      if (area) payload.area = area;
+      const payload = area
+        ? { position_x, position_y, area }
+        : { position_x, position_y };
       const { error } = await supabase.from("tables").update(payload).eq("id", id);
       if (error) throw error;
     },
