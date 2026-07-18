@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Users, QrCode, Pencil, Plus, MapPin } from "lucide-react";
@@ -123,6 +123,8 @@ function FloorCanvas({ area, tables, onEdit, onShowQR, onCreate }: FloorCanvasPr
   const updatePos = useUpdateTablePosition();
   const [dragId, setDragId] = useState<string | null>(null);
   const [preview, setPreview] = useState<Record<string, { x: number; y: number }>>({});
+  const previewRef = useRef<Record<string, { x: number; y: number }>>({});
+  useEffect(() => { previewRef.current = preview; }, [preview]);
 
   const startDrag = (e: React.PointerEvent, table: TableType) => {
     e.preventDefault();
@@ -136,13 +138,12 @@ function FloorCanvas({ area, tables, onEdit, onShowQR, onCreate }: FloorCanvasPr
       const rect = canvas.getBoundingClientRect();
       const x = ((ev.clientX - rect.left) / rect.width) * 100;
       const y = ((ev.clientY - rect.top) / rect.height) * 100;
-      setPreview((p) => ({
-        ...p,
-        [table.id]: {
-          x: Math.max(2, Math.min(96, x)),
-          y: Math.max(2, Math.min(96, y)),
-        },
-      }));
+      const clamped = {
+        x: Math.max(2, Math.min(96, x)),
+        y: Math.max(2, Math.min(96, y)),
+      };
+      previewRef.current = { ...previewRef.current, [table.id]: clamped };
+      setPreview((p) => ({ ...p, [table.id]: clamped }));
     };
     const up = (ev: PointerEvent) => {
       window.removeEventListener('pointermove', move);
