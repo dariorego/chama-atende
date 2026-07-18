@@ -30,14 +30,17 @@ const AdminTables = () => {
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [selectedTableForQR, setSelectedTableForQR] = useState<TableType | null>(null);
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
+  const [defaultArea, setDefaultArea] = useState<string | undefined>(undefined);
 
   const handleEdit = (table: TableType) => {
     setEditingTable(table);
+    setDefaultArea(undefined);
     setDialogOpen(true);
   };
 
-  const handleCreate = () => {
+  const handleCreate = (area?: string) => {
     setEditingTable(null);
+    setDefaultArea(area);
     setDialogOpen(true);
   };
 
@@ -65,7 +68,7 @@ const AdminTables = () => {
             <LayoutGrid className="h-4 w-4 mr-2" />
             Criar em Sequência
           </Button>
-          <Button onClick={handleCreate}>
+          <Button onClick={() => handleCreate()}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Mesa
           </Button>
@@ -241,6 +244,7 @@ const AdminTables = () => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         table={editingTable}
+        defaultArea={defaultArea}
       />
 
       <QRCodeDialog
