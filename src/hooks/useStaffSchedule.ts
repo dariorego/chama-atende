@@ -227,7 +227,7 @@ export function useDuplicatePreviousWeek() {
         .lte("shift_date", prevTo.toISOString().slice(0, 10));
       if (error) throw error;
       if (!prev || prev.length === 0) throw new Error("Semana anterior está vazia");
-      const rows = prev.map((s: EmployeeShift) => {
+      const rows = (prev as Array<Record<string, unknown> & { shift_date: string; start_time: string; end_time: string; employee_id: string; role: string | null; notes: string | null }>).map((s) => {
         const d = new Date(s.shift_date);
         d.setDate(d.getDate() + 7);
         return {
