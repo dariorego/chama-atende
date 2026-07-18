@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Puzzle, Loader2, UtensilsCrossed, Bell, CalendarDays, Users, ChefHat, Star, ShoppingBag, Tv, Receipt } from 'lucide-react';
+import { Puzzle, Loader2, UtensilsCrossed, Bell, CalendarDays, Users, ChefHat, Star, ShoppingBag, Tv, Receipt, PartyPopper, CalendarClock } from 'lucide-react';
 import { useAdminModules, MODULE_INFO } from '@/hooks/useAdminModules';
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -13,6 +13,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   ShoppingBag,
   Tv,
   Receipt,
+  PartyPopper,
+  CalendarClock,
 };
 
 export default function AdminModules() {
