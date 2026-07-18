@@ -45,6 +45,7 @@ import AdminPreOrders from "./pages/admin/AdminPreOrders";
 import AdminVitrine from "./pages/admin/AdminVitrine";
 import AdminComandas from "./pages/admin/AdminComandas";
 import AdminEventBookings from "./pages/admin/AdminEventBookings";
+import AdminStaffSchedule from "./pages/admin/AdminStaffSchedule";
 import EventBookingPage from "./pages/EventBookingPage";
 import VitrineDisplayPage from "./pages/VitrineDisplayPage";
 import PreOrderMenuPage from "./pages/PreOrderMenuPage";
@@ -311,6 +312,16 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin>
                 <AdminLayout>
                   <AdminEventBookings />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="agenda"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminStaffSchedule />
                 </AdminLayout>
               </AuthGuard>
             }

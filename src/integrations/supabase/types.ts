@@ -165,6 +165,182 @@ export type Database = {
           },
         ]
       }
+      employee_shifts: {
+        Row: {
+          created_at: string
+          employee_id: string
+          end_time: string
+          id: string
+          notes: string | null
+          restaurant_id: string
+          role: string | null
+          shift_date: string
+          start_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          end_time: string
+          id?: string
+          notes?: string | null
+          restaurant_id: string
+          role?: string | null
+          shift_date: string
+          start_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          end_time?: string
+          id?: string
+          notes?: string | null
+          restaurant_id?: string
+          role?: string | null
+          shift_date?: string
+          start_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_shifts_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_shifts_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_time_off: {
+        Row: {
+          created_at: string
+          employee_id: string
+          end_date: string
+          id: string
+          reason: string | null
+          restaurant_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          start_date: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          end_date: string
+          id?: string
+          reason?: string | null
+          restaurant_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          end_date?: string
+          id?: string
+          reason?: string | null
+          restaurant_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_time_off_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_time_off_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employees: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string
+          hire_date: string | null
+          hourly_rate: number | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          phone: string | null
+          restaurant_id: string
+          role: string | null
+          updated_at: string
+          user_id: string | null
+          weekly_hours: number | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name: string
+          hire_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          phone?: string | null
+          restaurant_id: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+          weekly_hours?: number | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          hire_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          phone?: string | null
+          restaurant_id?: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+          weekly_hours?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_bookings: {
         Row: {
           admin_response: string | null
@@ -1401,6 +1577,70 @@ export type Database = {
             columns: ["restaurant_id"]
             isOneToOne: false
             referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_clock_entries: {
+        Row: {
+          break_minutes: number
+          clock_in: string
+          clock_out: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          notes: string | null
+          restaurant_id: string
+          shift_id: string | null
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          break_minutes?: number
+          clock_in?: string
+          clock_out?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          notes?: string | null
+          restaurant_id: string
+          shift_id?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Update: {
+          break_minutes?: number
+          clock_in?: string
+          clock_out?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          restaurant_id?: string
+          shift_id?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_clock_entries_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_clock_entries_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_clock_entries_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "employee_shifts"
             referencedColumns: ["id"]
           },
         ]

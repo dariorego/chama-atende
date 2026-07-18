@@ -119,6 +119,7 @@ export interface ModulesMap {
   vitrineDigital: boolean;
   digitalComanda: boolean;
   eventBookings: boolean;
+  staffSchedule: boolean;
 }
 
 // Module name mapping from snake_case (DB) to camelCase (frontend)
@@ -133,6 +134,7 @@ export const MODULE_NAME_MAP: Record<string, keyof ModulesMap> = {
   'vitrine_digital': 'vitrineDigital',
   'digital_comanda': 'digitalComanda',
   'event_bookings': 'eventBookings',
+  'staff_schedule': 'staffSchedule',
 };
 
 // Format time from database (HH:MM:SS) to display format (HH:MM)

@@ -14,6 +14,7 @@ const DEFAULT_MODULES: ModulesMap = {
   vitrineDigital: false,
   digitalComanda: false,
   eventBookings: false,
+  staffSchedule: false,
 };
 
 /**

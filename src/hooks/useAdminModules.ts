@@ -60,6 +60,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Orçamento para aniversários, corporativos, casamentos e grupos",
     icon: "PartyPopper",
   },
+  staff_schedule: {
+    label: "Agenda de Funcionários",
+    description: "Escala semanal, folgas e controle de ponto da equipe",
+    icon: "CalendarClock",
+  },
 };
 
 export function useAdminModules() {

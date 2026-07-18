@@ -158,6 +158,7 @@ Deno.serve(async (req) => {
       'vitrine_digital',
       'digital_comanda',
       'event_bookings',
+      'staff_schedule',
     ];
 
     const modulesToInsert = defaultModules.map((moduleName) => ({
