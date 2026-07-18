@@ -148,11 +148,11 @@ function FloorCanvas({ area, tables, onEdit, onShowQR, onCreate }: FloorCanvasPr
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
       setDragId(null);
+      const pos = previewRef.current[table.id];
+      if (pos) {
+        updatePos.mutate({ id: table.id, position_x: pos.x, position_y: pos.y, area });
+      }
       setPreview((p) => {
-        const pos = p[table.id];
-        if (pos) {
-          updatePos.mutate({ id: table.id, position_x: pos.x, position_y: pos.y, area });
-        }
         const rest = { ...p };
         delete rest[table.id];
         return rest;
