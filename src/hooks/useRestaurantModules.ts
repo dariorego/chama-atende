@@ -13,6 +13,7 @@ const DEFAULT_MODULES: ModulesMap = {
   preOrders: false,
   vitrineDigital: false,
   digitalComanda: false,
+  eventBookings: false,
 };
 
 /**
