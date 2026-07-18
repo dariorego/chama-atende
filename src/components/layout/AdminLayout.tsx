@@ -43,6 +43,7 @@ import {
   Upload,
   Receipt,
   PartyPopper,
+  CalendarClock,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -111,6 +112,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'vitrine_digital', title: 'Vitrine Digital', url: `${adminBase}/vitrine`, icon: Tv },
     { moduleName: 'digital_comanda', title: 'Comandas', url: `${adminBase}/comandas`, icon: Receipt },
     { moduleName: 'event_bookings', title: 'Eventos', url: `${adminBase}/eventos`, icon: PartyPopper },
+    { moduleName: 'staff_schedule', title: 'Agenda', url: `${adminBase}/agenda`, icon: CalendarClock },
   ].filter((item) => isModuleActive(item.moduleName));
 
   // Composição items (subitems of kitchen_order)
