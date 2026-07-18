@@ -24,6 +24,7 @@ import {
   ChevronDown,
   CalendarClock,
 } from "lucide-react";
+import { Receipt, LayoutGrid, PartyPopper } from "lucide-react";
 
 const modules = [
   {
@@ -80,6 +81,27 @@ const modules = [
     title: "Vitrine Digital",
     desc: "Exiba seus produtos em uma TV com 3 modelos: Cinema, Split e Mosaico.",
     span: "md:col-span-2",
+    badge: "Novo",
+  },
+  {
+    icon: Receipt,
+    title: "Comanda Digital",
+    desc: "Várias comandas por mesa (ex.: 10.01, 10.02) com fechamento individual e impressão térmica.",
+    span: "md:col-span-2",
+    badge: "Novo",
+  },
+  {
+    icon: LayoutGrid,
+    title: "Controle de Mesas",
+    desc: "Mapa do salão com arrastar e soltar, áreas customizáveis e status em tempo real.",
+    span: "",
+    badge: "Novo",
+  },
+  {
+    icon: PartyPopper,
+    title: "Reserva de Eventos",
+    desc: "Orçamentos para aniversários, corporativos, casamentos e grupos.",
+    span: "",
     badge: "Novo",
   },
   {
