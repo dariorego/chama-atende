@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Users, QrCode, Pencil, Plus, MapPin } from "lucide-react";
+import { Users, QrCode, Pencil, Plus, MapPin, Move } from "lucide-react";
 import { Table as TableType, useUpdateTablePosition } from "@/hooks/useAdminTables";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface TableFloorMapProps {
   tables: TableType[];
@@ -66,6 +67,7 @@ export function TableFloorMap({ tables, onEdit, onShowQR, onCreate }: TableFloor
           <TabsContent key={a} value={a} className="mt-4">
             <FloorCanvas
               area={a}
+              allAreas={areas}
               tables={tables.filter((t) => (t.area || "Salão") === a)}
               onEdit={onEdit}
               onShowQR={onShowQR}
@@ -116,13 +118,14 @@ export function TableFloorMap({ tables, onEdit, onShowQR, onCreate }: TableFloor
 
 interface FloorCanvasProps {
   area: string;
+  allAreas: string[];
   tables: TableType[];
   onEdit: (t: TableType) => void;
   onShowQR: (t: TableType) => void;
   onCreate: () => void;
 }
 
-function FloorCanvas({ area, tables, onEdit, onShowQR, onCreate }: FloorCanvasProps) {
+function FloorCanvas({ area, allAreas, tables, onEdit, onShowQR, onCreate }: FloorCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const updatePos = useUpdateTablePosition();
   const [dragId, setDragId] = useState<string | null>(null);
@@ -235,6 +238,32 @@ function FloorCanvas({ area, tables, onEdit, onShowQR, onCreate }: FloorCanvasPr
                 >
                   <Pencil className="h-3 w-3" />
                 </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      onPointerDown={(e) => e.stopPropagation()}
+                      className="p-1 rounded-full bg-background border shadow hover:bg-accent"
+                      title="Mover para outra área"
+                    >
+                      <Move className="h-3 w-3" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" onPointerDown={(e) => e.stopPropagation()}>
+                    <DropdownMenuLabel>Mover para área</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {allAreas.filter((a) => a !== area).map((a) => (
+                      <DropdownMenuItem
+                        key={a}
+                        onClick={() => updatePos.mutate({ id: t.id, position_x: 50, position_y: 50, area: a })}
+                      >
+                        <MapPin className="h-3.5 w-3.5 mr-2" /> {a}
+                      </DropdownMenuItem>
+                    ))}
+                    {allAreas.filter((a) => a !== area).length === 0 && (
+                      <DropdownMenuItem disabled>Nenhuma outra área</DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           );
