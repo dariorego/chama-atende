@@ -1,67 +1,70 @@
-## Módulo Reserva de Eventos
+## Módulo Agenda de Funcionários
 
-Objetivo: cliente solicita reserva de evento (aniversário, corporativo, grupo, casamento, confraternização) informando data, número de convidados e detalhes; admin responde com orçamento e status.
+Gestão interna (admin) para cadastrar funcionários, montar escala semanal, aprovar folgas/férias e registrar ponto (entrada, saída e intervalos). Não expõe nada ao cliente final.
 
 ### Banco de dados
 
-Nova tabela `event_bookings`:
-- `restaurant_id uuid` (FK, RLS por tenant)
-- `booking_code text` (E-001, E-002…)
-- `event_type text` — `birthday` | `corporate` | `wedding` | `group` | `other`
-- `customer_name text`, `customer_email text`, `customer_phone text`
-- `event_date date`, `event_time time`
-- `guest_count int`
-- `budget_range text` (opcional — faixa que o cliente sugere)
-- `description text` (detalhes do cliente)
-- `status text` — `pending` | `quoted` | `confirmed` | `cancelled` | `completed`
-- `quote_amount numeric` (orçamento enviado pelo admin)
-- `quote_details text` (o que está incluído — cardápio, decoração, bebidas…)
-- `admin_response text`
-- `quoted_at`, `confirmed_at`, `cancelled_at`
+**`employees`** (colaboradores do tenant)
+- `restaurant_id`, `user_id` (nullable — vincula a `auth.users` se o funcionário também logar), `full_name`, `email`, `phone`, `role` (garçom, cozinha, caixa, gerente, outro — texto livre), `hourly_rate numeric`, `weekly_hours int` (carga contratual), `hire_date date`, `is_active bool default true`, `notes text`.
 
-RLS:
-- Público (anon): INSERT (submeter pedido) restrito por `restaurant_id` válido.
-- Autenticado com `has_tenant_admin(restaurant_id)`: gestão total.
-- Sem SELECT público (cliente acompanha por link único com `booking_code`, escopo futuro).
+**`employee_shifts`** (escala planejada)
+- `restaurant_id`, `employee_id`, `shift_date date`, `start_time time`, `end_time time`, `role text` (posição naquele turno), `status` (`scheduled` | `confirmed` | `absent` | `completed`), `notes`.
+- Índice único (`employee_id`, `shift_date`, `start_time`) para evitar duplicatas.
 
-Registrar em `restaurant_modules` como `event_bookings` (e no `create-tenant`).
+**`employee_time_off`** (folgas / férias / atestados)
+- `restaurant_id`, `employee_id`, `type` (`vacation` | `day_off` | `sick_leave` | `unpaid` | `other`), `start_date date`, `end_date date`, `reason text`, `status` (`pending` | `approved` | `rejected`), `reviewed_by uuid`, `reviewed_at`.
+
+**`time_clock_entries`** (ponto)
+- `restaurant_id`, `employee_id`, `shift_id uuid nullable` (vincula ao turno planejado), `clock_in timestamptz`, `clock_out timestamptz nullable`, `break_minutes int default 0`, `source` (`manual` | `pin` | `self`), `notes`.
+- Função `total_minutes` derivada em query.
+
+RLS (todas as tabelas): apenas `has_tenant_admin(restaurant_id)` gerencia; sem acesso público/anon. GRANTs para `authenticated` e `service_role`.
+
+Registrar módulo `staff_schedule` em `restaurant_modules` (e no `create-tenant`).
 
 ### Hooks
 
-- `useAdminEventBookings.ts`: listagem por status com realtime, mutations para responder orçamento (`quoteEventBooking`), confirmar, cancelar, marcar concluído.
-- `useSubmitEventBooking.ts`: formulário público (insert direto, pois é INSERT-only anon).
+- `useAdminEmployees.ts` — CRUD + toggle ativo.
+- `useAdminShifts.ts` — listar por semana (`from`/`to`), criar, editar, duplicar semana anterior, marcar falta/concluído. Realtime.
+- `useAdminTimeOff.ts` — listar por status, aprovar, rejeitar, cancelar.
+- `useAdminTimeClock.ts` — bater ponto (entrada/saída), listar do dia, corrigir manualmente, calcular horas trabalhadas x planejadas.
 
 ### Admin UI
 
-Nova página `src/pages/admin/AdminEventBookings.tsx`:
-- Cards agrupados por status (Pendentes, Orçados, Confirmados, Concluídos).
-- Card com dados do evento + botão "Enviar orçamento" (modal com valor, detalhes, resposta).
-- Ações: confirmar, cancelar, marcar concluído.
-- Ícone `PartyPopper` na sidebar quando módulo `event_bookings` ativo.
+Sidebar: ícone `CalendarClock`, rota `/admin/:slug/agenda`, visível quando módulo `staff_schedule` ativo.
 
-Adicionar `event_bookings` em `useAdminModules` (MODULE_INFO) e em `src/types/restaurant.ts` (ModulesMap + MODULE_NAME_MAP).
+Página `AdminStaffSchedule.tsx` com 4 abas:
 
-### UI Cliente
+1. **Funcionários** — tabela com nome, função, contato, carga semanal, ativo/inativo, ações (editar, desativar). Dialog `EmployeeFormDialog`.
+2. **Escala** — grade semanal (dias × funcionários) tipo calendário. Célula exibe turnos do dia com horário e status colorido. Botões: "Semana anterior", "Semana atual", "Próxima", "Duplicar semana anterior", "Novo turno". Dialog `ShiftFormDialog` (funcionário, data, hora início/fim, função, observações). Drag opcional fora do escopo.
+3. **Folgas & Férias** — cards agrupados por status (Pendentes, Aprovadas, Rejeitadas). Ações rápidas de aprovar/rejeitar. Dialog `TimeOffFormDialog` para lançar manualmente.
+4. **Ponto** — visão do dia: lista de funcionários com botão "Bater entrada" / "Bater saída" (registro manual pelo admin), tempo decorrido em tempo real, correção manual (dialog `TimeClockAdjustDialog`). Resumo semanal por funcionário: horas planejadas vs realizadas.
 
-Nova página `src/pages/EventBookingPage.tsx` (rota `/:slug/eventos`):
-- Hero com nome do estabelecimento.
-- Formulário: tipo de evento (chips), data, horário, número de convidados, contato, descrição.
-- Toast de confirmação e código gerado (E-001).
-
-Adicionar link "Reservar Evento" no `HubPage` quando o módulo estiver ativo.
+Todos usam design tokens (`bg-surface`, `text-foreground`, `text-muted-foreground`), sem cores hardcoded.
 
 ### Landing Page
 
-Adicionar card "Reserva de Eventos" na seção de módulos da `LandingPage`.
+Card "Agenda de Funcionários" na grid de módulos com ícone `CalendarClock` e badge "Novo".
 
-### Fora do escopo
+### Registrar módulo
 
-- Acompanhamento público por link com `booking_code` (próxima entrega).
-- Pagamento de sinal do evento.
-- Contratos em PDF.
+- `MODULE_INFO.staff_schedule` em `useAdminModules.ts`.
+- `ModulesMap.staffSchedule` + `MODULE_NAME_MAP` em `src/types/restaurant.ts`.
+- `DEFAULT_MODULES` em `useRestaurantModules.ts`.
+- `defaultModules` array em `create-tenant` edge function.
+- Item de menu em `AdminLayout.tsx`.
+
+### Fora do escopo (próximas entregas)
+
+- App/portal do funcionário para bater ponto sozinho (por enquanto só admin registra).
+- Geolocalização / biometria no ponto.
+- Exportação de folha de pagamento em PDF/CSV.
+- Notificações automáticas de escala publicada.
+- Regras de horas extras / adicional noturno automatizadas.
 
 ### Detalhes técnicos
 
-- Design tokens semânticos (`bg-surface`, `text-foreground`), sem cores hardcoded.
-- Realtime com canal único por instância (padrão dos demais hooks).
-- Tabela com GRANT para `authenticated` e `service_role`; `INSERT` para `anon` conforme política pública.
+- Realtime com canal único por instância (padrão do projeto).
+- Cálculo de horas em `date-fns`.
+- Grid semanal com CSS grid responsivo (scroll horizontal no mobile).
+- Sem `.select().single()` em inserts (RLS pode bloquear SELECT).
