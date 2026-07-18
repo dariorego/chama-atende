@@ -44,6 +44,8 @@ import AdminMetrics from "./pages/admin/AdminMetrics";
 import AdminPreOrders from "./pages/admin/AdminPreOrders";
 import AdminVitrine from "./pages/admin/AdminVitrine";
 import AdminComandas from "./pages/admin/AdminComandas";
+import AdminEventBookings from "./pages/admin/AdminEventBookings";
+import EventBookingPage from "./pages/EventBookingPage";
 import VitrineDisplayPage from "./pages/VitrineDisplayPage";
 import PreOrderMenuPage from "./pages/PreOrderMenuPage";
 import PreOrderCartPage from "./pages/PreOrderCartPage";
@@ -87,6 +89,7 @@ function ClientTenantPages() {
           <Route path="encomendas/checkout" element={<PreOrderCheckoutPage />} />
           <Route path="encomendas/status/:orderId" element={<PreOrderStatusPage />} />
           <Route path="vitrine" element={<VitrineDisplayPage />} />
+          <Route path="eventos" element={<EventBookingPage />} />
           <Route path="admin" element={<AdminRedirect />} />
           <Route path="login" element={<LoginRedirect />} />
         </Routes>
@@ -298,6 +301,16 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin>
                 <AdminLayout>
                   <AdminComandas />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="eventos"
+            element={
+              <AuthGuard requireAdmin>
+                <AdminLayout>
+                  <AdminEventBookings />
                 </AdminLayout>
               </AuthGuard>
             }
