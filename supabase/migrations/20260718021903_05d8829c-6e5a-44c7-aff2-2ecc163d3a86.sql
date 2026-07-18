@@ -1,0 +1,1 @@
+UPDATE public.tables SET restaurant_id = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' WHERE restaurant_id IS NULL;
