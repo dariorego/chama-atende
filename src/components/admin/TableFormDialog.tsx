@@ -30,6 +30,14 @@ export function TableFormDialog({ open, onOpenChange, table, defaultArea }: Tabl
   const existingAreas = Array.from(
     new Set((allTables ?? []).map((t) => t.area).filter(Boolean))
   );
+  const areaOptions = Array.from(new Set([...(existingAreas as string[]), "Salão"]));
+  const isNewArea = area && !areaOptions.includes(area);
+  const [creatingNewArea, setCreatingNewArea] = useState(false);
+  const [newAreaName, setNewAreaName] = useState("");
+
+  useEffect(() => {
+    if (isNewArea) setCreatingNewArea(true);
+  }, [open]);
 
   useEffect(() => {
     if (table) {
@@ -118,18 +126,52 @@ export function TableFormDialog({ open, onOpenChange, table, defaultArea }: Tabl
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="area">Área / Salão</Label>
-              <Input
-                id="area"
-                list="area-options"
-                value={area}
-                onChange={(e) => setArea(e.target.value)}
-                placeholder="Ex: Salão, Varanda, Deck"
-              />
-              <datalist id="area-options">
-                {existingAreas.map((a) => (
-                  <option key={a} value={a} />
-                ))}
-              </datalist>
+              {creatingNewArea ? (
+                <div className="flex gap-2">
+                  <Input
+                    id="area"
+                    autoFocus
+                    value={newAreaName}
+                    onChange={(e) => {
+                      setNewAreaName(e.target.value);
+                      setArea(e.target.value);
+                    }}
+                    placeholder="Nome da nova área"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setCreatingNewArea(false);
+                      setNewAreaName("");
+                      setArea(areaOptions[0] || "Salão");
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              ) : (
+                <Select
+                  value={area}
+                  onValueChange={(v) => {
+                    if (v === "__new__") {
+                      setCreatingNewArea(true);
+                      setNewAreaName("");
+                      setArea("");
+                    } else {
+                      setArea(v);
+                    }
+                  }}
+                >
+                  <SelectTrigger id="area"><SelectValue placeholder="Selecione a área" /></SelectTrigger>
+                  <SelectContent>
+                    {areaOptions.map((a) => (
+                      <SelectItem key={a} value={a}>{a}</SelectItem>
+                    ))}
+                    <SelectItem value="__new__">+ Nova área…</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="shape">Formato</Label>
