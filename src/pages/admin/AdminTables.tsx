@@ -68,7 +68,7 @@ const AdminTables = () => {
             <LayoutGrid className="h-4 w-4 mr-2" />
             Criar em Sequência
           </Button>
-          <Button onClick={handleCreate}>
+          <Button onClick={() => handleCreate()}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Mesa
           </Button>
