@@ -22,6 +22,7 @@ import {
   Globe,
   Smartphone,
   ChevronDown,
+  CalendarClock,
 } from "lucide-react";
 
 const modules = [
@@ -79,6 +80,13 @@ const modules = [
     title: "Vitrine Digital",
     desc: "Exiba seus produtos em uma TV com 3 modelos: Cinema, Split e Mosaico.",
     span: "md:col-span-2",
+    badge: "Novo",
+  },
+  {
+    icon: CalendarClock,
+    title: "Agenda de Funcionários",
+    desc: "Escala semanal, folgas, férias e controle de ponto da equipe.",
+    span: "",
     badge: "Novo",
   },
 ];
