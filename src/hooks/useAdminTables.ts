@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 export interface Table {
   id: string;
@@ -9,14 +10,41 @@ export interface Table {
   capacity: number;
   status: 'available' | 'occupied' | 'reserved' | 'inactive';
   is_active: boolean;
+  area: string;
+  position_x: number;
+  position_y: number;
+  shape: 'square' | 'round' | 'rect';
   created_at: string;
   updated_at: string;
 }
 
-export type TableInsert = Omit<Table, 'id' | 'created_at' | 'updated_at'>;
+export type TableInsert = Omit<Table, 'id' | 'created_at' | 'updated_at' | 'area' | 'position_x' | 'position_y' | 'shape'> & {
+  area?: string;
+  position_x?: number;
+  position_y?: number;
+  shape?: 'square' | 'round' | 'rect';
+};
 export type TableUpdate = Partial<TableInsert>;
 
 export function useAdminTables() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`admin-tables-${Date.now()}-${Math.random().toString(36).slice(2)}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'tables' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["admin-tables"],
     queryFn: async () => {
@@ -27,6 +55,33 @@ export function useAdminTables() {
 
       if (error) throw error;
       return data as Table[];
+    },
+  });
+}
+
+export function useUpdateTablePosition() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, position_x, position_y, area }: { id: string; position_x: number; position_y: number; area?: string }) => {
+      const payload = area
+        ? { position_x, position_y, area }
+        : { position_x, position_y };
+      const { error } = await supabase.from("tables").update(payload).eq("id", id);
+      if (error) throw error;
+    },
+    onMutate: async ({ id, position_x, position_y, area }) => {
+      await queryClient.cancelQueries({ queryKey: ["admin-tables"] });
+      const previous = queryClient.getQueryData<Table[]>(["admin-tables"]);
+      queryClient.setQueryData<Table[]>(["admin-tables"], (old) =>
+        old?.map((t) => (t.id === id ? { ...t, position_x, position_y, ...(area ? { area } : {}) } : t))
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(["admin-tables"], ctx.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
     },
   });
 }

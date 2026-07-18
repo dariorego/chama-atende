@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCreateTable, useUpdateTable, Table } from "@/hooks/useAdminTables";
+import { useAdminTables } from "@/hooks/useAdminTables";
 
 interface TableFormDialogProps {
   open: boolean;
@@ -19,9 +20,15 @@ export function TableFormDialog({ open, onOpenChange, table }: TableFormDialogPr
   const [capacity, setCapacity] = useState(4);
   const [status, setStatus] = useState<Table['status']>('available');
   const [isActive, setIsActive] = useState(true);
+  const [area, setArea] = useState("Salão");
+  const [shape, setShape] = useState<Table['shape']>('square');
 
   const createTable = useCreateTable();
   const updateTable = useUpdateTable();
+  const { data: allTables } = useAdminTables();
+  const existingAreas = Array.from(
+    new Set((allTables ?? []).map((t) => t.area).filter(Boolean))
+  );
 
   useEffect(() => {
     if (table) {
@@ -30,12 +37,16 @@ export function TableFormDialog({ open, onOpenChange, table }: TableFormDialogPr
       setCapacity(table.capacity);
       setStatus(table.status);
       setIsActive(table.is_active);
+      setArea(table.area || "Salão");
+      setShape(table.shape || 'square');
     } else {
       setNumber(1);
       setName("");
       setCapacity(4);
       setStatus('available');
       setIsActive(true);
+      setArea("Salão");
+      setShape('square');
     }
   }, [table, open]);
 
@@ -48,6 +59,8 @@ export function TableFormDialog({ open, onOpenChange, table }: TableFormDialogPr
       capacity,
       status,
       is_active: isActive,
+      area: area || "Salão",
+      shape,
     };
 
     if (table) {
@@ -99,6 +112,35 @@ export function TableFormDialog({ open, onOpenChange, table }: TableFormDialogPr
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex: Varanda, VIP, etc."
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="area">Área / Salão</Label>
+              <Input
+                id="area"
+                list="area-options"
+                value={area}
+                onChange={(e) => setArea(e.target.value)}
+                placeholder="Ex: Salão, Varanda, Deck"
+              />
+              <datalist id="area-options">
+                {existingAreas.map((a) => (
+                  <option key={a} value={a} />
+                ))}
+              </datalist>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="shape">Formato</Label>
+              <Select value={shape} onValueChange={(v) => setShape(v as Table['shape'])}>
+                <SelectTrigger id="shape"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="square">Quadrada</SelectItem>
+                  <SelectItem value="round">Redonda</SelectItem>
+                  <SelectItem value="rect">Retangular</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">

@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Users, QrCode, LayoutGrid } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, QrCode, LayoutGrid, Map, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useAdminTables, useDeleteTable, Table as TableType } from "@/hooks/useAdminTables";
 import { TableFormDialog } from "@/components/admin/TableFormDialog";
 import { QRCodeDialog } from "@/components/admin/QRCodeDialog";
 import { BatchTableFormDialog } from "@/components/admin/BatchTableFormDialog";
+import { TableFloorMap } from "@/components/admin/TableFloorMap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTenantSettings } from "@/hooks/useAdminSettings";
 
@@ -111,66 +113,42 @@ const AdminTables = () => {
       </div>
 
       {/* Tables Grid */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Mapa de Mesas</CardTitle>
-          <CardDescription>Visualização rápida do status das mesas</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="grid grid-cols-6 gap-3">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
-              {tables?.map((table) => {
-                const status = statusConfig[table.status];
-                return (
-                  <button
-                    key={table.id}
-                    onClick={() => handleEdit(table)}
-                    className={`relative p-3 rounded-lg border-2 transition-all hover:scale-105 ${
-                      table.status === 'available' ? 'border-green-500 bg-green-500/10' :
-                      table.status === 'occupied' ? 'border-amber-500 bg-amber-500/10' :
-                      table.status === 'reserved' ? 'border-blue-500 bg-blue-500/10' :
-                      'border-gray-300 bg-gray-100 opacity-50'
-                    }`}
-                  >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleShowQR(table);
-                      }}
-                      className="absolute top-1 right-1 p-1 rounded hover:bg-black/10 transition-colors"
-                      title="Ver QR Code"
-                    >
-                      <QrCode className="h-3 w-3 text-muted-foreground" />
-                    </button>
-                    <div className="text-lg font-bold">{table.number.toString().padStart(2, '0')}</div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      {table.capacity}
-                    </div>
-                    {table.name && (
-                      <div className="text-xs truncate mt-1">{table.name}</div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="map" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="map"><Map className="h-4 w-4 mr-2" /> Mapa do Salão</TabsTrigger>
+          <TabsTrigger value="list"><List className="h-4 w-4 mr-2" /> Lista</TabsTrigger>
+        </TabsList>
 
-      {/* Tables List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Mesas</CardTitle>
-          <CardDescription>Gerencie todas as mesas cadastradas</CardDescription>
-        </CardHeader>
-        <CardContent>
+        <TabsContent value="map">
+          <Card>
+            <CardHeader>
+              <CardTitle>Mapa do Salão</CardTitle>
+              <CardDescription>
+                Organize as mesas por área e arraste para reposicionar. Duplo clique edita a mesa.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <Skeleton className="h-[560px] w-full" />
+              ) : (
+                <TableFloorMap
+                  tables={tables || []}
+                  onEdit={handleEdit}
+                  onShowQR={handleShowQR}
+                  onCreate={handleCreate}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="list">
+          <Card>
+            <CardHeader>
+              <CardTitle>Lista de Mesas</CardTitle>
+              <CardDescription>Gerencie todas as mesas cadastradas</CardDescription>
+            </CardHeader>
+            <CardContent>
           {isLoading ? (
             <div className="space-y-2">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -183,6 +161,7 @@ const AdminTables = () => {
                 <TableRow>
                   <TableHead>Número</TableHead>
                   <TableHead>Nome</TableHead>
+                  <TableHead>Área</TableHead>
                   <TableHead>Capacidade</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Ativa</TableHead>
@@ -198,6 +177,7 @@ const AdminTables = () => {
                         Mesa {table.number.toString().padStart(2, '0')}
                       </TableCell>
                       <TableCell>{table.name || "-"}</TableCell>
+                      <TableCell>{table.area || "Salão"}</TableCell>
                       <TableCell>
                         <span className="flex items-center gap-1">
                           <Users className="h-4 w-4" />
@@ -252,8 +232,10 @@ const AdminTables = () => {
               </TableBody>
             </Table>
           )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       <TableFormDialog
         open={dialogOpen}
