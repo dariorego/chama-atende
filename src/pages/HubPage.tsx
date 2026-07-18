@@ -23,6 +23,7 @@ import {
   Settings,
   X,
   ShoppingBag,
+  PartyPopper,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -353,6 +354,16 @@ const HubPage = () => {
               description="Peça com antecedência e retire no horário combinado"
               to={buildRoute('/encomendas')}
               variant="primary"
+            />
+          )}
+
+          {modules?.eventBookings && (
+            <ActionCard
+              icon={PartyPopper}
+              title="Reserva de Eventos"
+              description="Solicite um orçamento para aniversários, corporativos e grupos"
+              to={buildRoute('/eventos')}
+              variant="rose"
             />
           )}
         </div>

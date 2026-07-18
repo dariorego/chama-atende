@@ -55,6 +55,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Várias comandas por mesa (ex.: 10.01, 10.02) com fechamento individual",
     icon: "Receipt",
   },
+  event_bookings: {
+    label: "Reserva de Eventos",
+    description: "Orçamento para aniversários, corporativos, casamentos e grupos",
+    icon: "PartyPopper",
+  },
 };
 
 export function useAdminModules() {

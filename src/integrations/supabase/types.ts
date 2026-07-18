@@ -165,6 +165,86 @@ export type Database = {
           },
         ]
       }
+      event_bookings: {
+        Row: {
+          admin_response: string | null
+          booking_code: string
+          budget_range: string | null
+          cancelled_at: string | null
+          confirmed_at: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          description: string | null
+          event_date: string
+          event_time: string | null
+          event_type: string
+          guest_count: number
+          id: string
+          quote_amount: number | null
+          quote_details: string | null
+          quoted_at: string | null
+          restaurant_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_response?: string | null
+          booking_code: string
+          budget_range?: string | null
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          description?: string | null
+          event_date: string
+          event_time?: string | null
+          event_type: string
+          guest_count: number
+          id?: string
+          quote_amount?: number | null
+          quote_details?: string | null
+          quoted_at?: string | null
+          restaurant_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_response?: string | null
+          booking_code?: string
+          budget_range?: string | null
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          description?: string | null
+          event_date?: string
+          event_time?: string | null
+          event_type?: string
+          guest_count?: number
+          id?: string
+          quote_amount?: number | null
+          quote_details?: string | null
+          quoted_at?: string | null
+          restaurant_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_bookings_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       keep_alive: {
         Row: {
           created_at: string
