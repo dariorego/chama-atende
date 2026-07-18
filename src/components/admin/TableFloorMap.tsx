@@ -11,7 +11,7 @@ interface TableFloorMapProps {
   tables: TableType[];
   onEdit: (t: TableType) => void;
   onShowQR: (t: TableType) => void;
-  onCreate: () => void;
+  onCreate: (defaultArea?: string) => void;
 }
 
 const statusStyles: Record<TableType['status'], string> = {
@@ -28,12 +28,14 @@ const shapeStyles: Record<NonNullable<TableType['shape']>, string> = {
 };
 
 export function TableFloorMap({ tables, onEdit, onShowQR, onCreate }: TableFloorMapProps) {
+  const [extraAreas, setExtraAreas] = useState<string[]>([]);
   const areas = useMemo(() => {
     const set = new Set<string>();
     tables.forEach((t) => set.add(t.area || "Salão"));
+    extraAreas.forEach((a) => set.add(a));
     if (set.size === 0) set.add("Salão");
     return Array.from(set);
-  }, [tables]);
+  }, [tables, extraAreas]);
 
   const [active, setActive] = useState(areas[0] || "Salão");
   const [addAreaOpen, setAddAreaOpen] = useState(false);
@@ -67,7 +69,7 @@ export function TableFloorMap({ tables, onEdit, onShowQR, onCreate }: TableFloor
               tables={tables.filter((t) => (t.area || "Salão") === a)}
               onEdit={onEdit}
               onShowQR={onShowQR}
-              onCreate={onCreate}
+              onCreate={() => onCreate(a)}
             />
           </TabsContent>
         ))}
@@ -94,8 +96,10 @@ export function TableFloorMap({ tables, onEdit, onShowQR, onCreate }: TableFloor
             <Button variant="outline" onClick={() => setAddAreaOpen(false)}>Cancelar</Button>
             <Button
               onClick={() => {
-                if (newArea.trim()) {
-                  setActive(newArea.trim());
+                const name = newArea.trim();
+                if (name) {
+                  setExtraAreas((prev) => (prev.includes(name) ? prev : [...prev, name]));
+                  setActive(name);
                   setAddAreaOpen(false);
                   setNewArea("");
                 }
