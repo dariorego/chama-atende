@@ -12,9 +12,10 @@ interface TableFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   table?: Table | null;
+  defaultArea?: string;
 }
 
-export function TableFormDialog({ open, onOpenChange, table }: TableFormDialogProps) {
+export function TableFormDialog({ open, onOpenChange, table, defaultArea }: TableFormDialogProps) {
   const [number, setNumber] = useState(1);
   const [name, setName] = useState("");
   const [capacity, setCapacity] = useState(4);
@@ -45,10 +46,10 @@ export function TableFormDialog({ open, onOpenChange, table }: TableFormDialogPr
       setCapacity(4);
       setStatus('available');
       setIsActive(true);
-      setArea("Salão");
+      setArea(defaultArea || "Salão");
       setShape('square');
     }
-  }, [table, open]);
+  }, [table, open, defaultArea]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
