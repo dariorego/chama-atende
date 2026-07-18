@@ -1239,35 +1239,47 @@ export type Database = {
       }
       tables: {
         Row: {
+          area: string
           capacity: number | null
           created_at: string | null
           id: string
           is_active: boolean | null
           name: string | null
           number: number
+          position_x: number
+          position_y: number
           restaurant_id: string | null
+          shape: string
           status: string | null
           updated_at: string | null
         }
         Insert: {
+          area?: string
           capacity?: number | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
           name?: string | null
           number: number
+          position_x?: number
+          position_y?: number
           restaurant_id?: string | null
+          shape?: string
           status?: string | null
           updated_at?: string | null
         }
         Update: {
+          area?: string
           capacity?: number | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
           name?: string | null
           number?: number
+          position_x?: number
+          position_y?: number
           restaurant_id?: string | null
+          shape?: string
           status?: string | null
           updated_at?: string | null
         }
