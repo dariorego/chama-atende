@@ -51,7 +51,6 @@ import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { useAdminModules } from '@/hooks/useAdminModules';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { useTenant } from '@/hooks/useTenant';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -333,7 +332,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 (item.url !== adminBase && location.pathname.startsWith(item.url))
               )?.title ?? 'Dashboard'}
             </h1>
-            <ThemeToggle />
           </header>
           <div className="flex-1 p-6">{children}</div>
         </main>

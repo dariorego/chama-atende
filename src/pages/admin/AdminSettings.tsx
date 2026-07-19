@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe, MapPin, Check, X, Music } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Globe, MapPin, Check, X, Music } from 'lucide-react';
 import { useTenantSettings } from '@/hooks/useAdminSettings';
 import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS, LocationCoordinates } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
@@ -52,10 +52,6 @@ export default function AdminSettings() {
   
   // Notification states
   const [soundEnabled, setSoundEnabled] = useState(true);
-  
-  // Theme settings states
-  const [clientDefaultTheme, setClientDefaultTheme] = useState<'light' | 'dark'>('dark');
-  const [adminDefaultTheme, setAdminDefaultTheme] = useState<'light' | 'dark'>('dark');
   
   // Business hours states
   const [businessHours, setBusinessHours] = useState<BusinessHours>(DEFAULT_BUSINESS_HOURS);
@@ -118,12 +114,6 @@ export default function AdminSettings() {
       // Load notification settings
       if (restaurant.notification_settings) {
         setSoundEnabled(restaurant.notification_settings.sound_enabled ?? true);
-      }
-      
-      // Load theme settings
-      if (restaurant.theme_settings) {
-        setClientDefaultTheme(restaurant.theme_settings.client_default_theme || 'dark');
-        setAdminDefaultTheme(restaurant.theme_settings.admin_default_theme || 'dark');
       }
       
       // Load business hours and timezone
@@ -215,10 +205,6 @@ export default function AdminSettings() {
       },
       notification_settings: {
         sound_enabled: soundEnabled,
-      },
-      theme_settings: {
-        client_default_theme: clientDefaultTheme,
-        admin_default_theme: adminDefaultTheme,
       },
       business_hours: businessHours,
       timezone: timezone,
@@ -796,76 +782,6 @@ export default function AdminSettings() {
                 <Volume2 className="h-4 w-4 mr-2" />
                 Testar Som
               </Button>
-            </CardContent>
-          </Card>
-
-          {/* Tema */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Palette className="h-5 w-5" />
-                Tema
-              </CardTitle>
-              <CardDescription>
-                Configure a aparência padrão do sistema
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Tema padrão do Cliente */}
-              <div className="space-y-3">
-                <Label className="text-base">Tema padrão para Clientes</Label>
-                <RadioGroup
-                  value={clientDefaultTheme}
-                  onValueChange={(value) => setClientDefaultTheme(value as 'light' | 'dark')}
-                  className="flex gap-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="dark" id="client-dark" />
-                    <Label htmlFor="client-dark" className="flex items-center gap-2 cursor-pointer">
-                      <Moon className="h-4 w-4" />
-                      Escuro
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="light" id="client-light" />
-                    <Label htmlFor="client-light" className="flex items-center gap-2 cursor-pointer">
-                      <Sun className="h-4 w-4" />
-                      Claro
-                    </Label>
-                  </div>
-                </RadioGroup>
-                <p className="text-sm text-muted-foreground">
-                  O cliente pode alterar o tema a qualquer momento
-                </p>
-              </div>
-
-              {/* Tema padrão do Admin */}
-              <div className="space-y-3">
-                <Label className="text-base">Tema padrão para Admin</Label>
-                <RadioGroup
-                  value={adminDefaultTheme}
-                  onValueChange={(value) => setAdminDefaultTheme(value as 'light' | 'dark')}
-                  className="flex gap-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="dark" id="admin-dark" />
-                    <Label htmlFor="admin-dark" className="flex items-center gap-2 cursor-pointer">
-                      <Moon className="h-4 w-4" />
-                      Escuro
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="light" id="admin-light" />
-                    <Label htmlFor="admin-light" className="flex items-center gap-2 cursor-pointer">
-                      <Sun className="h-4 w-4" />
-                      Claro
-                    </Label>
-                  </div>
-                </RadioGroup>
-                <p className="text-sm text-muted-foreground">
-                  Cada administrador pode alterar seu tema pessoal
-                </p>
-              </div>
             </CardContent>
           </Card>
 

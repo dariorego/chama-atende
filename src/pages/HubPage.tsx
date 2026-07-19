@@ -25,7 +25,6 @@ import {
   ShoppingBag,
   PartyPopper,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useTenant } from "@/hooks/useTenant";
 import { useRestaurantModules } from "@/hooks/useRestaurantModules";
@@ -147,7 +146,6 @@ const HubPage = () => {
               {tenant.name}
             </span>
             <div className="flex items-center gap-1">
-              <ThemeToggle />
               <Button variant="ghost" size="icon" className="text-emerald-deep hover:bg-emerald-deep/5" onClick={handleShare}>
                 <Share2 className="h-5 w-5" />
               </Button>
