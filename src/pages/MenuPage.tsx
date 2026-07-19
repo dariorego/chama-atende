@@ -277,22 +277,34 @@ const MenuPage = () => {
         </div>
       )}
 
-      {/* Category Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none -mx-4 px-4">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => setActiveCategory(category.id)}
-            className={cn(
-              "px-4 py-2 rounded-full text-xs tracking-widest uppercase font-medium whitespace-nowrap transition-all border",
-              activeCategory === category.id
-                ? "bg-emerald-deep text-cream border-emerald-deep"
-                : "bg-transparent text-emerald-deep/60 border-emerald-deep/15 hover:border-gold hover:text-emerald-deep"
-            )}
-          >
-            {category.name}
-          </button>
-        ))}
+      {/* Category Tabs - swipeable carousel */}
+      <div className="mb-6 -mx-4">
+        <Carousel
+          opts={{
+            align: "start",
+            dragFree: true,
+            containScroll: false,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="px-4">
+            {categories.map((category) => (
+              <CarouselItem key={category.id} className="basis-auto pl-0 pr-2 last:pr-0">
+                <button
+                  onClick={() => setActiveCategory(category.id)}
+                  className={cn(
+                    "px-4 py-2 rounded-full text-xs tracking-widest uppercase font-medium whitespace-nowrap transition-all border",
+                    activeCategory === category.id
+                      ? "bg-emerald-deep text-cream border-emerald-deep"
+                      : "bg-transparent text-emerald-deep/60 border-emerald-deep/15 hover:border-gold hover:text-emerald-deep"
+                  )}
+                >
+                  {category.name}
+                </button>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
 
       {/* Search */}
