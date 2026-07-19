@@ -1669,6 +1669,7 @@ export type Database = {
       waiters: {
         Row: {
           created_at: string | null
+          employee_id: string | null
           id: string
           is_active: boolean | null
           is_available: boolean | null
@@ -1679,6 +1680,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          employee_id?: string | null
           id?: string
           is_active?: boolean | null
           is_available?: boolean | null
@@ -1689,6 +1691,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          employee_id?: string | null
           id?: string
           is_active?: boolean | null
           is_available?: boolean | null
@@ -1698,6 +1701,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "waiters_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "waiters_restaurant_id_fkey"
             columns: ["restaurant_id"]
