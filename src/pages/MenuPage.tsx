@@ -200,13 +200,7 @@ const MenuPage = () => {
             </div>
           </div>
         </div>
-        {tenant?.name && (
-          <div className="mt-6 text-center px-4">
-            <h1 className="editorial-title text-2xl text-emerald-deep">{tenant.name}</h1>
-          </div>
-        )}
       </div>
-
 
       {/* Chef Highlights Carousel */}
       {highlightedProducts.length > 0 && (
