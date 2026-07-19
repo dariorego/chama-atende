@@ -71,7 +71,7 @@ const queryClient = new QueryClient();
 function ClientTenantPages() {
   return (
     <TenantProvider>
-      <ThemeProvider storageKey="client-theme" defaultTheme="dark">
+      <ThemeProvider storageKey="client-theme" defaultTheme="light">
         <TenantThemeApplier />
         <Routes>
           <Route index element={<HubPage />} />
@@ -103,7 +103,7 @@ function ClientTenantPages() {
 function AdminTenantPages() {
   return (
     <TenantProvider>
-      <ThemeProvider storageKey="admin-theme" defaultTheme="dark">
+      <ThemeProvider storageKey="admin-theme" defaultTheme="light">
         <TenantThemeApplier />
         <Routes>
           <Route
@@ -335,7 +335,7 @@ function AdminTenantPages() {
 // Global pages wrapper (tenant selection only)
 function GlobalPages() {
   return (
-    <ThemeProvider storageKey="client-theme" defaultTheme="dark">
+    <ThemeProvider storageKey="client-theme" defaultTheme="light">
       <TenantSelectPage />
     </ThemeProvider>
   );
@@ -343,7 +343,7 @@ function GlobalPages() {
 
 function LandingWrapper() {
   return (
-    <ThemeProvider storageKey="landing-theme" defaultTheme="dark">
+    <ThemeProvider storageKey="landing-theme" defaultTheme="light">
       <LandingPage />
     </ThemeProvider>
   );

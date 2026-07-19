@@ -27,7 +27,7 @@ interface ThemeProviderProps {
 export function ThemeProvider({ 
   children, 
   storageKey = 'theme',
-  defaultTheme = 'dark' 
+  defaultTheme = 'light' 
 }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
