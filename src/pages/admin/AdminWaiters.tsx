@@ -276,6 +276,53 @@ const AdminWaiters = () => {
         onOpenChange={setDialogOpen}
         waiter={editingWaiter}
       />
+
+      <Dialog open={importOpen} onOpenChange={setImportOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Importar da Agenda</DialogTitle>
+            <DialogDescription>
+              Selecione os funcionários que também atuam como atendentes.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-80 overflow-y-auto space-y-2">
+            {unlinkedEmployees.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Todos os funcionários ativos já estão vinculados.
+              </p>
+            ) : (
+              unlinkedEmployees.map((emp) => (
+                <label
+                  key={emp.id}
+                  className="flex items-center gap-3 p-2 rounded-md border cursor-pointer hover:bg-accent"
+                >
+                  <Checkbox
+                    checked={importSelected.has(emp.id)}
+                    onCheckedChange={() => toggleImportSelect(emp.id)}
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium text-sm">{emp.full_name}</div>
+                    {emp.role && (
+                      <div className="text-xs text-muted-foreground">{emp.role}</div>
+                    )}
+                  </div>
+                </label>
+              ))
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setImportOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleImport}
+              disabled={importSelected.size === 0 || createWaiter.isPending}
+            >
+              Importar {importSelected.size > 0 ? `(${importSelected.size})` : ""}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
