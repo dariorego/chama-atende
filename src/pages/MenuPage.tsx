@@ -207,17 +207,6 @@ const MenuPage = () => {
         )}
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-deep/40" />
-        <Input
-          type="search"
-          placeholder="Buscar no cardápio..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 bg-cream-soft border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus-visible:ring-emerald-deep/30"
-        />
-      </div>
 
       {/* Chef Highlights Carousel */}
       {highlightedProducts.length > 0 && (
@@ -310,6 +299,18 @@ const MenuPage = () => {
             {category.name}
           </button>
         ))}
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-deep/40" />
+        <Input
+          type="search"
+          placeholder="Buscar no cardápio..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10 bg-cream-soft border-emerald-deep/15 text-emerald-deep placeholder:text-emerald-deep/40 focus-visible:ring-emerald-deep/30"
+        />
       </div>
 
       {/* Regular Products */}
