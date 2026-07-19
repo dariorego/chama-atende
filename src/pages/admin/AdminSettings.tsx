@@ -110,6 +110,7 @@ export default function AdminSettings() {
         setPrimaryColor(restaurant.theme_colors.primary || DEFAULT_COLORS.primary!);
         setSecondaryColor(restaurant.theme_colors.secondary || DEFAULT_COLORS.secondary!);
         setBackgroundColor(restaurant.theme_colors.background || DEFAULT_COLORS.background!);
+        setForegroundColor((restaurant.theme_colors as any).foreground || DEFAULT_COLORS.foreground!);
       }
       
       // Load notification settings
@@ -150,6 +151,7 @@ export default function AdminSettings() {
     setPrimaryColor(DEFAULT_COLORS.primary!);
     setSecondaryColor(DEFAULT_COLORS.secondary!);
     setBackgroundColor(DEFAULT_COLORS.background!);
+    setForegroundColor(DEFAULT_COLORS.foreground!);
   };
   
   // Handle Google Maps URL change
@@ -203,6 +205,7 @@ export default function AdminSettings() {
         accent: primaryColor,
         secondary: secondaryColor,
         background: backgroundColor,
+        foreground: foregroundColor,
       },
       notification_settings: {
         sound_enabled: soundEnabled,
@@ -858,6 +861,26 @@ export default function AdminSettings() {
                 />
               </div>
 
+              {/* Cor da Fonte */}
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-12 h-12 rounded-lg border border-border shrink-0"
+                  style={{ backgroundColor: `hsl(${foregroundColor})` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <Label>Cor da Fonte</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Texto principal em títulos e conteúdos
+                  </p>
+                </div>
+                <Input
+                  type="color"
+                  value={hslToHex(foregroundColor)}
+                  onChange={(e) => setForegroundColor(hexToHsl(e.target.value))}
+                  className="w-16 h-10 p-1 cursor-pointer"
+                />
+              </div>
+
               {/* Botão para resetar cores padrão */}
               <Button type="button" variant="outline" onClick={resetToDefaultColors}>
                 <RotateCcw className="h-4 w-4 mr-2" />
@@ -869,7 +892,9 @@ export default function AdminSettings() {
                 className="p-4 rounded-lg border border-border"
                 style={{ backgroundColor: `hsl(${backgroundColor})` }}
               >
-                <p className="text-sm mb-3" style={{ color: `hsl(${primaryColor})` }}>Preview:</p>
+                <p className="text-sm mb-3" style={{ color: `hsl(${foregroundColor})` }}>
+                  Preview: texto principal usando a cor da fonte
+                </p>
                 <div className="flex flex-wrap gap-2">
                   <Button
                     type="button"
