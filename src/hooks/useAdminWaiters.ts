@@ -14,7 +14,7 @@ export interface Waiter {
   updated_at: string;
 }
 
-export type WaiterInsert = Omit<Waiter, 'id' | 'created_at' | 'updated_at'>;
+export type WaiterInsert = Omit<Waiter, 'id' | 'created_at' | 'updated_at' | 'employee'>;
 export type WaiterUpdate = Partial<WaiterInsert>;
 
 export function useAdminWaiters() {
