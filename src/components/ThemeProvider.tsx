@@ -24,34 +24,21 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-export function ThemeProvider({ 
-  children, 
-  storageKey = 'theme',
-  defaultTheme = 'light' 
-}: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(storageKey) as Theme;
-      return stored || defaultTheme;
-    }
-    return defaultTheme;
-  });
-
-  // Apply theme class to document
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  // Dark mode removed — theme is permanently light across the app.
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    localStorage.setItem(storageKey, theme);
-  }, [theme, storageKey]);
+    root.classList.remove('dark');
+    root.classList.add('light');
+  }, []);
 
-  const toggleTheme = () => {
-    setThemeState(prev => prev === 'dark' ? 'light' : 'dark');
+  const value: ThemeContextType = {
+    theme: 'light',
+    setTheme: () => {},
+    toggleTheme: () => {},
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme: setThemeState, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
