@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.sync_waiter_active_from_employee() FROM PUBLIC, anon, authenticated;
