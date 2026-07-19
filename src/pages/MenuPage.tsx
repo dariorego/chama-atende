@@ -174,8 +174,9 @@ const MenuPage = () => {
   return (
     <ClientLayout showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
       {/* Hero: cover image + circular logo */}
-      <div className="-mx-4 mb-36">
-        <div className="relative w-full aspect-[16/6] bg-gradient-to-br from-emerald-deep/20 to-emerald-deep/5 overflow-hidden">
+      <div className="-mx-4 mb-32">
+        <div className="relative w-full aspect-[16/6] bg-gradient-to-br from-emerald-deep/20 to-emerald-deep/5 overflow-visible">
+          <div className="absolute inset-0 overflow-hidden">
           {tenant?.cover_image_url ? (
             <img
               src={tenant.cover_image_url}
@@ -183,14 +184,15 @@ const MenuPage = () => {
               className="w-full h-full object-cover"
             />
           ) : null}
+          </div>
           {/* Logo overlay */}
-          <div className="absolute left-1/2 -bottom-8 -translate-x-1/2 z-10">
-            <div className="w-24 h-24 rounded-full border-4 border-cream bg-cream shadow-lg overflow-hidden flex items-center justify-center">
+          <div className="absolute left-1/2 -bottom-12 -translate-x-1/2 z-20">
+            <div className="w-28 h-28 rounded-full border-4 border-cream bg-cream shadow-lg overflow-hidden flex items-center justify-center p-1">
               {tenant?.logo_url ? (
                 <img
                   src={tenant.logo_url}
                   alt={`Logo ${tenant?.name ?? ""}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain rounded-full"
                 />
               ) : (
                 <ChefHat className="h-10 w-10 text-emerald-deep" />
@@ -199,7 +201,7 @@ const MenuPage = () => {
           </div>
         </div>
         {tenant?.name && (
-          <div className="mt-16 text-center px-4">
+          <div className="mt-20 text-center px-4">
             <h1 className="editorial-title text-2xl text-emerald-deep">{tenant.name}</h1>
           </div>
         )}
