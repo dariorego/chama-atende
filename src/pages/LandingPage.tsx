@@ -25,6 +25,7 @@ import {
   CalendarClock,
 } from "lucide-react";
 import { Receipt, LayoutGrid, PartyPopper } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const modules = [
   {
@@ -220,6 +221,7 @@ export default function LandingPage() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <Link to="/login">
               <Button variant="ghost" size="sm">Entrar</Button>
             </Link>
@@ -250,6 +252,7 @@ export default function LandingPage() {
                 <Link to="/login" className="flex-1"><Button variant="outline" className="w-full">Entrar</Button></Link>
                 <Link to="/onboarding" className="flex-1"><Button className="w-full">Começar</Button></Link>
               </div>
+            <div className="pt-2 flex justify-center"><ThemeToggle /></div>
             </div>
           </div>
         )}
