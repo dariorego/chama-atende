@@ -1,9 +1,27 @@
 import { useEffect } from 'react';
 import { useTenant } from '@/contexts/TenantContext';
 
+function parseHsl(v?: string): { h: number; s: number; l: number } | null {
+  if (!v) return null;
+  const m = v.trim().match(/^(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)%\s+(-?\d+(?:\.\d+)?)%$/);
+  if (!m) return null;
+  return { h: parseFloat(m[1]), s: parseFloat(m[2]), l: parseFloat(m[3]) };
+}
+
+const fmt = (h: number, s: number, l: number) =>
+  `${Math.round(h)} ${Math.round(s)}% ${Math.round(l)}%`;
+
+/** Auto-pick a readable foreground (near-white or near-black) for a given HSL bg. */
+function contrastOn(hsl?: string): string | undefined {
+  const c = parseHsl(hsl);
+  if (!c) return undefined;
+  return c.l >= 60 ? '220 25% 12%' : '0 0% 100%';
+}
+
 /**
- * Applies tenant-specific brand colors (primary, secondary, background)
- * as CSS variables on the document root. Must be mounted inside TenantProvider.
+ * Applies tenant-specific brand colors as CSS variables on the document root
+ * so every module (client + admin: sidebar, buttons, links, cards, rings)
+ * reflects the same identity. Must be mounted inside TenantProvider.
  */
 export function TenantThemeApplier() {
   const { tenant } = useTenant();
@@ -17,25 +35,50 @@ export function TenantThemeApplier() {
       else root.style.removeProperty(key);
     };
 
-    // Primary drives buttons, links, accents, rings
-    apply('--primary', colors.primary);
-    apply('--accent', colors.primary);
-    apply('--ring', colors.primary);
+    const primary = colors.primary;
+    const secondary = colors.secondary;
+    const background = colors.background;
+
+    // Primary — buttons, links, accents, focus rings
+    apply('--primary', primary);
+    apply('--primary-foreground', contrastOn(primary));
+    apply('--accent', primary);
+    apply('--accent-foreground', contrastOn(primary));
+    apply('--ring', primary);
 
     // Secondary — supporting brand surface
-    apply('--secondary', colors.secondary);
+    apply('--secondary', secondary);
+    apply('--secondary-foreground', contrastOn(secondary));
 
     // Background — main app surface + card fallback
-    apply('--background', colors.background);
-    apply('--card', colors.background);
+    apply('--background', background);
+    apply('--card', background);
+    apply('--card-foreground', contrastOn(background));
+    apply('--popover', background);
+    apply('--popover-foreground', contrastOn(background));
+    apply('--foreground', contrastOn(background));
+
+    // Sidebar tokens (admin layout) — mirror the tenant identity
+    apply('--sidebar-background', background);
+    apply('--sidebar-foreground', contrastOn(background));
+    apply('--sidebar-primary', primary);
+    apply('--sidebar-primary-foreground', contrastOn(primary));
+    apply('--sidebar-accent', secondary);
+    apply('--sidebar-accent-foreground', contrastOn(secondary));
+    apply('--sidebar-ring', primary);
 
     return () => {
-      root.style.removeProperty('--primary');
-      root.style.removeProperty('--accent');
-      root.style.removeProperty('--ring');
-      root.style.removeProperty('--secondary');
-      root.style.removeProperty('--background');
-      root.style.removeProperty('--card');
+      [
+        '--primary', '--primary-foreground',
+        '--accent', '--accent-foreground', '--ring',
+        '--secondary', '--secondary-foreground',
+        '--background', '--card', '--card-foreground',
+        '--popover', '--popover-foreground', '--foreground',
+        '--sidebar-background', '--sidebar-foreground',
+        '--sidebar-primary', '--sidebar-primary-foreground',
+        '--sidebar-accent', '--sidebar-accent-foreground',
+        '--sidebar-ring',
+      ].forEach((k) => root.style.removeProperty(k));
     };
   }, [tenant?.theme_colors]);
 
