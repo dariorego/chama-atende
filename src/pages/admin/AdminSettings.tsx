@@ -49,6 +49,7 @@ export default function AdminSettings() {
   const [primaryColor, setPrimaryColor] = useState(DEFAULT_COLORS.primary!);
   const [secondaryColor, setSecondaryColor] = useState(DEFAULT_COLORS.secondary!);
   const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.background!);
+  const [foregroundColor, setForegroundColor] = useState(DEFAULT_COLORS.foreground!);
   
   // Notification states
   const [soundEnabled, setSoundEnabled] = useState(true);
