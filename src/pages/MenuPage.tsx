@@ -200,7 +200,7 @@ const MenuPage = () => {
             </div>
           </div>
         </div>
-
+      </div>
 
       {/* Chef Highlights Carousel */}
       {highlightedProducts.length > 0 && (
