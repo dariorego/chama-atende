@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Sun, Moon, Globe, MapPin, Check, X, Music } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Globe, MapPin, Check, X, Music } from 'lucide-react';
 import { useTenantSettings } from '@/hooks/useAdminSettings';
 import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS, LocationCoordinates } from '@/types/restaurant';
 import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
@@ -52,10 +52,6 @@ export default function AdminSettings() {
   
   // Notification states
   const [soundEnabled, setSoundEnabled] = useState(true);
-  
-  // Theme settings states
-  const [clientDefaultTheme, setClientDefaultTheme] = useState<'light' | 'dark'>('dark');
-  const [adminDefaultTheme, setAdminDefaultTheme] = useState<'light' | 'dark'>('dark');
   
   // Business hours states
   const [businessHours, setBusinessHours] = useState<BusinessHours>(DEFAULT_BUSINESS_HOURS);
@@ -118,12 +114,6 @@ export default function AdminSettings() {
       // Load notification settings
       if (restaurant.notification_settings) {
         setSoundEnabled(restaurant.notification_settings.sound_enabled ?? true);
-      }
-      
-      // Load theme settings
-      if (restaurant.theme_settings) {
-        setClientDefaultTheme(restaurant.theme_settings.client_default_theme || 'dark');
-        setAdminDefaultTheme(restaurant.theme_settings.admin_default_theme || 'dark');
       }
       
       // Load business hours and timezone
@@ -215,10 +205,6 @@ export default function AdminSettings() {
       },
       notification_settings: {
         sound_enabled: soundEnabled,
-      },
-      theme_settings: {
-        client_default_theme: clientDefaultTheme,
-        admin_default_theme: adminDefaultTheme,
       },
       business_hours: businessHours,
       timezone: timezone,
