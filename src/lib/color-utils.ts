@@ -10,11 +10,11 @@ export interface ThemeColors {
 
 // Default theme colors (HSL format without hsl() wrapper)
 export const DEFAULT_COLORS: ThemeColors = {
-  primary: '43 55% 54%',     // gold — editorial fallback
-  secondary: '160 71% 11%',  // emerald deep
-  background: '165 76% 8%',  // emerald noturno
-  card: '160 71% 11%',
-  accent: '43 55% 54%',
+  primary: '213 68% 15%',    // deep navy
+  secondary: '190 55% 40%',  // teal
+  background: '210 30% 97%', // soft ice
+  card: '210 40% 99%',
+  accent: '190 55% 40%',
 };
 
 /**

@@ -11,26 +11,26 @@
 @layer base {
   /* Light theme (default) */
   :root {
-    --background: 40 43% 93%;              /* cream */
-    --foreground: 158 85% 16%;             /* emerald-deep */
+    --background: 210 30% 97%;             /* soft ice */
+    --foreground: 213 68% 15%;             /* deep navy */
 
-    --card: 43 55% 95%;                    /* cream-soft */
-    --card-foreground: 158 85% 16%;
+    --card: 210 40% 99%;
+    --card-foreground: 213 68% 15%;
 
-    --popover: 43 55% 95%;
-    --popover-foreground: 158 85% 16%;
+    --popover: 210 40% 99%;
+    --popover-foreground: 213 68% 15%;
 
-    --primary: 158 85% 16%;                /* emerald-deep */
-    --primary-foreground: 43 55% 95%;
+    --primary: 213 68% 15%;                /* deep navy */
+    --primary-foreground: 210 40% 99%;
 
-    --secondary: 43 40% 90%;
-    --secondary-foreground: 158 85% 16%;
+    --secondary: 210 35% 92%;
+    --secondary-foreground: 213 68% 15%;
 
-    --muted: 43 30% 88%;
-    --muted-foreground: 158 25% 30%;
+    --muted: 210 30% 90%;
+    --muted-foreground: 205 30% 35%;
 
-    --accent: 43 55% 54%;                  /* gold */
-    --accent-foreground: 158 85% 16%;
+    --accent: 190 55% 40%;                 /* teal */
+    --accent-foreground: 210 40% 99%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -41,22 +41,22 @@
     --warning: 38 92% 50%;
     --warning-foreground: 220 20% 10%;
 
-    --border: 158 20% 80%;
-    --input: 158 20% 80%;
-    --ring: 43 55% 54%;
+    --border: 210 25% 82%;
+    --input: 210 25% 82%;
+    --ring: 190 55% 40%;
 
     --radius: 0.75rem;
 
     /* Surface tokens */
-    --surface: 43 55% 95%;
-    --surface-foreground: 158 25% 35%;
+    --surface: 210 35% 94%;
+    --surface-foreground: 205 30% 35%;
 
     /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(158 85% 16%) 0%, hsl(43 55% 54%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(43 55% 96%) 0%, hsl(40 43% 93%) 100%);
-    --shadow-glow: 0 0 20px hsl(43 55% 54% / 0.25);
-    --shadow-card: 0 4px 24px hsl(158 85% 16% / 0.08);
-    --shadow-glow-lg: 0 0 40px hsl(43 55% 54% / 0.3);
+    --gradient-primary: linear-gradient(135deg, hsl(213 68% 15%) 0%, hsl(190 55% 40%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(210 40% 99%) 0%, hsl(210 30% 96%) 100%);
+    --shadow-glow: 0 0 20px hsl(190 55% 40% / 0.25);
+    --shadow-card: 0 4px 24px hsl(213 68% 15% / 0.08);
+    --shadow-glow-lg: 0 0 40px hsl(178 40% 55% / 0.35);
 
     /* Module colors */
     --module-amber: 38 92% 50%;
@@ -66,22 +66,22 @@
     --module-blue: 210 80% 55%;
     --module-blue-bg: 210 80% 95%;
 
-    --sidebar-background: 43 55% 96%;
-    --sidebar-foreground: 158 85% 16%;
-    --sidebar-primary: 158 85% 16%;
-    --sidebar-primary-foreground: 43 55% 95%;
-    --sidebar-accent: 43 40% 90%;
-    --sidebar-accent-foreground: 158 85% 16%;
-    --sidebar-border: 158 20% 80%;
-    --sidebar-ring: 43 55% 54%;
+    --sidebar-background: 210 40% 98%;
+    --sidebar-foreground: 213 68% 15%;
+    --sidebar-primary: 213 68% 15%;
+    --sidebar-primary-foreground: 210 40% 99%;
+    --sidebar-accent: 210 35% 92%;
+    --sidebar-accent-foreground: 213 68% 15%;
+    --sidebar-border: 210 25% 82%;
+    --sidebar-ring: 190 55% 40%;
 
-    /* Editorial "Emerald Prestige" tokens — light */
-    --ed-bg: 40 43% 93%;         /* cream #f5efe4 */
-    --ed-surface: 43 55% 95%;    /* cream-soft #faf6ec */
-    --ed-fg: 158 85% 16%;        /* emerald-deep #064e3b */
-    --ed-gold: 43 55% 54%;       /* gold #c9a84c */
-    --ed-hero: 158 85% 16%;      /* hero card bg */
-    --ed-hero-fg: 45 65% 95%;    /* hero card text */
+    /* Editorial "Ocean Deep" tokens — light */
+    --ed-bg: 210 30% 97%;
+    --ed-surface: 210 40% 99%;
+    --ed-fg: 213 68% 15%;
+    --ed-gold: 190 55% 40%;      /* accent (teal) reused as gold token */
+    --ed-hero: 213 68% 15%;
+    --ed-hero-fg: 178 40% 90%;
   }
 
   /* Scoped soft palette — used only on the marketing landing page.
@@ -122,26 +122,26 @@
 
   /* Dark theme */
   .dark {
-    --background: 165 76% 8%;              /* emerald noturno */
-    --foreground: 45 60% 92%;
+    --background: 220 30% 5%;              /* near-black */
+    --foreground: 178 40% 90%;
 
-    --card: 160 71% 11%;
-    --card-foreground: 45 60% 92%;
+    --card: 213 55% 10%;
+    --card-foreground: 178 40% 90%;
 
-    --popover: 160 71% 11%;
-    --popover-foreground: 45 60% 92%;
+    --popover: 213 55% 10%;
+    --popover-foreground: 178 40% 90%;
 
-    --primary: 43 55% 54%;                 /* gold as primary in dark */
-    --primary-foreground: 165 76% 8%;
+    --primary: 178 40% 55%;                /* light teal */
+    --primary-foreground: 220 30% 5%;
 
-    --secondary: 160 55% 16%;
-    --secondary-foreground: 45 60% 92%;
+    --secondary: 213 50% 15%;
+    --secondary-foreground: 178 40% 90%;
 
-    --muted: 160 50% 14%;
-    --muted-foreground: 45 25% 70%;
+    --muted: 213 40% 14%;
+    --muted-foreground: 205 25% 70%;
 
-    --accent: 43 55% 54%;
-    --accent-foreground: 165 76% 8%;
+    --accent: 190 55% 40%;
+    --accent-foreground: 210 40% 99%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
@@ -152,20 +152,20 @@
     --warning: 38 92% 50%;
     --warning-foreground: 220 20% 8%;
 
-    --border: 160 40% 22%;
-    --input: 160 40% 22%;
-    --ring: 43 55% 54%;
+    --border: 213 40% 22%;
+    --input: 213 40% 22%;
+    --ring: 178 40% 55%;
 
     /* Surface tokens */
-    --surface: 160 55% 16%;
-    --surface-foreground: 45 25% 65%;
+    --surface: 213 50% 15%;
+    --surface-foreground: 205 25% 65%;
 
     /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(158 85% 20%) 0%, hsl(43 55% 54%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(160 71% 13%) 0%, hsl(160 71% 10%) 100%);
-    --shadow-glow: 0 0 20px hsl(43 55% 54% / 0.3);
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.35);
-    --shadow-glow-lg: 0 0 40px hsl(43 55% 54% / 0.4);
+    --gradient-primary: linear-gradient(135deg, hsl(213 68% 20%) 0%, hsl(178 40% 55%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(213 55% 12%) 0%, hsl(220 30% 6%) 100%);
+    --shadow-glow: 0 0 20px hsl(178 40% 55% / 0.3);
+    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.45);
+    --shadow-glow-lg: 0 0 40px hsl(178 40% 55% / 0.4);
 
     /* Module colors */
     --module-amber: 38 92% 50%;
@@ -175,22 +175,22 @@
     --module-blue: 210 80% 55%;
     --module-blue-bg: 210 80% 15%;
 
-    --sidebar-background: 160 71% 10%;
-    --sidebar-foreground: 45 60% 92%;
-    --sidebar-primary: 43 55% 54%;
-    --sidebar-primary-foreground: 165 76% 8%;
-    --sidebar-accent: 160 55% 16%;
-    --sidebar-accent-foreground: 45 60% 92%;
-    --sidebar-border: 160 40% 20%;
-    --sidebar-ring: 43 55% 54%;
+    --sidebar-background: 220 35% 7%;
+    --sidebar-foreground: 178 40% 90%;
+    --sidebar-primary: 178 40% 55%;
+    --sidebar-primary-foreground: 220 30% 5%;
+    --sidebar-accent: 213 50% 15%;
+    --sidebar-accent-foreground: 178 40% 90%;
+    --sidebar-border: 213 40% 20%;
+    --sidebar-ring: 178 40% 55%;
 
-    /* Editorial "Emerald Prestige" tokens — dark (Emerald noturno) */
-    --ed-bg: 165 76% 8%;         /* #04241c */
-    --ed-surface: 160 71% 14%;   /* #0a3a2c */
-    --ed-fg: 45 60% 92%;         /* light cream text */
-    --ed-gold: 43 55% 54%;       /* gold stays */
-    --ed-hero: 160 71% 11%;
-    --ed-hero-fg: 45 65% 95%;
+    /* Editorial "Ocean Deep" tokens — dark */
+    --ed-bg: 220 30% 5%;
+    --ed-surface: 213 55% 10%;
+    --ed-fg: 178 40% 90%;
+    --ed-gold: 178 40% 55%;
+    --ed-hero: 213 68% 12%;
+    --ed-hero-fg: 178 40% 92%;
   }
 }
 
