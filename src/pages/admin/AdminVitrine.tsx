@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Tv, ExternalLink, Loader2, Film, LayoutGrid, Columns2 } from 'lucide-react';
+import { Tv, ExternalLink, Loader2, Film, LayoutGrid, Columns2, ImageOff } from 'lucide-react';
 import {
   useVitrineSettings,
   useVitrineDisplayProducts,
@@ -12,6 +12,7 @@ import {
 } from '@/hooks/useVitrineSettings';
 import { useTenant } from '@/hooks/useTenant';
 import { cn } from '@/lib/utils';
+import { VitrineStage } from '@/components/vitrine/VitrineSlides';
 
 const MODELS: { value: VitrineModel; label: string; description: string; Icon: typeof Film }[] = [
   { value: 'cinema', label: 'Cinema', description: 'Foto imersiva em tela cheia com título e preço', Icon: Film },
@@ -20,7 +21,7 @@ const MODELS: { value: VitrineModel; label: string; description: string; Icon: t
 ];
 
 export default function AdminVitrine() {
-  const { slug, tenantId } = useTenant();
+  const { slug, tenantId, tenant } = useTenant();
   const { settings, isActive, isLoading, updateSettings, isUpdating } = useVitrineSettings();
   const { data: products } = useVitrineDisplayProducts(tenantId);
 
@@ -60,7 +61,7 @@ export default function AdminVitrine() {
       <Card>
         <CardHeader>
           <CardTitle>Modelo de Exibição</CardTitle>
-          <CardDescription>Escolha o layout mostrado na TV</CardDescription>
+          <CardDescription>Escolha o layout mostrado na TV — a prévia abaixo atualiza em tempo real</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-3">
           {MODELS.map(({ value, label, description, Icon }) => (
@@ -79,6 +80,64 @@ export default function AdminVitrine() {
               <div className="text-xs text-muted-foreground mt-1">{description}</div>
             </button>
           ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Prévia da TV</CardTitle>
+          <CardDescription>Simulação em 16:9 do que aparecerá no telão</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div
+            className="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-inner"
+            style={{ containerType: 'inline-size' }}
+          >
+            <VitrineStage
+              model={settings.display_model}
+              products={products ?? []}
+              tenantName={tenant?.name}
+              logoUrl={tenant?.logo_url}
+              showPrice={settings.show_price}
+              intervalSeconds={settings.interval_seconds}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Produtos na Vitrine ({products?.length ?? 0})</CardTitle>
+          <CardDescription>Itens marcados como "Exibir na Vitrine" no catálogo</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {products && products.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {products.map((p) => (
+                <div key={p.id} className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3">
+                  {p.image_url ? (
+                    <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-md object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="w-14 h-14 rounded-md bg-muted flex items-center justify-center flex-shrink-0">
+                      <ImageOff className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium truncate">{p.name}</div>
+                    {p.price != null && (
+                      <div className="text-sm text-primary font-semibold">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(p.price))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-sm text-muted-foreground py-6 text-center">
+              Nenhum produto marcado. Vá em <strong>Cardápio → Produtos</strong> e ative o switch <strong>Vitrine</strong>.
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -127,9 +186,6 @@ export default function AdminVitrine() {
             <Input readOnly value={vitrineUrl} className="bg-surface font-mono text-sm" />
             <Button variant="outline" onClick={() => { navigator.clipboard.writeText(vitrineUrl); }}>Copiar</Button>
           </div>
-          <p className="text-sm text-muted-foreground mt-3">
-            {products?.length ?? 0} produto(s) marcado(s) para vitrine. Ative "Exibir na Vitrine" na lista de produtos.
-          </p>
         </CardContent>
       </Card>
     </div>
