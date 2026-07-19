@@ -8,11 +8,13 @@ export interface Waiter {
   name: string;
   is_available: boolean;
   is_active: boolean;
+  employee_id: string | null;
+  employee?: { id: string; full_name: string; role: string | null; phone: string | null } | null;
   created_at: string;
   updated_at: string;
 }
 
-export type WaiterInsert = Omit<Waiter, 'id' | 'created_at' | 'updated_at'>;
+export type WaiterInsert = Omit<Waiter, 'id' | 'created_at' | 'updated_at' | 'employee'>;
 export type WaiterUpdate = Partial<WaiterInsert>;
 
 export function useAdminWaiters() {
@@ -21,11 +23,11 @@ export function useAdminWaiters() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("waiters")
-        .select("*")
+        .select("*, employee:employees(id, full_name, role, phone)")
         .order("name", { ascending: true });
 
       if (error) throw error;
-      return data as Waiter[];
+      return data as unknown as Waiter[];
     },
   });
 }

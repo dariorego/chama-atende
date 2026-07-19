@@ -1,21 +1,57 @@
-import { useState } from "react";
-import { Plus, Pencil, Trash2, User, CheckCircle, XCircle } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Plus, Pencil, Trash2, User, CheckCircle, XCircle, Users, Link2Off } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useAdminWaiters, useDeleteWaiter, useUpdateWaiter, Waiter } from "@/hooks/useAdminWaiters";
+import { useAdminWaiters, useDeleteWaiter, useUpdateWaiter, useCreateWaiter, Waiter } from "@/hooks/useAdminWaiters";
 import { WaiterFormDialog } from "@/components/admin/WaiterFormDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useEmployees } from "@/hooks/useStaffSchedule";
 
 const AdminWaiters = () => {
   const { data: waiters, isLoading } = useAdminWaiters();
+  const { data: employees } = useEmployees();
   const deleteWaiter = useDeleteWaiter();
   const updateWaiter = useUpdateWaiter();
+  const createWaiter = useCreateWaiter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingWaiter, setEditingWaiter] = useState<Waiter | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importSelected, setImportSelected] = useState<Set<string>>(new Set());
+
+  const unlinkedEmployees = useMemo(() => {
+    const linked = new Set((waiters ?? []).map((w) => w.employee_id).filter(Boolean) as string[]);
+    return (employees ?? []).filter((e) => e.is_active && !linked.has(e.id));
+  }, [waiters, employees]);
+
+  const toggleImportSelect = (id: string) => {
+    setImportSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleImport = async () => {
+    const toCreate = unlinkedEmployees.filter((e) => importSelected.has(e.id));
+    for (const emp of toCreate) {
+      await createWaiter.mutateAsync({
+        name: emp.full_name,
+        is_available: true,
+        is_active: true,
+        user_id: null,
+        employee_id: emp.id,
+      });
+    }
+    setImportSelected(new Set());
+    setImportOpen(false);
+  };
 
   const handleEdit = (waiter: Waiter) => {
     setEditingWaiter(waiter);
@@ -47,10 +83,16 @@ const AdminWaiters = () => {
           <h1 className="text-3xl font-bold tracking-tight">Atendentes</h1>
           <p className="text-muted-foreground">Gerencie a equipe de atendimento</p>
         </div>
-        <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Atendente
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setImportOpen(true)} disabled={unlinkedEmployees.length === 0}>
+            <Users className="h-4 w-4 mr-2" />
+            Importar da Agenda
+          </Button>
+          <Button onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Atendente
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -101,9 +143,22 @@ const AdminWaiters = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold">{waiter.name}</h3>
-                      <Badge variant={waiter.is_available ? "default" : "secondary"}>
-                        {waiter.is_available ? "Disponível" : "Ocupado"}
-                      </Badge>
+                      <div className="flex flex-wrap items-center gap-1 mt-1">
+                        <Badge variant={waiter.is_available ? "default" : "secondary"}>
+                          {waiter.is_available ? "Disponível" : "Ocupado"}
+                        </Badge>
+                        {waiter.employee ? (
+                          <Badge variant="outline" className="gap-1">
+                            <Users className="h-3 w-3" />
+                            {waiter.employee.role || "Funcionário"}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="gap-1 text-muted-foreground">
+                            <Link2Off className="h-3 w-3" />
+                            Sem vínculo
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -140,6 +195,7 @@ const AdminWaiters = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome</TableHead>
+                  <TableHead>Funcionário</TableHead>
                   <TableHead>Disponibilidade</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
@@ -153,6 +209,18 @@ const AdminWaiters = () => {
                         <User className="h-4 w-4" />
                         {waiter.name}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      {waiter.employee ? (
+                        <div className="text-sm">
+                          <div>{waiter.employee.full_name}</div>
+                          {waiter.employee.role && (
+                            <div className="text-xs text-muted-foreground">{waiter.employee.role}</div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge variant={waiter.is_available ? "default" : "secondary"}>
@@ -208,6 +276,53 @@ const AdminWaiters = () => {
         onOpenChange={setDialogOpen}
         waiter={editingWaiter}
       />
+
+      <Dialog open={importOpen} onOpenChange={setImportOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Importar da Agenda</DialogTitle>
+            <DialogDescription>
+              Selecione os funcionários que também atuam como atendentes.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-80 overflow-y-auto space-y-2">
+            {unlinkedEmployees.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Todos os funcionários ativos já estão vinculados.
+              </p>
+            ) : (
+              unlinkedEmployees.map((emp) => (
+                <label
+                  key={emp.id}
+                  className="flex items-center gap-3 p-2 rounded-md border cursor-pointer hover:bg-accent"
+                >
+                  <Checkbox
+                    checked={importSelected.has(emp.id)}
+                    onCheckedChange={() => toggleImportSelect(emp.id)}
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium text-sm">{emp.full_name}</div>
+                    {emp.role && (
+                      <div className="text-xs text-muted-foreground">{emp.role}</div>
+                    )}
+                  </div>
+                </label>
+              ))
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setImportOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleImport}
+              disabled={importSelected.size === 0 || createWaiter.isPending}
+            >
+              Importar {importSelected.size > 0 ? `(${importSelected.size})` : ""}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
