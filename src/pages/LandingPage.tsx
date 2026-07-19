@@ -222,9 +222,6 @@ export default function LandingPage() {
 
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Entrar</Button>
-            </Link>
             <Link to="/onboarding">
               <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 shadow-glow">
                 Começar grátis <ArrowRight className="ml-1 w-4 h-4" />
@@ -248,9 +245,8 @@ export default function LandingPage() {
               <a href="#beneficios" onClick={() => setMobileOpen(false)}>Benefícios</a>
               <a href="#como-funciona" onClick={() => setMobileOpen(false)}>Como funciona</a>
               <Link to="/estabelecimentos" onClick={() => setMobileOpen(false)}>Estabelecimentos</Link>
-              <div className="flex gap-2 pt-2">
-                <Link to="/login" className="flex-1"><Button variant="outline" className="w-full">Entrar</Button></Link>
-                <Link to="/onboarding" className="flex-1"><Button className="w-full">Começar</Button></Link>
+              <div className="pt-2">
+                <Link to="/onboarding" className="block"><Button className="w-full">Começar</Button></Link>
               </div>
             <div className="pt-2 flex justify-center"><ThemeToggle /></div>
             </div>
