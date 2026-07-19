@@ -174,7 +174,7 @@ const MenuPage = () => {
   return (
     <ClientLayout showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
       {/* Hero: cover image + circular logo */}
-      <div className="-mx-4 mb-16">
+      <div className="-mx-4 mb-36">
         <div className="relative w-full aspect-[16/6] bg-gradient-to-br from-emerald-deep/20 to-emerald-deep/5 overflow-hidden">
           {tenant?.cover_image_url ? (
             <img
@@ -184,7 +184,7 @@ const MenuPage = () => {
             />
           ) : null}
           {/* Logo overlay */}
-          <div className="absolute left-1/2 -bottom-12 -translate-x-1/2">
+          <div className="absolute left-1/2 -bottom-8 -translate-x-1/2 z-10">
             <div className="w-24 h-24 rounded-full border-4 border-cream bg-cream shadow-lg overflow-hidden flex items-center justify-center">
               {tenant?.logo_url ? (
                 <img
