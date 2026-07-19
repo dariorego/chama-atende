@@ -4,6 +4,7 @@ export interface ThemeColors {
   primary?: string;
   secondary?: string;
   background?: string;
+  foreground?: string;
   card?: string;
   accent?: string;
 }
@@ -13,6 +14,7 @@ export const DEFAULT_COLORS: ThemeColors = {
   primary: '213 68% 15%',    // deep navy
   secondary: '190 55% 40%',  // teal
   background: '210 30% 97%', // soft ice
+  foreground: '220 25% 12%', // near-black text
   card: '210 40% 99%',
   accent: '190 55% 40%',
 };

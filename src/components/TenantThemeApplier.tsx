@@ -38,6 +38,7 @@ export function TenantThemeApplier() {
     const primary = colors.primary;
     const secondary = colors.secondary;
     const background = colors.background;
+    const foreground = colors.foreground;
 
     // Primary — buttons, links, accents, focus rings
     apply('--primary', primary);
@@ -51,16 +52,17 @@ export function TenantThemeApplier() {
     apply('--secondary-foreground', contrastOn(secondary));
 
     // Background — main app surface + card fallback
+    const fg = foreground || contrastOn(background);
     apply('--background', background);
     apply('--card', background);
-    apply('--card-foreground', contrastOn(background));
+    apply('--card-foreground', fg);
     apply('--popover', background);
-    apply('--popover-foreground', contrastOn(background));
-    apply('--foreground', contrastOn(background));
+    apply('--popover-foreground', fg);
+    apply('--foreground', fg);
 
     // Sidebar tokens (admin layout) — mirror the tenant identity
     apply('--sidebar-background', background);
-    apply('--sidebar-foreground', contrastOn(background));
+    apply('--sidebar-foreground', fg);
     apply('--sidebar-primary', primary);
     apply('--sidebar-primary-foreground', contrastOn(primary));
     apply('--sidebar-accent', secondary);
