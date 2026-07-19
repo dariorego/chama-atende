@@ -206,7 +206,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         <NavLink
                           to={item.url}
                           end={item.url === adminBase}
-                          className="flex items-center gap-2 hover:bg-muted/50"
+                          className="flex items-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors"
                           activeClassName="bg-primary/10 text-primary font-medium"
                         >
                           <item.icon className="h-4 w-4" />
@@ -230,7 +230,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                           <NavLink
                             to={item.url}
                             end={item.url === adminBase}
-                            className="flex items-center gap-2 hover:bg-muted/50"
+                            className="flex items-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors"
                             activeClassName="bg-primary/10 text-primary font-medium"
                           >
                             <item.icon className="h-4 w-4" />
@@ -253,7 +253,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       <Link
                         to={`/${slug}`}
                         target="_blank"
-                        className="flex items-center gap-2 hover:bg-muted/50"
+                        className="flex items-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors"
                       >
                         <ExternalLink className="h-4 w-4" />
                         <span>Ver Site</span>
