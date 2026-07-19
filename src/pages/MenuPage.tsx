@@ -184,13 +184,13 @@ const MenuPage = () => {
             />
           ) : null}
           {/* Logo overlay */}
-          <div className="absolute left-1/2 -bottom-12 -translate-x-1/2 z-10">
-            <div className="w-24 h-24 rounded-full border-4 border-cream bg-cream shadow-lg overflow-hidden flex items-center justify-center p-1">
+          <div className="absolute left-1/2 -bottom-12 -translate-x-1/2">
+            <div className="w-24 h-24 rounded-full border-4 border-cream bg-cream shadow-lg overflow-hidden flex items-center justify-center">
               {tenant?.logo_url ? (
                 <img
                   src={tenant.logo_url}
                   alt={`Logo ${tenant?.name ?? ""}`}
-                  className="w-full h-full object-contain relative z-20"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <ChefHat className="h-10 w-10 text-emerald-deep" />
