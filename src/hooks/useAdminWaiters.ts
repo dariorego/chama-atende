@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTenant } from "@/hooks/useTenant";
 
 export interface Waiter {
   id: string;
@@ -18,12 +19,15 @@ export type WaiterInsert = Omit<Waiter, 'id' | 'created_at' | 'updated_at' | 'em
 export type WaiterUpdate = Partial<WaiterInsert>;
 
 export function useAdminWaiters() {
+  const { tenantId } = useTenant();
   return useQuery({
-    queryKey: ["admin-waiters"],
+    queryKey: ["admin-waiters", tenantId],
+    enabled: !!tenantId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("waiters")
         .select("*, employee:employees(id, full_name, role, phone)")
+        .eq("restaurant_id", tenantId!)
         .order("name", { ascending: true });
 
       if (error) throw error;
@@ -35,12 +39,13 @@ export function useAdminWaiters() {
 export function useCreateWaiter() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   return useMutation({
     mutationFn: async (waiter: WaiterInsert) => {
       const { data, error } = await supabase
         .from("waiters")
-        .insert(waiter)
+        .insert({ ...waiter, restaurant_id: tenantId })
         .select()
         .single();
 
