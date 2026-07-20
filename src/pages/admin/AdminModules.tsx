@@ -38,7 +38,17 @@ export default function AdminModules() {
       </div>
 
       <div className="grid gap-4">
-        {modules?.map((module) => {
+        {[...(modules || [])]
+          .sort((a, b) => {
+            if (a.is_active === b.is_active) {
+              return (MODULE_INFO[a.module_name]?.label || a.module_name).localeCompare(
+                MODULE_INFO[b.module_name]?.label || b.module_name,
+                'pt-BR'
+              );
+            }
+            return a.is_active ? -1 : 1;
+          })
+          .map((module) => {
           const info = MODULE_INFO[module.module_name];
           const IconComponent = info ? ICON_MAP[info.icon] : Puzzle;
 
