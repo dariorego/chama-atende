@@ -39,23 +39,24 @@ const PLANS = [
   {
     value: 'starter',
     label: 'Starter',
-    description: 'Até 3 usuários, funcionalidades básicas',
+    description: 'Cardápio digital e informações da loja (redes sociais e contato)',
     icon: Sparkles,
     price: 'Grátis',
   },
   {
     value: 'professional',
     label: 'Professional',
-    description: 'Até 10 usuários, relatórios avançados',
+    description: 'Todos os módulos liberados',
     icon: Rocket,
-    price: 'R$ 99/mês',
+    price: 'R$ 69,90/mês',
   },
   {
     value: 'enterprise',
-    label: 'Enterprise',
-    description: 'Usuários ilimitados, API, domínio próprio',
+    label: 'Enterprise com IA',
+    description: 'Todos os módulos + recursos de IA (em breve)',
     icon: Crown,
-    price: 'R$ 299/mês',
+    price: 'R$ 129,90/mês',
+    comingSoon: true,
   },
 ];
 
