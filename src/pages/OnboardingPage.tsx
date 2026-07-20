@@ -130,6 +130,7 @@ export default function OnboardingPage() {
           slug: data.slug,
           subtitle: data.subtitle || null,
           plan: data.plan,
+          free_trial: data.plan === 'professional' ? freeProfessional : false,
         },
       });
 
