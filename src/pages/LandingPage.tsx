@@ -157,7 +157,7 @@ const steps = [
 const faqs = [
   {
     q: "O que é a ChamaAtende?",
-    a: "É uma plataforma SaaS multi-tenant para restaurantes. Reúne cardápio digital, pedidos, reservas, fila de espera, chamado de garçom e métricas em um só lugar.",
+    a: "É uma plataforma SaaS multi-tenant para estabelecimentos. Reúne cardápio digital, pedidos, reservas, fila de espera, chamado de garçom e métricas em um só lugar.",
   },
   {
     q: "Meus clientes precisam baixar algum aplicativo?",
@@ -169,7 +169,7 @@ const faqs = [
   },
   {
     q: "Posso usar a plataforma em mais de um estabelecimento?",
-    a: "Sim. Cada restaurante é isolado em um tenant próprio com autenticação, RLS e controle de acesso independente.",
+    a: "Sim. Cada estabelecimento é isolado em um tenant próprio com autenticação, RLS e controle de acesso independente.",
   },
   {
     q: "Existe contrato de fidelidade ou taxa por pedido?",
@@ -177,7 +177,7 @@ const faqs = [
   },
   {
     q: "Como faço para começar?",
-    a: "Basta clicar em 'Começar grátis', preencher o onboarding e configurar mesas e módulos. Em poucos minutos seu restaurante já pode atender pelo QR Code.",
+    a: "Basta clicar em 'Começar grátis', preencher o onboarding e configurar mesas e módulos. Em poucos minutos seu estabelecimento já pode atender pelo QR Code.",
   },
 ];
 
@@ -265,7 +265,7 @@ export default function LandingPage() {
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight mb-6 animate-slide-up">
             A plataforma completa
             <br />
-            para restaurantes
+            para estabelecimentos
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-slide-up">
@@ -333,7 +333,7 @@ export default function LandingPage() {
       <section className="py-10 border-y border-border/50 bg-card/30">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-center text-xs uppercase tracking-[0.28em] text-muted-foreground mb-6">
-            Restaurantes que confiam na plataforma
+            Estabelecimentos que confiam na plataforma
           </p>
           <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-4 opacity-70">
             {["Bistro Verde", "Café com Dengo", "Trattoria Rossa", "Casa Nostra", "Sabor & Arte", "Verde Cozinha"].map((n) => (
@@ -351,7 +351,7 @@ export default function LandingPage() {
           <div className="max-w-2xl mb-14">
             <div className="inline-block editorial-label text-accent mb-4">Módulos</div>
             <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              Tudo que seu restaurante
+              Tudo que seu estabelecimento
               <br />
               precisa. <span className="text-muted-foreground">Nada que não precisa.</span>
             </h2>
@@ -411,7 +411,7 @@ export default function LandingPage() {
             <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-4">
               Feito por quem entende
               <br />
-              de restaurante.
+              de estabelecimento.
             </h2>
           </div>
 
@@ -598,7 +598,7 @@ export default function LandingPage() {
               <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight mb-4">
                 Pronto para transformar
                 <br />
-                seu restaurante?
+                seu estabelecimento?
               </h2>
               <p className="text-primary-foreground/80 mb-6">
                 Fale com nosso time ou comece agora. Sem compromisso.
@@ -631,7 +631,7 @@ export default function LandingPage() {
               <span className="font-display font-bold text-lg">ChamaAtende</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-sm">
-              A plataforma completa para operação de restaurantes modernos.
+              A plataforma completa para operação de estabelecimentos modernos.
             </p>
           </div>
           <div>

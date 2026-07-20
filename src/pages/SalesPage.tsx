@@ -93,7 +93,7 @@ const STEPS = [
   },
   {
     number: "02",
-    title: "Configure seu restaurante",
+    title: "Configure seu estabelecimento",
     description: "Personalize nome, logo, horários, cardápio e ative os módulos que desejar.",
     icon: LayoutDashboard,
   },
@@ -113,9 +113,9 @@ const STEPS = [
 
 const DIFFERENTIALS = [
   { icon: LayoutDashboard, title: "Hub Centralizado", description: "Todos os módulos em um único lugar, acessível por QR Code na mesa." },
-  { icon: QrCode, title: "QR Code Inteligente", description: "Um QR Code por mesa que dá acesso a todos os serviços do restaurante." },
+  { icon: QrCode, title: "QR Code Inteligente", description: "Um QR Code por mesa que dá acesso a todos os serviços do estabelecimento." },
   { icon: Zap, title: "Tempo Real", description: "Todas as atualizações são instantâneas: pedidos, chamados, fila." },
-  { icon: Shield, title: "Multi-Tenant Seguro", description: "Cada restaurante tem seus dados 100% isolados e protegidos." },
+  { icon: Shield, title: "Multi-Tenant Seguro", description: "Cada estabelecimento tem seus dados 100% isolados e protegidos." },
   { icon: TrendingUp, title: "Painel Admin Completo", description: "Dashboard com métricas, gestão de equipe, produtos e configurações." },
   { icon: Smartphone, title: "100% Web e Responsivo", description: "Funciona em qualquer dispositivo. Sem necessidade de instalar aplicativos." },
 ];
@@ -125,7 +125,7 @@ const PLANS = [
     name: "Starter",
     price: "Grátis",
     period: "",
-    description: "Ideal para começar a digitalizar seu restaurante.",
+    description: "Ideal para começar a digitalizar seu estabelecimento.",
     features: [
       "Até 3 usuários",
       "Cardápio Digital",
@@ -140,7 +140,7 @@ const PLANS = [
     name: "Professional",
     price: "R$ 99",
     period: "/mês",
-    description: "Para restaurantes que querem a experiência completa.",
+    description: "Para estabelecimentos que querem a experiência completa.",
     features: [
       "Até 10 usuários",
       "Todos os módulos básicos",
@@ -235,7 +235,7 @@ export default function SalesPage() {
               <Zap className="w-3 h-3 mr-1" /> Plataforma 100% Web
             </Badge>
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-              Transforme seu Restaurante com{" "}
+              Transforme seu Estabelecimento com{" "}
               <span className="text-gradient">Tecnologia Inteligente</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -244,7 +244,7 @@ export default function SalesPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/onboarding">
                 <Button size="lg" className="gap-2 shadow-glow text-base px-8">
-                  Criar Restaurante Grátis <ArrowRight className="w-4 h-4" />
+                  Criar Estabelecimento Grátis <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
               <Link to="/bistro-verde">
@@ -272,7 +272,7 @@ export default function SalesPage() {
         <section className="py-20 px-4 bg-surface/50">
           <div className="container mx-auto max-w-3xl text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Seu restaurante ainda usa <span className="text-destructive">papel e caneta</span>?
+              Seu estabelecimento ainda usa <span className="text-destructive">papel e caneta</span>?
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
               Clientes esperando para serem atendidos, comandas perdidas, reservas por telefone que ninguém anota, filas sem organização...
@@ -290,8 +290,8 @@ export default function SalesPage() {
           <div className="container mx-auto">
             <div className="text-center mb-14">
               <Badge variant="secondary" className="mb-4">Funcionalidades</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Tudo que seu restaurante precisa</h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">7 módulos integrados que cobrem toda a operação do seu restaurante, do cardápio à avaliação.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Tudo que seu estabelecimento precisa</h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">7 módulos integrados que cobrem toda a operação do seu estabelecimento, do cardápio à avaliação.</p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {MODULES.map((m) => (
@@ -328,7 +328,7 @@ export default function SalesPage() {
             <div className="text-center mb-14">
               <Badge variant="secondary" className="mb-4">Passo a Passo</Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Comece em minutos</h2>
-              <p className="text-muted-foreground">4 passos simples para digitalizar seu restaurante.</p>
+              <p className="text-muted-foreground">4 passos simples para digitalizar seu estabelecimento.</p>
             </div>
             <div className="grid sm:grid-cols-2 gap-8">
               {STEPS.map((s, i) => (
@@ -375,7 +375,7 @@ export default function SalesPage() {
             <div className="text-center mb-14">
               <Badge variant="secondary" className="mb-4">Preços</Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Planos para cada momento</h2>
-              <p className="text-muted-foreground max-w-md mx-auto">Comece grátis e evolua conforme seu restaurante cresce.</p>
+              <p className="text-muted-foreground max-w-md mx-auto">Comece grátis e evolua conforme seu estabelecimento cresce.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {PLANS.map((p) => (
@@ -432,12 +432,12 @@ export default function SalesPage() {
               Pronto para <span className="text-gradient">revolucionar</span> seu atendimento?
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              Junte-se a restaurantes que já estão usando o Chama Atende para oferecer uma experiência digital completa aos seus clientes.
+              Junte-se a estabelecimentos que já estão usando o Chama Atende para oferecer uma experiência digital completa aos seus clientes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/onboarding">
                 <Button size="lg" className="gap-2 shadow-glow text-base px-8">
-                  Criar Restaurante Grátis <ArrowRight className="w-4 h-4" />
+                  Criar Estabelecimento Grátis <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
               <Link to="/bistro-verde">
@@ -461,7 +461,7 @@ export default function SalesPage() {
                 </div>
                 <span className="font-bold text-foreground">Chama Atende</span>
               </div>
-              <p className="text-sm text-muted-foreground">Plataforma completa para digitalizar a operação do seu restaurante.</p>
+              <p className="text-sm text-muted-foreground">Plataforma completa para digitalizar a operação do seu estabelecimento.</p>
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-3">Plataforma</h4>
@@ -474,7 +474,7 @@ export default function SalesPage() {
             <div>
               <h4 className="font-semibold text-sm mb-3">Acesso</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/onboarding" className="hover:text-foreground transition-colors">Criar Restaurante</Link></li>
+                <li><Link to="/onboarding" className="hover:text-foreground transition-colors">Criar Estabelecimento</Link></li>
                 <li><Link to="/login" className="hover:text-foreground transition-colors">Fazer Login</Link></li>
               </ul>
             </div>

@@ -141,7 +141,7 @@ export default function OnboardingPage() {
 
       if (signUpError) {
         const msg = signUpError.message.includes('already registered') || signUpError.message.includes('already been registered')
-          ? 'Este email já está cadastrado. Faça login e crie o restaurante a partir da sua conta.'
+          ? 'Este email já está cadastrado. Faça login e crie o estabelecimento a partir da sua conta.'
           : signUpError.message;
         toast.error(msg);
         setIsSubmitting(false);
@@ -161,7 +161,7 @@ export default function OnboardingPage() {
         }
       }
 
-      // 4. Cria o restaurante usando o JWT do novo usuário
+      // 4. Cria o estabelecimento usando o JWT do novo usuário
       const { data: response, error } = await supabase.functions.invoke('create-tenant', {
         body: {
           name: data.name,
@@ -174,18 +174,18 @@ export default function OnboardingPage() {
 
       if (error) {
         console.error('Error creating restaurant:', error);
-        toast.error(error.message || 'Erro ao criar restaurante');
+        toast.error(error.message || 'Erro ao criar estabelecimento');
         setIsSubmitting(false);
         return;
       }
 
       if (!response?.success) {
-        toast.error(response?.error || 'Erro ao criar restaurante');
+        toast.error(response?.error || 'Erro ao criar estabelecimento');
         setIsSubmitting(false);
         return;
       }
 
-      toast.success('Restaurante criado com sucesso!');
+      toast.success('Estabelecimento criado com sucesso!');
       navigate(`/admin/${data.slug}`, { replace: true });
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -212,7 +212,7 @@ export default function OnboardingPage() {
               <Store className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold">Criar Novo Restaurante</CardTitle>
+              <CardTitle className="text-2xl font-bold">Criar Novo Estabelecimento</CardTitle>
               <CardDescription className="mt-2">
                 Configure seu estabelecimento e comece a usar o sistema
               </CardDescription>
@@ -282,14 +282,14 @@ export default function OnboardingPage() {
 
                 <div className="border-t border-border" />
 
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Dados do restaurante</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Dados do estabelecimento</h3>
 
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nome do Restaurante *</FormLabel>
+                      <FormLabel>Nome do Estabelecimento *</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Ex: Bistro Verde"
@@ -308,7 +308,7 @@ export default function OnboardingPage() {
                   name="slug"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>URL do Restaurante *</FormLabel>
+                      <FormLabel>URL do Estabelecimento *</FormLabel>
                       <FormControl>
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground text-sm">plataforma.chamaatende.com/</span>
@@ -440,7 +440,7 @@ export default function OnboardingPage() {
                       Criando...
                     </>
                   ) : (
-                    'Criar Restaurante'
+                    'Criar Estabelecimento'
                   )}
                 </Button>
               </form>

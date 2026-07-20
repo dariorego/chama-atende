@@ -48,7 +48,7 @@ const AdminReservations = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Reservas</h1>
-          <p className="text-muted-foreground">Gerencie as reservas do restaurante</p>
+          <p className="text-muted-foreground">Gerencie as reservas do estabelecimento</p>
         </div>
         <Button onClick={() => setIsFormOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />

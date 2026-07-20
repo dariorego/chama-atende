@@ -108,9 +108,9 @@ export default function QueuePage() {
   if (!restaurant) {
     return (
       <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-4">
-        <h1 className="text-3xl font-serif-editorial text-emerald-deep mb-2">Restaurante não encontrado</h1>
+        <h1 className="text-3xl font-serif-editorial text-emerald-deep mb-2">Estabelecimento não encontrado</h1>
         <p className="text-emerald-deep/60 text-center font-sans-editorial">
-          O restaurante que você está procurando não existe ou está inativo.
+          O estabelecimento que você está procurando não existe ou está inativo.
         </p>
       </div>
     );

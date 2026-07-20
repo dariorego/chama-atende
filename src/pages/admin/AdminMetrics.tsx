@@ -185,7 +185,7 @@ const AdminMetrics = () => {
         {/* Restaurant Status */}
         <Card>
           <CardHeader>
-            <CardTitle>Status do Restaurante</CardTitle>
+            <CardTitle>Status do Estabelecimento</CardTitle>
             <CardDescription>Informações gerais</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

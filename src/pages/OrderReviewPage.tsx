@@ -61,7 +61,7 @@ const OrderReviewPage = () => {
     }
 
     if (!restaurant?.id || !baseId) {
-      toast.error("Erro ao identificar restaurante");
+      toast.error("Erro ao identificar estabelecimento");
       return;
     }
 

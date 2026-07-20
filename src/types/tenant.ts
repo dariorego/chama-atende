@@ -56,7 +56,7 @@ export const PLANS: Record<PlanType, Plan> = {
       whiteLabel: false,
       prioritySupport: false,
     },
-    description: 'Todos os módulos essenciais para seu restaurante',
+    description: 'Todos os módulos essenciais para seu estabelecimento',
   },
   premium: {
     id: 'premium',
