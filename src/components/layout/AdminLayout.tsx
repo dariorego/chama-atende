@@ -158,7 +158,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login', { replace: true });
+    navigate(slug ? `/login/${slug}` : '/estabelecimentos?admin=1', { replace: true });
   };
 
   const getInitials = (name: string | null) => {
