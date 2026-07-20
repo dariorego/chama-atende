@@ -358,7 +358,7 @@ const App = () => (
         <Routes>
           {/* Global auth routes FIRST (most specific) */}
           <Route path="/vendas" element={<ThemeProvider><SalesPage /></ThemeProvider>} />
-          <Route path="/login" element={<ThemeProvider><LoginPage /></ThemeProvider>} />
+          <Route path="/login" element={<Navigate to="/estabelecimentos?admin=1" replace />} />
           <Route path="/login/:slug" element={<TenantProvider><ThemeProvider><LoginPage /></ThemeProvider></TenantProvider>} />
           <Route path="/signup" element={<ThemeProvider><SignupPage /></ThemeProvider>} />
           <Route path="/onboarding" element={<ThemeProvider><OnboardingPage /></ThemeProvider>} />
