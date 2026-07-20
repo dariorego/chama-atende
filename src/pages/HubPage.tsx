@@ -126,27 +126,27 @@ const HubPage = () => {
   const buildRoute = (path: string) => `/${slug}${path}`;
 
   return (
-    <div className="min-h-screen bg-cream font-sans-editorial">
+    <div className="min-h-screen bg-background font-sans-editorial">
       {/* Fixed Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-cream/90 backdrop-blur-xl border-b border-emerald-deep/10" : "bg-transparent"
+          scrolled ? "bg-background/90 backdrop-blur-xl border-b border-border" : "bg-transparent"
         }`}
       >
         <div className="container mx-auto px-4 max-w-lg">
           <div className="flex items-center justify-between h-14">
-            <Button variant="ghost" size="icon" className="text-emerald-deep hover:bg-emerald-deep/5" onClick={() => navigate(`/${slug}`)}>
+            <Button variant="ghost" size="icon" className="text-foreground hover:bg-primary/5" onClick={() => navigate(`/${slug}`)}>
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <span
-              className={`editorial-title text-xl text-emerald-deep transition-opacity duration-300 ${
+              className={`editorial-title text-xl text-foreground transition-opacity duration-300 ${
                 scrolled ? "opacity-100" : "opacity-0"
               }`}
             >
               {tenant.name}
             </span>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="text-emerald-deep hover:bg-emerald-deep/5" onClick={handleShare}>
+              <Button variant="ghost" size="icon" className="text-foreground hover:bg-primary/5" onClick={handleShare}>
                 <Share2 className="h-5 w-5" />
               </Button>
             </div>
@@ -157,7 +157,7 @@ const HubPage = () => {
       {/* Hero Section */}
       <div className="relative pt-20 pb-6">
         {/* Editorial gradient wash */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#064e3b]/[0.06] via-[#c9a84c]/[0.05] to-transparent h-96" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent h-96" />
 
         {/* Content */}
         <div className="relative container mx-auto px-4 max-w-lg">
@@ -165,8 +165,8 @@ const HubPage = () => {
           <div className="flex flex-col items-center text-center animate-fade-in">
             <div className="relative">
               {/* Editorial gold ring */}
-              <div className="absolute inset-0 rounded-full bg-[#c9a84c]/20 blur-2xl scale-110" />
-              <div className="relative w-32 h-32 rounded-full border-[3px] border-gold overflow-hidden" style={{ boxShadow: '0 8px 32px -8px rgba(6,78,59,0.25)' }}>
+              <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl scale-110" />
+              <div className="relative w-32 h-32 rounded-full border-[3px] border-primary overflow-hidden" style={{ boxShadow: '0 8px 32px -8px rgba(6,78,59,0.25)' }}>
                 {tenant.logo_url ? (
                   <img
                     src={tenant.logo_url}
@@ -174,20 +174,20 @@ const HubPage = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-cream-soft flex items-center justify-center">
-                    <UtensilsCrossed className="h-10 w-10 text-emerald-deep/50" />
+                  <div className="w-full h-full bg-secondary flex items-center justify-center">
+                    <UtensilsCrossed className="h-10 w-10 text-foreground/50" />
                   </div>
                 )}
               </div>
             </div>
 
             {/* Editorial name and subtitle */}
-            <p className="editorial-label text-gold mt-6">Bem-vindo a</p>
-            <h1 className="editorial-title text-5xl text-emerald-deep mt-2">
+            <p className="editorial-label text-primary mt-6">Bem-vindo a</p>
+            <h1 className="editorial-title text-5xl text-foreground mt-2">
               {tenant.name}
             </h1>
             {tenant.subtitle && (
-              <p className="text-emerald-deep/60 text-sm mt-2 italic font-serif-editorial text-lg">
+              <p className="text-muted-foreground text-sm mt-2 italic font-serif-editorial text-lg">
                 {tenant.subtitle}
               </p>
             )}
@@ -196,15 +196,15 @@ const HubPage = () => {
             <div className="flex items-center gap-2 mt-5">
               <div className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full border ${
                 isOpen 
-                  ? 'bg-emerald-deep/5 text-emerald-deep border-emerald-deep/20' 
-                  : 'bg-cream-soft text-emerald-deep/40 border-emerald-deep/10'
+                  ? 'bg-primary/5 text-foreground border-border' 
+                  : 'bg-secondary text-muted-foreground border-border'
               }`}>
                 <span className="relative flex h-2 w-2">
                   {isOpen && (
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c9a84c] opacity-75" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                   )}
                   <span className={`relative inline-flex rounded-full h-2 w-2 ${
-                    isOpen ? 'bg-gold' : 'bg-emerald-deep/30'
+                    isOpen ? 'bg-primary' : 'bg-primary/30'
                   }`} />
                 </span>
                 <Clock className="h-4 w-4" />
@@ -214,22 +214,22 @@ const HubPage = () => {
 
             {/* Table Badge */}
             {hasTable && (
-              <div className="flex items-center gap-2 mt-3 px-4 py-2 rounded-xl bg-cream-soft border border-emerald-deep/10">
-                <MapPin className="h-4 w-4 text-gold" />
+              <div className="flex items-center gap-2 mt-3 px-4 py-2 rounded-xl bg-secondary border border-border">
+                <MapPin className="h-4 w-4 text-primary" />
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-emerald-deep">
+                  <p className="text-sm font-semibold text-foreground">
                     Mesa {tableNumber?.toString().padStart(2, "0")}
                   </p>
                   {tableName && (
-                    <p className="text-xs text-emerald-deep/60">{tableName}</p>
+                    <p className="text-xs text-muted-foreground">{tableName}</p>
                   )}
                 </div>
                 <button
                   onClick={clearTable}
-                  className="p-1 rounded-full hover:bg-emerald-deep/5 transition-colors"
+                  className="p-1 rounded-full hover:bg-primary/5 transition-colors"
                   title="Trocar mesa"
                 >
-                  <X className="h-4 w-4 text-emerald-deep/50" />
+                  <X className="h-4 w-4 text-foreground/50" />
                 </button>
               </div>
             )}
@@ -238,33 +238,33 @@ const HubPage = () => {
           {/* Quick Action Buttons */}
           <div className="flex items-center justify-center gap-6 mt-8">
             <button className="flex flex-col items-center gap-1.5 group">
-              <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
-                <Camera className="h-5 w-5 text-gold transition-colors" />
+              <div className="p-3 bg-secondary border border-primary rounded-full bg-primary/10 transition-all">
+                <Camera className="h-5 w-5 text-primary transition-colors" />
               </div>
-              <span className="text-[10px] tracking-widest uppercase text-emerald-deep">Fotos</span>
+              <span className="text-[10px] tracking-widest uppercase text-foreground">Fotos</span>
             </button>
             {tenant.phone && (
               <a href={`https://wa.me/${tenant.phone.replace(/\D/g, "")}`} className="flex flex-col items-center gap-1.5 group">
-                <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
-                  <MessageCircle className="h-5 w-5 text-gold transition-colors" />
+                <div className="p-3 bg-secondary border border-primary rounded-full bg-primary/10 transition-all">
+                  <MessageCircle className="h-5 w-5 text-primary transition-colors" />
                 </div>
-                <span className="text-[10px] tracking-widest uppercase text-emerald-deep">Chat</span>
+                <span className="text-[10px] tracking-widest uppercase text-foreground">Chat</span>
               </a>
             )}
             {socialLinks.website && (
               <a href={socialLinks.website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 group">
-                <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
-                  <Globe className="h-5 w-5 text-gold transition-colors" />
+                <div className="p-3 bg-secondary border border-primary rounded-full bg-primary/10 transition-all">
+                  <Globe className="h-5 w-5 text-primary transition-colors" />
                 </div>
-                <span className="text-[10px] tracking-widest uppercase text-emerald-deep">Site</span>
+                <span className="text-[10px] tracking-widest uppercase text-foreground">Site</span>
               </a>
             )}
             {wifiInfo.password && (
               <button onClick={copyWifiPassword} className="flex flex-col items-center gap-1.5 group">
-                <div className="p-3 bg-cream-soft border border-gold rounded-full bg-[#c9a84c]/10 transition-all">
-                  <Wifi className="h-5 w-5 text-gold transition-colors" />
+                <div className="p-3 bg-secondary border border-primary rounded-full bg-primary/10 transition-all">
+                  <Wifi className="h-5 w-5 text-primary transition-colors" />
                 </div>
-                <span className="text-[10px] tracking-widest uppercase text-emerald-deep">WiFi</span>
+                <span className="text-[10px] tracking-widest uppercase text-foreground">WiFi</span>
               </button>
             )}
           </div>
@@ -274,9 +274,9 @@ const HubPage = () => {
       {/* Action Cards */}
       <div className="container mx-auto px-4 pb-8 max-w-lg">
         <div className="mb-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-emerald-deep/15" />
-          <span className="editorial-label text-emerald-deep">Nossos serviços</span>
-          <div className="h-px flex-1 bg-emerald-deep/15" />
+          <div className="h-px flex-1 bg-primary/15" />
+          <span className="editorial-label text-foreground">Nossos serviços</span>
+          <div className="h-px flex-1 bg-primary/15" />
         </div>
         <div className="space-y-3">
           {/* Hero Menu Card */}
@@ -433,16 +433,16 @@ const HubPage = () => {
         )}
 
         {/* Footer */}
-        <div className="mt-10 pt-6 border-t border-emerald-deep/10 text-center">
-          <p className="text-xs text-emerald-deep">
-            Powered by <span className="text-gold font-medium">Chama Atende</span>
+        <div className="mt-10 pt-6 border-t border-border text-center">
+          <p className="text-xs text-foreground">
+            Powered by <span className="text-primary font-medium">Chama Atende</span>
           </p>
-          <div className="flex items-center justify-center gap-2 mt-2 text-[10px] tracking-widest text-emerald-deep/50">
-            <a href="/termos" className="hover:text-gold transition-colors">TERMOS</a>
+          <div className="flex items-center justify-center gap-2 mt-2 text-[10px] tracking-widest text-foreground/50">
+            <a href="/termos" className="hover:text-primary transition-colors">TERMOS</a>
             <span>•</span>
-            <a href="/privacidade" className="hover:text-gold transition-colors">PRIVACIDADE</a>
+            <a href="/privacidade" className="hover:text-primary transition-colors">PRIVACIDADE</a>
             <span>•</span>
-            <Link to={`/login/${slug}`} className="hover:text-gold transition-colors flex items-center gap-1">
+            <Link to={`/login/${slug}`} className="hover:text-primary transition-colors flex items-center gap-1">
               <Settings className="h-3 w-3" />
               ADMIN
             </Link>
