@@ -54,7 +54,7 @@ export default function SignupPage() {
     setIsSubmitting(false);
 
     if (!error) {
-      navigate('/login', { replace: true });
+      navigate('/estabelecimentos?admin=1', { replace: true });
     }
   };
 
@@ -178,7 +178,7 @@ export default function SignupPage() {
 
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">Já tem uma conta? </span>
-            <Link to="/login" className="text-primary hover:underline font-medium">
+            <Link to="/estabelecimentos?admin=1" className="text-primary hover:underline font-medium">
               Entrar
             </Link>
           </div>
