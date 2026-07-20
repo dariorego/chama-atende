@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +20,8 @@ interface Restaurant {
 
 export default function TenantSelectPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const adminMode = searchParams.get('admin') === '1';
   const [searchQuery, setSearchQuery] = useState('');
   const [slugInput, setSlugInput] = useState('');
 
@@ -44,9 +46,13 @@ export default function TenantSelectPage() {
       r.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const goToTenant = (slug: string) => {
+    navigate(adminMode ? `/login/${slug}` : `/${slug}`);
+  };
+
   const handleNavigateToSlug = () => {
     if (slugInput.trim()) {
-      navigate(`/${slugInput.trim().toLowerCase()}`);
+      goToTenant(slugInput.trim().toLowerCase());
     }
   };
 
@@ -80,14 +86,16 @@ export default function TenantSelectPage() {
                 <Plus className="h-4 w-4" />
                 Criar Estabelecimento
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/login')}
-                className="gap-2 rounded-full bg-cream-soft border-emerald-deep/15 text-emerald-deep hover:border-gold/40 hover:bg-cream-soft font-sans-editorial"
-              >
-                <Shield className="h-4 w-4" />
-                Admin
-              </Button>
+              {!adminMode && (
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/estabelecimentos?admin=1')}
+                  className="gap-2 rounded-full bg-cream-soft border-emerald-deep/15 text-emerald-deep hover:border-gold/40 hover:bg-cream-soft font-sans-editorial"
+                >
+                  <Shield className="h-4 w-4" />
+                  Admin
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -96,10 +104,15 @@ export default function TenantSelectPage() {
       <main className="container mx-auto px-4 py-10 flex-1">
         {/* Editorial intro */}
         <div className="mb-10 max-w-2xl">
-          <p className="editorial-label text-gold">Bem-vindo</p>
+          <p className="editorial-label text-gold">{adminMode ? 'Acesso Admin' : 'Bem-vindo'}</p>
           <h2 className="text-4xl md:text-5xl font-serif-editorial text-emerald-deep leading-[1.05] mt-1">
-            Encontre seu estabelecimento
+            {adminMode ? 'Selecione seu estabelecimento' : 'Encontre seu estabelecimento'}
           </h2>
+          {adminMode && (
+            <p className="text-sm text-emerald-deep/70 font-sans-editorial mt-3">
+              Escolha o estabelecimento para acessar o painel administrativo.
+            </p>
+          )}
           <div className="w-16 h-px bg-gold/60 mt-4" />
         </div>
 
@@ -128,7 +141,7 @@ export default function TenantSelectPage() {
               <Card
                 key={restaurant.id}
                 className="bg-cream-soft border-emerald-deep/10 hover:border-gold/60 rounded-2xl transition-all cursor-pointer group shadow-[0_10px_40px_-25px_rgba(6,78,59,0.35)] hover:shadow-[0_20px_60px_-25px_rgba(6,78,59,0.45)]"
-                onClick={() => navigate(`/${restaurant.slug}`)}
+                onClick={() => goToTenant(restaurant.slug)}
               >
                 <CardContent className="p-5">
                   <div className="flex items-start gap-4">
