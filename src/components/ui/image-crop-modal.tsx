@@ -77,10 +77,17 @@ export function ImageCropModal({
       height: (crop.height / 100) * image.height * scaleY,
     };
 
-    // Tamanho final da imagem (quadrado)
-    const outputSize = Math.min(pixelCrop.width, pixelCrop.height, 800);
-    canvas.width = outputSize;
-    canvas.height = outputSize;
+    // Tamanho final respeitando a proporção do crop
+    const MAX_DIM = 1600;
+    let outW = pixelCrop.width;
+    let outH = pixelCrop.height;
+    if (outW > MAX_DIM || outH > MAX_DIM) {
+      const scale = Math.min(MAX_DIM / outW, MAX_DIM / outH);
+      outW = Math.round(outW * scale);
+      outH = Math.round(outH * scale);
+    }
+    canvas.width = outW;
+    canvas.height = outH;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -95,8 +102,8 @@ export function ImageCropModal({
       pixelCrop.height,
       0,
       0,
-      outputSize,
-      outputSize
+      outW,
+      outH
     );
 
     return new Promise((resolve, reject) => {
@@ -133,7 +140,7 @@ export function ImageCropModal({
         <DialogHeader>
           <DialogTitle>Ajustar Imagem</DialogTitle>
           <DialogDescription>
-            Arraste para ajustar a área de recorte. A imagem será salva em formato quadrado.
+            Arraste para ajustar a área de recorte respeitando a proporção sugerida.
           </DialogDescription>
         </DialogHeader>
 
