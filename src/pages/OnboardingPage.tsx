@@ -3,14 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Store, ArrowLeft, Sparkles, Crown, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -25,6 +23,10 @@ const slugify = (text: string) => {
 };
 
 const onboardingSchema = z.object({
+  fullName: z.string().trim().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100, 'Nome muito longo'),
+  email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
+  password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres').max(72, 'Senha muito longa'),
+  confirmPassword: z.string(),
   name: z.string().trim().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100, 'Nome muito longo'),
   slug: z.string().trim()
     .min(3, 'Slug deve ter no mínimo 3 caracteres')
@@ -32,6 +34,9 @@ const onboardingSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug deve conter apenas letras minúsculas, números e hífens'),
   subtitle: z.string().trim().max(200, 'Subtítulo muito longo').optional(),
   plan: z.enum(['starter', 'professional', 'enterprise']),
+}).refine((d) => d.password === d.confirmPassword, {
+  message: 'As senhas não coincidem',
+  path: ['confirmPassword'],
 });
 
 type OnboardingFormData = z.infer<typeof onboardingSchema>;
@@ -63,7 +68,6 @@ const PLANS = [
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [checkingSlug, setCheckingSlug] = useState(false);
@@ -72,6 +76,10 @@ export default function OnboardingPage() {
   const form = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
       name: '',
       slug: '',
       subtitle: '',
@@ -110,12 +118,6 @@ export default function OnboardingPage() {
   };
 
   const onSubmit = async (data: OnboardingFormData) => {
-    if (!user) {
-      toast.error('Você precisa estar logado para criar um restaurante');
-      navigate('/login', { state: { from: '/onboarding' } });
-      return;
-    }
-
     if (slugAvailable === false) {
       toast.error('Este slug já está em uso. Escolha outro.');
       return;
@@ -124,6 +126,42 @@ export default function OnboardingPage() {
     setIsSubmitting(true);
 
     try {
+      // 1. Encerra qualquer sessão ativa para garantir usuário isolado
+      try { await supabase.auth.signOut(); } catch { /* noop */ }
+
+      // 2. Cria a nova conta
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: data.email.trim(),
+        password: data.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: { full_name: data.fullName },
+        },
+      });
+
+      if (signUpError) {
+        const msg = signUpError.message.includes('already registered') || signUpError.message.includes('already been registered')
+          ? 'Este email já está cadastrado. Faça login e crie o restaurante a partir da sua conta.'
+          : signUpError.message;
+        toast.error(msg);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 3. Se não veio sessão (confirmação de email), tenta login imediato
+      if (!signUpData.session) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email.trim(),
+          password: data.password,
+        });
+        if (signInError) {
+          toast.error('Conta criada, mas não foi possível autenticar automaticamente. Confirme seu email e faça login.');
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      // 4. Cria o restaurante usando o JWT do novo usuário
       const { data: response, error } = await supabase.functions.invoke('create-tenant', {
         body: {
           name: data.name,
@@ -156,46 +194,6 @@ export default function OnboardingPage() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/30 p-4">
-        <Card className="w-full max-w-md shadow-xl border-border/50">
-          <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-              <Store className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-bold">Acesso Necessário</CardTitle>
-              <CardDescription className="mt-2">
-                Você precisa estar logado para criar um restaurante
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button asChild className="w-full">
-              <Link to="/login" state={{ from: '/onboarding' }}>
-                Fazer Login
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full">
-              <Link to="/signup">
-                Criar Conta
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 p-4">
       <div className="max-w-2xl mx-auto">
@@ -224,6 +222,68 @@ export default function OnboardingPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Sua conta</h3>
+                  <FormField
+                    control={form.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome completo *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Seu nome" autoComplete="name" className="bg-surface placeholder:text-surface-foreground" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email *</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="seu@email.com" autoComplete="email" className="bg-surface placeholder:text-surface-foreground" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Senha *</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="••••••••" autoComplete="new-password" className="bg-surface placeholder:text-surface-foreground" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirmar senha *</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="••••••••" autoComplete="new-password" className="bg-surface placeholder:text-surface-foreground" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-border" />
+
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Dados do restaurante</h3>
+
                 <FormField
                   control={form.control}
                   name="name"
