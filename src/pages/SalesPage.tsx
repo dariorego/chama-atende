@@ -199,7 +199,7 @@ export default function SalesPage() {
                 {l.label}
               </button>
             ))}
-            <Link to="/login">
+            <Link to="/estabelecimentos?admin=1">
               <Button variant="ghost" size="sm">Login</Button>
             </Link>
             <Link to="/onboarding">
@@ -221,7 +221,7 @@ export default function SalesPage() {
                 {l.label}
               </button>
             ))}
-            <Link to="/login"><Button variant="ghost" size="sm" className="w-full">Login</Button></Link>
+            <Link to="/estabelecimentos?admin=1"><Button variant="ghost" size="sm" className="w-full">Login</Button></Link>
             <Link to="/onboarding"><Button size="sm" className="w-full">Começar Grátis</Button></Link>
           </nav>
         )}
@@ -475,7 +475,7 @@ export default function SalesPage() {
               <h4 className="font-semibold text-sm mb-3">Acesso</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link to="/onboarding" className="hover:text-foreground transition-colors">Criar Estabelecimento</Link></li>
-                <li><Link to="/login" className="hover:text-foreground transition-colors">Fazer Login</Link></li>
+                <li><Link to="/estabelecimentos?admin=1" className="hover:text-foreground transition-colors">Fazer Login</Link></li>
               </ul>
             </div>
           </div>
