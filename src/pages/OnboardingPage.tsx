@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Store, ArrowLeft, Sparkles, Crown, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const slugify = (text: string) => {
   return text
@@ -39,23 +40,24 @@ const PLANS = [
   {
     value: 'starter',
     label: 'Starter',
-    description: 'Até 3 usuários, funcionalidades básicas',
+    description: 'Cardápio digital e informações da loja (redes sociais e contato)',
     icon: Sparkles,
     price: 'Grátis',
   },
   {
     value: 'professional',
     label: 'Professional',
-    description: 'Até 10 usuários, relatórios avançados',
+    description: 'Todos os módulos liberados',
     icon: Rocket,
-    price: 'R$ 99/mês',
+    price: 'R$ 69,90/mês',
   },
   {
     value: 'enterprise',
-    label: 'Enterprise',
-    description: 'Usuários ilimitados, API, domínio próprio',
+    label: 'Enterprise com IA',
+    description: 'Todos os módulos + recursos de IA (em breve)',
     icon: Crown,
-    price: 'R$ 299/mês',
+    price: 'R$ 129,90/mês',
+    comingSoon: true,
   },
 ];
 
@@ -65,6 +67,7 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [checkingSlug, setCheckingSlug] = useState(false);
+  const [freeProfessional, setFreeProfessional] = useState(false);
 
   const form = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
@@ -127,6 +130,7 @@ export default function OnboardingPage() {
           slug: data.slug,
           subtitle: data.subtitle || null,
           plan: data.plan,
+          free_trial: data.plan === 'professional' ? freeProfessional : false,
         },
       });
 
@@ -301,15 +305,23 @@ export default function OnboardingPage() {
                         {PLANS.map((plan) => {
                           const Icon = plan.icon;
                           const isSelected = field.value === plan.value;
+                          const isDisabled = (plan as any).comingSoon;
                           return (
                             <div
                               key={plan.value}
-                              onClick={() => field.onChange(plan.value)}
+                              onClick={() => {
+                                if (isDisabled) return;
+                                field.onChange(plan.value);
+                              }}
                               className={`
-                                relative flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all
-                                ${isSelected
+                                relative flex items-center gap-4 p-4 rounded-lg border-2 transition-all
+                                ${isDisabled
+                                  ? 'opacity-60 cursor-not-allowed border-border'
+                                  : 'cursor-pointer'
+                                }
+                                ${isSelected && !isDisabled
                                   ? 'border-primary bg-primary/5'
-                                  : 'border-border hover:border-primary/50'
+                                  : !isDisabled ? 'border-border hover:border-primary/50' : ''
                                 }
                               `}
                             >
@@ -321,10 +333,29 @@ export default function OnboardingPage() {
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center justify-between">
-                                  <span className="font-medium">{plan.label}</span>
+                                  <span className="font-medium">
+                                    {plan.label}
+                                    {isDisabled && (
+                                      <span className="ml-2 text-xs uppercase tracking-wide text-muted-foreground">
+                                        em breve
+                                      </span>
+                                    )}
+                                  </span>
                                   <span className="text-sm font-semibold text-primary">{plan.price}</span>
                                 </div>
                                 <p className="text-sm text-muted-foreground">{plan.description}</p>
+                                {plan.value === 'professional' && isSelected && (
+                                  <label
+                                    className="mt-3 flex items-center gap-2 text-sm text-foreground cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Checkbox
+                                      checked={freeProfessional}
+                                      onCheckedChange={(v) => setFreeProfessional(!!v)}
+                                    />
+                                    Ativar Professional sem pagamento (período de avaliação)
+                                  </label>
+                                )}
                               </div>
                               {isSelected && (
                                 <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
