@@ -50,7 +50,7 @@ function AccessDenied({ currentSlug }: { currentSlug: string | null }) {
 
   const handleLogout = async () => {
     await logout();
-    navigate(currentSlug ? `/login/${currentSlug}` : '/login', { replace: true });
+    navigate(currentSlug ? `/login/${currentSlug}` : '/estabelecimentos?admin=1', { replace: true });
   };
 
   return (
@@ -122,7 +122,7 @@ export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
 
   const getTenantLoginPath = () => {
     const adminMatch = location.pathname.match(/^\/admin\/([^/]+)/);
-    return adminMatch?.[1] ? `/login/${adminMatch[1]}` : '/login';
+    return adminMatch?.[1] ? `/login/${adminMatch[1]}` : '/estabelecimentos?admin=1';
   };
 
   useEffect(() => {
