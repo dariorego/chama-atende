@@ -646,7 +646,7 @@ export default function LandingPage() {
             <div className="font-semibold mb-3 text-sm">Empresa</div>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/vendas" className="hover:text-foreground">Vendas</Link></li>
-              <li><Link to="/login" className="hover:text-foreground">Entrar</Link></li>
+              <li><Link to="/estabelecimentos?admin=1" className="hover:text-foreground">Entrar</Link></li>
               <li><Link to="/estabelecimentos" className="hover:text-foreground">Estabelecimentos</Link></li>
             </ul>
           </div>
