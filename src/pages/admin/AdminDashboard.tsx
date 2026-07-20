@@ -40,7 +40,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Módulos do Restaurante</h2>
+        <h2 className="text-xl font-semibold">Módulos do Estabelecimento</h2>
         {activeModules.length === 0 ? (
           <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum módulo ativo. <Link to="/admin/modulos" className="text-primary underline">Ativar módulos</Link></CardContent></Card>
         ) : (

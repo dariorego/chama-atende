@@ -230,7 +230,7 @@ export default function AdminSettings() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Configurações</h2>
         <p className="text-muted-foreground">
-          Configure as preferências do restaurante
+          Configure as preferências do estabelecimento
         </p>
       </div>
 
@@ -253,9 +253,9 @@ export default function AdminSettings() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome do Restaurante</FormLabel>
+                    <FormLabel>Nome do Estabelecimento</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Nome do restaurante" />
+                      <Input {...field} placeholder="Nome do estabelecimento" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -285,7 +285,7 @@ export default function AdminSettings() {
                 Identidade Visual
               </CardTitle>
               <CardDescription>
-                Logo e imagem de capa do restaurante
+                Logo e imagem de capa do estabelecimento
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -305,7 +305,7 @@ export default function AdminSettings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Logo do Restaurante</Label>
+                  <Label>Logo do Estabelecimento</Label>
                   <p className="text-sm text-muted-foreground mb-2">
                     Exibido como círculo sobre a capa. Recomendado: 512×512px (quadrado).
                   </p>
@@ -520,7 +520,7 @@ export default function AdminSettings() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input {...field} type="email" value={field.value || ''} placeholder="contato@restaurante.com" />
+                      <Input {...field} type="email" value={field.value || ''} placeholder="contato@estabelecimento.com" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -690,7 +690,7 @@ export default function AdminSettings() {
                   <FormItem>
                     <FormLabel>Instagram</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="https://instagram.com/seurestaurante" />
+                      <Input {...field} placeholder="https://instagram.com/seuestabelecimento" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -703,7 +703,7 @@ export default function AdminSettings() {
                   <FormItem>
                     <FormLabel>Facebook</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="https://facebook.com/seurestaurante" />
+                      <Input {...field} placeholder="https://facebook.com/seuestabelecimento" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -716,7 +716,7 @@ export default function AdminSettings() {
                   <FormItem>
                     <FormLabel>Website</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="https://seurestaurante.com.br" />
+                      <Input {...field} placeholder="https://seuestabelecimento.com.br" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

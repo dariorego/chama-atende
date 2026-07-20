@@ -132,7 +132,7 @@ export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName }: QRCo
             ${table.name ? `<div class="table-name">${table.name}</div>` : ""}
             <div class="qr-code">${svgData}</div>
             <div class="table-number">Mesa ${table.number.toString().padStart(2, "0")}</div>
-            <p class="hint">Escaneie para acessar o restaurante</p>
+            <p class="hint">Escaneie para acessar o estabelecimento</p>
           </div>
           <script>
             window.onload = function() {

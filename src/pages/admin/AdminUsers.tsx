@@ -33,7 +33,7 @@ export default function AdminUsers() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Usuários</h2>
         <p className="text-muted-foreground">
-          Gerencie a equipe do restaurante
+          Gerencie a equipe do estabelecimento
         </p>
       </div>
 

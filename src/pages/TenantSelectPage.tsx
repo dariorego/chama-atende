@@ -69,7 +69,7 @@ export default function TenantSelectPage() {
               <div>
                 <p className="editorial-label text-gold leading-none">Plataforma</p>
                 <h1 className="text-2xl font-serif-editorial text-emerald-deep leading-none mt-0.5">Chama Atende</h1>
-                <p className="text-xs text-emerald-deep/60 font-sans-editorial mt-0.5">SaaS para restaurantes</p>
+                <p className="text-xs text-emerald-deep/60 font-sans-editorial mt-0.5">SaaS para estabelecimentos</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export default function TenantSelectPage() {
                 className="gap-2 rounded-full bg-emerald-deep text-cream border border-gold/40 hover:bg-emerald-deep/90 font-sans-editorial"
               >
                 <Plus className="h-4 w-4" />
-                Criar Restaurante
+                Criar Estabelecimento
               </Button>
               <Button
                 variant="outline"

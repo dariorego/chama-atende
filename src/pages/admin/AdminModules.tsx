@@ -33,7 +33,7 @@ export default function AdminModules() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Módulos</h2>
         <p className="text-muted-foreground">
-          Ative ou desative funcionalidades do seu restaurante
+          Ative ou desative funcionalidades do seu estabelecimento
         </p>
       </div>
 
@@ -74,7 +74,7 @@ export default function AdminModules() {
           <Card>
             <CardContent className="py-8">
               <p className="text-muted-foreground text-center">
-                Nenhum módulo configurado para este restaurante.
+                Nenhum módulo configurado para este estabelecimento.
               </p>
             </CardContent>
           </Card>

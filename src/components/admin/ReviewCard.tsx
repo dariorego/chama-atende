@@ -181,7 +181,7 @@ export function ReviewCard({
           {/* Admin response */}
           {review.admin_response && (
             <div className="bg-primary/10 rounded-lg p-3 border border-primary/20">
-              <p className="text-xs font-medium text-primary mb-1">Resposta do restaurante:</p>
+              <p className="text-xs font-medium text-primary mb-1">Resposta do estabelecimento:</p>
               <p className="text-sm text-foreground/90">{review.admin_response}</p>
             </div>
           )}

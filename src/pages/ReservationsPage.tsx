@@ -190,9 +190,9 @@ const ReservationsPage = () => {
   if (!restaurant) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#e8e4d8]" style={{ fontFamily: "'Work Sans', sans-serif" }}>
-        <h1 className="text-3xl italic text-[#064e3b] mb-2" style={{ fontFamily: "'Instrument Serif', serif" }}>Restaurante não encontrado</h1>
+        <h1 className="text-3xl italic text-[#064e3b] mb-2" style={{ fontFamily: "'Instrument Serif', serif" }}>Estabelecimento não encontrado</h1>
         <p className="text-[#064e3b]/60 text-center">
-          O restaurante que você está procurando não existe ou está inativo.
+          O estabelecimento que você está procurando não existe ou está inativo.
         </p>
       </div>
     );
