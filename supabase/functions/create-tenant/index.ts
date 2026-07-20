@@ -148,12 +148,12 @@ Deno.serve(async (req) => {
 
     // Create default modules for the restaurant
     const defaultModules = [
-      'digital_menu',
+      'menu',
       'waiter_call',
       'reservations',
-      'queue_management',
-      'kitchen_orders',
-      'customer_reviews',
+      'queue',
+      'kitchen_order',
+      'customer_review',
       'pre_orders',
       'vitrine_digital',
       'digital_comanda',
@@ -164,11 +164,16 @@ Deno.serve(async (req) => {
     const modulesToInsert = defaultModules.map((moduleName) => ({
       restaurant_id: restaurant.id,
       module_name: moduleName,
-      is_active: moduleName === 'digital_menu', // Only digital menu active by default
+      is_active: moduleName === 'menu', // Only digital menu active by default
       settings: {},
     }));
 
-    await supabaseAdmin.from('restaurant_modules').insert(modulesToInsert);
+    const { error: modulesError } = await supabaseAdmin
+      .from('restaurant_modules')
+      .insert(modulesToInsert);
+    if (modulesError) {
+      console.error('Error inserting default modules:', modulesError);
+    }
 
     console.log(`Restaurant ${slug} created successfully for user ${user.id}`);
 
