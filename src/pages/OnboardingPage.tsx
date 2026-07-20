@@ -311,7 +311,7 @@ export default function OnboardingPage() {
                       <FormLabel>URL do Restaurante *</FormLabel>
                       <FormControl>
                         <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground text-sm">chamaatende.lovable.app/</span>
+                          <span className="text-muted-foreground text-sm">plataforma.chamaatende.com/</span>
                           <Input
                             placeholder="bistro-verde"
                             className="bg-surface placeholder:text-surface-foreground flex-1"
