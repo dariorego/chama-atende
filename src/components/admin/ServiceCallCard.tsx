@@ -10,6 +10,7 @@ import { Waiter } from "@/hooks/useAdminWaiters";
 interface ServiceCallCardProps {
   call: ServiceCall;
   waiters?: Waiter[];
+  duplicateIds?: string[];
 }
 
 const callTypeConfig = {
@@ -32,10 +33,13 @@ function formatDuration(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-export function ServiceCallCard({ call, waiters }: ServiceCallCardProps) {
+export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCardProps) {
   const [elapsed, setElapsed] = useState(0);
   const updateCall = useUpdateServiceCall();
   const [selectedWaiter, setSelectedWaiter] = useState<string>(call.waiter_id || "");
+
+  const extraIds = (duplicateIds ?? []).filter((id) => id !== call.id);
+  const totalCount = 1 + extraIds.length;
 
   const config = callTypeConfig[call.call_type];
   const statusInfo = statusConfig[call.status];
@@ -68,6 +72,10 @@ export function ServiceCallCard({ call, waiters }: ServiceCallCardProps) {
       status: 'acknowledged',
       acknowledged_at: new Date().toISOString(),
     });
+    const now = new Date().toISOString();
+    extraIds.forEach((id) =>
+      updateCall.mutate({ id, status: 'acknowledged', acknowledged_at: now })
+    );
   };
 
   const handleStartService = () => {
@@ -76,6 +84,9 @@ export function ServiceCallCard({ call, waiters }: ServiceCallCardProps) {
       status: 'in_progress',
       waiter_id: selectedWaiter || null,
     });
+    extraIds.forEach((id) =>
+      updateCall.mutate({ id, status: 'in_progress', waiter_id: selectedWaiter || null })
+    );
   };
 
   const handleComplete = () => {
@@ -84,6 +95,10 @@ export function ServiceCallCard({ call, waiters }: ServiceCallCardProps) {
       status: 'completed',
       completed_at: new Date().toISOString(),
     });
+    const now = new Date().toISOString();
+    extraIds.forEach((id) =>
+      updateCall.mutate({ id, status: 'completed', completed_at: now })
+    );
   };
 
   const handleCancel = () => {
@@ -91,6 +106,7 @@ export function ServiceCallCard({ call, waiters }: ServiceCallCardProps) {
       id: call.id,
       status: 'cancelled',
     });
+    extraIds.forEach((id) => updateCall.mutate({ id, status: 'cancelled' }));
   };
 
   const isActive = ['pending', 'acknowledged', 'in_progress'].includes(call.status);
@@ -111,6 +127,11 @@ export function ServiceCallCard({ call, waiters }: ServiceCallCardProps) {
               <div className="flex items-center gap-2">
                 <span className="font-semibold">{tableName}</span>
                 <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+                {totalCount > 1 && (
+                  <Badge variant="secondary" title={`${totalCount} chamados desta mesa`}>
+                    ×{totalCount}
+                  </Badge>
+                )}
               </div>
               <p className="text-sm text-muted-foreground">{config.label}</p>
               {call.waiters && (
