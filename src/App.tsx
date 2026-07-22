@@ -9,6 +9,7 @@ import { TenantThemeApplier } from "@/components/TenantThemeApplier";
 import HubPage from "./pages/HubPage";
 import MenuPage from "./pages/MenuPage";
 import WaiterCallPage from "./pages/WaiterCallPage";
+import TableEntryPage from "./pages/TableEntryPage";
 import ReservationsPage from "./pages/ReservationsPage";
 import QueuePage from "./pages/QueuePage";
 import KitchenOrderPage from "./pages/KitchenOrderPage";
@@ -77,6 +78,7 @@ function ClientTenantPages() {
           <Route index element={<HubPage />} />
           <Route path="cardapio" element={<MenuPage />} />
           <Route path="atendimento/:tableId" element={<WaiterCallPage />} />
+          <Route path="mesa/:tableId" element={<TableEntryPage />} />
           <Route path="solicitar-atendimento" element={<WaiterCallPage />} />
           <Route path="reservas" element={<ReservationsPage />} />
           <Route path="fila" element={<QueuePage />} />
