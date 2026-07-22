@@ -79,9 +79,6 @@ function SortableRow({ category, onEdit, onDelete, isDragDisabled }: SortableRow
         </button>
       </TableCell>
       <TableCell className="font-medium">{category.name}</TableCell>
-      <TableCell className="text-muted-foreground font-mono text-sm">
-        {category.slug}
-      </TableCell>
       <TableCell className="max-w-[200px] truncate text-muted-foreground">
         {category.description || '-'}
       </TableCell>
@@ -189,7 +186,6 @@ export function CategoriesTable({
           <TableRow>
             <TableHead className="w-[40px]"></TableHead>
             <TableHead>Nome</TableHead>
-            <TableHead>Slug</TableHead>
             <TableHead>Descrição</TableHead>
             <TableHead className="text-center">Ordem</TableHead>
             <TableHead className="text-center">Status</TableHead>
