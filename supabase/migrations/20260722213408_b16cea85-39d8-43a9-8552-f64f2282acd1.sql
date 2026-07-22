@@ -1,0 +1,1 @@
+UPDATE public.service_calls sc SET restaurant_id = t.restaurant_id FROM public.tables t WHERE sc.restaurant_id IS NULL AND sc.table_id = t.id;
