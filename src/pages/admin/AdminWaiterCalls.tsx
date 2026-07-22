@@ -121,9 +121,31 @@ const AdminWaiterCalls = () => {
                   <Skeleton key={i} className="h-24 w-full" />
                 ))
               ) : pendingCalls && pendingCalls.length > 0 ? (
-                pendingCalls.map((call) => (
-                  <ServiceCallCard key={call.id} call={call} waiters={waiters} />
-                ))
+                (() => {
+                  // Agrupa chamados pendentes por mesa + tipo, mostrando um único card com contador
+                  const groups = new Map<string, { representative: typeof pendingCalls[number]; count: number }>();
+                  for (const call of pendingCalls) {
+                    const key = `${call.table_id ?? "no-table"}-${call.call_type}`;
+                    const existing = groups.get(key);
+                    if (!existing) {
+                      groups.set(key, { representative: call, count: 1 });
+                    } else {
+                      existing.count += 1;
+                      // Mantém o mais antigo como representante (maior tempo de espera)
+                      if (new Date(call.called_at) < new Date(existing.representative.called_at)) {
+                        existing.representative = call;
+                      }
+                    }
+                  }
+                  return Array.from(groups.values()).map(({ representative, count }) => (
+                    <ServiceCallCard
+                      key={representative.id}
+                      call={representative}
+                      waiters={waiters}
+                      duplicateCount={count}
+                    />
+                  ));
+                })()
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <Bell className="h-12 w-12 mx-auto mb-2 opacity-20" />
