@@ -123,26 +123,25 @@ const AdminWaiterCalls = () => {
               ) : pendingCalls && pendingCalls.length > 0 ? (
                 (() => {
                   // Agrupa chamados pendentes por mesa + tipo, mostrando um único card com contador
-                  const groups = new Map<string, { representative: typeof pendingCalls[number]; count: number }>();
+                  const groups = new Map<string, { representative: typeof pendingCalls[number]; ids: string[] }>();
                   for (const call of pendingCalls) {
                     const key = `${call.table_id ?? "no-table"}-${call.call_type}`;
                     const existing = groups.get(key);
                     if (!existing) {
-                      groups.set(key, { representative: call, count: 1 });
+                      groups.set(key, { representative: call, ids: [call.id] });
                     } else {
-                      existing.count += 1;
-                      // Mantém o mais antigo como representante (maior tempo de espera)
+                      existing.ids.push(call.id);
                       if (new Date(call.called_at) < new Date(existing.representative.called_at)) {
                         existing.representative = call;
                       }
                     }
                   }
-                  return Array.from(groups.values()).map(({ representative, count }) => (
+                  return Array.from(groups.values()).map(({ representative, ids }) => (
                     <ServiceCallCard
                       key={representative.id}
                       call={representative}
                       waiters={waiters}
-                      duplicateCount={count}
+                      duplicateIds={ids}
                     />
                   ));
                 })()
