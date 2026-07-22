@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UtensilsCrossed, Plus, Search, Info } from 'lucide-react';
+import { UtensilsCrossed, Plus, Search, Info, LayoutGrid, List, ChevronLeft, ChevronRight, Pencil, Trash2, Star, CameraOff, Tv } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -25,6 +27,13 @@ import {
 import { useAdminCategories } from '@/hooks/useAdminCategories';
 import { ProductFormDialog } from '@/components/admin/ProductFormDialog';
 import { ProductsTable } from '@/components/admin/ProductsTable';
+
+type ViewMode = 'list' | 'card';
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
 
 export default function AdminProducts() {
   const { restaurant } = useAdminSettings();
