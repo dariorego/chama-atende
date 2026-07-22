@@ -161,9 +161,15 @@ const MenuPage = () => {
   const highlightedProducts = products.filter((p) => p.highlight);
   const regularProducts = filteredProducts.filter((p) => !p.highlight);
 
+  const backTo = tenant?.slug
+    ? table?.id
+      ? `/${tenant.slug}/mesa/${table.id}`
+      : `/${tenant.slug}`
+    : "/";
+
   if (isLoading) {
     return (
-      <ClientLayout title="Cardápio" showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
+      <ClientLayout title="Cardápio" showBack backTo={backTo}>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -172,7 +178,7 @@ const MenuPage = () => {
   }
 
   return (
-    <ClientLayout showBack backTo={tenant?.slug ? `/${tenant.slug}` : "/"}>
+    <ClientLayout showBack backTo={backTo}>
       {/* Hero: cover image + circular logo */}
       <div className="-mx-4 mb-16">
         <div className="relative w-full aspect-[16/6] bg-gradient-to-br from-emerald-deep/20 to-emerald-deep/5 overflow-visible">
