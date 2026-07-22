@@ -17,16 +17,19 @@ interface QRCodeDialogProps {
   onOpenChange: (open: boolean) => void;
   table: Table | null;
   restaurantName?: string | null;
+  slug?: string | null;
 }
 
-export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName }: QRCodeDialogProps) => {
+export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName, slug }: QRCodeDialogProps) => {
   const { toast } = useToast();
   const qrRef = useRef<HTMLDivElement>(null);
 
   if (!table) return null;
 
   const baseUrl = window.location.origin;
-  const tableUrl = `${baseUrl}/?mesa=${table.id}`;
+  const tableUrl = slug
+    ? `${baseUrl}/${slug}/mesa/${table.id}`
+    : `${baseUrl}/?mesa=${table.id}`;
 
   const handleCopyUrl = async () => {
     try {
