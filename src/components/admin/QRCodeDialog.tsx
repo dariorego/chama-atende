@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Table } from "@/hooks/useAdminTables";
+import { useTenant } from "@/contexts/TenantContext";
 
 interface QRCodeDialogProps {
   open: boolean;
@@ -23,6 +24,7 @@ interface QRCodeDialogProps {
 export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName, slug }: QRCodeDialogProps) => {
   const { toast } = useToast();
   const qrRef = useRef<HTMLDivElement>(null);
+  const { tenant } = useTenant();
 
   if (!table) return null;
 
@@ -30,6 +32,14 @@ export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName, slug }
   const tableUrl = slug
     ? `${baseUrl}/${slug}/mesa/${table.id}`
     : `${baseUrl}/?mesa=${table.id}`;
+
+  // Branding: puxa cores do tenant (fallback verde/creme como no modelo)
+  const primaryColor = tenant?.theme_colors?.primary || "#a8c47a";
+  const secondaryColor = tenant?.theme_colors?.secondary || "#fdf6c9";
+  const primaryText = tenant?.theme_colors?.primary_foreground || "#2d4a1a";
+  const logoUrl = tenant?.logo_url || "";
+  const displayName = restaurantName || tenant?.name || "";
+  const tableLabel = `MESA ${table.number.toString().padStart(2, "0")}`;
 
   const handleCopyUrl = async () => {
     try {
@@ -54,24 +64,77 @@ export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName, slug }
     const svgData = new XMLSerializer().serializeToString(svg);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    const img = new Image();
+    if (!ctx) return;
 
-    img.onload = () => {
-      canvas.width = 400;
-      canvas.height = 400;
-      if (ctx) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, 400, 400);
+    // Cartaz A6 vertical (proporção do modelo): 900x1272
+    const W = 900;
+    const H = 1272;
+    const topH = Math.round(H * 0.55);
+
+    canvas.width = W;
+    canvas.height = H;
+
+    // Fundo superior (cor primária)
+    ctx.fillStyle = primaryColor;
+    ctx.fillRect(0, 0, W, topH);
+    // Fundo inferior (cor secundária)
+    ctx.fillStyle = secondaryColor;
+    ctx.fillRect(0, topH, W, H - topH);
+
+    // Título "MESA XX"
+    ctx.fillStyle = primaryText;
+    ctx.font = "bold 78px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(tableLabel, W / 2, 130);
+
+    // Card branco do QR
+    const qrSize = 560;
+    const qrX = (W - qrSize) / 2;
+    const qrY = 210;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(qrX - 24, qrY - 24, qrSize + 48, qrSize + 48);
+
+    const qrImg = new Image();
+    qrImg.onload = () => {
+      ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+      const finalize = () => {
+        const pngFile = canvas.toDataURL("image/png");
+        const downloadLink = document.createElement("a");
+        downloadLink.download = `qrcode-mesa-${table.number.toString().padStart(2, "0")}.png`;
+        downloadLink.href = pngFile;
+        downloadLink.click();
+      };
+
+      // Logo (ou nome) no rodapé
+      if (logoUrl) {
+        const logo = new Image();
+        logo.crossOrigin = "anonymous";
+        logo.onload = () => {
+          const maxW = W * 0.65;
+          const maxH = (H - topH) * 0.7;
+          const ratio = Math.min(maxW / logo.width, maxH / logo.height);
+          const lw = logo.width * ratio;
+          const lh = logo.height * ratio;
+          ctx.drawImage(logo, (W - lw) / 2, topH + ((H - topH) - lh) / 2, lw, lh);
+          finalize();
+        };
+        logo.onerror = () => {
+          ctx.fillStyle = primaryText;
+          ctx.font = "bold 64px system-ui, sans-serif";
+          ctx.fillText(displayName, W / 2, topH + (H - topH) / 2);
+          finalize();
+        };
+        logo.src = logoUrl;
+      } else {
+        ctx.fillStyle = primaryText;
+        ctx.font = "bold 64px system-ui, sans-serif";
+        ctx.fillText(displayName, W / 2, topH + (H - topH) / 2);
+        finalize();
       }
-      const pngFile = canvas.toDataURL("image/png");
-      const downloadLink = document.createElement("a");
-      downloadLink.download = `qrcode-mesa-${table.number.toString().padStart(2, "0")}.png`;
-      downloadLink.href = pngFile;
-      downloadLink.click();
     };
-
-    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+    qrImg.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
   };
 
   const handlePrint = () => {
@@ -87,55 +150,71 @@ export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName, slug }
       <!DOCTYPE html>
       <html>
         <head>
-          <title>QR Code - ${restaurantName || "Mesa " + table.number.toString().padStart(2, "0")}</title>
+          <title>QR Code - ${displayName || tableLabel}</title>
           <style>
+            @page { size: A6 portrait; margin: 0; }
+            * { box-sizing: border-box; }
             body {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              min-height: 100vh;
               margin: 0;
               font-family: system-ui, -apple-system, sans-serif;
             }
-            .container {
-              text-align: center;
-              padding: 40px;
+            .poster {
+              width: 100vw;
+              height: 100vh;
+              display: flex;
+              flex-direction: column;
             }
-            .restaurant-name {
+            .top {
+              flex: 0 0 55%;
+              background: ${primaryColor};
+              color: ${primaryText};
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: flex-start;
+              padding: 24px 20px 20px;
+            }
+            .top h1 {
+              margin: 0 0 16px;
+              font-size: 34px;
+              font-weight: 800;
+              letter-spacing: 1px;
+            }
+            .qr-box {
+              background: #fff;
+              padding: 14px;
+              border-radius: 6px;
+              box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            }
+            .qr-box svg { display: block; width: 260px; height: 260px; }
+            .bottom {
+              flex: 1 1 45%;
+              background: ${secondaryColor};
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 24px;
+            }
+            .bottom img { max-width: 70%; max-height: 80%; object-fit: contain; }
+            .bottom .fallback {
               font-size: 32px;
-              font-weight: 700;
-              margin-bottom: 8px;
-              color: #000;
-            }
-            .table-name {
-              font-size: 18px;
-              color: #666;
-              margin-bottom: 24px;
-            }
-            .qr-code {
-              margin: 8px 0 24px;
-            }
-            .table-number {
-              font-size: 28px;
-              font-weight: 600;
-              color: #000;
-              margin-bottom: 8px;
-            }
-            .hint {
-              font-size: 14px;
-              color: #666;
-              margin-bottom: 0;
+              font-weight: 800;
+              color: ${primaryText};
+              text-align: center;
             }
           </style>
         </head>
         <body>
-          <div class="container">
-            <div class="restaurant-name">${restaurantName || ""}</div>
-            ${table.name ? `<div class="table-name">${table.name}</div>` : ""}
-            <div class="qr-code">${svgData}</div>
-            <div class="table-number">Mesa ${table.number.toString().padStart(2, "0")}</div>
-            <p class="hint">Escaneie para acessar o estabelecimento</p>
+          <div class="poster">
+            <div class="top">
+              <h1>${tableLabel}</h1>
+              <div class="qr-box">${svgData}</div>
+            </div>
+            <div class="bottom">
+              ${logoUrl
+                ? `<img src="${logoUrl}" alt="${displayName}" />`
+                : `<div class="fallback">${displayName}</div>`}
+            </div>
           </div>
           <script>
             window.onload = function() {
@@ -156,35 +235,41 @@ export const QRCodeDialog = ({ open, onOpenChange, table, restaurantName, slug }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>QR Code - Mesa {table.number.toString().padStart(2, "0")}</DialogTitle>
+          <DialogTitle>QR Code - {tableLabel}</DialogTitle>
           <DialogDescription>
-            {table.name || "Escaneie para acessar a página de atendimento"}
+            {table.name || "Prévia do cartaz que será impresso"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col items-center py-6">
-          <div ref={qrRef} className="bg-white p-4 rounded-lg">
-            <QRCodeSVG
-              value={tableUrl}
-              size={200}
-              level="H"
-              includeMargin={false}
-            />
+        {/* Prévia do cartaz no mesmo layout da impressão */}
+        <div className="mx-auto w-full max-w-[280px] rounded-lg overflow-hidden shadow-md border">
+          <div
+            ref={qrRef}
+            className="flex flex-col items-center pt-4 pb-5 px-4"
+            style={{ backgroundColor: primaryColor, color: primaryText }}
+          >
+            <h3 className="text-xl font-extrabold tracking-wide mb-3">{tableLabel}</h3>
+            <div className="bg-white p-3 rounded-sm shadow-sm">
+              <QRCodeSVG value={tableUrl} size={180} level="H" includeMargin={false} />
+            </div>
           </div>
-
-          <div className="mt-4 text-center">
-            <p className="text-sm font-semibold text-foreground">
-              Mesa {table.number.toString().padStart(2, "0")}
-            </p>
-            {table.name && (
-              <p className="text-xs text-muted-foreground">{table.name}</p>
+          <div
+            className="flex items-center justify-center py-6 px-4 min-h-[130px]"
+            style={{ backgroundColor: secondaryColor }}
+          >
+            {logoUrl ? (
+              <img src={logoUrl} alt={displayName} className="max-h-24 max-w-[70%] object-contain" />
+            ) : (
+              <span className="text-lg font-extrabold" style={{ color: primaryText }}>
+                {displayName}
+              </span>
             )}
           </div>
-
-          <p className="text-xs text-muted-foreground mt-4 text-center break-all max-w-full px-4">
-            {tableUrl}
-          </p>
         </div>
+
+        <p className="text-[11px] text-muted-foreground text-center break-all px-4">
+          {tableUrl}
+        </p>
 
         <div className="flex gap-2">
           <Button variant="outline" className="flex-1" onClick={handleCopyUrl}>
