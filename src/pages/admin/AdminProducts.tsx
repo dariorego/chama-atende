@@ -253,7 +253,7 @@ export default function AdminProducts() {
               ) : (
                 paginatedProducts.map((product) => (
                   <Card key={product.id} className="overflow-hidden flex flex-col">
-                    <div className="relative aspect-video bg-muted">
+                    <div className="relative aspect-square bg-muted">
                       {product.image_url ? (
                         <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                       ) : (
