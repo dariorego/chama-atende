@@ -66,6 +66,8 @@ export function useAdminTables() {
 
 export function useUpdateTablePosition() {
   const queryClient = useQueryClient();
+  const { tenantId } = useTenant();
+  const queryKey = ["admin-tables", tenantId] as const;
   return useMutation({
     mutationFn: async ({ id, position_x, position_y, area }: { id: string; position_x: number; position_y: number; area?: string }) => {
       const payload = area
@@ -75,18 +77,18 @@ export function useUpdateTablePosition() {
       if (error) throw error;
     },
     onMutate: async ({ id, position_x, position_y, area }) => {
-      await queryClient.cancelQueries({ queryKey: ["admin-tables"] });
-      const previous = queryClient.getQueryData<Table[]>(["admin-tables"]);
-      queryClient.setQueryData<Table[]>(["admin-tables"], (old) =>
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Table[]>(queryKey);
+      queryClient.setQueryData<Table[]>(queryKey, (old) =>
         old?.map((t) => (t.id === id ? { ...t, position_x, position_y, ...(area ? { area } : {}) } : t))
       );
       return { previous };
     },
     onError: (_err, _vars, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["admin-tables"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(queryKey, ctx.previous);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 }
@@ -121,6 +123,7 @@ export function useCreateTable() {
 export function useUpdateTable() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: TableUpdate & { id: string }) => {
@@ -135,7 +138,7 @@ export function useUpdateTable() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tables", tenantId] });
       toast({ title: "Mesa atualizada com sucesso!" });
     },
     onError: (error) => {
@@ -147,6 +150,7 @@ export function useUpdateTable() {
 export function useDeleteTable() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -154,7 +158,7 @@ export function useDeleteTable() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-tables", tenantId] });
       toast({ title: "Mesa excluída com sucesso!" });
     },
     onError: (error) => {
