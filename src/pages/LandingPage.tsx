@@ -472,7 +472,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-center gap-3">
             <div className="w-11 h-11 rounded-full bg-gradient-primary" />
             <div className="text-left">
-              <div className="font-semibold">Ana Ribeiro</div>
+              <div className="font-semibold">Ana Silva</div>
               <div className="text-sm text-muted-foreground">Proprietária, Bistro Verde</div>
             </div>
           </div>
