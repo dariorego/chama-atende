@@ -265,7 +265,7 @@ export default function LandingPage() {
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight mb-6 animate-slide-up">
             A plataforma completa
             <br />
-            para estabelecimentos
+            para seu estabelecimento
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-slide-up">
