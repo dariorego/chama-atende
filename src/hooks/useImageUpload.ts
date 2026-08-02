@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 const BUCKET_NAME = 'imagens';
-const SUPABASE_URL = 'https://txtgrxwulaqyfxdyxnik.supabase.co';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 
 export function useImageUpload() {
   const [isUploading, setIsUploading] = useState(false);
