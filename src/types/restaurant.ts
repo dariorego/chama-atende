@@ -120,6 +120,7 @@ export interface ModulesMap {
   digitalComanda: boolean;
   eventBookings: boolean;
   staffSchedule: boolean;
+  whatsappAi: boolean;
 }
 
 // Module name mapping from snake_case (DB) to camelCase (frontend)
@@ -135,6 +136,7 @@ export const MODULE_NAME_MAP: Record<string, keyof ModulesMap> = {
   'digital_comanda': 'digitalComanda',
   'event_bookings': 'eventBookings',
   'staff_schedule': 'staffSchedule',
+  'whatsapp_ai': 'whatsappAi',
 };
 
 // Format time from database (HH:MM:SS) to display format (HH:MM)

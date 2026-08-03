@@ -26,6 +26,7 @@ export const ADMIN_SECTIONS = [
   "comandas",
   "eventos",
   "agenda",
+  "whatsapp",
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
@@ -36,7 +37,7 @@ export function isAdminSection(value?: string | null): boolean {
 }
 
 /** Seções acessíveis apenas por owner/admin do estabelecimento. */
-export const ADMIN_ONLY_SECTIONS: string[] = ["modulos", "usuarios", "configuracoes", "importar"];
+export const ADMIN_ONLY_SECTIONS: string[] = ["modulos", "usuarios", "configuracoes", "importar", "whatsapp"];
 
 /** Mapeia cada seção do admin para o módulo de permissão correspondente. */
 export const SECTION_MODULE: Record<string, string> = {
@@ -56,6 +57,7 @@ export const SECTION_MODULE: Record<string, string> = {
   comandas: "digital_comanda",
   eventos: "event_bookings",
   agenda: "staff_schedule",
+  whatsapp: "whatsapp_ai",
   metricas: "metrics",
 };
 

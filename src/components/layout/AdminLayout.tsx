@@ -44,6 +44,7 @@ import {
   Receipt,
   PartyPopper,
   CalendarClock,
+  MessageCircle,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -149,6 +150,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       label: 'Gestão',
       items: [
         { title: 'Métricas', url: `${adminBase}/metricas`, icon: BarChart3 },
+        ...(isModuleActive('whatsapp_ai')
+          ? [{ title: 'WhatsApp AI', url: `${adminBase}/whatsapp`, icon: MessageCircle }]
+          : []),
         { title: 'Módulos', url: `${adminBase}/modulos`, icon: Puzzle },
         { title: 'Usuários', url: `${adminBase}/usuarios`, icon: Users },
         { title: 'Configurações', url: `${adminBase}/configuracoes`, icon: Settings },
