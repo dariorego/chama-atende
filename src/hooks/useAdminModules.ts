@@ -65,6 +65,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Escala semanal, folgas e controle de ponto da equipe",
     icon: "CalendarClock",
   },
+  whatsapp_ai: {
+    label: "WhatsApp AI",
+    description: "Atendimento no WhatsApp com chatbot inteligente (Evolution API + OpenRouter)",
+    icon: "MessageCircle",
+  },
 };
 
 export function useAdminModules() {
