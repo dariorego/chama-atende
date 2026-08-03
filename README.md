@@ -1,73 +1,78 @@
-# Welcome to your Lovable project
+# Chama-atende
 
-## Project info
+Vou te mandar um serie de arquivos para inicar o desenvolvimento, usaremos o SUPABASE externo 
+Objetivo da Plataforma
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Desenvolver uma plataforma única que centralize atendimento, cardápio, reservas e gestão, funcionando como um hub digital do estabelecimento, semelhante a um Linktree, porém com funcionalidades operacionais.
 
-## How can I edit this code?
+⸻
 
-There are several ways of editing your application.
+Módulos da Plataforma
 
-**Use Lovable**
+0. Página principal (estilo Linktree)
+	•	Página pública acessível por link ou QR Code
+	•	Lista de ações/módulos disponíveis para o cliente
+	•	Cada módulo pode ser ativado ou ocultado pelo gestor
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+1. Cardápio Digital
+	•	Cardápio organizado por categorias e produtos
+	•	Produto com nome, descrição, preço e imagem
+	•	Possibilidade de ativar/desativar produtos e categorias
+	•	Visualização otimizada para celular
 
-Changes made via Lovable will be committed automatically to this repo.
+2. Chamar Atendente / Mesas
+	•	Cadastro de mesas no sistema
+	•	Cliente seleciona ou confirma a mesa
+	•	Botão “Chamar atendente”
+	•	Notificação enviada ao painel do estabelecimento
 
-**Use your preferred IDE**
+3. Reserva de Ambiente
+	•	Reserva de mesas ou ambientes específicos
+	•	Seleção de data, horário e número de pessoas
+	•	Confirmação via painel administrativo
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+4. Fila de Espera
+	•	Entrada do cliente na fila digital
+	•	Informar nome e quantidade de pessoas
+	•	Visualização da posição na fila
+	•	Painel interno para controle e chamada dos clientes
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+5. Painel de Gestão (Admin)
+	•	Dashboard central do estabelecimento
+	•	Ativar ou ocultar módulos individualmente
+	•	Gerenciar cardápio, mesas, reservas e fila
+	•	Controle simples, visual e intuitivo
 
-Follow these steps:
+⸻
+Imagens e códigos em anexo.
+Requisitos Gerais
+	•	Interface moderna e intuitiva
+	•	Experiência mobile-first
+	•	Plataforma modular e escalável
+	•	Separação clara entre visão do cliente e painel administrativo
+	•	Pensada para uso via QR Code em mesas, balcão ou entrada
+
+Vou te mandar algumas telas :
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://chamaatende.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/b3f9bbf7-ff47-4e48-bdb7-60137ef112f5).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
