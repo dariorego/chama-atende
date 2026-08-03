@@ -409,6 +409,16 @@ export default function LandingPage() {
                     <p className={`text-sm ${m.featured ? "text-primary-foreground/80 max-w-md" : "text-muted-foreground"}`}>
                       {m.desc}
                     </p>
+                    {MODULE_LANDINGS[m.slug] && (
+                      <Link
+                        to={`/modulos/${m.slug}`}
+                        className={`mt-3 inline-flex items-center gap-1.5 text-sm font-semibold ${
+                          m.featured ? "text-accent" : "text-accent"
+                        } hover:gap-2.5 transition-all`}
+                      >
+                        Saiba mais <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
