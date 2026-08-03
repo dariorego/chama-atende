@@ -15,7 +15,8 @@ import { useAdminProducts } from '@/hooks/useAdminProducts';
 import { parseCSVToObjects, toCSV, downloadCSV, parseBool, parseNumber, slugify } from '@/lib/csv';
 
 const BUCKET = 'imagens';
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+import { SUPABASE_PROJECT_URL } from '@/integrations/supabase/client';
+const SUPABASE_URL = SUPABASE_PROJECT_URL;
 const publicUrl = (path: string) => `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
 
 type LogEntry = { ok: boolean; message: string };

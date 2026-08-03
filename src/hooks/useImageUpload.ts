@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useTenant } from '@/hooks/useTenant';
 
 const BUCKET_NAME = 'imagens';
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+import { SUPABASE_PROJECT_URL } from '@/integrations/supabase/client';
+const SUPABASE_URL = SUPABASE_PROJECT_URL;
 
 export function useImageUpload() {
   const [isUploading, setIsUploading] = useState(false);
