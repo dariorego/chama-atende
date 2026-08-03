@@ -267,7 +267,7 @@ export function ProductFormDialog({
                     <ImageUploadWithCrop
                       value={field.value}
                       onChange={field.onChange}
-                      folder="produtos"
+                      folder="cardapio"
                     />
                   </FormControl>
                   <FormMessage />
