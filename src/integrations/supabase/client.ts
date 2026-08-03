@@ -1,17 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// URL e chave pública vêm das variáveis de ambiente (.env),
-// permitindo apontar para Supabase Cloud ou self-hosted sem alterar código.
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-// This is the public anon key (safe to use in the frontend)
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+// Backend self-hosted (EasyPanel). Fixado no código porque o .env do projeto
+// é regravado automaticamente pela plataforma. URL e anon key são públicas.
+const SELF_HOSTED_URL = 'https://supabase.chamaatende.com.br';
+const SELF_HOSTED_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg1NjMyNzk1LCJleHAiOjE5NDMzMTI3OTV9.Vyem5K430vnpHZrzZtF-Dey3WoZs7ZiIsDQruwTPbL8';
 
-if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  throw new Error(
-    'Configuração do Supabase ausente: defina VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY no .env'
-  );
-}
+const SUPABASE_URL = SELF_HOSTED_URL;
+const SUPABASE_PUBLISHABLE_KEY = SELF_HOSTED_ANON_KEY;
+
+export const SUPABASE_PROJECT_URL = SUPABASE_URL;
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
