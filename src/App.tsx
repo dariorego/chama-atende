@@ -121,7 +121,7 @@ function AdminTenantPages() {
           <Route
             path="produtos"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="produtos">
                 <AdminLayout>
                   <AdminProducts />
                 </AdminLayout>
@@ -131,7 +131,7 @@ function AdminTenantPages() {
           <Route
             path="categorias"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="categorias">
                 <AdminLayout>
                   <AdminCategories />
                 </AdminLayout>
@@ -141,7 +141,7 @@ function AdminTenantPages() {
           <Route
             path="importar"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="importar">
                 <AdminLayout>
                   <AdminImport />
                 </AdminLayout>
@@ -151,7 +151,7 @@ function AdminTenantPages() {
           <Route
             path="modulos"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="modulos">
                 <AdminLayout>
                   <AdminModules />
                 </AdminLayout>
@@ -161,7 +161,7 @@ function AdminTenantPages() {
           <Route
             path="usuarios"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="usuarios">
                 <AdminLayout>
                   <AdminUsers />
                 </AdminLayout>
@@ -171,7 +171,7 @@ function AdminTenantPages() {
           <Route
             path="configuracoes"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="configuracoes">
                 <AdminLayout>
                   <AdminSettings />
                 </AdminLayout>
@@ -181,7 +181,7 @@ function AdminTenantPages() {
           <Route
             path="atendimentos"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="atendimentos">
                 <AdminLayout>
                   <AdminWaiterCalls />
                 </AdminLayout>
@@ -191,7 +191,7 @@ function AdminTenantPages() {
           <Route
             path="mesas"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="mesas">
                 <AdminLayout>
                   <AdminTables />
                 </AdminLayout>
@@ -201,7 +201,7 @@ function AdminTenantPages() {
           <Route
             path="atendentes"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="atendentes">
                 <AdminLayout>
                   <AdminWaiters />
                 </AdminLayout>
@@ -211,7 +211,7 @@ function AdminTenantPages() {
           <Route
             path="reservas"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="reservas">
                 <AdminLayout>
                   <AdminReservations />
                 </AdminLayout>
@@ -221,7 +221,7 @@ function AdminTenantPages() {
           <Route
             path="fila"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="fila">
                 <AdminLayout>
                   <AdminQueue />
                 </AdminLayout>
@@ -231,7 +231,7 @@ function AdminTenantPages() {
           <Route
             path="avaliacoes"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="avaliacoes">
                 <AdminLayout>
                   <AdminReviews />
                 </AdminLayout>
@@ -241,7 +241,7 @@ function AdminTenantPages() {
           <Route
             path="pedidos"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="pedidos">
                 <AdminLayout>
                   <AdminOrders />
                 </AdminLayout>
@@ -251,7 +251,7 @@ function AdminTenantPages() {
           <Route
             path="itens-pedido"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="itens-pedido">
                 <AdminLayout>
                   <AdminOrderItems />
                 </AdminLayout>
@@ -261,7 +261,7 @@ function AdminTenantPages() {
           <Route
             path="combinacoes"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="combinacoes">
                 <AdminLayout>
                   <AdminCombinationGroups />
                 </AdminLayout>
@@ -271,7 +271,7 @@ function AdminTenantPages() {
           <Route
             path="metricas"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="metricas">
                 <AdminLayout>
                   <AdminMetrics />
                 </AdminLayout>
@@ -281,7 +281,7 @@ function AdminTenantPages() {
           <Route
             path="encomendas"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="encomendas">
                 <AdminLayout>
                   <AdminPreOrders />
                 </AdminLayout>
@@ -291,7 +291,7 @@ function AdminTenantPages() {
           <Route
             path="vitrine"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="vitrine">
                 <AdminLayout>
                   <AdminVitrine />
                 </AdminLayout>
@@ -301,7 +301,7 @@ function AdminTenantPages() {
           <Route
             path="comandas"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="comandas">
                 <AdminLayout>
                   <AdminComandas />
                 </AdminLayout>
@@ -311,7 +311,7 @@ function AdminTenantPages() {
           <Route
             path="eventos"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="eventos">
                 <AdminLayout>
                   <AdminEventBookings />
                 </AdminLayout>
@@ -321,7 +321,7 @@ function AdminTenantPages() {
           <Route
             path="agenda"
             element={
-              <AuthGuard requireAdmin>
+              <AuthGuard requireAdmin section="agenda">
                 <AdminLayout>
                   <AdminStaffSchedule />
                 </AdminLayout>

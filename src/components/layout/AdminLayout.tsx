@@ -51,6 +51,7 @@ import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { useAdminModules } from '@/hooks/useAdminModules';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { useTenant } from '@/hooks/useTenant';
+import { useAdminPermissions } from '@/hooks/useAdminPermissions';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -84,6 +85,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { tenant, tenantId } = useTenant();
   const { modules } = useAdminModules();
   const { restaurant: restaurantSettings } = useAdminSettings(tenantId ?? undefined);
+  const { canAccessSection } = useAdminPermissions();
   
   // Use tenant data for display (more reliable as it comes from URL context)
   const restaurant = tenant;
@@ -154,7 +156,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     },
   ];
 
-  const allMenuItems = menuGroups.flatMap((g) => g.items);
+  // Filtra por permissão de módulo do usuário (admin/owner vê tudo)
+  const sectionOf = (url: string) => url.replace(`${adminBase}/`, '').replace(adminBase, '') || undefined;
+  const visibleGroups = menuGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => canAccessSection(sectionOf(item.url))),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  const allMenuItems = visibleGroups.flatMap((g) => g.items);
 
   const handleLogout = async () => {
     await logout();
@@ -200,7 +211,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {menuGroups[0].items.map((item) => (
+                  {(visibleGroups[0]?.label === null ? visibleGroups[0].items : []).map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink
@@ -219,7 +230,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {menuGroups.slice(1).map((group) => (
+            {visibleGroups.filter((g) => g.label !== null).map((group) => (
               <SidebarGroup key={group.label}>
                 <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
                 <SidebarGroupContent>

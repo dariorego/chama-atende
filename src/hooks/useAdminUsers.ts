@@ -10,6 +10,7 @@ export interface AdminUser {
   created_at: string;
   roles: string[];
   tenantRole: string | null;
+  modules: string[];
 }
 
 export function useAdminUsers() {
@@ -41,6 +42,13 @@ export function useAdminUsers() {
 
       if (profilesError) throw profilesError;
 
+      // Módulos liberados por usuário neste estabelecimento
+      const { data: userModules } = await supabase
+        .from('tenant_user_modules')
+        .select('user_id, module_name')
+        .eq('restaurant_id', tenantId)
+        .in('user_id', userIds);
+
       // Combine profile data with tenant roles
       const usersWithRoles: AdminUser[] = (profiles || []).map((p) => {
         const userTenantRoles = tenantRoles.filter(r => r.user_id === p.id);
@@ -53,6 +61,9 @@ export function useAdminUsers() {
           created_at: p.created_at || '',
           roles: userTenantRoles.map(r => r.role),
           tenantRole: userTenantRoles[0]?.role || null,
+          modules: (userModules ?? [])
+            .filter((m) => m.user_id === p.id)
+            .map((m) => m.module_name as string),
         };
       });
 
