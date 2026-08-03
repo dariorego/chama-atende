@@ -1549,6 +1549,41 @@ export type Database = {
           },
         ]
       }
+      tenant_user_modules: {
+        Row: {
+          created_at: string
+          id: string
+          module_name: string
+          restaurant_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          module_name: string
+          restaurant_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          module_name?: string
+          restaurant_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_user_modules_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_user_roles: {
         Row: {
           created_at: string | null
@@ -1737,6 +1772,10 @@ export type Database = {
         }[]
       }
       get_user_restaurant_id: { Args: never; Returns: string }
+      has_module_access: {
+        Args: { _module_name: string; _restaurant_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
