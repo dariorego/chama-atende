@@ -29,7 +29,7 @@ import {
   Puzzle,
 } from "lucide-react";
 
-const ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+const ICONS: Record<string, LucideIcon> = {
   QrCode,
   Image: ImageIcon,
   LayoutGrid,
