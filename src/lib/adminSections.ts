@@ -27,6 +27,9 @@ export const ADMIN_SECTIONS = [
   "eventos",
   "agenda",
   "whatsapp",
+  "fidelidade",
+  "cupons",
+  "indicacao",
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
@@ -59,6 +62,9 @@ export const SECTION_MODULE: Record<string, string> = {
   agenda: "staff_schedule",
   whatsapp: "whatsapp_ai",
   metricas: "metrics",
+  fidelidade: "loyalty_cashback",
+  cupons: "coupons",
+  indicacao: "referral_program",
 };
 
 /** Módulos que podem ser concedidos a um usuário na tela Usuários. */

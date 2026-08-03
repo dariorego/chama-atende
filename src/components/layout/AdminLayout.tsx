@@ -45,6 +45,9 @@ import {
   PartyPopper,
   CalendarClock,
   MessageCircle,
+  Gift,
+  Tag,
+  UserPlus,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -115,6 +118,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'digital_comanda', title: 'Comandas', url: `${adminBase}/comandas`, icon: Receipt },
     { moduleName: 'event_bookings', title: 'Eventos', url: `${adminBase}/eventos`, icon: PartyPopper },
     { moduleName: 'staff_schedule', title: 'Agenda', url: `${adminBase}/agenda`, icon: CalendarClock },
+    { moduleName: 'loyalty_cashback', title: 'Fidelidade', url: `${adminBase}/fidelidade`, icon: Gift },
+    { moduleName: 'coupons', title: 'Cupons', url: `${adminBase}/cupons`, icon: Tag },
+    { moduleName: 'referral_program', title: 'Indicação', url: `${adminBase}/indicacao`, icon: UserPlus },
   ].filter((item) => isModuleActive(item.moduleName));
 
   // Composição items (subitems of kitchen_order)
