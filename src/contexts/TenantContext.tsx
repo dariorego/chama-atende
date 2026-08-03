@@ -2,6 +2,7 @@ import React, { createContext, useContext, ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useParams, useLocation } from 'react-router-dom';
+import { ADMIN_SECTIONS } from '@/lib/adminSections';
 
 export interface Tenant {
   id: string;
@@ -123,7 +124,8 @@ export function TenantProvider({ children, slug: propSlug }: TenantProviderProps
  */
 const RESERVED_ROUTES = [
   'login', 'signup', 'onboarding', 'admin', 'api', 'auth', 
-  'settings', 'profile', 'dashboard', 'health', 'status'
+  'settings', 'profile', 'dashboard', 'health', 'status',
+  ...ADMIN_SECTIONS,
 ];
 
 /**
