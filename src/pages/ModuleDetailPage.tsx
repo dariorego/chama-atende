@@ -28,6 +28,28 @@ import {
   Clock,
   Puzzle,
 } from "lucide-react";
+import {
+  Bell,
+  BellRing,
+  Volume2,
+  Layers,
+  ListChecks,
+  ClipboardList,
+  FileText,
+  BarChart3,
+  CalendarCheck,
+  CalendarClock,
+  Users,
+  MessageCircle,
+  ShoppingBag,
+  CreditCard,
+  Receipt,
+  Printer,
+  Tv,
+  Play,
+  Move,
+  PartyPopper,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -49,6 +71,26 @@ const ICONS: Record<string, LucideIcon> = {
   ShieldCheck,
   Clock,
   Sparkles,
+  Bell,
+  BellRing,
+  Volume2,
+  Layers,
+  ListChecks,
+  ClipboardList,
+  FileText,
+  BarChart3,
+  CalendarCheck,
+  CalendarClock,
+  Users,
+  MessageCircle,
+  ShoppingBag,
+  CreditCard,
+  Receipt,
+  Printer,
+  Tv,
+  Play,
+  Move,
+  PartyPopper,
 };
 
 export default function ModuleDetailPage() {
