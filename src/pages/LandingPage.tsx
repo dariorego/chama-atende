@@ -128,6 +128,30 @@ const modules = [
     span: "",
     badge: "Novo",
   },
+  {
+    icon: Gift,
+    title: "Fidelidade e Cashback",
+    slug: "fidelidade-cashback",
+    desc: "Pontos por compra, níveis de cliente e recompensas automáticas.",
+    span: "md:col-span-2",
+    badge: "Novo",
+  },
+  {
+    icon: Tag,
+    title: "Cupons e Promoções",
+    slug: "cupons-promocoes",
+    desc: "Descontos por horário, categoria, primeiro pedido e compra mínima.",
+    span: "",
+    badge: "Novo",
+  },
+  {
+    icon: UserPlus,
+    title: "Programa de Indicação",
+    slug: "programa-indicacao",
+    desc: "Cliente indica amigo e ambos ganham crédito ou pontos.",
+    span: "",
+    badge: "Novo",
+  },
 ];
 
 const benefits = [
