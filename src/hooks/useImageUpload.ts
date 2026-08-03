@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTenant } from '@/hooks/useTenant';
 
 const BUCKET_NAME = 'imagens';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
@@ -7,8 +8,9 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 export function useImageUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { slug } = useTenant();
 
-  const uploadImage = async (blob: Blob, folder: string = 'produtos'): Promise<string> => {
+  const uploadImage = async (blob: Blob, folder: string = 'cardapio'): Promise<string> => {
     setIsUploading(true);
     setError(null);
 
@@ -16,7 +18,8 @@ export function useImageUpload() {
       const timestamp = Date.now();
       const randomId = Math.random().toString(36).substring(2, 10);
       const extension = blob.type.split('/')[1] || 'jpg';
-      const fileName = `${folder}/${timestamp}-${randomId}.${extension}`;
+      const basePath = slug ? `${slug}/${folder}` : folder;
+      const fileName = `${basePath}/${timestamp}-${randomId}.${extension}`;
 
       const { data, error: uploadError } = await supabase.storage
         .from(BUCKET_NAME)
