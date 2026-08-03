@@ -257,6 +257,76 @@ export default function AdminImport() {
     toast({ title: 'Uploads concluídos', description: `${log.filter((l) => l.ok).length}/${log.length} imagens enviadas.` });
   };
 
+  // ---------- Migrar imagens externas para o bucket ----------
+  const callMigrate = async (payload: { dryRun?: boolean; limit?: number }) => {
+    const { data, error } = await supabase.functions.invoke('migrate-menu-images', {
+      body: { restaurantId: tenantId, ...payload },
+    });
+    if (error) throw new Error(error.message);
+    if ((data as any)?.error) throw new Error(JSON.stringify((data as any).error));
+    return data as {
+      slug: string;
+      total?: number;
+      pending?: number;
+      processed?: number;
+      migrated?: number;
+      failed?: number;
+      remaining?: number;
+      results?: LogEntry[];
+      sample?: { name: string; image_url: string }[];
+    };
+  };
+
+  const handleAnalyze = async () => {
+    if (!tenantId) return;
+    setIsMigrating(true);
+    setMigrateLog([]);
+    try {
+      const data = await callMigrate({ dryRun: true });
+      setMigrateStatus(
+        `${data.pending ?? 0} de ${data.total ?? 0} imagens estão fora de imagens/${data.slug}/cardapio/`,
+      );
+      setMigrateLog(
+        (data.sample ?? []).map((s) => ({ ok: true, message: `${s.name}: ${s.image_url}` })),
+      );
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Falha na análise';
+      setMigrateStatus(null);
+      setMigrateLog([{ ok: false, message: msg }]);
+      toast({ title: 'Erro', description: msg, variant: 'destructive' });
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
+  const handleMigrate = async () => {
+    if (!tenantId) return;
+    setIsMigrating(true);
+    const log: LogEntry[] = [];
+    let totalMigrated = 0;
+    try {
+      // Loop em lotes até não haver mais pendências
+      for (let round = 0; round < 60; round++) {
+        const data = await callMigrate({ limit: 20 });
+        log.push(...(data.results ?? []));
+        totalMigrated += data.migrated ?? 0;
+        setMigrateLog([...log]);
+        setMigrateStatus(`Migradas ${totalMigrated} imagens • restam ${data.remaining ?? 0}`);
+        if (!data.processed || (data.remaining ?? 0) === 0) break;
+        if ((data.migrated ?? 0) === 0) break; // evita loop infinito em falhas
+      }
+      await refetchProducts();
+      toast({ title: 'Migração concluída', description: `${totalMigrated} imagem(ns) movida(s) para o bucket.` });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Falha na migração';
+      log.push({ ok: false, message: msg });
+      setMigrateLog([...log]);
+      toast({ title: 'Erro', description: msg, variant: 'destructive' });
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
   const renderLog = (log: LogEntry[]) => {
     if (log.length === 0) return null;
     return (
