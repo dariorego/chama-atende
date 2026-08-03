@@ -465,7 +465,7 @@ export const MODULE_LANDINGS: Record<string, ModuleLanding> = {
       { icon: "TrendingUp", title: "Menos desistências", desc: "Saber o tempo de espera faz o cliente esperar." },
       { icon: "Sparkles", title: "Entrada organizada", desc: "Sem aglomeração e sem discussão sobre a ordem." },
       { icon: "Clock", title: "Giro mais rápido", desc: "A mesa liberada é ocupada em seguida." },
-      { icon: "Users", title: "Recepção aliviada", desc: "Menos perguntas repetidas sobre "quanto falta"." },
+      { icon: "Users", title: "Recepção aliviada", desc: "Menos perguntas repetidas sobre o tempo restante." },
       { icon: "ShieldCheck", title: "Justiça na ordem", desc: "Registro digital de quem chegou primeiro." },
       { icon: "BarChart3", title: "Dados para decidir", desc: "Descubra os horários que mais formam fila." },
     ],
