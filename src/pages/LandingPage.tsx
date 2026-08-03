@@ -25,11 +25,13 @@ import {
   CalendarClock,
 } from "lucide-react";
 import { Receipt, LayoutGrid, PartyPopper } from "lucide-react";
+import { MODULE_LANDINGS } from "@/data/moduleLandings";
 
 const modules = [
   {
     icon: Utensils,
     title: "Cardápio Digital",
+    slug: "cardapio-digital",
     desc: "QR Code na mesa, fotos, categorias, combinações e preços sempre atualizados.",
     span: "md:col-span-2 md:row-span-2",
     featured: true,
@@ -37,48 +39,56 @@ const modules = [
   {
     icon: Bell,
     title: "Chamado de Garçom",
+    slug: "chamado-de-garcom",
     desc: "Cliente chama pela mesa, atendente recebe em tempo real.",
     span: "",
   },
   {
     icon: ClipboardList,
     title: "Pedidos na Cozinha",
+    slug: "pedidos-na-cozinha",
     desc: "Fluxo direto do cliente à cozinha, sem retrabalho.",
     span: "",
   },
   {
     icon: CalendarCheck,
     title: "Reservas",
+    slug: "reservas",
     desc: "Agenda inteligente com confirmação e compartilhamento por WhatsApp.",
     span: "md:col-span-2",
   },
   {
     icon: Users,
     title: "Fila de Espera",
+    slug: "fila-de-espera",
     desc: "Chamadas por SMS/Push e painel público sem filas físicas.",
     span: "",
   },
   {
     icon: ShoppingBag,
     title: "Encomendas",
+    slug: "encomendas",
     desc: "Aceite pedidos para retirada com pagamento Pix ou cartão.",
     span: "",
   },
   {
     icon: Star,
     title: "Avaliações",
+    slug: "avaliacoes",
     desc: "Colete feedback e responda diretamente pela plataforma.",
     span: "",
   },
   {
     icon: BarChart3,
     title: "Métricas em Tempo Real",
+    slug: "metricas",
     desc: "Faturamento, ticket médio, pratos que mais vendem e horários de pico.",
     span: "",
   },
   {
     icon: Tv,
     title: "Vitrine Digital",
+    slug: "vitrine-digital",
     desc: "Exiba seus produtos em uma TV com 3 modelos: Cinema, Split e Mosaico.",
     span: "md:col-span-2",
     badge: "Novo",
@@ -86,6 +96,7 @@ const modules = [
   {
     icon: Receipt,
     title: "Comanda Digital",
+    slug: "comanda-digital",
     desc: "Várias comandas por mesa (ex.: 10.01, 10.02) com fechamento individual e impressão térmica.",
     span: "md:col-span-2",
     badge: "Novo",
@@ -93,6 +104,7 @@ const modules = [
   {
     icon: LayoutGrid,
     title: "Controle de Mesas",
+    slug: "controle-de-mesas",
     desc: "Mapa do salão com arrastar e soltar, áreas customizáveis e status em tempo real.",
     span: "",
     badge: "Novo",
@@ -100,6 +112,7 @@ const modules = [
   {
     icon: PartyPopper,
     title: "Reserva de Eventos",
+    slug: "reserva-de-eventos",
     desc: "Orçamentos para aniversários, corporativos, casamentos e grupos.",
     span: "",
     badge: "Novo",
@@ -107,6 +120,7 @@ const modules = [
   {
     icon: CalendarClock,
     title: "Agenda de Funcionários",
+    slug: "agenda-de-funcionarios",
     desc: "Escala semanal, folgas, férias e controle de ponto da equipe.",
     span: "",
     badge: "Novo",
@@ -395,6 +409,16 @@ export default function LandingPage() {
                     <p className={`text-sm ${m.featured ? "text-primary-foreground/80 max-w-md" : "text-muted-foreground"}`}>
                       {m.desc}
                     </p>
+                    {MODULE_LANDINGS[m.slug] && (
+                      <Link
+                        to={`/modulos/${m.slug}`}
+                        className={`mt-3 inline-flex items-center gap-1.5 text-sm font-semibold ${
+                          m.featured ? "text-accent" : "text-accent"
+                        } hover:gap-2.5 transition-all`}
+                      >
+                        Saiba mais <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
