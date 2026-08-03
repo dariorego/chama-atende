@@ -21,7 +21,7 @@ const publicUrl = (path: string) => `${SUPABASE_URL}/storage/v1/object/public/${
 type LogEntry = { ok: boolean; message: string };
 
 export default function AdminImport() {
-  const { tenantId } = useTenant();
+  const { tenantId, slug: tenantSlug } = useTenant();
   const { toast } = useToast();
   const { data: categories = [], refetch: refetchCategories } = useAdminCategories();
   const { data: products = [], refetch: refetchProducts } = useAdminProducts();
@@ -235,7 +235,7 @@ export default function AdminImport() {
     for (const file of Array.from(files)) {
       try {
         const clean = file.name.replace(/[^a-zA-Z0-9._-]/g, '-').toLowerCase();
-        const path = `produtos/${Date.now()}-${clean}`;
+        const path = `${tenantSlug ? `${tenantSlug}/cardapio` : 'cardapio'}/${Date.now()}-${clean}`;
         const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
           cacheControl: '3600',
           upsert: false,
