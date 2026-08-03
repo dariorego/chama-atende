@@ -25,7 +25,7 @@ const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 export function ImageUploadWithCrop({
   value,
   onChange,
-  folder = 'produtos',
+  folder = 'cardapio',
   className,
   disabled = false,
   aspectRatio = 1,
