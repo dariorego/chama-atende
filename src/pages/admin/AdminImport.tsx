@@ -478,6 +478,32 @@ export default function AdminImport() {
               {renderLog(imgLog)}
             </CardContent>
           </Card>
+
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CloudDownload className="h-5 w-5" /> Migrar imagens externas
+              </CardTitle>
+              <CardDescription>
+                Baixa as fotos dos produtos que ainda estão em servidores externos e as reenvia para{' '}
+                <code className="text-xs">imagens/{tenantSlug}/cardapio/</code>, atualizando o cardápio automaticamente.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" onClick={handleAnalyze} disabled={isMigrating}>
+                  {isMigrating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Info className="mr-2 h-4 w-4" />}
+                  Analisar
+                </Button>
+                <Button onClick={handleMigrate} disabled={isMigrating}>
+                  {isMigrating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CloudDownload className="mr-2 h-4 w-4" />}
+                  Migrar tudo
+                </Button>
+              </div>
+              {migrateStatus && <p className="text-sm text-muted-foreground">{migrateStatus}</p>}
+              {renderLog(migrateLog)}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
