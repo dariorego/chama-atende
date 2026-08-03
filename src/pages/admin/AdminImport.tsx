@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Download, Upload, FileSpreadsheet, Image as ImageIcon, CheckCircle2, XCircle, Info } from 'lucide-react';
+import { Download, Upload, FileSpreadsheet, Image as ImageIcon, CheckCircle2, XCircle, Info, CloudDownload, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useTenant } from '@/hooks/useTenant';
@@ -34,6 +34,9 @@ export default function AdminImport() {
   const [prodLog, setProdLog] = useState<LogEntry[]>([]);
   const [imgLog, setImgLog] = useState<LogEntry[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [migrateLog, setMigrateLog] = useState<LogEntry[]>([]);
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [migrateStatus, setMigrateStatus] = useState<string | null>(null);
 
   // ---------- Templates ----------
   const downloadCategoryTemplate = () => {
