@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Download, Upload, FileSpreadsheet, Image as ImageIcon, CheckCircle2, XCircle, Info } from 'lucide-react';
+import { Download, Upload, FileSpreadsheet, Image as ImageIcon, CheckCircle2, XCircle, Info, CloudDownload, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useTenant } from '@/hooks/useTenant';
@@ -34,6 +34,9 @@ export default function AdminImport() {
   const [prodLog, setProdLog] = useState<LogEntry[]>([]);
   const [imgLog, setImgLog] = useState<LogEntry[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [migrateLog, setMigrateLog] = useState<LogEntry[]>([]);
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [migrateStatus, setMigrateStatus] = useState<string | null>(null);
 
   // ---------- Templates ----------
   const downloadCategoryTemplate = () => {
@@ -254,6 +257,76 @@ export default function AdminImport() {
     toast({ title: 'Uploads concluídos', description: `${log.filter((l) => l.ok).length}/${log.length} imagens enviadas.` });
   };
 
+  // ---------- Migrar imagens externas para o bucket ----------
+  const callMigrate = async (payload: { dryRun?: boolean; limit?: number }) => {
+    const { data, error } = await supabase.functions.invoke('migrate-menu-images', {
+      body: { restaurantId: tenantId, ...payload },
+    });
+    if (error) throw new Error(error.message);
+    if ((data as any)?.error) throw new Error(JSON.stringify((data as any).error));
+    return data as {
+      slug: string;
+      total?: number;
+      pending?: number;
+      processed?: number;
+      migrated?: number;
+      failed?: number;
+      remaining?: number;
+      results?: LogEntry[];
+      sample?: { name: string; image_url: string }[];
+    };
+  };
+
+  const handleAnalyze = async () => {
+    if (!tenantId) return;
+    setIsMigrating(true);
+    setMigrateLog([]);
+    try {
+      const data = await callMigrate({ dryRun: true });
+      setMigrateStatus(
+        `${data.pending ?? 0} de ${data.total ?? 0} imagens estão fora de imagens/${data.slug}/cardapio/`,
+      );
+      setMigrateLog(
+        (data.sample ?? []).map((s) => ({ ok: true, message: `${s.name}: ${s.image_url}` })),
+      );
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Falha na análise';
+      setMigrateStatus(null);
+      setMigrateLog([{ ok: false, message: msg }]);
+      toast({ title: 'Erro', description: msg, variant: 'destructive' });
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
+  const handleMigrate = async () => {
+    if (!tenantId) return;
+    setIsMigrating(true);
+    const log: LogEntry[] = [];
+    let totalMigrated = 0;
+    try {
+      // Loop em lotes até não haver mais pendências
+      for (let round = 0; round < 60; round++) {
+        const data = await callMigrate({ limit: 20 });
+        log.push(...(data.results ?? []));
+        totalMigrated += data.migrated ?? 0;
+        setMigrateLog([...log]);
+        setMigrateStatus(`Migradas ${totalMigrated} imagens • restam ${data.remaining ?? 0}`);
+        if (!data.processed || (data.remaining ?? 0) === 0) break;
+        if ((data.migrated ?? 0) === 0) break; // evita loop infinito em falhas
+      }
+      await refetchProducts();
+      toast({ title: 'Migração concluída', description: `${totalMigrated} imagem(ns) movida(s) para o bucket.` });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Falha na migração';
+      log.push({ ok: false, message: msg });
+      setMigrateLog([...log]);
+      toast({ title: 'Erro', description: msg, variant: 'destructive' });
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
   const renderLog = (log: LogEntry[]) => {
     if (log.length === 0) return null;
     return (
@@ -403,6 +476,32 @@ export default function AdminImport() {
                 />
               </div>
               {renderLog(imgLog)}
+            </CardContent>
+          </Card>
+
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CloudDownload className="h-5 w-5" /> Migrar imagens externas
+              </CardTitle>
+              <CardDescription>
+                Baixa as fotos dos produtos que ainda estão em servidores externos e as reenvia para{' '}
+                <code className="text-xs">imagens/{tenantSlug}/cardapio/</code>, atualizando o cardápio automaticamente.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" onClick={handleAnalyze} disabled={isMigrating}>
+                  {isMigrating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Info className="mr-2 h-4 w-4" />}
+                  Analisar
+                </Button>
+                <Button onClick={handleMigrate} disabled={isMigrating}>
+                  {isMigrating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CloudDownload className="mr-2 h-4 w-4" />}
+                  Migrar tudo
+                </Button>
+              </div>
+              {migrateStatus && <p className="text-sm text-muted-foreground">{migrateStatus}</p>}
+              {renderLog(migrateLog)}
             </CardContent>
           </Card>
         </TabsContent>
