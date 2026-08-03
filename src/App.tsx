@@ -55,6 +55,7 @@ import PreOrderCartPage from "./pages/PreOrderCartPage";
 import PreOrderCheckoutPage from "./pages/PreOrderCheckoutPage";
 import PreOrderStatusPage from "./pages/PreOrderStatusPage";
 import SalesPage from "./pages/SalesPage";
+import ModuleDetailPage from "./pages/ModuleDetailPage";
 import { useParams } from "react-router-dom";
 
 function AdminRedirect() {
@@ -375,6 +376,9 @@ const App = () => (
           <Route path="/login/:slug" element={<TenantProvider><ThemeProvider><TenantThemeApplier /><LoginPage /></ThemeProvider></TenantProvider>} />
           <Route path="/signup" element={<ThemeProvider><SignupPage /></ThemeProvider>} />
           <Route path="/onboarding" element={<ThemeProvider><OnboardingPage /></ThemeProvider>} />
+
+          {/* Module marketing pages */}
+          <Route path="/modulos/:moduleSlug" element={<ThemeProvider storageKey="landing-theme" defaultTheme="light"><ModuleDetailPage /></ThemeProvider>} />
           
           {/* Admin routes with tenant slug */}
           <Route path="/admin/:slug/*" element={<AdminTenantPages />} />
