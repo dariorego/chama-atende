@@ -23,6 +23,9 @@ import {
   Smartphone,
   ChevronDown,
   CalendarClock,
+  Gift,
+  Tag,
+  UserPlus,
 } from "lucide-react";
 import { Receipt, LayoutGrid, PartyPopper } from "lucide-react";
 import { MODULE_LANDINGS } from "@/data/moduleLandings";
@@ -122,6 +125,30 @@ const modules = [
     title: "Agenda de Funcionários",
     slug: "agenda-de-funcionarios",
     desc: "Escala semanal, folgas, férias e controle de ponto da equipe.",
+    span: "",
+    badge: "Novo",
+  },
+  {
+    icon: Gift,
+    title: "Fidelidade e Cashback",
+    slug: "fidelidade-cashback",
+    desc: "Pontos por compra, níveis de cliente e recompensas automáticas.",
+    span: "md:col-span-2",
+    badge: "Novo",
+  },
+  {
+    icon: Tag,
+    title: "Cupons e Promoções",
+    slug: "cupons-promocoes",
+    desc: "Descontos por horário, categoria, primeiro pedido e compra mínima.",
+    span: "",
+    badge: "Novo",
+  },
+  {
+    icon: UserPlus,
+    title: "Programa de Indicação",
+    slug: "programa-indicacao",
+    desc: "Cliente indica amigo e ambos ganham crédito ou pontos.",
     span: "",
     badge: "Novo",
   },

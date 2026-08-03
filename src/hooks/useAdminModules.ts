@@ -70,6 +70,21 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Atendimento no WhatsApp com chatbot inteligente (Evolution API + OpenRouter)",
     icon: "MessageCircle",
   },
+  loyalty_cashback: {
+    label: "Fidelidade e Cashback",
+    description: "Pontos por compra, níveis de cliente e resgate de recompensas",
+    icon: "Gift",
+  },
+  coupons: {
+    label: "Cupons e Promoções",
+    description: "Códigos de desconto por horário, categoria ou primeiro pedido",
+    icon: "Tag",
+  },
+  referral_program: {
+    label: "Programa de Indicação",
+    description: "Cliente indica amigo e ambos ganham crédito",
+    icon: "UserPlus",
+  },
 };
 
 export function useAdminModules() {

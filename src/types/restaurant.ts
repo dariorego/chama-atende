@@ -121,6 +121,9 @@ export interface ModulesMap {
   eventBookings: boolean;
   staffSchedule: boolean;
   whatsappAi: boolean;
+  loyaltyCashback: boolean;
+  coupons: boolean;
+  referralProgram: boolean;
 }
 
 // Module name mapping from snake_case (DB) to camelCase (frontend)
@@ -137,6 +140,9 @@ export const MODULE_NAME_MAP: Record<string, keyof ModulesMap> = {
   'event_bookings': 'eventBookings',
   'staff_schedule': 'staffSchedule',
   'whatsapp_ai': 'whatsappAi',
+  'loyalty_cashback': 'loyaltyCashback',
+  'coupons': 'coupons',
+  'referral_program': 'referralProgram',
 };
 
 // Format time from database (HH:MM:SS) to display format (HH:MM)

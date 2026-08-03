@@ -16,6 +16,9 @@ const DEFAULT_MODULES: ModulesMap = {
   eventBookings: false,
   staffSchedule: false,
   whatsappAi: false,
+  loyaltyCashback: false,
+  coupons: false,
+  referralProgram: false,
 };
 
 /**

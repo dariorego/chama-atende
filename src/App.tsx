@@ -48,6 +48,9 @@ import AdminComandas from "./pages/admin/AdminComandas";
 import AdminEventBookings from "./pages/admin/AdminEventBookings";
 import AdminStaffSchedule from "./pages/admin/AdminStaffSchedule";
 import AdminWhatsApp from "./pages/admin/AdminWhatsApp";
+import AdminLoyalty from "./pages/admin/AdminLoyalty";
+import AdminCoupons from "./pages/admin/AdminCoupons";
+import AdminReferrals from "./pages/admin/AdminReferrals";
 import EventBookingPage from "./pages/EventBookingPage";
 import VitrineDisplayPage from "./pages/VitrineDisplayPage";
 import PreOrderMenuPage from "./pages/PreOrderMenuPage";
@@ -336,6 +339,36 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin section="whatsapp">
                 <AdminLayout>
                   <AdminWhatsApp />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="fidelidade"
+            element={
+              <AuthGuard requireAdmin section="fidelidade">
+                <AdminLayout>
+                  <AdminLoyalty />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="cupons"
+            element={
+              <AuthGuard requireAdmin section="cupons">
+                <AdminLayout>
+                  <AdminCoupons />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="indicacao"
+            element={
+              <AuthGuard requireAdmin section="indicacao">
+                <AdminLayout>
+                  <AdminReferrals />
                 </AdminLayout>
               </AuthGuard>
             }

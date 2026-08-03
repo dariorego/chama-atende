@@ -11,6 +11,9 @@ import comandaHero from "@/assets/modulo-comanda-digital.jpg";
 import mesasHero from "@/assets/modulo-controle-de-mesas.jpg";
 import eventosHero from "@/assets/modulo-reserva-de-eventos.jpg";
 import agendaHero from "@/assets/modulo-agenda-de-funcionarios.jpg";
+import fidelidadeHero from "@/assets/modulo-fidelidade-cashback.jpg";
+import cuponsHero from "@/assets/modulo-cupons-promocoes.jpg";
+import indicacaoHero from "@/assets/modulo-programa-indicacao.jpg";
 
 export interface ModuleFeature {
   icon: string;
@@ -1093,6 +1096,224 @@ export const MODULE_LANDINGS: Record<string, ModuleLanding> = {
     cta: {
       title: "Organize a escala da sua equipe",
       desc: "Ative a agenda de funcionários e controle turnos, folgas e ponto em um só painel.",
+    },
+  },
+  "fidelidade-cashback": {
+    slug: "fidelidade-cashback",
+    moduleName: "Fidelidade e Cashback",
+    title: "Fidelidade e Cashback",
+    subtitle: "Transforme compras em pontos e pontos em recompensas.",
+    description:
+      "Crie um programa de fidelidade completo: pontos por real gasto, níveis de cliente, recompensas automáticas e extrato digital. Use para fidelizar quem já compra e incentivar a repetição.",
+    heroImage: fidelidadeHero,
+    tryPath: "/onboarding",
+    about: [
+      {
+        heading: "O que é o Fidelidade e Cashback",
+        body: "É um programa de pontos que recompensa o cliente a cada compra. Ele acumula pontos, sobe de nível e resgata descontos ou produtos diretamente no seu estabelecimento.",
+      },
+      {
+        heading: "Quais problemas resolve",
+        body: "Reduz a dependência de descontos generosos, aumenta a taxa de retorno, valoriza o cliente frequente e dá uma razão clara para a pessoa voltar a comprar.",
+      },
+      {
+        heading: "Para quem foi desenvolvido",
+        body: "Restaurantes, bares, cafeterias, padarias, lanchonetes e qualquer negócio que queira estimular a recorrência sem depender apenas de promoções pontuais.",
+      },
+      {
+        heading: "Como funciona",
+        body: "Você define quantos pontos o cliente ganha por real gasto, os níveis de fidelidade e as recompensas disponíveis. Cada compra alimenta o saldo e o cliente consulta o extrato no seu perfil.",
+      },
+      {
+        heading: "Como se integra à plataforma",
+        body: "Funciona junto com o Programa de Indicação e os Cupons. Pontos podem ser convertidos em recompensas e integrados a pedidos, comandas ou reservas.",
+      },
+    ],
+    features: [
+      { icon: "Star", title: "Pontos por compra", desc: "Configure quantos pontos o cliente ganha por real gasto." },
+      { icon: "Crown", title: "Níveis de fidelidade", desc: "Bronze, prata, ouro, diamante — com multiplicadores." },
+      { icon: "Gift", title: "Recompensas", desc: "Descontos percentuais, fixos ou produtos grátis." },
+      { icon: "Wallet", title: "Cashback", desc: "Converta pontos em crédito para a próxima compra." },
+      { icon: "Users", title: "Cadastro de clientes", desc: "Base de clientes por telefone e e-mail." },
+      { icon: "History", title: "Extrato digital", desc: "Cliente acompanha ganhos e resgates." },
+      { icon: "Bell", title: "Boas-vindas", desc: "Pontos de entrada para quem aderir ao programa." },
+      { icon: "Zap", title: "Resgate automático", desc: "Validação de recompensas no pedido." },
+      { icon: "BarChart3", title: "Relatório de engajamento", desc: "Quem acumula, quem resgata e quem parou de comprar." },
+      { icon: "Smartphone", title: "Sem aplicativo", desc: "O cliente usa WhatsApp ou QR Code do cardápio." },
+    ],
+    flow: [
+      { title: "Configure o programa", desc: "Defina pontos por real, valor do ponto e recompensas." },
+      { title: "Crie níveis", desc: "Estabeleça metas e multiplicadores de pontos." },
+      { title: "Cliente acumula", desc: "A cada compra os pontos são creditados automaticamente." },
+      { title: "Cliente consulta", desc: "Saldo e extrato disponíveis no cardápio." },
+      { title: "Cliente resgata", desc: "Escolhe uma recompensa e aplica no pedido." },
+      { title: "Você analisa", desc: "Relatórios de retenção e comportamento de compra." },
+    ],
+    benefits: [
+      { icon: "TrendingUp", title: "Mais repetição", desc: "Clientes retornam para aproveitar os pontos." },
+      { icon: "Star", title: "Valorização", desc: "Recompensas dão uma sensação de ganho real." },
+      { icon: "Wallet", title: "Ticket médio", desc: "Níveis altos incentivam compras maiores." },
+      { icon: "Users", title: "Base ativa", desc: "Você sabe quem são seus melhores clientes." },
+      { icon: "ShieldCheck", title: "Sem custo alto", desc: "Programa digital, sem cartões físicos." },
+      { icon: "Sparkles", title: "Diferencial", desc: "Destaque-se da concorrência com fidelidade." },
+    ],
+    useCases: ["Restaurantes", "Bares", "Cafeterias", "Lanchonetes", "Pizzarias", "Padarias"],
+    integrations: ["Cardápio Digital", "Cupons e Promoções", "Programa de Indicação", "Comanda Digital"],
+    faq: [
+      { q: "Como o cliente acumula pontos?", a: "Automaticamente, com base no valor da compra e na regra configurada por você." },
+      { q: "Os pontos expiram?", a: "Por padrão não. Você pode definir regras de expiração futuramente." },
+      { q: "Posso criar recompensas diferentes?", a: "Sim: desconto percentual, valor fixo ou produto grátis." },
+      { q: "Quem pode gerenciar o programa?", a: "Proprietários, administradores e gerentes do estabelecimento." },
+      { q: "O cliente precisa de cadastro?", a: "Sim, basta nome e telefone para identificação no programa." },
+      { q: "Dá para ajustar pontos manualmente?", a: "Sim, o admin pode creditar ou debitar pontos com descrição." },
+    ],
+    cta: {
+      title: "Fidelize seus clientes com pontos",
+      desc: "Ative o Fidelidade e Cashback e crie um programa de recompensas completo.",
+    },
+  },
+  "cupons-promocoes": {
+    slug: "cupons-promocoes",
+    moduleName: "Cupons e Promoções",
+    title: "Cupons e Promoções",
+    subtitle: "Descontos certeiros para vender mais no momento certo.",
+    description:
+      "Crie códigos de desconto por percentual, valor fixo ou produto grátis. Aplique por categoria, produto, horário, primeiro pedido ou compra mínima — e acompanhe os resultados.",
+    heroImage: cuponsHero,
+    tryPath: "/onboarding",
+    about: [
+      {
+        heading: "O que é o Cupons e Promoções",
+        body: "É um gerenciador de códigos de desconto que você cria, personaliza e valida. Use para datas comemorativas, horários de baixa movimento, aniversários de clientes ou primeiras compras.",
+      },
+      {
+        heading: "Quais problemas resolve",
+        body: "Evita descontos informais e inconsistentes. Cria regras claras, limita uso e mede o impacto de cada campanha no faturamento.",
+      },
+      {
+        heading: "Para quem foi desenvolvido",
+        body: "Estabelecimentos que fazem campanhas sazonais, happy hour, desconto para novos clientes ou promoções por categoria de produto.",
+      },
+      {
+        heading: "Como funciona",
+        body: "Você cria um cupom com código, tipo de desconto, regras de aplicação e limite de uso. O cliente insere o código no checkout e o desconto é aplicado automaticamente se as regras forem atendidas.",
+      },
+      {
+        heading: "Como se integra à plataforma",
+        body: "Integrado ao pedido, comanda, encomendas e reservas de eventos. Os cupons também alimentam o relatório de métricas.",
+      },
+    ],
+    features: [
+      { icon: "Tag", title: "Percentual ou fixo", desc: "Desconto em % ou valor fixo em reais." },
+      { icon: "Gift", title: "Produto grátis", desc: "Cuponagem por item específico." },
+      { icon: "Clock", title: "Validade", desc: "Defina período de início e fim da promoção." },
+      { icon: "Wallet", title: "Valor mínimo", desc: "Só aplica acima de um valor de compra." },
+      { icon: "Users", title: "Primeiro pedido", desc: "Cupom exclusivo para novos clientes." },
+      { icon: "LayoutGrid", title: "Por categoria", desc: "Desconto para categorias ou produtos selecionados." },
+      { icon: "ListChecks", title: "Limite de uso", desc: "Controle total e por cliente." },
+      { icon: "Smartphone", title: "Código simples", desc: "Cliente digita no checkout do cardápio." },
+      { icon: "BarChart3", title: "Relatório de uso", desc: "Quantidade e valor descontado por cupom." },
+      { icon: "Zap", title: "Autoaplicação", desc: "Cupons que já entram ativos no checkout." },
+    ],
+    flow: [
+      { title: "Crie o cupom", desc: "Código, tipo de desconto e descrição." },
+      { title: "Defina regras", desc: "Validade, mínimo, limite e aplicação." },
+      { title: "Divulgue", desc: "Compartilhe o código nas redes sociais ou WhatsApp." },
+      { title: "Cliente aplica", desc: "Insere o código no checkout do cardápio." },
+      { title: "Sistema valida", desc: "Regras são verificadas automaticamente." },
+      { title: "Você mede", desc: "Acompanha uso e impacto em vendas." },
+    ],
+    benefits: [
+      { icon: "TrendingUp", title: "Vendas em horário morto", desc: "Happy hour e dias de baixa com movimento." },
+      { icon: "Users", title: "Conversão de novos clientes", desc: "Primeiro pedido com desconto atrativo." },
+      { icon: "Wallet", title: "Ticket médio", desc: "Cupons por valor mínimo incentivam compras maiores." },
+      { icon: "Star", title: "Fidelização", desc: "Promoções periódicas mantêm o cliente engajado." },
+      { icon: "ShieldCheck", title: "Controle", desc: "Sem descontos avulsos fora das regras." },
+      { icon: "BarChart3", title: "Mensurável", desc: "Cada campanha tem seu resultado claro." },
+    ],
+    useCases: ["Happy hour", "Dias de baixa", "Aniversário de cliente", "Primeiro pedido", "Feriados", "Eventos"],
+    integrations: ["Cardápio Digital", "Pedidos na Cozinha", "Encomendas", "Comanda Digital", "Métricas"],
+    faq: [
+      { q: "Posso limitar por cliente?", a: "Sim, defina um limite de uso por cliente no cadastro do cupom." },
+      { q: "Cupom pode ter data de validade?", a: "Sim, você define início e fim da promoção." },
+      { q: "Dá para usar em produtos específicos?", a: "Sim, selecione categorias ou produtos individuais." },
+      { q: "O cliente pode usar mais de um cupom?", a: "Por padrão um por pedido, conforme configuração." },
+      { q: "Consigo ver quantos cupons foram usados?", a: "Sim, há relatório de resgates e valores descontados." },
+      { q: "O cupom pode entrar automaticamente?", a: "Sim, ative a autoaplicação para quem atender às regras." },
+    ],
+    cta: {
+      title: "Crie campanhas que convertem",
+      desc: "Ative Cupons e Promoções e comece a vender mais nos horários certos.",
+    },
+  },
+  "programa-indicacao": {
+    slug: "programa-indicacao",
+    moduleName: "Programa de Indicação",
+    title: "Programa de Indicação",
+    subtitle: "Seus clientes indicam amigos e todos ganham.",
+    description:
+      "Monte um programa de indicação digital: cada cliente recebe um código único, ganha pontos ou crédito quando um amigo completa a primeira compra e você acompanha o resultado em tempo real.",
+    heroImage: indicacaoHero,
+    tryPath: "/onboarding",
+    about: [
+      {
+        heading: "O que é o Programa de Indicação",
+        body: "É uma ferramenta para transformar seus clientes em promotores. Cada pessoa recebe um código pessoal e ganha recompensas quando amigos usarem esse código na primeira compra.",
+      },
+      {
+        heading: "Quais problemas resolve",
+        body: "Reduz o custo de aquisição de clientes, usa a base atual para atrair novos consumidores e cria um ciclo de recompra com recompensa dupla: quem indica e quem é indicado." },
+      {
+        heading: "Para quem foi desenvolvido",
+        body: "Negócios que querem crescer com indicação orgânica: restaurantes, bares, cafeterias, serviços de alimentação e eventos." },
+      {
+        heading: "Como funciona",
+        body: "Você configura a recompensa para quem indica e para quem é indicado. O sistema gera códigos únicos, rastreia conversões e credita as recompensas automaticamente." },
+      {
+        heading: "Como se integra à plataforma",
+        body: "Integrado ao Fidelidade e Cashback. As recompensas podem ser pontos, descontos ou créditos que alimentam o saldo do cliente." },
+    ],
+    features: [
+      { icon: "UserPlus", title: "Código pessoal", desc: "Cada cliente recebe um código único de indicação." },
+      { icon: "Gift", title: "Recompensa dupla", desc: "Quem indica e quem é indicado ganham." },
+      { icon: "Smartphone", title: "Compartilhamento fácil", desc: "Link e código para WhatsApp e redes sociais." },
+      { icon: "History", title: "Rastreamento", desc: "Acompanhe indicações e conversões." },
+      { icon: "Wallet", title: "Pontos ou crédito", desc: "Configure o tipo de recompensa." },
+      { icon: "Users", title: "Base de indicadores", desc: "Veja quem mais indica novos clientes." },
+      { icon: "BarChart3", title: "Resultados", desc: "Relatório de novos clientes por indicação." },
+      { icon: "ShieldCheck", title: "Validação automática", desc: "Recompensa só é liberada após a primeira compra." },
+      { icon: "Zap", title: "Integrado", desc: "Funciona com Fidelidade e Cupons." },
+      { icon: "Clock", title: "Campanhas por período", desc: "Ative promoções de indicação por tempo limitado." },
+    ],
+    flow: [
+      { title: "Configure a recompensa", desc: "Defina o valor para quem indica e para quem é indicado." },
+      { title: "Cliente recebe código", desc: "Código único é gerado na base de clientes." },
+      { title: "Cliente compartilha", desc: "Envia para amigos via WhatsApp ou redes sociais." },
+      { title: "Amigo compra", desc: "Usa o código na primeira compra." },
+      { title: "Sistema valida", desc: "Confere a compra e libera as recompensas." },
+      { title: "Você analisa", desc: "Relatório de conversão e clientes indicados." },
+    ],
+    benefits: [
+      { icon: "TrendingUp", title: "Custo de aquisição baixo", desc: "Você paga com recompensas, não com anúncios." },
+      { icon: "Users", title: "Crescimento orgânico", desc: "Clientes indicam pessoas de confiança." },
+      { icon: "Star", title: "Engajamento", desc: "Cliente ativo se sente valorizado ao indicar." },
+      { icon: "Wallet", title: "Conversão", desc: "Recompensa dupla aumenta a adesão." },
+      { icon: "BarChart3", title: "Mensurável", desc: "Saiba quantos clientes vieram de indicação." },
+      { icon: "Sparkles", title: "Diferencial", desc: "Programa viral dentro do seu negócio." },
+    ],
+    useCases: ["Restaurantes", "Bares", "Cafeterias", "Eventos", "Lanchonetes", "Serviços de buffet"],
+    integrations: ["Fidelidade e Cashback", "Cupons e Promoções", "Cardápio Digital", "Comanda Digital"],
+    faq: [
+      { q: "Como o cliente recebe o código?", a: "O código é gerado automaticamente e pode ser consultado no cardápio ou enviado pelo WhatsApp." },
+      { q: "Quando a recompensa é liberada?", a: "Após o indicado concluir a primeira compra com o código." },
+      { q: "Posso definir recompensas diferentes?", a: "Sim, valores distintos para quem indica e para quem é indicado." },
+      { q: "Dá para limitar indicações?", a: "Sim, você pode limitar o número de indicações por cliente ou período." },
+      { q: "O programa pode ser ativado por tempo?", a: "Sim, crie campanhas de indicação com início e fim." },
+      { q: "Consigo ver resultados?", a: "Sim, há relatório de indicações, conversões e recompensas." },
+    ],
+    cta: {
+      title: "Cresça com indicações de clientes",
+      desc: "Ative o Programa de Indicação e transforme seus clientes em promotores.",
     },
   },
 };

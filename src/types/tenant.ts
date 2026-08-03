@@ -44,10 +44,10 @@ export const PLANS: Record<PlanType, Plan> = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    price: 99,
+    price: 69.90,
     currency: 'BRL',
     billingPeriod: 'monthly',
-    modules: ['menu', 'waiter_call', 'reservations', 'queue', 'kitchen_order'],
+    modules: ['menu', 'waiter_call', 'reservations', 'queue', 'kitchen_order', 'loyalty_cashback', 'coupons'],
     maxUsers: 5,
     features: {
       customDomain: false,
@@ -61,7 +61,7 @@ export const PLANS: Record<PlanType, Plan> = {
   premium: {
     id: 'premium',
     name: 'Premium',
-    price: 199,
+    price: 129.90,
     currency: 'BRL',
     billingPeriod: 'monthly',
     modules: ['*'], // All modules
@@ -73,12 +73,12 @@ export const PLANS: Record<PlanType, Plan> = {
       whiteLabel: false,
       prioritySupport: true,
     },
-    description: 'Solução completa com domínio próprio e API',
+    description: 'Solução completa com domínio próprio, API e programa de indicação',
   },
   enterprise: {
     id: 'enterprise',
     name: 'Enterprise',
-    price: 499,
+    price: 299.90,
     currency: 'BRL',
     billingPeriod: 'monthly',
     modules: ['*'],
