@@ -143,8 +143,12 @@ Deno.serve(async (req) => {
         return json({ ok: true, instanceId: instance.id, qrCode: qr });
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        await repos.instances.update(instance.id, { status: "error", last_error: msg });
-        return json({ error: msg }, 502);
+        // Não deixa registro órfão quando a Evolution recusa a criação
+        await repos.instances.remove(instance.id).catch(() => null);
+        const hint = /HTTP 401/.test(msg)
+          ? "Evolution API recusou a autenticação (401). Verifique EVOLUTION_API_URL e EVOLUTION_API_KEY (chave global do servidor)."
+          : msg;
+        return json({ error: hint }, 502);
       }
     }
 
