@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
 
       const { error: roleError } = await supabaseAdmin
         .from('tenant_user_roles')
-        .upsert({ user_id: newUserId, restaurant_id, role }, { onConflict: 'user_id,restaurant_id' });
+        .insert({ user_id: newUserId, restaurant_id, role });
       if (roleError) return json({ success: false, error: roleError.message }, 400);
 
       await syncModules(newUserId);
@@ -164,9 +164,15 @@ Deno.serve(async (req) => {
         if (error) return json({ success: false, error: error.message }, 400);
       }
 
+      await supabaseAdmin
+        .from('tenant_user_roles')
+        .delete()
+        .eq('user_id', targetUserId)
+        .eq('restaurant_id', restaurant_id);
+
       const { error: roleError } = await supabaseAdmin
         .from('tenant_user_roles')
-        .upsert({ user_id: targetUserId, restaurant_id, role }, { onConflict: 'user_id,restaurant_id' });
+        .insert({ user_id: targetUserId, restaurant_id, role });
       if (roleError) return json({ success: false, error: roleError.message }, 400);
 
       await syncModules(targetUserId);
