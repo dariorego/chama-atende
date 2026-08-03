@@ -15,6 +15,7 @@ const DEFAULT_MODULES: ModulesMap = {
   digitalComanda: false,
   eventBookings: false,
   staffSchedule: false,
+  whatsappAi: false,
 };
 
 /**
