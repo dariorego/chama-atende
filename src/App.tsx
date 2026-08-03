@@ -47,6 +47,7 @@ import AdminVitrine from "./pages/admin/AdminVitrine";
 import AdminComandas from "./pages/admin/AdminComandas";
 import AdminEventBookings from "./pages/admin/AdminEventBookings";
 import AdminStaffSchedule from "./pages/admin/AdminStaffSchedule";
+import AdminWhatsApp from "./pages/admin/AdminWhatsApp";
 import EventBookingPage from "./pages/EventBookingPage";
 import VitrineDisplayPage from "./pages/VitrineDisplayPage";
 import PreOrderMenuPage from "./pages/PreOrderMenuPage";
@@ -324,6 +325,16 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin section="agenda">
                 <AdminLayout>
                   <AdminStaffSchedule />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="whatsapp"
+            element={
+              <AuthGuard requireAdmin section="whatsapp">
+                <AdminLayout>
+                  <AdminWhatsApp />
                 </AdminLayout>
               </AuthGuard>
             }
