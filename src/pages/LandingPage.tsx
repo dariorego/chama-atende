@@ -23,6 +23,9 @@ import {
   Smartphone,
   ChevronDown,
   CalendarClock,
+  Gift,
+  Tag,
+  UserPlus,
 } from "lucide-react";
 import { Receipt, LayoutGrid, PartyPopper } from "lucide-react";
 import { MODULE_LANDINGS } from "@/data/moduleLandings";
