@@ -38,7 +38,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Pencil, Trash2, Star, CameraOff, GripVertical, Tv } from 'lucide-react';
+import { Pencil, Trash2, Star, CameraOff, GripVertical, ZoomIn } from 'lucide-react';
+import { ImageZoomDialog } from '@/components/ui/image-zoom-dialog';
 import type { MenuProduct } from '@/hooks/useAdminProducts';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
 
@@ -51,7 +52,7 @@ interface ProductsTableProps {
   isDeleting?: boolean;
   onReorder?: (products: MenuProduct[]) => void;
   isDragDisabled?: boolean;
-  onToggleShowOnDisplay?: (product: MenuProduct, show: boolean) => void;
+  onToggleActive?: (product: MenuProduct, active: boolean) => void;
 }
 
 function formatPrice(value: number) {
@@ -71,7 +72,8 @@ interface SortableProductRowProps {
   onEdit: (product: MenuProduct) => void;
   onDeleteClick: (product: MenuProduct) => void;
   isDragDisabled?: boolean;
-  onToggleShowOnDisplay?: (product: MenuProduct, show: boolean) => void;
+  onToggleActive?: (product: MenuProduct, active: boolean) => void;
+  onZoom: (product: MenuProduct) => void;
 }
 
 function SortableProductRow({
@@ -80,7 +82,8 @@ function SortableProductRow({
   onEdit,
   onDeleteClick,
   isDragDisabled,
-  onToggleShowOnDisplay,
+  onToggleActive,
+  onZoom,
 }: SortableProductRowProps) {
   const {
     attributes,
@@ -114,11 +117,21 @@ function SortableProductRow({
       </TableCell>
       <TableCell>
         {product.image_url ? (
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className="h-12 w-12 rounded-md object-cover"
-          />
+          <button
+            type="button"
+            onClick={() => onZoom(product)}
+            className="group relative h-12 w-12 rounded-md overflow-hidden"
+            aria-label={`Ampliar imagem de ${product.name}`}
+          >
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="h-12 w-12 rounded-md object-cover transition-transform group-hover:scale-110"
+            />
+            <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+              <ZoomIn className="h-4 w-4 text-white" />
+            </span>
+          </button>
         ) : (
           <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center">
             <CameraOff className="h-5 w-5 text-muted-foreground" />
@@ -132,11 +145,6 @@ function SortableProductRow({
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           )}
         </div>
-        {product.description && (
-          <p className="text-sm text-muted-foreground line-clamp-1">
-            {product.description}
-          </p>
-        )}
       </TableCell>
       <TableCell>
         <Badge variant="outline">{getCategoryName(product.category_id)}</Badge>
@@ -163,17 +171,15 @@ function SortableProductRow({
         </div>
       </TableCell>
       <TableCell className="text-center">
-        <Badge variant={product.is_active ? 'default' : 'secondary'}>
-          {product.is_active ? 'Ativo' : 'Inativo'}
-        </Badge>
-      </TableCell>
-      <TableCell className="text-center">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center gap-2">
           <Switch
-            checked={!!product.show_on_display}
-            onCheckedChange={(checked) => onToggleShowOnDisplay?.(product, checked)}
-            aria-label="Exibir na vitrine"
+            checked={!!product.is_active}
+            onCheckedChange={(checked) => onToggleActive?.(product, checked)}
+            aria-label="Ativar produto"
           />
+          <Badge variant={product.is_active ? 'default' : 'secondary'}>
+            {product.is_active ? 'Ativo' : 'Inativo'}
+          </Badge>
         </div>
       </TableCell>
       <TableCell className="text-right">
@@ -207,9 +213,10 @@ export function ProductsTable({
   isDeleting,
   onReorder,
   isDragDisabled,
-  onToggleShowOnDisplay,
+  onToggleActive,
 }: ProductsTableProps) {
   const [deleteProduct, setDeleteProduct] = useState<MenuProduct | null>(null);
+  const [zoomProduct, setZoomProduct] = useState<MenuProduct | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -275,10 +282,7 @@ export function ProductsTable({
                 <TableHead>Nome</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead className="text-right">Preço</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className="text-center w-28">
-                  <span className="inline-flex items-center gap-1"><Tv className="h-3.5 w-3.5" />Vitrine</span>
-                </TableHead>
+                <TableHead className="text-center w-40">Status</TableHead>
                 <TableHead className="w-24 text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -295,7 +299,8 @@ export function ProductsTable({
                     onEdit={onEdit}
                     onDeleteClick={setDeleteProduct}
                     isDragDisabled={isDragDisabled}
-                    onToggleShowOnDisplay={onToggleShowOnDisplay}
+                    onToggleActive={onToggleActive}
+                    onZoom={setZoomProduct}
                   />
                 ))}
               </TableBody>
@@ -304,13 +309,20 @@ export function ProductsTable({
         </div>
       </DndContext>
 
+      <ImageZoomDialog
+        src={zoomProduct?.image_url || ''}
+        alt={zoomProduct?.name || ''}
+        open={!!zoomProduct}
+        onOpenChange={(open) => !open && setZoomProduct(null)}
+      />
+
       <AlertDialog open={!!deleteProduct} onOpenChange={() => setDeleteProduct(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Desativar produto?</AlertDialogTitle>
+            <AlertDialogTitle>Excluir produto?</AlertDialogTitle>
             <AlertDialogDescription>
-              O produto "{deleteProduct?.name}" será desativado e não aparecerá mais no cardápio.
-              Você pode reativá-lo a qualquer momento.
+              O produto "{deleteProduct?.name}" será excluído permanentemente do banco de dados.
+              Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -320,7 +332,7 @@ export function ProductsTable({
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting ? 'Desativando...' : 'Desativar'}
+            {isDeleting ? 'Excluindo...' : 'Excluir'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
