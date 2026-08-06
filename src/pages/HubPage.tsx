@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTenant } from "@/hooks/useTenant";
-import { useRestaurantModules } from "@/hooks/useRestaurantModules";
+import { useTenantModules } from "@/hooks/useRestaurantModules";
 import { useRestaurantStatus } from "@/hooks/useRestaurantStatus";
 import { useTableContext } from "@/hooks/useTableContext";
 import { SocialLinks, WifiInfo, LocationCoordinates, BusinessHours } from "@/types/restaurant";
@@ -42,7 +42,7 @@ const HubPage = () => {
 
   // Use TenantContext instead of useAdminSettings
   const { tenant, isLoading: isLoadingTenant, error: tenantError } = useTenant();
-  const { data: modules, isLoading: isLoadingModules } = useRestaurantModules();
+  const { data: modules, isLoading: isLoadingModules } = useTenantModules();
   const { table, tableNumber, tableName, hasTable, isLoading: isLoadingTable, setTable, clearTable } = useTableContext();
 
   const isLoading = isLoadingTenant || isLoadingModules || isLoadingTable;
