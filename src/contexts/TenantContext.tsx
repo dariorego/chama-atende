@@ -30,6 +30,7 @@ export interface Tenant {
   notification_settings: Record<string, unknown> | null;
   features: Record<string, boolean> | null;
   max_users: number | null;
+  owner_id: string | null;
 }
 
 interface TenantContextValue {
