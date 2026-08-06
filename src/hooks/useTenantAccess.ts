@@ -7,7 +7,7 @@ export type TenantRole = 'owner' | 'admin' | 'manager' | 'staff';
 
 export function useTenantAccess() {
   const { user, loading: authLoading } = useAuth();
-  const { tenantId, isLoading: tenantLoading } = useTenant();
+  const { tenantId, tenant, isLoading: tenantLoading } = useTenant();
 
   const { data: tenantRole, isLoading: roleLoading } = useQuery({
     queryKey: ['tenant-role', user?.id, tenantId],
@@ -31,13 +31,19 @@ export function useTenantAccess() {
     enabled: !!user?.id && !!tenantId,
   });
 
-  const hasAccess = !!tenantRole;
-  const isOwner = tenantRole === 'owner';
-  const isAdmin = tenantRole === 'owner' || tenantRole === 'admin';
+  // Dono do estabelecimento sempre tem acesso total, mesmo que a linha em
+  // tenant_user_roles ainda não exista (tenants criados antes do vínculo).
+  const isOwnerByRecord = !!user?.id && !!tenant?.owner_id && tenant.owner_id === user.id;
+
+  const effectiveRole: TenantRole | null = tenantRole ?? (isOwnerByRecord ? 'owner' : null);
+
+  const hasAccess = !!effectiveRole;
+  const isOwner = effectiveRole === 'owner';
+  const isAdmin = effectiveRole === 'owner' || effectiveRole === 'admin';
   const isManager = isAdmin || tenantRole === 'manager';
 
   return {
-    tenantRole,
+    tenantRole: effectiveRole,
     hasAccess,
     isOwner,
     isAdmin,
