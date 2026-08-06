@@ -131,10 +131,20 @@ export default function AdminProducts() {
   const handleDelete = async (product: MenuProduct) => {
     try {
       await deleteProduct.mutateAsync({ id: product.id });
-      toast({ title: 'Produto desativado', description: 'O produto foi removido.' });
+      toast({ title: 'Produto excluído', description: 'O produto foi removido definitivamente.' });
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao desativar.';
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao excluir.';
       toast({ title: 'Erro', description: errorMessage, variant: 'destructive' });
+    }
+  };
+
+  const handleToggleActive = async (product: MenuProduct, active: boolean) => {
+    try {
+      await updateProduct.mutateAsync({ id: product.id, is_active: active });
+      toast({ title: active ? 'Produto ativado' : 'Produto inativado', description: product.name });
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Erro ao atualizar status.';
+      toast({ title: 'Erro', description: msg, variant: 'destructive' });
     }
   };
 
@@ -238,7 +248,7 @@ export default function AdminProducts() {
               isDeleting={deleteProduct.isPending}
               onReorder={handleReorder}
               isDragDisabled={isDragDisabled || currentPage !== 1 || products.length > pageSize}
-              onToggleShowOnDisplay={handleToggleShowOnDisplay}
+              onToggleActive={handleToggleActive}
             />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

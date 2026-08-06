@@ -44,6 +44,7 @@ const productSchema = z.object({
   is_highlight: z.boolean().default(false),
   is_active: z.boolean().default(true),
   is_orderable: z.boolean().default(false),
+  show_on_display: z.boolean().default(false),
   display_order: z.coerce.number().int().min(1, 'Ordem mínima é 1').default(1),
 }).refine((data) => {
   if (data.promotional_price && data.promotional_price >= data.price) {
@@ -54,6 +55,18 @@ const productSchema = z.object({
   message: 'Preço promocional deve ser menor que o preço normal',
   path: ['promotional_price'],
 });
+
+function formatCurrencyInput(raw: string) {
+  const digits = raw.replace(/\D/g, '').slice(0, 11);
+  if (!digits) return '';
+  const cents = (Number(digits) / 100).toFixed(2);
+  return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(cents));
+}
+
+function currencyToNumber(masked: string) {
+  const digits = masked.replace(/\D/g, '');
+  return digits ? Number(digits) / 100 : 0;
+}
 
 type ProductFormData = z.infer<typeof productSchema>;
 
@@ -90,6 +103,7 @@ export function ProductFormDialog({
       is_highlight: false,
       is_active: true,
       is_orderable: false,
+      show_on_display: false,
       display_order: suggestedOrder ?? 1,
     },
   });
@@ -107,6 +121,7 @@ export function ProductFormDialog({
           is_highlight: product.is_highlight ?? false,
           is_active: product.is_active ?? true,
           is_orderable: (product as MenuProduct & { is_orderable?: boolean }).is_orderable ?? false,
+          show_on_display: product.show_on_display ?? false,
           display_order: product.display_order ?? 0,
         });
       } else {
@@ -120,6 +135,7 @@ export function ProductFormDialog({
           is_highlight: false,
           is_active: true,
           is_orderable: false,
+          show_on_display: false,
           display_order: suggestedOrder ?? 1,
         });
       }
@@ -218,13 +234,16 @@ export function ProductFormDialog({
                   <FormItem>
                     <FormLabel>Preço *</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="0,00"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">R$</span>
+                        <Input
+                          inputMode="numeric"
+                          placeholder="0,00"
+                          className="pl-9"
+                          value={field.value ? formatCurrencyInput(Number(field.value).toFixed(2)) : ''}
+                          onChange={(e) => field.onChange(currencyToNumber(e.target.value))}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -238,18 +257,19 @@ export function ProductFormDialog({
                   <FormItem>
                     <FormLabel>Preço Promocional</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="0,00"
-                        {...field}
-                        value={field.value ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value === '' ? null : Number(value));
-                        }}
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">R$</span>
+                        <Input
+                          inputMode="numeric"
+                          placeholder="0,00"
+                          className="pl-9"
+                          value={field.value ? formatCurrencyInput(Number(field.value).toFixed(2)) : ''}
+                          onChange={(e) => {
+                            const num = currencyToNumber(e.target.value);
+                            field.onChange(num === 0 ? null : num);
+                          }}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -347,6 +367,24 @@ export function ProductFormDialog({
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">
                       Encomenda
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="show_on_display"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2 space-y-0">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Vitrine
                     </FormLabel>
                   </FormItem>
                 )}
