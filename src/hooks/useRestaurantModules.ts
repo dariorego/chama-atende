@@ -25,9 +25,10 @@ const DEFAULT_MODULES: ModulesMap = {
  * Hook to fetch restaurant modules
  * @param restaurantId - Optional restaurant ID. If not provided, fetches all active modules.
  */
-export function useRestaurantModules(restaurantId?: string) {
+export function useRestaurantModules(restaurantId?: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['restaurant-modules', restaurantId],
+    enabled: options?.enabled ?? true,
     queryFn: async () => {
       let query = supabase
         .from('restaurant_modules')
@@ -63,5 +64,5 @@ export function useRestaurantModules(restaurantId?: string) {
  */
 export function useTenantModules() {
   const { tenantId } = useTenant();
-  return useRestaurantModules(tenantId ?? undefined);
+  return useRestaurantModules(tenantId ?? undefined, { enabled: !!tenantId });
 }

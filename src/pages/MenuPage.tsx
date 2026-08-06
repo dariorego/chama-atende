@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useMenuCategories } from "@/hooks/useMenuCategories";
 import { useMenuProducts, calculatePromotion, type MenuProduct } from "@/hooks/useMenuProducts";
-import { useRestaurantModules } from "@/hooks/useRestaurantModules";
+import { useTenantModules } from "@/hooks/useRestaurantModules";
 import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
@@ -75,7 +75,7 @@ const MenuPage = () => {
   const { data: productsData, isLoading: isLoadingProducts } = useMenuProducts();
 
   // Waiter call functionality
-  const { data: modules } = useRestaurantModules();
+  const { data: modules } = useTenantModules();
   const { table, setTable } = useTableContext();
   const { data: tables, isLoading: isLoadingTables } = usePublicTables();
   const { hasActiveCall, createCall, isCreatingCall } = useClientServiceCall(table?.id || null);
