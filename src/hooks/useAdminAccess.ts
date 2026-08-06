@@ -32,10 +32,10 @@ export function useAdminAccess() {
 
   const hasAccess = useMemo(() => {
     if (!profile) return false;
-    // Server verification is authoritative; client checks are UI convenience.
-    const clientAccess = hasTenantAccess || isGlobalAdmin;
-    if (serverVerified === false) return false;
-    return clientAccess;
+    // Acesso ao painel de um estabelecimento é definido pelo vínculo com o
+    // tenant (tenant_user_roles / dono). `verify_admin_access` é uma checagem
+    // global e não deve bloquear um admin válido do slug.
+    return hasTenantAccess || isGlobalAdmin || serverVerified === true;
   }, [profile, hasTenantAccess, isGlobalAdmin, serverVerified]);
 
   const accessLevel = useMemo(() => {
