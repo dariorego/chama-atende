@@ -1,6 +1,4 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useCurrentUser } from './useCurrentUser';
 import { useAdminSettings } from './useAdminSettings';
 import { useTenantAccess } from './useTenantAccess';
@@ -10,33 +8,16 @@ export function useAdminAccess() {
   const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
   const { 
     hasAccess: hasTenantAccess, 
-    isAdmin: isTenantAdmin, 
-    isManager: isTenantManager,
     tenantRole,
     isLoading: isLoadingTenantAccess 
   } = useTenantAccess();
 
-  // Server-side verification via SECURITY DEFINER function.
-  // This is enforced regardless of client-side state.
-  const { data: serverVerified, isLoading: isLoadingServer } = useQuery({
-    queryKey: ['verify-admin-access', profile?.id],
-    queryFn: async () => {
-      if (!profile?.id) return false;
-      const { data, error } = await supabase.rpc('verify_admin_access');
-      if (error) return false;
-      return Boolean(data);
-    },
-    enabled: !!profile?.id,
-    staleTime: 60_000,
-  });
-
   const hasAccess = useMemo(() => {
-    if (!profile) return false;
-    // Acesso ao painel de um estabelecimento é definido pelo vínculo com o
-    // tenant (tenant_user_roles / dono). `verify_admin_access` é uma checagem
-    // global e não deve bloquear um admin válido do slug.
-    return hasTenantAccess || isGlobalAdmin || serverVerified === true;
-  }, [profile, hasTenantAccess, isGlobalAdmin, serverVerified]);
+    // O acesso ao painel é exclusivamente do estabelecimento atual. Uma função
+    // ou função global nunca deve liberar outro slug; o vínculo em
+    // tenant_user_roles (ou owner_id) é a fonte de verdade.
+    return Boolean(profile && hasTenantAccess);
+  }, [profile, hasTenantAccess]);
 
   const accessLevel = useMemo(() => {
     // Prioritize tenant-specific role
@@ -57,6 +38,6 @@ export function useAdminAccess() {
     restaurant,
     roles,
     tenantRole,
-    isLoading: isLoadingUser || isLoadingRestaurant || isLoadingTenantAccess || isLoadingServer,
+    isLoading: isLoadingUser || isLoadingRestaurant || isLoadingTenantAccess,
   };
 }
