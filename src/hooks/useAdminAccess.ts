@@ -31,12 +31,11 @@ export function useAdminAccess() {
   });
 
   const hasAccess = useMemo(() => {
-    if (!profile) return false;
-    // Acesso ao painel de um estabelecimento é definido pelo vínculo com o
-    // tenant (tenant_user_roles / dono). `verify_admin_access` é uma checagem
-    // global e não deve bloquear um admin válido do slug.
-    return hasTenantAccess || isGlobalAdmin || serverVerified === true;
-  }, [profile, hasTenantAccess, isGlobalAdmin, serverVerified]);
+    // O acesso ao painel é exclusivamente do estabelecimento atual. Uma função
+    // ou função global nunca deve liberar outro slug; o vínculo em
+    // tenant_user_roles (ou owner_id) é a fonte de verdade.
+    return Boolean(profile && hasTenantAccess);
+  }, [profile, hasTenantAccess]);
 
   const accessLevel = useMemo(() => {
     // Prioritize tenant-specific role
