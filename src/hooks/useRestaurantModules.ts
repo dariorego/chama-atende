@@ -21,13 +21,37 @@ const DEFAULT_MODULES: ModulesMap = {
   referralProgram: false,
 };
 
+type RestaurantPlan = 'starter' | 'professional' | 'enterprise' | string | null | undefined;
+
+function getPlanFallbackModules(plan: RestaurantPlan): ModulesMap {
+  const modules: ModulesMap = {
+    ...DEFAULT_MODULES,
+    menu: true,
+  };
+
+  if (plan === 'professional' || plan === 'enterprise') {
+    modules.waiterCall = true;
+    modules.reservations = true;
+    modules.queue = true;
+    modules.kitchenOrder = true;
+    modules.customerReview = true;
+    modules.preOrders = true;
+    modules.eventBookings = true;
+  }
+
+  return modules;
+}
+
 /**
  * Hook to fetch restaurant modules
  * @param restaurantId - Optional restaurant ID. If not provided, fetches all active modules.
  */
-export function useRestaurantModules(restaurantId?: string, options?: { enabled?: boolean }) {
+export function useRestaurantModules(
+  restaurantId?: string,
+  options?: { enabled?: boolean; fallbackPlan?: RestaurantPlan },
+) {
   return useQuery({
-    queryKey: ['restaurant-modules', restaurantId],
+    queryKey: ['restaurant-modules', restaurantId, options?.fallbackPlan],
     enabled: options?.enabled ?? true,
     queryFn: async () => {
       let query = supabase
@@ -45,7 +69,11 @@ export function useRestaurantModules(restaurantId?: string, options?: { enabled?
       if (error) throw error;
 
       // Transform array to ModulesMap object
-      const modules: ModulesMap = { ...DEFAULT_MODULES };
+      // Migrated tenants may not have restaurant_modules rows yet. Keep their
+      // public experience available according to the contracted plan.
+      const modules: ModulesMap = data?.length
+        ? { ...DEFAULT_MODULES }
+        : getPlanFallbackModules(options?.fallbackPlan);
       
       data?.forEach((module) => {
         const key = MODULE_NAME_MAP[module.module_name];
@@ -63,6 +91,9 @@ export function useRestaurantModules(restaurantId?: string, options?: { enabled?
  * Hook that uses TenantContext to get modules for current tenant
  */
 export function useTenantModules() {
-  const { tenantId } = useTenant();
-  return useRestaurantModules(tenantId ?? undefined, { enabled: !!tenantId });
+  const { tenant, tenantId } = useTenant();
+  return useRestaurantModules(tenantId ?? undefined, {
+    enabled: !!tenantId,
+    fallbackPlan: tenant?.plan,
+  });
 }
