@@ -8,8 +8,6 @@ export function useAdminAccess() {
   const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
   const { 
     hasAccess: hasTenantAccess, 
-    isAdmin: isTenantAdmin, 
-    isManager: isTenantManager,
     tenantRole,
     isLoading: isLoadingTenantAccess 
   } = useTenantAccess();
