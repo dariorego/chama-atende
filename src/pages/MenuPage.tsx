@@ -137,7 +137,7 @@ const MenuPage = () => {
   const isLoading = isLoadingCategories || isLoadingProducts;
 
   // Categories (no "Todos" — the whole menu is always rendered)
-  const categories = categoriesData?.map(cat => ({ id: cat.slug, name: cat.name })) ?? [];
+  const categories = categoriesData?.map(cat => ({ id: cat.slug, name: cat.name, description: cat.description })) ?? [];
 
   // Transform products
   const products = productsData?.map(transformProduct) ?? [];
@@ -174,6 +174,7 @@ const MenuPage = () => {
       .map((cat) => ({
         id: cat.slug,
         name: cat.name,
+        description: cat.description,
         items: regularProducts.filter((p) => p.category === cat.slug),
       }))
       .filter((s) => s.items.length > 0);
