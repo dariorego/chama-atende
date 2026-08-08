@@ -137,7 +137,7 @@ const MenuPage = () => {
   const isLoading = isLoadingCategories || isLoadingProducts;
 
   // Categories (no "Todos" — the whole menu is always rendered)
-  const categories = categoriesData?.map(cat => ({ id: cat.slug, name: cat.name })) ?? [];
+  const categories = categoriesData?.map(cat => ({ id: cat.slug, name: cat.name, description: cat.description })) ?? [];
 
   // Transform products
   const products = productsData?.map(transformProduct) ?? [];
@@ -174,6 +174,7 @@ const MenuPage = () => {
       .map((cat) => ({
         id: cat.slug,
         name: cat.name,
+        description: cat.description,
         items: regularProducts.filter((p) => p.category === cat.slug),
       }))
       .filter((s) => s.items.length > 0);
@@ -411,11 +412,22 @@ const MenuPage = () => {
                 onClick={() =>
                   setCollapsed((prev) => ({ ...prev, [section.id]: !isCollapsed }))
                 }
-                className="w-full flex items-center justify-between gap-3 mb-3 pb-2 border-b border-emerald-deep/15"
+                className="w-full flex items-start justify-between gap-3 mb-2 pb-2 border-b border-emerald-deep/15"
               >
-                <h2 className="editorial-label text-emerald-deep">{section.name}</h2>
-                <span className="flex items-center gap-2 text-emerald-deep/50 text-xs">
-                  {section.items.length}
+                <div className="text-left">
+                  <h2 className="editorial-label text-emerald-deep flex items-center gap-2">
+                    {section.name}
+                  </h2>
+                  {section.description ? (
+                    <p className="mt-1 text-sm text-emerald-deep/60 font-sans-editorial italic leading-relaxed">
+                      {section.description}
+                    </p>
+                  ) : null}
+                </div>
+                <span className="flex items-center gap-2 text-emerald-deep/50 text-xs shrink-0 mt-0.5">
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-cream-soft border border-emerald-deep/10 text-emerald-deep/70 text-[10px] font-medium">
+                    {section.items.length}
+                  </span>
                   <ChevronDown
                     className={cn(
                       "h-4 w-4 transition-transform",
