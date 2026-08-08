@@ -48,7 +48,7 @@ const productSchema = z.object({
   display_order: z
     .preprocess(
       (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
-      z.number().int().min(1, 'Ordem mínima é 1').nullable(),
+      z.number().int().min(0, 'Ordem inválida').nullable(),
     )
     .default(null),
 }).refine((data) => {
