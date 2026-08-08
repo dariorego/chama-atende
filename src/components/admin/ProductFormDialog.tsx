@@ -305,17 +305,21 @@ export function ProductFormDialog({
               name="display_order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ordem de Exibição</FormLabel>
+                  <FormLabel>Ordem de Exibição (opcional)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       min="1"
-                      placeholder="1"
+                      placeholder="Automático (ordem alfabética)"
                       {...field}
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        field.onChange(e.target.value === '' ? null : e.target.value)
+                      }
                     />
                   </FormControl>
                   <FormDescription>
-                    Produtos com ordem 1 aparecem primeiro
+                    Deixe em branco para ordenar por nome. Produtos com ordem definida aparecem primeiro.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
