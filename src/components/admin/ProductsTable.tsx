@@ -219,6 +219,7 @@ export function ProductsTable({
   onReorder,
   isDragDisabled,
   onToggleActive,
+  fallbackImageUrl,
 }: ProductsTableProps) {
   const [deleteProduct, setDeleteProduct] = useState<MenuProduct | null>(null);
   const [zoomProduct, setZoomProduct] = useState<MenuProduct | null>(null);
