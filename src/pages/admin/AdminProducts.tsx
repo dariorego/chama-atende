@@ -97,15 +97,15 @@ export default function AdminProducts() {
     try {
       if (editingProduct) {
         // If order changed, adjust other products first
-        const oldOrder = editingProduct.display_order ?? 0;
-        const newOrder = data.display_order;
-        
-        if (newOrder !== oldOrder) {
+        const oldOrder = editingProduct.display_order ?? null;
+        const newOrder = data.display_order ?? null;
+
+        if (newOrder !== null && newOrder !== oldOrder) {
           await adjustProductOrder.mutateAsync({
             productId: editingProduct.id,
             categoryId: editingProduct.category_id,
             newOrder,
-            oldOrder,
+            oldOrder: oldOrder ?? 0,
             currentProducts: products,
           });
         }
@@ -113,12 +113,10 @@ export default function AdminProducts() {
         await updateProduct.mutateAsync({ id: editingProduct.id, ...data });
         toast({ title: 'Produto atualizado', description: 'As alterações foram salvas.' });
       } else {
-        // For new products, calculate the next order for the selected category
-        const nextOrder = getNextOrderForCategory(data.category_id);
-        await createProduct.mutateAsync({ 
-          ...data, 
+        await createProduct.mutateAsync({
+          ...data,
           restaurant_id: restaurant?.id,
-          display_order: data.display_order || nextOrder,
+          display_order: data.display_order ?? null,
         });
         toast({ title: 'Produto criado', description: 'O produto foi adicionado.' });
       }
