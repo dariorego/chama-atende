@@ -41,6 +41,7 @@ interface Product {
   price: number;
   category: string;
   image?: string;
+  isFallbackImage?: boolean;
   highlight?: boolean;
   promotion?: string;
 }
