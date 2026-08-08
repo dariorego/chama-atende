@@ -69,6 +69,7 @@ function calculateDiscount(price: number, promoPrice: number) {
 
 interface SortableProductRowProps {
   product: MenuProduct;
+  position: number;
   getCategoryName: (categoryId: string) => string;
   onEdit: (product: MenuProduct) => void;
   onDeleteClick: (product: MenuProduct) => void;
@@ -80,6 +81,7 @@ interface SortableProductRowProps {
 
 function SortableProductRow({
   product,
+  position,
   getCategoryName,
   onEdit,
   onDeleteClick,
@@ -116,8 +118,15 @@ function SortableProductRow({
           >
             <GripVertical className="h-4 w-4 text-muted-foreground" />
           </button>
+        ) : product.display_order != null ? (
+          <span className="text-muted-foreground text-sm">{product.display_order}</span>
         ) : (
-          <span className="text-muted-foreground text-sm">{product.display_order ?? '-'}</span>
+          <span
+            className="text-muted-foreground/60 text-sm italic"
+            title="Ordem provisória (alfabética)"
+          >
+            {position}
+          </span>
         )}
       </TableCell>
       <TableCell>
