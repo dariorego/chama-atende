@@ -98,6 +98,7 @@ export function ProductFormDialog({
 }: ProductFormDialogProps) {
   const isEditing = !!product;
 
+
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
