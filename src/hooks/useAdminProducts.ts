@@ -25,8 +25,8 @@ export function useAdminProducts(filters?: ProductFilters) {
         .from('menu_products')
         .select('*')
         .eq('restaurant_id', tenantId)
-        .order('display_order')
-        .order('name');
+        .order('display_order', { ascending: true, nullsFirst: false })
+        .order('name', { ascending: true });
 
       if (filters?.categoryId) {
         query = query.eq('category_id', filters.categoryId);
