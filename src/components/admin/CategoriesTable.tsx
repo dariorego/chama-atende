@@ -25,7 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pencil, Trash2, GripVertical } from 'lucide-react';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
@@ -37,6 +37,7 @@ interface CategoriesTableProps {
   onDelete: (category: MenuCategory) => void;
   onReorder?: (reorderedCategories: MenuCategory[]) => void;
   isDragDisabled?: boolean;
+  onToggleActive?: (category: MenuCategory, isActive: boolean) => void;
 }
 
 interface SortableRowProps {
@@ -44,9 +45,10 @@ interface SortableRowProps {
   onEdit: (category: MenuCategory) => void;
   onDelete: (category: MenuCategory) => void;
   isDragDisabled: boolean;
+  onToggleActive?: (category: MenuCategory, isActive: boolean) => void;
 }
 
-function SortableRow({ category, onEdit, onDelete, isDragDisabled }: SortableRowProps) {
+function SortableRow({ category, onEdit, onDelete, isDragDisabled, onToggleActive }: SortableRowProps) {
   const {
     attributes,
     listeners,
@@ -86,13 +88,16 @@ function SortableRow({ category, onEdit, onDelete, isDragDisabled }: SortableRow
         {category.display_order ?? 0}
       </TableCell>
       <TableCell className="text-center">
-        {category.is_active ? (
-          <Badge variant="default" className="bg-green-500/10 text-green-600 hover:bg-green-500/20">
-            Ativa
-          </Badge>
-        ) : (
-          <Badge variant="secondary">Inativa</Badge>
-        )}
+        <div className="flex items-center justify-center gap-2">
+          <Switch
+            checked={!!category.is_active}
+            onCheckedChange={(checked) => onToggleActive?.(category, checked)}
+            aria-label={category.is_active ? 'Desativar categoria' : 'Ativar categoria'}
+          />
+          <span className="text-xs text-muted-foreground w-[46px] text-left">
+            {category.is_active ? 'Ativa' : 'Inativa'}
+          </span>
+        </div>
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-1">
@@ -103,16 +108,14 @@ function SortableRow({ category, onEdit, onDelete, isDragDisabled }: SortableRow
           >
             <Pencil className="h-4 w-4" />
           </Button>
-          {category.is_active && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onDelete(category)}
-              className="text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onDelete(category)}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
       </TableCell>
     </TableRow>
@@ -126,6 +129,7 @@ export function CategoriesTable({
   onDelete,
   onReorder,
   isDragDisabled = false,
+  onToggleActive,
 }: CategoriesTableProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -188,7 +192,7 @@ export function CategoriesTable({
             <TableHead>Nome</TableHead>
             <TableHead>Descrição</TableHead>
             <TableHead className="text-center">Ordem</TableHead>
-            <TableHead className="text-center">Status</TableHead>
+            <TableHead className="text-center">Ativa</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -201,6 +205,7 @@ export function CategoriesTable({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 isDragDisabled={isDragDisabled}
+                onToggleActive={onToggleActive}
               />
             ))}
           </TableBody>
