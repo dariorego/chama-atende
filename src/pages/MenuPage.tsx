@@ -60,7 +60,7 @@ function transformProduct(product: MenuProduct): Product {
 }
 
 const MenuPage = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -136,11 +136,8 @@ const MenuPage = () => {
 
   const isLoading = isLoadingCategories || isLoadingProducts;
 
-  // Transform categories with "Todos" option
-  const categories = [
-    { id: "all", name: "Todos" },
-    ...(categoriesData?.map(cat => ({ id: cat.slug, name: cat.name })) ?? [])
-  ];
+  // Categories (no "Todos" — the whole menu is always rendered)
+  const categories = categoriesData?.map(cat => ({ id: cat.slug, name: cat.name })) ?? [];
 
   // Transform products
   const products = productsData?.map(transformProduct) ?? [];
@@ -160,10 +157,11 @@ const MenuPage = () => {
   }, [carouselApi]);
 
   const filteredProducts = products.filter((product) => {
-    const matchesCategory = activeCategory === "all" || product.category === activeCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          product.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const q = searchQuery.toLowerCase();
+    return (
+      product.name.toLowerCase().includes(q) ||
+      (product.description?.toLowerCase().includes(q) ?? false)
+    );
   });
 
   const highlightedProducts = products.filter((p) => p.highlight);
@@ -187,10 +185,6 @@ const MenuPage = () => {
 
   const scrollToCategory = (id: string) => {
     setActiveCategory(id);
-    if (id === "all") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
     const el = sectionRefs.current[id];
     if (el) {
       isScrollingRef.current = true;
