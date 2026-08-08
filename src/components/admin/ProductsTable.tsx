@@ -81,7 +81,6 @@ interface SortableProductRowProps {
 function SortableProductRow({
   product,
   position,
-  getCategoryName,
   onEdit,
   onDeleteClick,
   isDragDisabled,
@@ -158,9 +157,6 @@ function SortableProductRow({
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           )}
         </div>
-      </TableCell>
-      <TableCell>
-        <Badge variant="outline">{getCategoryName(product.category_id)}</Badge>
       </TableCell>
       <TableCell className="text-right">
         <div className="space-y-1">
