@@ -60,7 +60,7 @@ function transformProduct(product: MenuProduct): Product {
 }
 
 const MenuPage = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -136,11 +136,8 @@ const MenuPage = () => {
 
   const isLoading = isLoadingCategories || isLoadingProducts;
 
-  // Transform categories with "Todos" option
-  const categories = [
-    { id: "all", name: "Todos" },
-    ...(categoriesData?.map(cat => ({ id: cat.slug, name: cat.name })) ?? [])
-  ];
+  // Categories (no "Todos" — the whole menu is always rendered)
+  const categories = categoriesData?.map(cat => ({ id: cat.slug, name: cat.name })) ?? [];
 
   // Transform products
   const products = productsData?.map(transformProduct) ?? [];
@@ -160,10 +157,11 @@ const MenuPage = () => {
   }, [carouselApi]);
 
   const filteredProducts = products.filter((product) => {
-    const matchesCategory = activeCategory === "all" || product.category === activeCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          product.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const q = searchQuery.toLowerCase();
+    return (
+      product.name.toLowerCase().includes(q) ||
+      (product.description?.toLowerCase().includes(q) ?? false)
+    );
   });
 
   const highlightedProducts = products.filter((p) => p.highlight);
@@ -187,10 +185,6 @@ const MenuPage = () => {
 
   const scrollToCategory = (id: string) => {
     setActiveCategory(id);
-    if (id === "all") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
     const el = sectionRefs.current[id];
     if (el) {
       isScrollingRef.current = true;
@@ -347,7 +341,7 @@ const MenuPage = () => {
       )}
 
       {/* Category Tabs - swipeable carousel */}
-      <div className="mb-6 -mx-4 sticky top-0 z-30 bg-background/95 backdrop-blur py-2">
+      <div className="mb-6 -mx-4 sticky top-0 z-30 bg-background/95 backdrop-blur py-3 border-b border-emerald-deep/10">
         <Carousel
           opts={{
             align: "start",
@@ -357,21 +351,33 @@ const MenuPage = () => {
           className="w-full"
         >
           <CarouselContent className="px-4">
-            {categories.map((category) => (
-              <CarouselItem key={category.id} className="basis-auto pl-0 pr-2 last:pr-0">
-                <button
-                  onClick={() => scrollToCategory(category.id)}
-                  className={cn(
-                    "px-4 py-2 rounded-full text-xs tracking-widest uppercase font-medium whitespace-nowrap transition-all border",
-                    activeCategory === category.id
-                      ? "bg-emerald-deep text-cream border-emerald-deep"
-                      : "bg-transparent text-emerald-deep/60 border-emerald-deep/15 hover:border-gold hover:text-emerald-deep"
-                  )}
-                >
-                  {category.name}
-                </button>
-              </CarouselItem>
-            ))}
+            {categories.map((category) => {
+              const count = products.filter((p) => p.category === category.id).length;
+              const isActive = activeCategory === category.id;
+              return (
+                <CarouselItem key={category.id} className="basis-auto pl-0 pr-2 last:pr-0">
+                  <button
+                    onClick={() => scrollToCategory(category.id)}
+                    className={cn(
+                      "group flex items-center gap-2 px-4 py-2 rounded-full text-[11px] tracking-[0.18em] uppercase font-medium whitespace-nowrap transition-all border",
+                      isActive
+                        ? "bg-emerald-deep text-cream border-emerald-deep shadow-md"
+                        : "bg-cream-soft text-emerald-deep/70 border-emerald-deep/10 hover:border-gold hover:text-emerald-deep"
+                    )}
+                  >
+                    {category.name}
+                    <span
+                      className={cn(
+                        "text-[10px] rounded-full px-1.5 py-0.5 leading-none",
+                        isActive ? "bg-gold text-emerald-deep" : "bg-emerald-deep/8 text-emerald-deep/50"
+                      )}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                </CarouselItem>
+              );
+            })}
           </CarouselContent>
         </Carousel>
       </div>
