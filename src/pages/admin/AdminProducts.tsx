@@ -65,6 +65,26 @@ export default function AdminProducts() {
   const getCategoryName = (categoryId: string) =>
     categories.find((c) => c.id === categoryId)?.name || 'Sem categoria';
 
+  // Group paginated products by category (same structure as the public menu)
+  const groupedProducts = useMemo(() => {
+    const groups = categories
+      .map((c) => ({
+        id: c.id,
+        name: c.name,
+        description: c.description as string | null | undefined,
+        items: paginatedProducts.filter((p) => p.category_id === c.id),
+      }))
+      .filter((g) => g.items.length > 0);
+
+    const orphans = paginatedProducts.filter(
+      (p) => !categories.some((c) => c.id === p.category_id),
+    );
+    if (orphans.length > 0) {
+      groups.push({ id: 'sem-categoria', name: 'Sem categoria', description: null, items: orphans });
+    }
+    return groups;
+  }, [categories, paginatedProducts]);
+
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
