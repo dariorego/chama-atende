@@ -56,6 +56,7 @@ export interface NotificationSettings {
 export interface ThemeSettings {
   client_default_theme?: 'light' | 'dark';
   admin_default_theme?: 'light' | 'dark';
+  chef_suggestion_label?: string;
 }
 
 // Horário de um dia específico
