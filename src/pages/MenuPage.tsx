@@ -447,6 +447,7 @@ const MenuPage = () => {
                       name={product.name}
                       price={product.price}
                       image={product.image}
+                      isFallbackImage={product.isFallbackImage}
                       promotion={product.promotion}
                       onClick={() => setSelectedProduct(product)}
                     />
@@ -465,6 +466,7 @@ const MenuPage = () => {
                 name={product.name}
                 price={product.price}
                 image={product.image}
+                isFallbackImage={product.isFallbackImage}
                 promotion={product.promotion}
                 onClick={() => setSelectedProduct(product)}
               />
