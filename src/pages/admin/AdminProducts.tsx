@@ -362,7 +362,7 @@ export default function AdminProducts() {
                       </div>
                     </CardContent>
                   </Card>
-                ))
+                ))}
                     </div>
                   )}
                 </section>
