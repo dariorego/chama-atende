@@ -306,6 +306,7 @@ export function ProductsTable({
                     isDragDisabled={isDragDisabled}
                     onToggleActive={onToggleActive}
                     onZoom={setZoomProduct}
+                    fallbackImageUrl={fallbackImageUrl}
                   />
                 ))}
               </TableBody>
@@ -315,7 +316,7 @@ export function ProductsTable({
       </DndContext>
 
       <ImageZoomDialog
-        src={zoomProduct?.image_url || ''}
+        src={zoomProduct?.image_url || fallbackImageUrl || ''}
         alt={zoomProduct?.name || ''}
         open={!!zoomProduct}
         onOpenChange={(open) => !open && setZoomProduct(null)}
