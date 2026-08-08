@@ -318,8 +318,8 @@ export function ProductFormDialog({
                   <FormControl>
                     <Input
                       type="number"
-                      min="1"
-                      placeholder="Automático (ordem alfabética)"
+                      min="0"
+                      placeholder={`Sugerido: ${categorySuggestedOrder}`}
                       {...field}
                       value={field.value ?? ''}
                       onChange={(e) =>
@@ -328,7 +328,7 @@ export function ProductFormDialog({
                     />
                   </FormControl>
                   <FormDescription>
-                    Deixe em branco para ordenar por nome. Produtos com ordem definida aparecem primeiro.
+                    Opcional. Em branco ou 0 usa a ordem sugerida da categoria ({categorySuggestedOrder}).
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
