@@ -70,7 +70,6 @@ function calculateDiscount(price: number, promoPrice: number) {
 interface SortableProductRowProps {
   product: MenuProduct;
   position: number;
-  getCategoryName: (categoryId: string) => string;
   onEdit: (product: MenuProduct) => void;
   onDeleteClick: (product: MenuProduct) => void;
   isDragDisabled?: boolean;
