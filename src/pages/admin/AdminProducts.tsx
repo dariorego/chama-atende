@@ -256,31 +256,50 @@ export default function AdminProducts() {
             </div>
           </div>
 
-          {viewMode === 'list' ? (
-            <ProductsTable
-              products={paginatedProducts}
-              categories={categories}
-              isLoading={isLoadingProducts}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              isDeleting={deleteProduct.isPending}
-              onReorder={handleReorder}
-              isDragDisabled={isDragDisabled || currentPage !== 1 || products.length > pageSize}
-              onToggleActive={handleToggleActive}
-              fallbackImageUrl={restaurant?.logo_url}
-            />
+          {isLoadingProducts ? (
+            <div className="space-y-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-16 rounded-md border bg-muted/40 animate-pulse" />
+              ))}
+            </div>
+          ) : groupedProducts.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">Nenhum produto encontrado</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {isLoadingProducts ? (
-                Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-64 rounded-md border bg-muted/40 animate-pulse" />
-                ))
-              ) : paginatedProducts.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-muted-foreground">
-                  Nenhum produto encontrado
-                </div>
-              ) : (
-                paginatedProducts.map((product) => (
+            <div className="space-y-10">
+              {groupedProducts.map((group) => (
+                <section key={group.id} className="space-y-3">
+                  <div className="flex items-end justify-between gap-3 border-b pb-2">
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-semibold uppercase tracking-wide truncate">
+                        {group.name}
+                      </h3>
+                      {group.description && (
+                        <p className="text-sm italic text-muted-foreground mt-0.5">
+                          {group.description}
+                        </p>
+                      )}
+                    </div>
+                    <Badge variant="secondary" className="rounded-full shrink-0">
+                      {group.items.length} {group.items.length === 1 ? 'item' : 'itens'}
+                    </Badge>
+                  </div>
+
+                  {viewMode === 'list' ? (
+                    <ProductsTable
+                      products={group.items}
+                      categories={categories}
+                      isLoading={false}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      isDeleting={deleteProduct.isPending}
+                      onReorder={handleReorder}
+                      isDragDisabled={isDragDisabled || currentPage !== 1 || products.length > pageSize}
+                      onToggleActive={handleToggleActive}
+                      fallbackImageUrl={restaurant?.logo_url}
+                    />
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {group.items.map((product) => (
                   <Card key={product.id} className="overflow-hidden flex flex-col">
                     <div className="relative w-full aspect-square bg-muted shrink-0 overflow-hidden">
                       {product.image_url ? (
