@@ -306,10 +306,11 @@ export function ProductsTable({
               strategy={verticalListSortingStrategy}
             >
               <TableBody>
-                {products.map((product) => (
+                {products.map((product, index) => (
                   <SortableProductRow
                     key={product.id}
                     product={product}
+                    position={index + 1}
                     getCategoryName={getCategoryName}
                     onEdit={onEdit}
                     onDeleteClick={setDeleteProduct}
