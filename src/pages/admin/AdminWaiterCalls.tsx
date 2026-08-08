@@ -1,8 +1,10 @@
-import { Bell, Receipt, Users, User, Clock, LayoutGrid } from "lucide-react";
+import { Bell, Receipt, Users, User, Clock, LayoutGrid, Check, X } from "lucide-react";
 import { isToday } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePendingServiceCalls, useAdminServiceCalls } from "@/hooks/useAdminServiceCalls";
+import { usePendingServiceCalls, useAdminServiceCalls, useUpdateServiceCall } from "@/hooks/useAdminServiceCalls";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { useAdminWaiters } from "@/hooks/useAdminWaiters";
 import { useAdminTables } from "@/hooks/useAdminTables";
 import { useTableSessions } from "@/hooks/useTableSessions";
@@ -17,6 +19,18 @@ const AdminWaiterCalls = () => {
   const { data: waiters, isLoading: loadingWaiters } = useAdminWaiters();
   const { data: tables, isLoading: loadingTables } = useAdminTables();
   const { data: sessions, isLoading: loadingSessions } = useTableSessions();
+  const updateCall = useUpdateServiceCall();
+
+  const handleTableCalls = (ids: string[], action: 'attend' | 'cancel') => {
+    const now = new Date().toISOString();
+    ids.forEach((id, index) =>
+      updateCall.mutate(
+        action === 'attend'
+          ? { id, status: 'completed', completed_at: now, ...(index === 0 ? { acknowledged_at: now } : {}) }
+          : { id, status: 'cancelled' }
+      )
+    );
+  };
 
   const stats = {
     pendingCalls: pendingCalls?.length || 0,
@@ -219,11 +233,15 @@ const AdminWaiterCalls = () => {
                 <>
                   <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
                     {tables?.filter(t => t.is_active).map((table) => {
-                      const hasPendingCall = pendingCalls?.some(c => c.table_id === table.id);
-                      return (
-                        <div
+                      const tableCalls = pendingCalls?.filter(c => c.table_id === table.id) ?? [];
+                      const hasPendingCall = tableCalls.length > 0;
+                      const card = (
+                        <button
+                          type="button"
                           key={table.id}
-                          className={`relative p-3 rounded-lg border-2 transition-all ${
+                          className={`relative w-full text-left p-3 rounded-lg border-2 transition-all ${
+                            hasPendingCall ? 'cursor-pointer hover:brightness-95' : 'cursor-default'
+                          } ${
                             hasPendingCall ? 'border-destructive bg-destructive/10 animate-pulse' :
                             table.status === 'available' ? 'border-green-500 bg-green-500/10' :
                             table.status === 'occupied' ? 'border-amber-500 bg-amber-500/10' :
@@ -239,7 +257,42 @@ const AdminWaiterCalls = () => {
                             <Users className="h-3 w-3" />
                             {table.capacity}
                           </div>
-                        </div>
+                        </button>
+                      );
+
+                      if (!hasPendingCall) return card;
+
+                      return (
+                        <Popover key={table.id}>
+                          <PopoverTrigger asChild>{card}</PopoverTrigger>
+                          <PopoverContent className="w-56 space-y-3" align="center">
+                            <div>
+                              <p className="font-semibold text-sm">Mesa {table.number.toString().padStart(2, '0')}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {tableCalls.length} chamado{tableCalls.length > 1 ? 's' : ''} pendente{tableCalls.length > 1 ? 's' : ''}
+                              </p>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <Button
+                                size="sm"
+                                disabled={updateCall.isPending}
+                                onClick={() => handleTableCalls(tableCalls.map(c => c.id), 'attend')}
+                              >
+                                <Check className="h-4 w-4 mr-1" />
+                                Atender
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={updateCall.isPending}
+                                onClick={() => handleTableCalls(tableCalls.map(c => c.id), 'cancel')}
+                              >
+                                <X className="h-4 w-4 mr-1" />
+                                Cancelar chamado
+                              </Button>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       );
                     })}
                   </div>
