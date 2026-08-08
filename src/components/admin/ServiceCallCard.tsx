@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Receipt, HelpCircle, Clock, User, Check, X } from "lucide-react";
+import { Bell, Receipt, HelpCircle, Clock, User, Check, X, ChevronDown } from "lucide-react";
 import { ServiceCall, useUpdateServiceCall } from "@/hooks/useAdminServiceCalls";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Waiter } from "@/hooks/useAdminWaiters";
 
 interface ServiceCallCardProps {
@@ -36,7 +35,7 @@ function formatDuration(seconds: number): string {
 export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCardProps) {
   const [elapsed, setElapsed] = useState(0);
   const updateCall = useUpdateServiceCall();
-  const [selectedWaiter, setSelectedWaiter] = useState<string>(call.waiter_id || "");
+  const [showActions, setShowActions] = useState(false);
 
   const extraIds = (duplicateIds ?? []).filter((id) => id !== call.id);
   const totalCount = 1 + extraIds.length;
@@ -66,39 +65,18 @@ export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCard
     return () => clearInterval(interval);
   }, [call.called_at, call.status, call.response_time_seconds]);
 
-  const handleAcknowledge = () => {
-    updateCall.mutate({
-      id: call.id,
-      status: 'acknowledged',
-      acknowledged_at: new Date().toISOString(),
-    });
+  const handleAttend = () => {
     const now = new Date().toISOString();
-    extraIds.forEach((id) =>
-      updateCall.mutate({ id, status: 'acknowledged', acknowledged_at: now })
-    );
-  };
-
-  const handleStartService = () => {
-    updateCall.mutate({
-      id: call.id,
-      status: 'in_progress',
-      waiter_id: selectedWaiter || null,
-    });
-    extraIds.forEach((id) =>
-      updateCall.mutate({ id, status: 'in_progress', waiter_id: selectedWaiter || null })
-    );
-  };
-
-  const handleComplete = () => {
     updateCall.mutate({
       id: call.id,
       status: 'completed',
-      completed_at: new Date().toISOString(),
+      completed_at: now,
+      acknowledged_at: call.acknowledged_at || now,
     });
-    const now = new Date().toISOString();
     extraIds.forEach((id) =>
       updateCall.mutate({ id, status: 'completed', completed_at: now })
     );
+    setShowActions(false);
   };
 
   const handleCancel = () => {
@@ -107,6 +85,7 @@ export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCard
       status: 'cancelled',
     });
     extraIds.forEach((id) => updateCall.mutate({ id, status: 'cancelled' }));
+    setShowActions(false);
   };
 
   const isActive = ['pending', 'acknowledged', 'in_progress'].includes(call.status);
