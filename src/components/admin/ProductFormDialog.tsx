@@ -48,7 +48,7 @@ const productSchema = z.object({
   display_order: z
     .preprocess(
       (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
-      z.number().int().min(1, 'Ordem mínima é 1').nullable(),
+      z.number().int().min(0, 'Ordem inválida').nullable(),
     )
     .default(null),
 }).refine((data) => {
@@ -83,6 +83,7 @@ interface ProductFormDialogProps {
   onSubmit: (data: ProductFormData) => Promise<void>;
   isLoading?: boolean;
   suggestedOrder?: number;
+  getSuggestedOrder?: (categoryId: string) => number;
 }
 
 export function ProductFormDialog({
@@ -93,8 +94,10 @@ export function ProductFormDialog({
   onSubmit,
   isLoading,
   suggestedOrder,
+  getSuggestedOrder,
 }: ProductFormDialogProps) {
   const isEditing = !!product;
+
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -147,13 +150,26 @@ export function ProductFormDialog({
     }
   }, [open, product, form]);
 
+  const watchedCategoryId = form.watch('category_id');
+  const categorySuggestedOrder =
+    (getSuggestedOrder && watchedCategoryId
+      ? getSuggestedOrder(watchedCategoryId)
+      : suggestedOrder) ?? 1;
+
   const handleSubmit = async (data: ProductFormData) => {
+    const categorySuggestion =
+      (getSuggestedOrder ? getSuggestedOrder(data.category_id) : suggestedOrder) ?? 1;
+    const order =
+      data.display_order === null || data.display_order === undefined || data.display_order === 0
+        ? categorySuggestion
+        : data.display_order;
     // Clean up empty strings to null
     const cleanData = {
       ...data,
       description: data.description || null,
       image_url: data.image_url || null,
       promotional_price: data.promotional_price || null,
+      display_order: order,
     };
     await onSubmit(cleanData);
     onOpenChange(false);
@@ -309,8 +325,8 @@ export function ProductFormDialog({
                   <FormControl>
                     <Input
                       type="number"
-                      min="1"
-                      placeholder="Automático (ordem alfabética)"
+                      min="0"
+                      placeholder={`Sugerido: ${categorySuggestedOrder}`}
                       {...field}
                       value={field.value ?? ''}
                       onChange={(e) =>
@@ -319,7 +335,7 @@ export function ProductFormDialog({
                     />
                   </FormControl>
                   <FormDescription>
-                    Deixe em branco para ordenar por nome. Produtos com ordem definida aparecem primeiro.
+                    Opcional. Em branco ou 0 usa a ordem sugerida da categoria ({categorySuggestedOrder}).
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
