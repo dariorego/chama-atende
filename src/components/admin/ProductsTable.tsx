@@ -235,10 +235,6 @@ export function ProductsTable({
     })
   );
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || 'Sem categoria';
-  };
 
   const handleConfirmDelete = () => {
     if (deleteProduct) {
