@@ -18,7 +18,8 @@ export function useMenuCategories() {
         .select('*')
         .eq('restaurant_id', tenantId)
         .eq('is_active', true)
-        .order('display_order');
+        .order('display_order', { ascending: true, nullsFirst: false })
+        .order('name', { ascending: true });
 
       if (error) throw error;
       return data;

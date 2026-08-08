@@ -45,7 +45,12 @@ const productSchema = z.object({
   is_active: z.boolean().default(true),
   is_orderable: z.boolean().default(false),
   show_on_display: z.boolean().default(false),
-  display_order: z.coerce.number().int().min(1, 'Ordem mínima é 1').default(1),
+  display_order: z
+    .preprocess(
+      (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
+      z.number().int().min(1, 'Ordem mínima é 1').nullable(),
+    )
+    .default(null),
 }).refine((data) => {
   if (data.promotional_price && data.promotional_price >= data.price) {
     return false;
@@ -104,7 +109,7 @@ export function ProductFormDialog({
       is_active: true,
       is_orderable: false,
       show_on_display: false,
-      display_order: suggestedOrder ?? 1,
+      display_order: null,
     },
   });
 
@@ -122,7 +127,7 @@ export function ProductFormDialog({
           is_active: product.is_active ?? true,
           is_orderable: (product as MenuProduct & { is_orderable?: boolean }).is_orderable ?? false,
           show_on_display: product.show_on_display ?? false,
-          display_order: product.display_order ?? 0,
+          display_order: product.display_order ?? null,
         });
       } else {
         form.reset({
@@ -136,7 +141,7 @@ export function ProductFormDialog({
           is_active: true,
           is_orderable: false,
           show_on_display: false,
-          display_order: suggestedOrder ?? 1,
+          display_order: null,
         });
       }
     }
@@ -300,17 +305,21 @@ export function ProductFormDialog({
               name="display_order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ordem de Exibição</FormLabel>
+                  <FormLabel>Ordem de Exibição (opcional)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       min="1"
-                      placeholder="1"
+                      placeholder="Automático (ordem alfabética)"
                       {...field}
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        field.onChange(e.target.value === '' ? null : e.target.value)
+                      }
                     />
                   </FormControl>
                   <FormDescription>
-                    Produtos com ordem 1 aparecem primeiro
+                    Deixe em branco para ordenar por nome. Produtos com ordem definida aparecem primeiro.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
