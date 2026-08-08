@@ -33,6 +33,7 @@ const settingsSchema = z.object({
   facebook: z.string().max(200).optional(),
   website: z.string().max(200).optional(),
   spotify_playlist: z.string().max(500).optional(),
+  chef_suggestion_label: z.string().max(60).optional(),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -81,6 +82,7 @@ export default function AdminSettings() {
       facebook: '',
       website: '',
       spotify_playlist: '',
+      chef_suggestion_label: '',
     },
   });
 
@@ -99,6 +101,7 @@ export default function AdminSettings() {
         facebook: restaurant.social_links?.facebook || '',
         website: restaurant.social_links?.website || '',
         spotify_playlist: restaurant.social_links?.spotify_playlist || '',
+        chef_suggestion_label: restaurant.theme_settings?.chef_suggestion_label || '',
       });
       
       // Load images
@@ -210,6 +213,10 @@ export default function AdminSettings() {
       notification_settings: {
         sound_enabled: soundEnabled,
       },
+      theme_settings: {
+        ...(restaurant?.theme_settings || {}),
+        chef_suggestion_label: data.chef_suggestion_label?.trim() || undefined,
+      },
       business_hours: businessHours,
       timezone: timezone,
       google_maps_url: googleMapsUrl || null,
@@ -256,6 +263,23 @@ export default function AdminSettings() {
                     <FormLabel>Nome do Estabelecimento</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Nome do estabelecimento" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="chef_suggestion_label"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Título do Destaque no Cardápio</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value || ''}
+                        placeholder="Ex: Sugestão do Chef, Destaques da Casa"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
