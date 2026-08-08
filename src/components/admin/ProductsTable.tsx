@@ -70,7 +70,6 @@ function calculateDiscount(price: number, promoPrice: number) {
 interface SortableProductRowProps {
   product: MenuProduct;
   position: number;
-  getCategoryName: (categoryId: string) => string;
   onEdit: (product: MenuProduct) => void;
   onDeleteClick: (product: MenuProduct) => void;
   isDragDisabled?: boolean;
@@ -82,7 +81,6 @@ interface SortableProductRowProps {
 function SortableProductRow({
   product,
   position,
-  getCategoryName,
   onEdit,
   onDeleteClick,
   isDragDisabled,
@@ -159,9 +157,6 @@ function SortableProductRow({
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           )}
         </div>
-      </TableCell>
-      <TableCell>
-        <Badge variant="outline">{getCategoryName(product.category_id)}</Badge>
       </TableCell>
       <TableCell className="text-right">
         <div className="space-y-1">
@@ -240,10 +235,6 @@ export function ProductsTable({
     })
   );
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || 'Sem categoria';
-  };
 
   const handleConfirmDelete = () => {
     if (deleteProduct) {
@@ -295,7 +286,6 @@ export function ProductsTable({
                 <TableHead className="w-10">Ordem</TableHead>
                 <TableHead className="w-16">Imagem</TableHead>
                 <TableHead>Nome</TableHead>
-                <TableHead>Categoria</TableHead>
                 <TableHead className="text-right">Preço</TableHead>
                 <TableHead className="text-center w-40">Status</TableHead>
                 <TableHead className="w-24 text-right">Ações</TableHead>
@@ -311,7 +301,6 @@ export function ProductsTable({
                     key={product.id}
                     product={product}
                     position={index + 1}
-                    getCategoryName={getCategoryName}
                     onEdit={onEdit}
                     onDeleteClick={setDeleteProduct}
                     isDragDisabled={isDragDisabled}
