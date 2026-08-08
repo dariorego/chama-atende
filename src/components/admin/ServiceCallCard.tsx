@@ -94,8 +94,11 @@ export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCard
     : `Mesa ${call.tables?.number}`;
 
   return (
-    <Card className={`transition-all ${isActive ? 'border-l-4' : ''}`} 
-          style={{ borderLeftColor: isActive ? config.color.replace('bg-', '') : undefined }}>
+    <Card
+      className={`transition-all ${isActive ? 'border-l-4 cursor-pointer hover:bg-accent/40' : ''}`}
+      style={{ borderLeftColor: isActive ? config.color.replace('bg-', '') : undefined }}
+      onClick={isActive ? () => setShowActions((v) => !v) : undefined}
+    >
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
@@ -107,8 +110,8 @@ export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCard
                 <span className="font-semibold">{tableName}</span>
                 <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
                 {totalCount > 1 && (
-                  <Badge variant="secondary" title={`${totalCount} chamados desta mesa`}>
-                    ×{totalCount}
+                  <Badge variant="secondary" title={`Cliente chamou ${totalCount} vezes antes do atendimento`}>
+                    chamou {totalCount}×
                   </Badge>
                 )}
               </div>
@@ -127,47 +130,23 @@ export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCard
               <Clock className="h-4 w-4" />
               {formatDuration(elapsed)}
             </div>
+            {isActive && (
+              <ChevronDown
+                className={`h-4 w-4 text-muted-foreground transition-transform ${showActions ? 'rotate-180' : ''}`}
+              />
+            )}
           </div>
         </div>
 
-        {isActive && (
-          <div className="mt-4 flex items-center gap-2 flex-wrap">
-            {waiters && waiters.length > 0 && call.status !== 'in_progress' && (
-              <Select value={selectedWaiter} onValueChange={setSelectedWaiter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Atendente" />
-                </SelectTrigger>
-                <SelectContent>
-                  {waiters.filter(w => w.is_available).map((waiter) => (
-                    <SelectItem key={waiter.id} value={waiter.id}>
-                      {waiter.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-
-            {call.status === 'pending' && (
-              <Button size="sm" variant="secondary" onClick={handleAcknowledge}>
-                Visualizar
-              </Button>
-            )}
-            
-            {(call.status === 'pending' || call.status === 'acknowledged') && (
-              <Button size="sm" onClick={handleStartService}>
-                Atender
-              </Button>
-            )}
-
-            {call.status === 'in_progress' && (
-              <Button size="sm" onClick={handleComplete} className="bg-green-600 hover:bg-green-700">
-                <Check className="h-4 w-4 mr-1" />
-                Concluir
-              </Button>
-            )}
-
-            <Button size="sm" variant="ghost" onClick={handleCancel}>
-              <X className="h-4 w-4" />
+        {isActive && showActions && (
+          <div className="mt-4 flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
+            <Button size="sm" onClick={handleAttend} disabled={updateCall.isPending}>
+              <Check className="h-4 w-4 mr-1" />
+              Atender
+            </Button>
+            <Button size="sm" variant="outline" onClick={handleCancel} disabled={updateCall.isPending}>
+              <X className="h-4 w-4 mr-1" />
+              Cancelar chamado
             </Button>
           </div>
         )}
