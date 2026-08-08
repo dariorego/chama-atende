@@ -364,6 +364,7 @@ export default function AdminProducts() {
         onSubmit={handleSubmit} 
         isLoading={createProduct.isPending || updateProduct.isPending}
         suggestedOrder={suggestedOrder}
+        getSuggestedOrder={getNextOrderForCategory}
       />
     </div>
   );
