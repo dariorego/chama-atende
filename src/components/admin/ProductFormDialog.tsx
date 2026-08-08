@@ -83,6 +83,7 @@ interface ProductFormDialogProps {
   onSubmit: (data: ProductFormData) => Promise<void>;
   isLoading?: boolean;
   suggestedOrder?: number;
+  getSuggestedOrder?: (categoryId: string) => number;
 }
 
 export function ProductFormDialog({
@@ -93,6 +94,7 @@ export function ProductFormDialog({
   onSubmit,
   isLoading,
   suggestedOrder,
+  getSuggestedOrder,
 }: ProductFormDialogProps) {
   const isEditing = !!product;
 
