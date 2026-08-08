@@ -150,12 +150,19 @@ export function ProductFormDialog({
   }, [open, product, form]);
 
   const handleSubmit = async (data: ProductFormData) => {
+    const categorySuggestion =
+      (getSuggestedOrder ? getSuggestedOrder(data.category_id) : suggestedOrder) ?? 1;
+    const order =
+      data.display_order === null || data.display_order === undefined || data.display_order === 0
+        ? categorySuggestion
+        : data.display_order;
     // Clean up empty strings to null
     const cleanData = {
       ...data,
       description: data.description || null,
       image_url: data.image_url || null,
       promotional_price: data.promotional_price || null,
+      display_order: order,
     };
     await onSubmit(cleanData);
     onOpenChange(false);
