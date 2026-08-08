@@ -41,19 +41,21 @@ interface Product {
   price: number;
   category: string;
   image?: string;
+  isFallbackImage?: boolean;
   highlight?: boolean;
   promotion?: string;
 }
 
 // Transform Supabase product to local Product interface
-function transformProduct(product: MenuProduct): Product {
+function transformProduct(product: MenuProduct, fallbackImage?: string | null): Product {
   return {
     id: product.id,
     name: product.name,
     description: product.description ?? undefined,
     price: product.promotional_price ? Number(product.promotional_price) : Number(product.price),
     category: product.category?.slug ?? '',
-    image: product.image_url ?? undefined,
+    image: product.image_url ?? fallbackImage ?? undefined,
+    isFallbackImage: !product.image_url && !!fallbackImage,
     highlight: product.is_highlight ?? false,
     promotion: calculatePromotion(Number(product.price), product.promotional_price ? Number(product.promotional_price) : null),
   };
@@ -140,7 +142,7 @@ const MenuPage = () => {
   const categories = categoriesData?.map(cat => ({ id: cat.slug, name: cat.name, description: cat.description })) ?? [];
 
   // Transform products
-  const products = productsData?.map(transformProduct) ?? [];
+  const products = productsData?.map((p) => transformProduct(p, tenant?.logo_url)) ?? [];
 
   // Setup carousel API listener
   useEffect(() => {
@@ -445,6 +447,7 @@ const MenuPage = () => {
                       name={product.name}
                       price={product.price}
                       image={product.image}
+                      isFallbackImage={product.isFallbackImage}
                       promotion={product.promotion}
                       onClick={() => setSelectedProduct(product)}
                     />
@@ -463,6 +466,7 @@ const MenuPage = () => {
                 name={product.name}
                 price={product.price}
                 image={product.image}
+                isFallbackImage={product.isFallbackImage}
                 promotion={product.promotion}
                 onClick={() => setSelectedProduct(product)}
               />
@@ -483,7 +487,7 @@ const MenuPage = () => {
                 <img
                   src={selectedProduct.image}
                   alt={selectedProduct.name}
-                  className="w-full aspect-[4/3] object-cover rounded-xl"
+                  className={`w-full aspect-[4/3] rounded-xl ${selectedProduct.isFallbackImage ? 'object-contain bg-cream-soft p-8' : 'object-cover'}`}
                 />
               )}
               <DialogHeader>

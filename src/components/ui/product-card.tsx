@@ -7,6 +7,7 @@ interface ProductCardProps {
   description?: string;
   price: number;
   image?: string;
+  isFallbackImage?: boolean;
   highlight?: boolean;
   promotion?: string;
   isOrderable?: boolean;
@@ -20,6 +21,7 @@ export function ProductCard({
   description,
   price,
   image,
+  isFallbackImage,
   highlight,
   promotion,
   isOrderable,
@@ -50,7 +52,10 @@ export function ProductCard({
           <img
             src={image}
             alt={name}
-            className="w-24 h-24 rounded-xl object-cover border border-[#064e3b]/10"
+            className={cn(
+              "w-24 h-24 rounded-xl border border-[#064e3b]/10",
+              isFallbackImage ? "object-contain bg-[#faf6ec] p-2" : "object-cover"
+            )}
           />
           {highlight && (
             <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] font-semibold tracking-widest uppercase bg-[#c9a84c] text-[#064e3b] rounded-full">
