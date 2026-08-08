@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ImageZoomDialog } from "./image-zoom-dialog";
-import { ZoomIn, CameraOff, Plus, ShoppingBag } from "lucide-react";
+import { CameraOff, Plus, ShoppingBag } from "lucide-react";
 import { Button } from "./button";
 
 interface ProductCardProps {
@@ -29,9 +27,7 @@ export function ProductCard({
   onClick,
   onAddToCart,
 }: ProductCardProps) {
-  const [isZoomOpen, setIsZoomOpen] = useState(false);
-  
-  const formattedPrice = new Intl.NumberFormat("pt-BR", {
+    const formattedPrice = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
   }).format(price);
@@ -50,41 +46,22 @@ export function ProductCard({
     >
       {/* Image */}
       {image ? (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsZoomOpen(true);
-          }}
-          className="relative shrink-0 cursor-zoom-in group"
-        >
+        <div className="relative shrink-0">
           <img
             src={image}
             alt={name}
             className="w-24 h-24 rounded-xl object-cover border border-[#064e3b]/10"
           />
-          <div className="absolute bottom-1 right-1 p-1 rounded-full bg-[#064e3b]/70 opacity-0 group-hover:opacity-100 transition-opacity">
-            <ZoomIn className="h-3 w-3 text-white" />
-          </div>
           {highlight && (
             <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] font-semibold tracking-widest uppercase bg-[#c9a84c] text-[#064e3b] rounded-full">
               Chef
             </span>
           )}
-        </button>
+        </div>
       ) : (
         <div className="w-24 h-24 rounded-xl bg-[#faf6ec] border border-[#064e3b]/10 shrink-0 flex items-center justify-center">
           <CameraOff className="h-8 w-8 text-[#064e3b]/30" />
         </div>
-      )}
-
-      {image && (
-        <ImageZoomDialog
-          src={image}
-          alt={name}
-          open={isZoomOpen}
-          onOpenChange={setIsZoomOpen}
-        />
       )}
 
       {/* Content */}
