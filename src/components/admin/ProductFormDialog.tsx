@@ -150,6 +150,12 @@ export function ProductFormDialog({
     }
   }, [open, product, form]);
 
+  const watchedCategoryId = form.watch('category_id');
+  const categorySuggestedOrder =
+    (getSuggestedOrder && watchedCategoryId
+      ? getSuggestedOrder(watchedCategoryId)
+      : suggestedOrder) ?? 1;
+
   const handleSubmit = async (data: ProductFormData) => {
     const categorySuggestion =
       (getSuggestedOrder ? getSuggestedOrder(data.category_id) : suggestedOrder) ?? 1;
