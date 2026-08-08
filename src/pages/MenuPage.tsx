@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import { ProductCard } from "@/components/ui/product-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ChefHat, Loader2, Bell, Check } from "lucide-react";
+import { Search, ChefHat, Loader2, Bell, Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Carousel,
@@ -66,9 +66,17 @@ const MenuPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string>("");
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const isScrollingRef = useRef(false);
 
   const { toast } = useToast();
   const { tenant } = useTenant();
+
+  const chefLabel =
+    (tenant?.theme_settings as Record<string, string> | null)?.chef_suggestion_label?.trim() ||
+    "Sugestão do Chef";
 
   // Fetch data from Supabase
   const { data: categoriesData, isLoading: isLoadingCategories } = useMenuCategories();
@@ -161,6 +169,61 @@ const MenuPage = () => {
   const highlightedProducts = products.filter((p) => p.highlight);
   const regularProducts = filteredProducts.filter((p) => !p.highlight);
 
+  // Group products by category for the scrollable, collapsible sections
+  const sections = useMemo(() => {
+    const cats = categoriesData ?? [];
+    return cats
+      .map((cat) => ({
+        id: cat.slug,
+        name: cat.name,
+        items: regularProducts.filter((p) => p.category === cat.slug),
+      }))
+      .filter((s) => s.items.length > 0);
+  }, [categoriesData, regularProducts]);
+
+  const uncategorized = regularProducts.filter(
+    (p) => !(categoriesData ?? []).some((c) => c.slug === p.category)
+  );
+
+  const scrollToCategory = (id: string) => {
+    setActiveCategory(id);
+    if (id === "all") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    const el = sectionRefs.current[id];
+    if (el) {
+      isScrollingRef.current = true;
+      const y = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: "smooth" });
+      window.setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 700);
+    }
+  };
+
+  // Scroll-spy: highlight the category currently in view
+  useEffect(() => {
+    if (sections.length === 0) return;
+
+    const onScroll = () => {
+      if (isScrollingRef.current) return;
+      let current = sections[0].id;
+      for (const section of sections) {
+        const el = sectionRefs.current[section.id];
+        if (!el) continue;
+        if (el.getBoundingClientRect().top - 100 <= 0) {
+          current = section.id;
+        }
+      }
+      setActiveCategory((prev) => (prev === current ? prev : current));
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [sections]);
+
   const backTo = tenant?.slug
     ? table?.id
       ? `/${tenant.slug}/mesa/${table.id}`
@@ -213,7 +276,7 @@ const MenuPage = () => {
         <div className="mb-6 -mx-4">
           <div className="px-4 mb-3">
             <h2 className="editorial-label text-gold flex items-center gap-2">
-              <ChefHat className="h-4 w-4" /> Sugestão do Chef
+              <ChefHat className="h-4 w-4" /> {chefLabel}
             </h2>
           </div>
           
@@ -284,7 +347,7 @@ const MenuPage = () => {
       )}
 
       {/* Category Tabs - swipeable carousel */}
-      <div className="mb-6 -mx-4">
+      <div className="mb-6 -mx-4 sticky top-0 z-30 bg-background/95 backdrop-blur py-2">
         <Carousel
           opts={{
             align: "start",
@@ -297,7 +360,7 @@ const MenuPage = () => {
             {categories.map((category) => (
               <CarouselItem key={category.id} className="basis-auto pl-0 pr-2 last:pr-0">
                 <button
-                  onClick={() => setActiveCategory(category.id)}
+                  onClick={() => scrollToCategory(category.id)}
                   className={cn(
                     "px-4 py-2 rounded-full text-xs tracking-widest uppercase font-medium whitespace-nowrap transition-all border",
                     activeCategory === category.id
@@ -325,24 +388,106 @@ const MenuPage = () => {
         />
       </div>
 
-      {/* Regular Products */}
-      <div className="space-y-3">
-        {regularProducts.map((product, index) => (
-          <div
-            key={product.id}
-            className="animate-slide-up"
-            style={{ animationDelay: `${(highlightedProducts.length + index) * 0.05}s` }}
-          >
-            <ProductCard
-              name={product.name}
-              description={product.description}
-              price={product.price}
-              image={product.image}
-              promotion={product.promotion}
-            />
+      {/* Products grouped by category (collapsible sections) */}
+      <div className="space-y-8">
+        {sections.map((section) => {
+          const isCollapsed = collapsed[section.id] ?? false;
+          return (
+            <div
+              key={section.id}
+              ref={(el) => {
+                sectionRefs.current[section.id] = el;
+              }}
+              className="scroll-mt-24"
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  setCollapsed((prev) => ({ ...prev, [section.id]: !isCollapsed }))
+                }
+                className="w-full flex items-center justify-between gap-3 mb-3 pb-2 border-b border-emerald-deep/15"
+              >
+                <h2 className="editorial-label text-emerald-deep">{section.name}</h2>
+                <span className="flex items-center gap-2 text-emerald-deep/50 text-xs">
+                  {section.items.length}
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform",
+                      isCollapsed && "-rotate-90"
+                    )}
+                  />
+                </span>
+              </button>
+
+              {!isCollapsed && (
+                <div className="space-y-3">
+                  {section.items.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      name={product.name}
+                      price={product.price}
+                      image={product.image}
+                      promotion={product.promotion}
+                      onClick={() => setSelectedProduct(product)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {uncategorized.length > 0 && (
+          <div className="space-y-3">
+            {uncategorized.map((product) => (
+              <ProductCard
+                key={product.id}
+                name={product.name}
+                price={product.price}
+                image={product.image}
+                promotion={product.promotion}
+                onClick={() => setSelectedProduct(product)}
+              />
+            ))}
           </div>
-        ))}
+        )}
       </div>
+
+      {/* Product detail popup */}
+      <Dialog
+        open={!!selectedProduct}
+        onOpenChange={(open) => !open && setSelectedProduct(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          {selectedProduct && (
+            <>
+              {selectedProduct.image && (
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="w-full aspect-[4/3] object-cover rounded-xl"
+                />
+              )}
+              <DialogHeader>
+                <DialogTitle className="editorial-title text-2xl text-emerald-deep text-left">
+                  {selectedProduct.name}
+                </DialogTitle>
+                {selectedProduct.description && (
+                  <DialogDescription className="text-left font-sans-editorial">
+                    {selectedProduct.description}
+                  </DialogDescription>
+                )}
+              </DialogHeader>
+              <p className="editorial-title text-3xl text-gold">
+                {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(selectedProduct.price)}
+              </p>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Empty State */}
       {filteredProducts.length === 0 && !isLoading && (
