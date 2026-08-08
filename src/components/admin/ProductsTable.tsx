@@ -286,7 +286,6 @@ export function ProductsTable({
                 <TableHead className="w-10">Ordem</TableHead>
                 <TableHead className="w-16">Imagem</TableHead>
                 <TableHead>Nome</TableHead>
-                <TableHead>Categoria</TableHead>
                 <TableHead className="text-right">Preço</TableHead>
                 <TableHead className="text-center w-40">Status</TableHead>
                 <TableHead className="w-24 text-right">Ações</TableHead>
@@ -302,7 +301,6 @@ export function ProductsTable({
                     key={product.id}
                     product={product}
                     position={index + 1}
-                    getCategoryName={getCategoryName}
                     onEdit={onEdit}
                     onDeleteClick={setDeleteProduct}
                     isDragDisabled={isDragDisabled}
