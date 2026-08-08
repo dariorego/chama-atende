@@ -326,7 +326,6 @@ export default function AdminProducts() {
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <h3 className="font-medium truncate">{product.name}</h3>
-                          <Badge variant="outline" className="mt-1 text-xs">{getCategoryName(product.category_id)}</Badge>
                         </div>
                         <div className="text-right shrink-0">
                           {product.promotional_price ? (
