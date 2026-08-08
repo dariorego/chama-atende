@@ -249,6 +249,7 @@ export default function AdminProducts() {
               onReorder={handleReorder}
               isDragDisabled={isDragDisabled || currentPage !== 1 || products.length > pageSize}
               onToggleActive={handleToggleActive}
+              fallbackImageUrl={restaurant?.logo_url}
             />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -266,6 +267,8 @@ export default function AdminProducts() {
                     <div className="relative w-full aspect-square bg-muted shrink-0 overflow-hidden">
                       {product.image_url ? (
                         <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                      ) : restaurant?.logo_url ? (
+                        <img src={restaurant.logo_url} alt={product.name} className="w-full h-full object-contain p-6 opacity-80" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <CameraOff className="h-8 w-8 text-muted-foreground" />
