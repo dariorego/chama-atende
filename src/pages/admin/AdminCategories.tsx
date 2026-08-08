@@ -220,6 +220,9 @@ export default function AdminCategories() {
             onDelete={handleOpenDelete}
             onReorder={handleReorder}
             isDragDisabled={isFiltered}
+            onToggleActive={(category, isActive) =>
+              updateCategory.mutate({ id: category.id, is_active: isActive })
+            }
           />
         </CardContent>
       </Card>
