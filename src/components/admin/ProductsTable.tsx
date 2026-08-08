@@ -53,6 +53,7 @@ interface ProductsTableProps {
   onReorder?: (products: MenuProduct[]) => void;
   isDragDisabled?: boolean;
   onToggleActive?: (product: MenuProduct, active: boolean) => void;
+  fallbackImageUrl?: string | null;
 }
 
 function formatPrice(value: number) {
@@ -74,6 +75,7 @@ interface SortableProductRowProps {
   isDragDisabled?: boolean;
   onToggleActive?: (product: MenuProduct, active: boolean) => void;
   onZoom: (product: MenuProduct) => void;
+  fallbackImageUrl?: string | null;
 }
 
 function SortableProductRow({
@@ -84,6 +86,7 @@ function SortableProductRow({
   isDragDisabled,
   onToggleActive,
   onZoom,
+  fallbackImageUrl,
 }: SortableProductRowProps) {
   const {
     attributes,
@@ -99,6 +102,8 @@ function SortableProductRow({
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
+
+  const imageSrc = product.image_url || fallbackImageUrl || null;
 
   return (
     <TableRow ref={setNodeRef} style={style}>
@@ -116,7 +121,7 @@ function SortableProductRow({
         )}
       </TableCell>
       <TableCell>
-        {product.image_url ? (
+        {imageSrc ? (
           <button
             type="button"
             onClick={() => onZoom(product)}
@@ -124,9 +129,9 @@ function SortableProductRow({
             aria-label={`Ampliar imagem de ${product.name}`}
           >
             <img
-              src={product.image_url}
+              src={imageSrc}
               alt={product.name}
-              className="h-12 w-12 rounded-md object-cover transition-transform group-hover:scale-110"
+              className={`h-12 w-12 rounded-md transition-transform group-hover:scale-110 ${product.image_url ? 'object-cover' : 'object-contain bg-muted p-1'}`}
             />
             <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
               <ZoomIn className="h-4 w-4 text-white" />
