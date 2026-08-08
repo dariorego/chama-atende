@@ -363,7 +363,10 @@ export default function AdminProducts() {
                     </CardContent>
                   </Card>
                 ))
-              )}
+                    </div>
+                  )}
+                </section>
+              ))}
             </div>
           )}
 
