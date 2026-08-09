@@ -33,6 +33,7 @@ export const ADMIN_SECTIONS = [
   "insumos",
   "fichas",
   "desperdicio",
+  "cmv",
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
@@ -71,6 +72,7 @@ export const SECTION_MODULE: Record<string, string> = {
   insumos: "technical_sheet",
   fichas: "technical_sheet",
   desperdicio: "technical_sheet",
+  cmv: "technical_sheet",
 };
 
 /** Módulos que podem ser concedidos a um usuário na tela Usuários. */
