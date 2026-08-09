@@ -27,6 +27,7 @@ import {
   LogOut,
   ChefHat,
   Package,
+  Gauge,
   Trash2,
   Layers,
   ExternalLink,
@@ -123,6 +124,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'coupons', title: 'Cupons', url: `${adminBase}/cupons`, icon: Tag },
     { moduleName: 'referral_program', title: 'Indicação', url: `${adminBase}/indicacao`, icon: UserPlus },
     { moduleName: 'technical_sheet', title: 'Insumos', url: `${adminBase}/insumos`, icon: Package },
+    { moduleName: 'technical_sheet', title: 'Painel de CMV', url: `${adminBase}/cmv`, icon: Gauge },
     { moduleName: 'technical_sheet', title: 'Fichas Técnicas', url: `${adminBase}/fichas`, icon: ChefHat },
     { moduleName: 'technical_sheet', title: 'Desperdício', url: `${adminBase}/desperdicio`, icon: Trash2 },
   ].filter((item) => isModuleActive(item.moduleName));

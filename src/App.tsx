@@ -53,6 +53,7 @@ import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 import AdminIngredients from "./pages/admin/AdminIngredients";
 import AdminRecipes from "./pages/admin/AdminRecipes";
+import AdminCmv from "./pages/admin/AdminCmv";
 import AdminRecipeEditor from "./pages/admin/AdminRecipeEditor";
 import AdminWaste from "./pages/admin/AdminWaste";
 import EventBookingPage from "./pages/EventBookingPage";
@@ -413,6 +414,16 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin section="desperdicio">
                 <AdminLayout>
                   <AdminWaste />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="cmv"
+            element={
+              <AuthGuard requireAdmin section="cmv">
+                <AdminLayout>
+                  <AdminCmv />
                 </AdminLayout>
               </AuthGuard>
             }
