@@ -765,6 +765,314 @@ export type Database = {
           },
         ]
       }
+      ingredient_categories: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean
+          name: string
+          restaurant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          restaurant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          restaurant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredient_categories_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingredient_quotes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          ingredient_id: string
+          package_price: number | null
+          package_weight: number | null
+          quoted_at: string
+          restaurant_id: string
+          source: string
+          supplier_id: string | null
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id: string
+          package_price?: number | null
+          package_weight?: number | null
+          quoted_at?: string
+          restaurant_id: string
+          source?: string
+          supplier_id?: string | null
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id?: string
+          package_price?: number | null
+          package_weight?: number | null
+          quoted_at?: string
+          restaurant_id?: string
+          source?: string
+          supplier_id?: string | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredient_quotes_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredient_quotes_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredient_quotes_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingredients: {
+        Row: {
+          brand: string | null
+          category_id: string | null
+          code: string | null
+          correction_factor: number | null
+          created_at: string
+          gross_weight_ref: number
+          id: string
+          is_active: boolean
+          is_packaging: boolean
+          name: string
+          net_weight_ref: number
+          package_price: number | null
+          package_weight: number | null
+          quoted_at: string | null
+          restaurant_id: string
+          source_recipe_id: string | null
+          supplier_id: string | null
+          type: Database["public"]["Enums"]["ingredient_type"]
+          unit: Database["public"]["Enums"]["ingredient_unit"]
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          brand?: string | null
+          category_id?: string | null
+          code?: string | null
+          correction_factor?: number | null
+          created_at?: string
+          gross_weight_ref?: number
+          id?: string
+          is_active?: boolean
+          is_packaging?: boolean
+          name: string
+          net_weight_ref?: number
+          package_price?: number | null
+          package_weight?: number | null
+          quoted_at?: string | null
+          restaurant_id: string
+          source_recipe_id?: string | null
+          supplier_id?: string | null
+          type?: Database["public"]["Enums"]["ingredient_type"]
+          unit?: Database["public"]["Enums"]["ingredient_unit"]
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          brand?: string | null
+          category_id?: string | null
+          code?: string | null
+          correction_factor?: number | null
+          created_at?: string
+          gross_weight_ref?: number
+          id?: string
+          is_active?: boolean
+          is_packaging?: boolean
+          name?: string
+          net_weight_ref?: number
+          package_price?: number | null
+          package_weight?: number | null
+          quoted_at?: string | null
+          restaurant_id?: string
+          source_recipe_id?: string | null
+          supplier_id?: string | null
+          type?: Database["public"]["Enums"]["ingredient_type"]
+          unit?: Database["public"]["Enums"]["ingredient_unit"]
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredients_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "ingredient_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredients_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredients_source_recipe_id_fkey"
+            columns: ["source_recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredients_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_count_lines: {
+        Row: {
+          count_id: string
+          created_at: string
+          id: string
+          ingredient_id: string
+          quantity: number
+          restaurant_id: string
+          total_value: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          count_id: string
+          created_at?: string
+          id?: string
+          ingredient_id: string
+          quantity?: number
+          restaurant_id: string
+          total_value?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          count_id?: string
+          created_at?: string
+          id?: string
+          ingredient_id?: string
+          quantity?: number
+          restaurant_id?: string
+          total_value?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_count_lines_count_id_fkey"
+            columns: ["count_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_counts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_count_lines_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_count_lines_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_counts: {
+        Row: {
+          closed_at: string | null
+          count_date: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string | null
+          restaurant_id: string
+          status: string
+          total_value: number
+          updated_at: string
+        }
+        Insert: {
+          closed_at?: string | null
+          count_date?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string | null
+          restaurant_id: string
+          status?: string
+          total_value?: number
+          updated_at?: string
+        }
+        Update: {
+          closed_at?: string | null
+          count_date?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string | null
+          restaurant_id?: string
+          status?: string
+          total_value?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_counts_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       keep_alive: {
         Row: {
           created_at: string
@@ -1471,6 +1779,50 @@ export type Database = {
           },
         ]
       }
+      portion_standards: {
+        Row: {
+          created_at: string
+          family: string
+          household_measure: string | null
+          id: string
+          name: string
+          restaurant_id: string
+          standard_weight: number
+          unit: Database["public"]["Enums"]["ingredient_unit"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          family: string
+          household_measure?: string | null
+          id?: string
+          name: string
+          restaurant_id: string
+          standard_weight: number
+          unit?: Database["public"]["Enums"]["ingredient_unit"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          family?: string
+          household_measure?: string | null
+          id?: string
+          name?: string
+          restaurant_id?: string
+          standard_weight?: number
+          unit?: Database["public"]["Enums"]["ingredient_unit"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portion_standards_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pre_order_items: {
         Row: {
           created_at: string | null
@@ -1692,6 +2044,356 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "queue_entries_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_audit_log: {
+        Row: {
+          action: string
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          record_id: string | null
+          restaurant_id: string
+          table_name: string
+        }
+        Insert: {
+          action: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          restaurant_id: string
+          table_name: string
+        }
+        Update: {
+          action?: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          restaurant_id?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
+      recipe_components: {
+        Row: {
+          correction_factor: number
+          cost: number
+          created_at: string
+          display_order: number | null
+          gross_weight: number
+          household_measure: string | null
+          id: string
+          ingredient_id: string | null
+          net_weight: number
+          recipe_id: string
+          restaurant_id: string
+          sub_recipe_id: string | null
+          unit: Database["public"]["Enums"]["ingredient_unit"]
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          correction_factor?: number
+          cost?: number
+          created_at?: string
+          display_order?: number | null
+          gross_weight?: number
+          household_measure?: string | null
+          id?: string
+          ingredient_id?: string | null
+          net_weight: number
+          recipe_id: string
+          restaurant_id: string
+          sub_recipe_id?: string | null
+          unit?: Database["public"]["Enums"]["ingredient_unit"]
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          correction_factor?: number
+          cost?: number
+          created_at?: string
+          display_order?: number | null
+          gross_weight?: number
+          household_measure?: string | null
+          id?: string
+          ingredient_id?: string | null
+          net_weight?: number
+          recipe_id?: string
+          restaurant_id?: string
+          sub_recipe_id?: string | null
+          unit?: Database["public"]["Enums"]["ingredient_unit"]
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_components_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_components_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_components_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_components_sub_recipe_id_fkey"
+            columns: ["sub_recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_pricing: {
+        Row: {
+          created_at: string
+          id: string
+          packaging_cost: number
+          recipe_id: string
+          restaurant_id: string
+          selling_price: number | null
+          target_cmv: number
+          treatment_tag: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          packaging_cost?: number
+          recipe_id: string
+          restaurant_id: string
+          selling_price?: number | null
+          target_cmv?: number
+          treatment_tag?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          packaging_cost?: number
+          recipe_id?: string
+          restaurant_id?: string
+          selling_price?: number | null
+          target_cmv?: number
+          treatment_tag?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_pricing_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: true
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_pricing_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_steps: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          recipe_id: string
+          restaurant_id: string
+          step_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          recipe_id: string
+          restaurant_id: string
+          step_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          recipe_id?: string
+          restaurant_id?: string
+          step_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_steps_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_steps_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_versions: {
+        Row: {
+          id: string
+          published_at: string
+          published_by: string | null
+          recipe_id: string
+          restaurant_id: string
+          snapshot: Json
+          total_cost: number
+          unit_cost: number
+          version: number
+        }
+        Insert: {
+          id?: string
+          published_at?: string
+          published_by?: string | null
+          recipe_id: string
+          restaurant_id: string
+          snapshot: Json
+          total_cost?: number
+          unit_cost?: number
+          version: number
+        }
+        Update: {
+          id?: string
+          published_at?: string
+          published_by?: string | null
+          recipe_id?: string
+          restaurant_id?: string
+          snapshot?: Json
+          total_cost?: number
+          unit_cost?: number
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_versions_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_versions_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          category: string | null
+          code: string | null
+          created_at: string
+          id: string
+          menu_product_id: string | null
+          name: string
+          notes: string | null
+          photo_url: string | null
+          plating_photo_url: string | null
+          prep_time_min: number | null
+          restaurant_id: string
+          shelf_life: string | null
+          status: Database["public"]["Enums"]["recipe_status"]
+          total_cost: number
+          type: Database["public"]["Enums"]["recipe_type"]
+          unit_cost: number
+          updated_at: string
+          utensils: string[]
+          yield_qty: number
+          yield_unit: Database["public"]["Enums"]["yield_unit"]
+        }
+        Insert: {
+          category?: string | null
+          code?: string | null
+          created_at?: string
+          id?: string
+          menu_product_id?: string | null
+          name: string
+          notes?: string | null
+          photo_url?: string | null
+          plating_photo_url?: string | null
+          prep_time_min?: number | null
+          restaurant_id: string
+          shelf_life?: string | null
+          status?: Database["public"]["Enums"]["recipe_status"]
+          total_cost?: number
+          type?: Database["public"]["Enums"]["recipe_type"]
+          unit_cost?: number
+          updated_at?: string
+          utensils?: string[]
+          yield_qty?: number
+          yield_unit?: Database["public"]["Enums"]["yield_unit"]
+        }
+        Update: {
+          category?: string | null
+          code?: string | null
+          created_at?: string
+          id?: string
+          menu_product_id?: string | null
+          name?: string
+          notes?: string | null
+          photo_url?: string | null
+          plating_photo_url?: string | null
+          prep_time_min?: number | null
+          restaurant_id?: string
+          shelf_life?: string | null
+          status?: Database["public"]["Enums"]["recipe_status"]
+          total_cost?: number
+          type?: Database["public"]["Enums"]["recipe_type"]
+          unit_cost?: number
+          updated_at?: string
+          utensils?: string[]
+          yield_qty?: number
+          yield_unit?: Database["public"]["Enums"]["yield_unit"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_menu_product_id_fkey"
+            columns: ["menu_product_id"]
+            isOneToOne: false
+            referencedRelation: "menu_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipes_restaurant_id_fkey"
             columns: ["restaurant_id"]
             isOneToOne: false
             referencedRelation: "restaurants"
@@ -2063,6 +2765,108 @@ export type Database = {
         }
         Relationships: []
       }
+      seasonal_menu_items: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean
+          menu_id: string
+          price: number | null
+          recipe_id: string | null
+          restaurant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean
+          menu_id: string
+          price?: number | null
+          recipe_id?: string | null
+          restaurant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean
+          menu_id?: string
+          price?: number | null
+          recipe_id?: string | null
+          restaurant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasonal_menu_items_menu_id_fkey"
+            columns: ["menu_id"]
+            isOneToOne: false
+            referencedRelation: "seasonal_menus"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seasonal_menu_items_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seasonal_menu_items_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seasonal_menus: {
+        Row: {
+          channel: string | null
+          created_at: string
+          ends_on: string | null
+          id: string
+          is_active: boolean
+          name: string
+          restaurant_id: string
+          starts_on: string | null
+          updated_at: string
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          restaurant_id: string
+          starts_on?: string | null
+          updated_at?: string
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          restaurant_id?: string
+          starts_on?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasonal_menus_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_calls: {
         Row: {
           acknowledged_at: string | null
@@ -2136,6 +2940,53 @@ export type Database = {
             columns: ["waiter_id"]
             isOneToOne: false
             referencedRelation: "waiters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          created_at: string
+          document: string | null
+          email: string | null
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          phone: string | null
+          restaurant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          phone?: string | null
+          restaurant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          restaurant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
             referencedColumns: ["id"]
           },
         ]
@@ -2472,6 +3323,66 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      waste_entries: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          entry_date: string
+          id: string
+          ingredient_id: string
+          notes: string | null
+          quantity: number
+          reason: Database["public"]["Enums"]["waste_reason"]
+          restaurant_id: string
+          total_value: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          entry_date?: string
+          id?: string
+          ingredient_id: string
+          notes?: string | null
+          quantity: number
+          reason?: Database["public"]["Enums"]["waste_reason"]
+          restaurant_id: string
+          total_value?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          entry_date?: string
+          id?: string
+          ingredient_id?: string
+          notes?: string | null
+          quantity?: number
+          reason?: Database["public"]["Enums"]["waste_reason"]
+          restaurant_id?: string
+          total_value?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waste_entries_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waste_entries_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
             referencedColumns: ["id"]
           },
         ]
@@ -2813,6 +3724,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      recalc_recipe_cost: { Args: { _recipe_id: string }; Returns: undefined }
+      recalc_recipe_tree: {
+        Args: { _depth?: number; _recipe_id: string }
+        Returns: undefined
+      }
       search_pre_orders_by_phone: {
         Args: { search_phone: string }
         Returns: {
@@ -2849,6 +3765,10 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "manager" | "staff"
+      ingredient_type: "COMPRADO" | "PREPARACAO"
+      ingredient_unit: "KG" | "LT" | "UN"
+      recipe_status: "RASCUNHO" | "PUBLICADA" | "FORA_DE_LINHA"
+      recipe_type: "PRODUTO_FINAL" | "PREPARACAO"
       tenant_role:
         | "owner"
         | "admin"
@@ -2856,6 +3776,14 @@ export type Database = {
         | "staff"
         | "kitchen"
         | "waiter"
+      waste_reason:
+        | "ESTRAGOU"
+        | "QUEBRA"
+        | "VENCIMENTO"
+        | "ERRO_PREPARO"
+        | "DEVOLUCAO"
+        | "OUTRO"
+      yield_unit: "KG" | "LT" | "PORCAO" | "UN"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2984,7 +3912,20 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "manager", "staff"],
+      ingredient_type: ["COMPRADO", "PREPARACAO"],
+      ingredient_unit: ["KG", "LT", "UN"],
+      recipe_status: ["RASCUNHO", "PUBLICADA", "FORA_DE_LINHA"],
+      recipe_type: ["PRODUTO_FINAL", "PREPARACAO"],
       tenant_role: ["owner", "admin", "manager", "staff", "kitchen", "waiter"],
+      waste_reason: [
+        "ESTRAGOU",
+        "QUEBRA",
+        "VENCIMENTO",
+        "ERRO_PREPARO",
+        "DEVOLUCAO",
+        "OUTRO",
+      ],
+      yield_unit: ["KG", "LT", "PORCAO", "UN"],
     },
   },
 } as const
