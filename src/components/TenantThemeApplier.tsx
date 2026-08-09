@@ -18,6 +18,13 @@ function contrastOn(hsl?: string): string | undefined {
   return c.l >= 60 ? '220 25% 12%' : '0 0% 100%';
 }
 
+/** Ajusta a luminosidade de uma cor HSL mantendo matiz/saturação. */
+function withLightness(hsl?: string, l?: number, s?: number): string | undefined {
+  const c = parseHsl(hsl);
+  if (!c || l === undefined) return undefined;
+  return fmt(c.h, s ?? c.s, l);
+}
+
 /**
  * Applies tenant-specific brand colors as CSS variables on the document root
  * so every module (client + admin: sidebar, buttons, links, cards, rings)
@@ -69,6 +76,17 @@ export function TenantThemeApplier() {
     apply('--sidebar-accent-foreground', contrastOn(secondary));
     apply('--sidebar-ring', primary);
 
+    // Tokens editoriais (hub, cardápio, cards) — seguem a identidade do tenant
+    const heroBase =
+      (parseHsl(secondary)?.l ?? 100) <= 40 ? secondary : primary;
+    const hero = withLightness(heroBase, 15);
+    apply('--ed-gold', primary);
+    apply('--ed-hero', hero);
+    apply('--ed-hero-fg', hero ? '0 0% 100%' : undefined);
+    apply('--ed-fg', foreground || withLightness(primary, 18));
+    apply('--ed-bg', background);
+    apply('--ed-surface', withLightness(background, 99, 30) || background);
+
     return () => {
       [
         '--primary', '--primary-foreground',
@@ -80,6 +98,8 @@ export function TenantThemeApplier() {
         '--sidebar-primary', '--sidebar-primary-foreground',
         '--sidebar-accent', '--sidebar-accent-foreground',
         '--sidebar-ring',
+        '--ed-gold', '--ed-hero', '--ed-hero-fg',
+        '--ed-fg', '--ed-bg', '--ed-surface',
       ].forEach((k) => root.style.removeProperty(k));
     };
   }, [tenant?.theme_colors]);
