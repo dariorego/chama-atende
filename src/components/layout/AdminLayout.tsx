@@ -27,6 +27,7 @@ import {
   LogOut,
   ChefHat,
   Package,
+  Trash2,
   Layers,
   ExternalLink,
   Bell,
