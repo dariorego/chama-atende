@@ -19,6 +19,7 @@ const DEFAULT_MODULES: ModulesMap = {
   loyaltyCashback: false,
   coupons: false,
   referralProgram: false,
+  technicalSheet: false,
 };
 
 type RestaurantPlan = 'starter' | 'professional' | 'enterprise' | string | null | undefined;

@@ -159,6 +159,11 @@ Deno.serve(async (req) => {
       'digital_comanda',
       'event_bookings',
       'staff_schedule',
+      'whatsapp_ai',
+      'loyalty_cashback',
+      'coupons',
+      'referral_program',
+      'technical_sheet',
     ];
 
     const modulesToInsert = defaultModules.map((moduleName) => ({
