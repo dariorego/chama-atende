@@ -80,7 +80,9 @@ export function TenantThemeApplier() {
     const heroBase =
       (parseHsl(secondary)?.l ?? 100) <= 40 ? secondary : primary;
     const hero = withLightness(heroBase, 15);
-    apply('--ed-gold', primary);
+    // Acento editorial: escurece cores muito claras para manter legibilidade
+    const accentL = parseHsl(primary)?.l ?? 50;
+    apply('--ed-gold', accentL > 62 ? withLightness(primary, 48) : primary);
     apply('--ed-hero', hero);
     apply('--ed-hero-fg', hero ? '0 0% 100%' : undefined);
     apply('--ed-fg', foreground || withLightness(primary, 18));
