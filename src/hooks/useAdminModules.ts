@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTenant } from "@/hooks/useTenant";
 
 export interface RestaurantModule {
   id: string;
@@ -94,15 +95,22 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
 
 export function useAdminModules() {
   const queryClient = useQueryClient();
+  const { tenantId } = useTenant();
 
   const {
     data: modules,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["admin-modules"],
+    queryKey: ["admin-modules", tenantId],
+    enabled: !!tenantId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("restaurant_modules").select("id, module_name, is_active, settings");
+      if (!tenantId) return [];
+
+      const { data, error } = await supabase
+        .from("restaurant_modules")
+        .select("id, module_name, is_active, settings")
+        .eq("restaurant_id", tenantId);
 
       if (error) throw error;
       return data as RestaurantModule[];
@@ -116,7 +124,7 @@ export function useAdminModules() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-modules"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-modules", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["restaurant-modules"] });
       toast.success("Módulo atualizado com sucesso!");
     },
