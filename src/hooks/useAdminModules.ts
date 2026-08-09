@@ -85,6 +85,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Cliente indica amigo e ambos ganham crédito",
     icon: "UserPlus",
   },
+  technical_sheet: {
+    label: "Ficha Técnica",
+    description: "Insumos, fichas técnicas, CMV, desperdício e inventário",
+    icon: "ClipboardList",
+  },
 };
 
 export function useAdminModules() {

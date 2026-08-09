@@ -51,6 +51,10 @@ import AdminWhatsApp from "./pages/admin/AdminWhatsApp";
 import AdminLoyalty from "./pages/admin/AdminLoyalty";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminReferrals from "./pages/admin/AdminReferrals";
+import AdminIngredients from "./pages/admin/AdminIngredients";
+import AdminRecipes from "./pages/admin/AdminRecipes";
+import AdminRecipeEditor from "./pages/admin/AdminRecipeEditor";
+import AdminWaste from "./pages/admin/AdminWaste";
 import EventBookingPage from "./pages/EventBookingPage";
 import VitrineDisplayPage from "./pages/VitrineDisplayPage";
 import PreOrderMenuPage from "./pages/PreOrderMenuPage";
@@ -369,6 +373,46 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin section="indicacao">
                 <AdminLayout>
                   <AdminReferrals />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="insumos"
+            element={
+              <AuthGuard requireAdmin section="insumos">
+                <AdminLayout>
+                  <AdminIngredients />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="fichas"
+            element={
+              <AuthGuard requireAdmin section="fichas">
+                <AdminLayout>
+                  <AdminRecipes />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="fichas/:recipeId"
+            element={
+              <AuthGuard requireAdmin section="fichas">
+                <AdminLayout>
+                  <AdminRecipeEditor />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="desperdicio"
+            element={
+              <AuthGuard requireAdmin section="desperdicio">
+                <AdminLayout>
+                  <AdminWaste />
                 </AdminLayout>
               </AuthGuard>
             }

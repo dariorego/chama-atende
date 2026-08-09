@@ -30,6 +30,9 @@ export const ADMIN_SECTIONS = [
   "fidelidade",
   "cupons",
   "indicacao",
+  "insumos",
+  "fichas",
+  "desperdicio",
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
@@ -65,6 +68,9 @@ export const SECTION_MODULE: Record<string, string> = {
   fidelidade: "loyalty_cashback",
   cupons: "coupons",
   indicacao: "referral_program",
+  insumos: "technical_sheet",
+  fichas: "technical_sheet",
+  desperdicio: "technical_sheet",
 };
 
 /** Módulos que podem ser concedidos a um usuário na tela Usuários. */
