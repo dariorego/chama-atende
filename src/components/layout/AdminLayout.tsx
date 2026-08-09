@@ -27,6 +27,7 @@ import {
   LogOut,
   ChefHat,
   Package,
+  Gauge,
   Trash2,
   Layers,
   ExternalLink,
