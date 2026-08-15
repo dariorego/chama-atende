@@ -54,6 +54,8 @@ export default function AdminSettings() {
   
   // Notification states
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundType, setSoundType] = useState<NotificationSoundType>('sino');
+  const [soundVolume, setSoundVolume] = useState(70);
   
   // Business hours states
   const [businessHours, setBusinessHours] = useState<BusinessHours>(DEFAULT_BUSINESS_HOURS);
@@ -119,6 +121,12 @@ export default function AdminSettings() {
       // Load notification settings
       if (restaurant.notification_settings) {
         setSoundEnabled(restaurant.notification_settings.sound_enabled ?? true);
+        setSoundType((restaurant.notification_settings.sound_type as NotificationSoundType) || 'sino');
+        setSoundVolume(
+          typeof restaurant.notification_settings.sound_volume === 'number'
+            ? restaurant.notification_settings.sound_volume
+            : 70,
+        );
       }
       
       // Load business hours and timezone
@@ -212,6 +220,8 @@ export default function AdminSettings() {
       },
       notification_settings: {
         sound_enabled: soundEnabled,
+        sound_type: soundType,
+        sound_volume: soundVolume,
       },
       theme_settings: {
         ...(restaurant?.theme_settings || {}),
@@ -799,12 +809,47 @@ export default function AdminSettings() {
                   />
                 </div>
               </div>
-              
+
+              <div className="space-y-2">
+                <Label>Som da notificação</Label>
+                <Select
+                  value={soundType}
+                  onValueChange={(v) => setSoundType(v as NotificationSoundType)}
+                  disabled={!soundEnabled}
+                >
+                  <SelectTrigger className="bg-surface border-border">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {NOTIFICATION_SOUNDS.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label} — {s.description}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Volume</Label>
+                  <span className="text-sm text-muted-foreground">{soundVolume}%</span>
+                </div>
+                <Slider
+                  value={[soundVolume]}
+                  onValueChange={([v]) => setSoundVolume(v)}
+                  min={0}
+                  max={100}
+                  step={5}
+                  disabled={!soundEnabled}
+                />
+              </div>
+
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={playTestSound}
+                onClick={() => playTestSound(soundType, soundVolume)}
                 disabled={!soundEnabled}
               >
                 <Volume2 className="h-4 w-4 mr-2" />
