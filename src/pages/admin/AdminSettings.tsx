@@ -57,6 +57,8 @@ export default function AdminSettings() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [soundType, setSoundType] = useState<NotificationSoundType>('sino');
   const [soundVolume, setSoundVolume] = useState(70);
+  const [soundRepeatEnabled, setSoundRepeatEnabled] = useState(false);
+  const [soundRepeatSeconds, setSoundRepeatSeconds] = useState(30);
   
   // Business hours states
   const [businessHours, setBusinessHours] = useState<BusinessHours>(DEFAULT_BUSINESS_HOURS);
@@ -127,6 +129,12 @@ export default function AdminSettings() {
           typeof restaurant.notification_settings.sound_volume === 'number'
             ? restaurant.notification_settings.sound_volume
             : 70,
+        );
+        setSoundRepeatEnabled(restaurant.notification_settings.sound_repeat_enabled ?? false);
+        setSoundRepeatSeconds(
+          typeof restaurant.notification_settings.sound_repeat_seconds === 'number'
+            ? restaurant.notification_settings.sound_repeat_seconds
+            : 30,
         );
       }
       
@@ -223,6 +231,8 @@ export default function AdminSettings() {
         sound_enabled: soundEnabled,
         sound_type: soundType,
         sound_volume: soundVolume,
+        sound_repeat_enabled: soundRepeatEnabled,
+        sound_repeat_seconds: Math.max(5, Number(soundRepeatSeconds) || 30),
       },
       theme_settings: {
         ...(restaurant?.theme_settings || {}),
