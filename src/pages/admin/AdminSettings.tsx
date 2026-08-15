@@ -840,9 +840,39 @@ export default function AdminSettings() {
                   value={[soundVolume]}
                   onValueChange={([v]) => setSoundVolume(v)}
                   min={0}
-                  max={100}
-                  step={5}
+                  max={200}
+                  step={10}
                   disabled={!soundEnabled}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Acima de 100% o som é amplificado (até 200%).
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Repetir som</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Tocar novamente enquanto houver chamado pendente
+                  </p>
+                </div>
+                <Switch
+                  checked={soundRepeatEnabled}
+                  onCheckedChange={setSoundRepeatEnabled}
+                  disabled={!soundEnabled}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Repetir a cada (segundos)</Label>
+                <Input
+                  type="number"
+                  min={5}
+                  step={5}
+                  value={soundRepeatSeconds}
+                  onChange={(e) => setSoundRepeatSeconds(Number(e.target.value))}
+                  className="bg-surface border-border placeholder:text-surface-foreground max-w-[160px]"
+                  disabled={!soundEnabled || !soundRepeatEnabled}
                 />
               </div>
 

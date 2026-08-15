@@ -92,6 +92,26 @@ function useNewPendingSound(calls: ServiceCall[] | undefined, playSound: () => v
   }, [calls]);
 }
 
+/** Repete o som a cada X segundos enquanto houver chamado pendente. */
+function useRepeatPendingSound(
+  calls: ServiceCall[] | undefined,
+  playSound: () => void,
+  enabled: boolean,
+  intervalSeconds: number,
+) {
+  const soundRef = useRef(playSound);
+  soundRef.current = playSound;
+
+  const hasPending = !!calls?.some((c) => c.status === 'pending');
+
+  useEffect(() => {
+    if (!enabled || !hasPending) return;
+    const ms = Math.max(5, intervalSeconds) * 1000;
+    const interval = setInterval(() => soundRef.current(), ms);
+    return () => clearInterval(interval);
+  }, [enabled, hasPending, intervalSeconds]);
+}
+
 const REALTIME_QUERY_OPTIONS = {
   refetchInterval: 10_000,
   refetchIntervalInBackground: true,
@@ -126,7 +146,7 @@ export function useAdminServiceCalls() {
 }
 
 export function usePendingServiceCalls() {
-  const { playNotificationSound } = useNotificationSound();
+  const { playNotificationSound, repeatEnabled, repeatSeconds } = useNotificationSound();
 
   const query = useQuery({
     queryKey: ["pending-service-calls"],
@@ -149,6 +169,7 @@ export function usePendingServiceCalls() {
 
   useServiceCallsRealtime(playNotificationSound);
   useNewPendingSound(query.data, playNotificationSound);
+  useRepeatPendingSound(query.data, playNotificationSound, repeatEnabled, repeatSeconds);
 
   return query;
 }
