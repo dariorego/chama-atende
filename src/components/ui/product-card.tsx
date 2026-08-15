@@ -72,7 +72,9 @@ export function ProductCard({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="editorial-title text-xl text-[#064e3b] line-clamp-1">{name}</h4>
+          <h4 className="editorial-title text-base sm:text-lg text-[#064e3b] break-words leading-snug">
+            {name}
+          </h4>
           <div className="flex items-center gap-1.5 shrink-0">
             {isOrderable && (
               <span className="px-2 py-0.5 text-[10px] font-medium tracking-widest uppercase bg-[#064e3b]/5 text-[#064e3b] rounded-full border border-[#064e3b]/20 flex items-center gap-1">
