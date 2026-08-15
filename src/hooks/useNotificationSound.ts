@@ -39,7 +39,7 @@ export function playSoundPattern(ctx: Ctx, type: NotificationSoundType, volume: 
 
   const file = AUDIO_FILES[type];
   if (file) {
-    playAudioFile(file, vol / 2 > 1 ? 1 : vol > 1 ? 1 : vol);
+    playAudioFile(file, Math.min(1, vol));
     return;
   }
 
