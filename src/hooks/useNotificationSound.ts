@@ -1,6 +1,21 @@
 import { useCallback, useRef } from 'react';
 import { useTenantSettings } from './useAdminSettings';
 import type { NotificationSoundType } from '@/types/restaurant';
+import som1Asset from '@/assets/som.mp3.asset.json';
+import som2Asset from '@/assets/som3.mp3.asset.json';
+import som3Asset from '@/assets/som4.mp3.asset.json';
+
+const AUDIO_FILES: Partial<Record<NotificationSoundType, string>> = {
+  toque1: som1Asset.url,
+  toque2: som2Asset.url,
+  toque3: som3Asset.url,
+};
+
+function playAudioFile(url: string, volume: number) {
+  const audio = new Audio(url);
+  audio.volume = Math.max(0, Math.min(1, volume));
+  void audio.play().catch((error) => console.error('Error playing notification audio:', error));
+}
 
 type Ctx = AudioContext;
 
@@ -21,6 +36,12 @@ function getAudioContext(ref: React.MutableRefObject<Ctx | null>): Ctx {
 export function playSoundPattern(ctx: Ctx, type: NotificationSoundType, volume: number) {
   const vol = Math.max(0, Math.min(2, volume));
   if (vol === 0) return;
+
+  const file = AUDIO_FILES[type];
+  if (file) {
+    playAudioFile(file, Math.min(1, vol));
+    return;
+  }
 
   const beep = (
     startOffset: number,

@@ -57,12 +57,15 @@ export interface NotificationSettings {
   sound_repeat_seconds?: number; // intervalo de repetição enquanto houver chamado pendente
 }
 
-export type NotificationSoundType = 'sino' | 'campainha' | 'alerta';
+export type NotificationSoundType = 'sino' | 'campainha' | 'alerta' | 'toque1' | 'toque2' | 'toque3';
 
 export const NOTIFICATION_SOUNDS: { value: NotificationSoundType; label: string; description: string }[] = [
   { value: 'sino', label: 'Sino', description: 'Dois toques suaves' },
   { value: 'campainha', label: 'Campainha', description: 'Três toques curtos' },
   { value: 'alerta', label: 'Alerta', description: 'Sirene ascendente' },
+  { value: 'toque1', label: 'Toque 1', description: 'Som gravado 1' },
+  { value: 'toque2', label: 'Toque 2', description: 'Som gravado 2' },
+  { value: 'toque3', label: 'Toque 3', description: 'Som gravado 3' },
 ];
 
 export interface ThemeSettings {
