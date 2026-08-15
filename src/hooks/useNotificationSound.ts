@@ -17,9 +17,9 @@ function getAudioContext(ref: React.MutableRefObject<Ctx | null>): Ctx {
   return ref.current;
 }
 
-/** Toca um dos três padrões sonoros com o volume informado (0 - 1). */
+/** Toca um dos três padrões sonoros com o volume informado (0 - 2). */
 export function playSoundPattern(ctx: Ctx, type: NotificationSoundType, volume: number) {
-  const vol = Math.max(0, Math.min(1, volume));
+  const vol = Math.max(0, Math.min(2, volume));
   if (vol === 0) return;
 
   const beep = (
@@ -42,7 +42,7 @@ export function playSoundPattern(ctx: Ctx, type: NotificationSoundType, volume: 
       oscillator.frequency.linearRampToValueAtTime(endFrequency, start + duration);
     }
 
-    gainNode.gain.setValueAtTime(vol * 0.4, start);
+    gainNode.gain.setValueAtTime(Math.min(0.95, vol * 0.4), start);
     gainNode.gain.exponentialRampToValueAtTime(0.001, start + duration);
 
     oscillator.start(start);
@@ -75,6 +75,11 @@ export function useNotificationSound() {
   const enabled = settings?.sound_enabled ?? true;
   const soundType = (settings?.sound_type as NotificationSoundType) || 'sino';
   const volume = typeof settings?.sound_volume === 'number' ? settings.sound_volume : 70;
+  const repeatEnabled = settings?.sound_repeat_enabled ?? false;
+  const repeatSeconds =
+    typeof settings?.sound_repeat_seconds === 'number' && settings.sound_repeat_seconds >= 5
+      ? settings.sound_repeat_seconds
+      : 30;
 
   const playNotificationSound = useCallback(() => {
     if (!enabled) return;
@@ -98,5 +103,5 @@ export function useNotificationSound() {
     }
   }, [soundType, volume]);
 
-  return { playNotificationSound, playTestSound };
+  return { playNotificationSound, playTestSound, repeatEnabled, repeatSeconds };
 }
