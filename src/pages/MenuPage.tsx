@@ -491,7 +491,10 @@ const MenuPage = () => {
                 />
               )}
               <DialogHeader>
-                <DialogTitle className="editorial-title text-2xl text-emerald-deep text-left">
+                <DialogTitle
+                  className="editorial-title text-2xl text-emerald-deep text-left break-words"
+                  style={{ overflowWrap: 'anywhere' }}
+                >
                   {selectedProduct.name}
                 </DialogTitle>
                 {selectedProduct.description && (
