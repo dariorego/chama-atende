@@ -51,7 +51,17 @@ export interface ThemeColors {
 
 export interface NotificationSettings {
   sound_enabled?: boolean;
+  sound_type?: NotificationSoundType;
+  sound_volume?: number; // 0 - 100
 }
+
+export type NotificationSoundType = 'sino' | 'campainha' | 'alerta';
+
+export const NOTIFICATION_SOUNDS: { value: NotificationSoundType; label: string; description: string }[] = [
+  { value: 'sino', label: 'Sino', description: 'Dois toques suaves' },
+  { value: 'campainha', label: 'Campainha', description: 'Três toques curtos' },
+  { value: 'alerta', label: 'Alerta', description: 'Sirene ascendente' },
+];
 
 export interface ThemeSettings {
   client_default_theme?: 'light' | 'dark';
