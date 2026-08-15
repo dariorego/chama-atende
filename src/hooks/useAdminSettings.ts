@@ -48,7 +48,7 @@ export interface UpdateRestaurantData {
   social_links?: Record<string, string | undefined>;
   wifi_info?: Record<string, string | undefined>;
   theme_colors?: Record<string, string | undefined>;
-  notification_settings?: Record<string, boolean | undefined>;
+  notification_settings?: Record<string, boolean | number | string | undefined>;
   theme_settings?: Record<string, string | undefined>;
   business_hours?: BusinessHours;
   timezone?: string;

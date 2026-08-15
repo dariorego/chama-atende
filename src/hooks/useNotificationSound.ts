@@ -1,80 +1,102 @@
 import { useCallback, useRef } from 'react';
-import { useAdminSettings } from './useAdminSettings';
+import { useTenantSettings } from './useAdminSettings';
+import type { NotificationSoundType } from '@/types/restaurant';
 
-export function useNotificationSound() {
-  const { restaurant } = useAdminSettings();
-  const audioContextRef = useRef<AudioContext | null>(null);
+type Ctx = AudioContext;
 
-  const playNotificationSound = useCallback(() => {
-    // Verificar se som está habilitado
-    if (!restaurant?.notification_settings?.sound_enabled) {
-      return;
+function getAudioContext(ref: React.MutableRefObject<Ctx | null>): Ctx {
+  if (!ref.current) {
+    const AC =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    ref.current = new AC();
+  }
+  if (ref.current.state === 'suspended') {
+    void ref.current.resume();
+  }
+  return ref.current;
+}
+
+/** Toca um dos três padrões sonoros com o volume informado (0 - 1). */
+export function playSoundPattern(ctx: Ctx, type: NotificationSoundType, volume: number) {
+  const vol = Math.max(0, Math.min(1, volume));
+  if (vol === 0) return;
+
+  const beep = (
+    startOffset: number,
+    frequency: number,
+    duration: number,
+    wave: OscillatorType = 'sine',
+    endFrequency?: number,
+  ) => {
+    const start = ctx.currentTime + startOffset;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.type = wave;
+    oscillator.frequency.setValueAtTime(frequency, start);
+    if (endFrequency) {
+      oscillator.frequency.linearRampToValueAtTime(endFrequency, start + duration);
     }
 
-    try {
-      // Criar AudioContext se não existir
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      }
-      
-      const ctx = audioContextRef.current;
-      
-      // Criar som de notificação (beep duplo)
-      const playBeep = (startTime: number, frequency: number) => {
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
-        
-        oscillator.frequency.value = frequency;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.3, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
-        
-        oscillator.start(startTime);
-        oscillator.stop(startTime + 0.3);
-      };
+    gainNode.gain.setValueAtTime(vol * 0.4, start);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, start + duration);
 
-      const now = ctx.currentTime;
-      playBeep(now, 800);        // Primeiro beep
-      playBeep(now + 0.35, 1000); // Segundo beep (mais agudo)
-      
+    oscillator.start(start);
+    oscillator.stop(start + duration);
+  };
+
+  switch (type) {
+    case 'campainha':
+      beep(0, 1200, 0.14, 'triangle');
+      beep(0.18, 1200, 0.14, 'triangle');
+      beep(0.36, 1400, 0.2, 'triangle');
+      break;
+    case 'alerta':
+      beep(0, 500, 0.45, 'sawtooth', 1100);
+      beep(0.5, 500, 0.45, 'sawtooth', 1100);
+      break;
+    case 'sino':
+    default:
+      beep(0, 800, 0.3);
+      beep(0.35, 1000, 0.3);
+      break;
+  }
+}
+
+export function useNotificationSound() {
+  const { restaurant } = useTenantSettings();
+  const audioContextRef = useRef<Ctx | null>(null);
+
+  const settings = restaurant?.notification_settings;
+  const enabled = settings?.sound_enabled ?? true;
+  const soundType = (settings?.sound_type as NotificationSoundType) || 'sino';
+  const volume = typeof settings?.sound_volume === 'number' ? settings.sound_volume : 70;
+
+  const playNotificationSound = useCallback(() => {
+    if (!enabled) return;
+    try {
+      playSoundPattern(getAudioContext(audioContextRef), soundType, volume / 100);
     } catch (error) {
       console.error('Error playing notification sound:', error);
     }
-  }, [restaurant?.notification_settings?.sound_enabled]);
+  }, [enabled, soundType, volume]);
 
-  // Função para testar som (ignora configuração)
-  const playTestSound = useCallback(() => {
+  // Testa um som específico (ignora a configuração salva)
+  const playTestSound = useCallback((type?: NotificationSoundType, testVolume?: number) => {
     try {
-      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      
-      const playBeep = (startTime: number, frequency: number) => {
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
-        
-        oscillator.frequency.value = frequency;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.3, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
-        
-        oscillator.start(startTime);
-        oscillator.stop(startTime + 0.3);
-      };
-
-      const now = ctx.currentTime;
-      playBeep(now, 800);
-      playBeep(now + 0.35, 1000);
+      playSoundPattern(
+        getAudioContext(audioContextRef),
+        type || soundType,
+        (testVolume ?? volume) / 100,
+      );
     } catch (error) {
       console.error('Error playing test sound:', error);
     }
-  }, []);
+  }, [soundType, volume]);
 
   return { playNotificationSound, playTestSound };
 }
