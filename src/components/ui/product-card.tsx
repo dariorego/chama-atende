@@ -72,7 +72,10 @@ export function ProductCard({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="editorial-title text-base sm:text-lg text-[#064e3b] break-words leading-snug">
+          <h4
+            className="editorial-title text-base sm:text-lg text-[#064e3b] break-words hyphens-auto leading-snug"
+            style={{ overflowWrap: 'anywhere' }}
+          >
             {name}
           </h4>
           <div className="flex items-center gap-1.5 shrink-0">

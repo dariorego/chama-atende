@@ -52,7 +52,9 @@ export interface ThemeColors {
 export interface NotificationSettings {
   sound_enabled?: boolean;
   sound_type?: NotificationSoundType;
-  sound_volume?: number; // 0 - 100
+  sound_volume?: number; // 0 - 200 (100 = volume padrão)
+  sound_repeat_enabled?: boolean;
+  sound_repeat_seconds?: number; // intervalo de repetição enquanto houver chamado pendente
 }
 
 export type NotificationSoundType = 'sino' | 'campainha' | 'alerta';

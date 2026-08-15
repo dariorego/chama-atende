@@ -57,6 +57,8 @@ export default function AdminSettings() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [soundType, setSoundType] = useState<NotificationSoundType>('sino');
   const [soundVolume, setSoundVolume] = useState(70);
+  const [soundRepeatEnabled, setSoundRepeatEnabled] = useState(false);
+  const [soundRepeatSeconds, setSoundRepeatSeconds] = useState(30);
   
   // Business hours states
   const [businessHours, setBusinessHours] = useState<BusinessHours>(DEFAULT_BUSINESS_HOURS);
@@ -127,6 +129,12 @@ export default function AdminSettings() {
           typeof restaurant.notification_settings.sound_volume === 'number'
             ? restaurant.notification_settings.sound_volume
             : 70,
+        );
+        setSoundRepeatEnabled(restaurant.notification_settings.sound_repeat_enabled ?? false);
+        setSoundRepeatSeconds(
+          typeof restaurant.notification_settings.sound_repeat_seconds === 'number'
+            ? restaurant.notification_settings.sound_repeat_seconds
+            : 30,
         );
       }
       
@@ -223,6 +231,8 @@ export default function AdminSettings() {
         sound_enabled: soundEnabled,
         sound_type: soundType,
         sound_volume: soundVolume,
+        sound_repeat_enabled: soundRepeatEnabled,
+        sound_repeat_seconds: Math.max(5, Number(soundRepeatSeconds) || 30),
       },
       theme_settings: {
         ...(restaurant?.theme_settings || {}),
@@ -840,9 +850,39 @@ export default function AdminSettings() {
                   value={[soundVolume]}
                   onValueChange={([v]) => setSoundVolume(v)}
                   min={0}
-                  max={100}
-                  step={5}
+                  max={200}
+                  step={10}
                   disabled={!soundEnabled}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Acima de 100% o som é amplificado (até 200%).
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Repetir som</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Tocar novamente enquanto houver chamado pendente
+                  </p>
+                </div>
+                <Switch
+                  checked={soundRepeatEnabled}
+                  onCheckedChange={setSoundRepeatEnabled}
+                  disabled={!soundEnabled}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Repetir a cada (segundos)</Label>
+                <Input
+                  type="number"
+                  min={5}
+                  step={5}
+                  value={soundRepeatSeconds}
+                  onChange={(e) => setSoundRepeatSeconds(Number(e.target.value))}
+                  className="bg-surface border-border placeholder:text-surface-foreground max-w-[160px]"
+                  disabled={!soundEnabled || !soundRepeatEnabled}
                 />
               </div>
 
