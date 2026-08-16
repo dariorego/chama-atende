@@ -83,7 +83,7 @@ export default function AdminModules() {
           const IconComponent = info ? ICON_MAP[info.icon] : Puzzle;
 
           return (
-            <Card key={module.id} className={!module.is_active ? 'opacity-60' : ''}>
+            <Card key={module.module_name} className={!module.is_active ? 'opacity-60' : ''}>
               <CardHeader className="pb-3">
                 {view === 'grid' ? (
                   <div className="space-y-3">
@@ -98,7 +98,7 @@ export default function AdminModules() {
                       <Switch
                         checked={module.is_active}
                         onCheckedChange={(checked) =>
-                          toggleModule({ moduleId: module.id, isActive: checked })
+                          toggleModule({ moduleId: module.id, moduleName: module.module_name, isActive: checked })
                         }
                         disabled={isToggling}
                       />
@@ -130,7 +130,7 @@ export default function AdminModules() {
                     <Switch
                       checked={module.is_active}
                       onCheckedChange={(checked) =>
-                        toggleModule({ moduleId: module.id, isActive: checked })
+                        toggleModule({ moduleId: module.id, moduleName: module.module_name, isActive: checked })
                       }
                       disabled={isToggling}
                     />

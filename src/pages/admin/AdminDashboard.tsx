@@ -50,7 +50,7 @@ export default function AdminDashboard() {
               if (!config) return null;
               const Icon = config.icon;
               return (
-                <Link key={module.id} to={`/admin/${config.href}`}>
+                <Link key={module.module_name} to={`/admin/${config.href}`}>
                   <Card className="h-full transition-all hover:shadow-md hover:border-primary/50 group">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
