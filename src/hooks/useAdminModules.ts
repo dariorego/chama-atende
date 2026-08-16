@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useTenant } from "@/hooks/useTenant";
 
 export interface RestaurantModule {
-  id: string;
+  id: string | null;
   module_name: string;
   is_active: boolean;
   settings: Record<string, unknown>;
@@ -113,14 +113,53 @@ export function useAdminModules() {
         .eq("restaurant_id", tenantId);
 
       if (error) throw error;
-      return data as RestaurantModule[];
+
+      const rows = (data ?? []) as RestaurantModule[];
+
+      // Catálogo completo: módulos novos podem ainda não ter linha no banco
+      // (ex.: Ficha Técnica). Exibimos todos e criamos a linha ao ativar.
+      const merged: RestaurantModule[] = Object.keys(MODULE_INFO).map((name) => {
+        const row = rows.find((r) => r.module_name === name);
+        return (
+          row ?? {
+            id: null,
+            module_name: name,
+            is_active: false,
+            settings: {},
+          }
+        );
+      });
+
+      // Mantém eventuais módulos legados presentes no banco
+      rows.forEach((row) => {
+        if (!MODULE_INFO[row.module_name]) merged.push(row);
+      });
+
+      return merged;
     },
   });
 
   const toggleModuleMutation = useMutation({
-    mutationFn: async ({ moduleId, isActive }: { moduleId: string; isActive: boolean }) => {
-      const { error } = await supabase.from("restaurant_modules").update({ is_active: isActive }).eq("id", moduleId);
+    mutationFn: async ({
+      moduleId,
+      moduleName,
+      isActive,
+    }: {
+      moduleId: string | null;
+      moduleName?: string;
+      isActive: boolean;
+    }) => {
+      if (moduleId) {
+        const { error } = await supabase.from("restaurant_modules").update({ is_active: isActive }).eq("id", moduleId);
+        if (error) throw error;
+        return;
+      }
 
+      if (!tenantId || !moduleName) throw new Error("Módulo inválido");
+
+      const { error } = await supabase
+        .from("restaurant_modules")
+        .insert({ restaurant_id: tenantId, module_name: moduleName, is_active: isActive });
       if (error) throw error;
     },
     onSuccess: () => {
