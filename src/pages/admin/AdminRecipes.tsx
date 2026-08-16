@@ -63,18 +63,19 @@ export default function AdminRecipes() {
   }, [recipes, search, typeFilter]);
 
   const handleCreate = async () => {
-    if (!form.name.trim()) {
-      toast.error("Informe o nome da ficha");
+    const selectedProduct = products.find((product) => product.id === form.menu_product_id);
+    if (!selectedProduct) {
+      toast.error("Selecione um produto do cardápio");
       return;
     }
     try {
       const id = await saveRecipe.mutateAsync({
-        name: form.name.trim(),
+        name: selectedProduct.name,
         type: form.type,
         yield_qty: Number(form.yield_qty.replace(",", ".")) || 1,
         yield_unit: form.yield_unit,
         category: form.category.trim() || null,
-        menu_product_id: form.menu_product_id || null,
+        menu_product_id: selectedProduct.id,
       } as Partial<Recipe> & { name: string });
       toast.success("Ficha criada");
       setOpen(false);
@@ -218,13 +219,28 @@ export default function AdminRecipes() {
           </DialogHeader>
           <div className="grid gap-4">
             <div>
-              <Label>Nome *</Label>
-              <Input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Ex.: Filé ao molho madeira"
-                className="bg-surface placeholder:text-surface-foreground"
-              />
+              <Label>Produto do cardápio *</Label>
+              <Select
+                value={form.menu_product_id}
+                onValueChange={(productId) => {
+                  const product = products.find((item) => item.id === productId);
+                  setForm({ ...form, menu_product_id: productId, name: product?.name ?? "" });
+                }}
+              >
+                <SelectTrigger className="bg-surface">
+                  <SelectValue placeholder="Selecione um produto" />
+                </SelectTrigger>
+                <SelectContent>
+                  {products.map((product) => (
+                    <SelectItem key={product.id} value={product.id}>
+                      {product.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {products.length === 0 && (
+                <p className="mt-1 text-xs text-muted-foreground">Cadastre um produto no cardápio antes de criar a ficha.</p>
+              )}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -277,33 +293,12 @@ export default function AdminRecipes() {
                 </Select>
               </div>
             </div>
-            {form.type === "PRODUTO_FINAL" && (
-              <div>
-                <Label>Vincular a um produto do cardápio</Label>
-                <Select
-                  value={form.menu_product_id || "none"}
-                  onValueChange={(v) => setForm({ ...form, menu_product_id: v === "none" ? "" : v })}
-                >
-                  <SelectTrigger className="bg-surface">
-                    <SelectValue placeholder="Sem vínculo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Sem vínculo</SelectItem>
-                    {products.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleCreate} disabled={saveRecipe.isPending}>
+            <Button onClick={handleCreate} disabled={saveRecipe.isPending || !form.menu_product_id}>
               Criar ficha
             </Button>
           </DialogFooter>
