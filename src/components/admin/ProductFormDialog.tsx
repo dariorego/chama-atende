@@ -377,6 +377,18 @@ export function ProductFormDialog({
               )}
             />
 
+            <AvailabilityFields
+              enabled={availabilityEnabled}
+              days={availableDays ?? ALL_DAYS}
+              from={availableFrom ?? ''}
+              to={availableTo ?? ''}
+              scopeLabel="o produto"
+              onEnabledChange={(v) => form.setValue('availability_enabled', v, { shouldValidate: true })}
+              onDaysChange={(v) => form.setValue('available_days', v, { shouldValidate: true })}
+              onFromChange={(v) => form.setValue('available_from', v || null)}
+              onToChange={(v) => form.setValue('available_to', v || null)}
+            />
+
             <div className="flex flex-wrap gap-6">
               <FormField
                 control={form.control}

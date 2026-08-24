@@ -1,24 +1,32 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { isAvailableNow, useAvailabilityClock } from "@/lib/availability";
 
 export type PreOrderProduct = Tables<'menu_products'> & {
   category?: {
     id: string;
     slug: string;
     name: string;
+    availability_enabled?: boolean | null;
+    available_days?: number[] | null;
+    available_from?: string | null;
+    available_to?: string | null;
   } | null;
 };
 
 export function usePreOrderProducts() {
-  return useQuery({
+  const now = useAvailabilityClock();
+
+  const query = useQuery({
     queryKey: ['pre-order-products'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('menu_products')
         .select(`
           *,
-          category:menu_categories(id, slug, name)
+          category:menu_categories(id, slug, name, availability_enabled, available_days, available_from, available_to)
         `)
         .eq('is_active', true)
         .eq('is_orderable', true)
@@ -28,10 +36,22 @@ export function usePreOrderProducts() {
       return data as PreOrderProduct[];
     },
   });
+
+  // Hide products outside their availability window (category wins over item)
+  const data = useMemo(() => {
+    if (!query.data) return query.data;
+    return query.data.filter(
+      (p) => isAvailableNow(p.category ?? null, undefined, now) && isAvailableNow(p, undefined, now),
+    );
+  }, [query.data, now]);
+
+  return { ...query, data } as typeof query;
 }
 
 export function usePreOrderCategories() {
-  return useQuery({
+  const now = useAvailabilityClock();
+
+  const query = useQuery({
     queryKey: ['pre-order-categories'],
     queryFn: async () => {
       // Get categories that have at least one orderable product
@@ -42,6 +62,10 @@ export function usePreOrderCategories() {
           name,
           slug,
           display_order,
+          availability_enabled,
+          available_days,
+          available_from,
+          available_to,
           menu_products!inner(id)
         `)
         .eq('is_active', true)
@@ -53,7 +77,7 @@ export function usePreOrderCategories() {
       
       // Remove duplicates and format
       const uniqueCategories = data?.reduce((acc, cat) => {
-        if (!acc.find(c => c.id === cat.id)) {
+        if (!acc.find(c => c.id === cat.id) && isAvailableNow(cat, undefined, now)) {
           acc.push({
             id: cat.id,
             name: cat.name,
@@ -66,4 +90,6 @@ export function usePreOrderCategories() {
       return uniqueCategories ?? [];
     },
   });
+
+  return query;
 }
