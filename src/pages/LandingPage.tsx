@@ -27,7 +27,7 @@ import {
   Tag,
   UserPlus,
 } from "lucide-react";
-import { Receipt, LayoutGrid, PartyPopper } from "lucide-react";
+import { Receipt, LayoutGrid, PartyPopper, Calculator } from "lucide-react";
 import { MODULE_LANDINGS } from "@/data/moduleLandings";
 
 const modules = [
@@ -142,6 +142,14 @@ const modules = [
     slug: "cupons-promocoes",
     desc: "Descontos por horário, categoria, primeiro pedido e compra mínima.",
     span: "",
+    badge: "Novo",
+  },
+  {
+    icon: Calculator,
+    title: "Ficha Técnica e CMV",
+    slug: "ficha-tecnica",
+    desc: "Custo real por prato, CMV, margem e controle de desperdício.",
+    span: "md:col-span-2",
     badge: "Novo",
   },
   {
