@@ -35,7 +35,7 @@ const modules = [
     icon: Utensils,
     title: "Cardápio Digital",
     slug: "cardapio-digital",
-    desc: "QR Code na mesa, fotos, categorias, combinações e preços sempre atualizados.",
+    desc: "QR Code na mesa, fotos, combinações e disponibilidade por dia e horário — café, almoço e happy hour no automático.",
     span: "md:col-span-2 md:row-span-2",
     featured: true,
   },
