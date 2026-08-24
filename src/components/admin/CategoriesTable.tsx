@@ -27,8 +27,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Pencil, Trash2, GripVertical } from 'lucide-react';
+import { Pencil, Trash2, GripVertical, Clock } from 'lucide-react';
+import { formatAvailabilityLabel } from '@/lib/availability';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
+
 
 interface CategoriesTableProps {
   categories: MenuCategory[] | undefined;
