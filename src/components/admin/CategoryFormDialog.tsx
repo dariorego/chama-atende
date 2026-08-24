@@ -22,6 +22,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
+import { AvailabilityFields } from '@/components/admin/AvailabilityFields';
+import { ALL_DAYS, normalizeTime } from '@/lib/availability';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100, 'Máximo 100 caracteres'),
@@ -30,7 +32,15 @@ const categorySchema = z.object({
   description: z.string().max(500, 'Máximo 500 caracteres').optional().nullable(),
   display_order: z.coerce.number().int().min(1, 'Ordem mínima é 1'),
   is_active: z.boolean(),
+  availability_enabled: z.boolean().default(false),
+  available_days: z.array(z.number().int().min(0).max(6)).default(ALL_DAYS),
+  available_from: z.string().nullable().default(null),
+  available_to: z.string().nullable().default(null),
+}).refine((data) => !data.availability_enabled || data.available_days.length > 0, {
+  message: 'Selecione ao menos um dia da semana',
+  path: ['available_days'],
 });
+
 
 export type CategoryFormData = z.infer<typeof categorySchema>;
 
