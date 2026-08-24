@@ -82,7 +82,18 @@ function SortableRow({ category, onEdit, onDelete, isDragDisabled, onToggleActiv
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </button>
       </TableCell>
-      <TableCell className="font-medium">{category.name}</TableCell>
+      <TableCell className="font-medium">
+        <div className="flex flex-col gap-1">
+          <span>{category.name}</span>
+          {formatAvailabilityLabel(category) && (
+            <span className="flex items-center gap-1 text-xs font-normal text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              {formatAvailabilityLabel(category)}
+            </span>
+          )}
+        </div>
+      </TableCell>
+
       <TableCell className="max-w-[200px] truncate text-muted-foreground">
         {category.description || '-'}
       </TableCell>
