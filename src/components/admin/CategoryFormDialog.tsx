@@ -248,6 +248,20 @@ export function CategoryFormDialog({
               />
             </div>
 
+            <AvailabilityFields
+              enabled={availabilityEnabled}
+              days={availableDays ?? ALL_DAYS}
+              from={availableFrom ?? ''}
+              to={availableTo ?? ''}
+              scopeLabel="a categoria e seus itens"
+              onEnabledChange={(v) => form.setValue('availability_enabled', v, { shouldValidate: true })}
+              onDaysChange={(v) => form.setValue('available_days', v, { shouldValidate: true })}
+              onFromChange={(v) => form.setValue('available_from', v || null)}
+              onToChange={(v) => form.setValue('available_to', v || null)}
+            />
+
+
+
             <div className="flex justify-end gap-2 pt-4">
               <Button
                 type="button"
