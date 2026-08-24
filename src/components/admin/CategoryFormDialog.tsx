@@ -82,18 +82,33 @@ export function CategoryFormDialog({
       description: '',
       display_order: 1,
       is_active: true,
+      availability_enabled: false,
+      available_days: ALL_DAYS,
+      available_from: null,
+      available_to: null,
     },
   });
 
   useEffect(() => {
     if (open) {
-      if (category) {
+      const cat = category as (MenuCategory & {
+        availability_enabled?: boolean | null;
+        available_days?: number[] | null;
+        available_from?: string | null;
+        available_to?: string | null;
+      }) | null | undefined;
+
+      if (cat) {
         form.reset({
-          name: category.name,
-          slug: category.slug,
-          description: category.description ?? '',
-          display_order: category.display_order ?? 1,
-          is_active: category.is_active ?? true,
+          name: cat.name,
+          slug: cat.slug,
+          description: cat.description ?? '',
+          display_order: cat.display_order ?? 1,
+          is_active: cat.is_active ?? true,
+          availability_enabled: cat.availability_enabled ?? false,
+          available_days: cat.available_days?.length ? cat.available_days : ALL_DAYS,
+          available_from: normalizeTime(cat.available_from) || null,
+          available_to: normalizeTime(cat.available_to) || null,
         });
       } else {
         form.reset({
@@ -102,6 +117,10 @@ export function CategoryFormDialog({
           description: '',
           display_order: suggestedOrder,
           is_active: true,
+          availability_enabled: false,
+          available_days: ALL_DAYS,
+          available_from: null,
+          available_to: null,
         });
       }
     }
@@ -116,9 +135,20 @@ export function CategoryFormDialog({
     }
   }, [watchName, isEditing, form]);
 
+  const availabilityEnabled = form.watch('availability_enabled');
+  const availableDays = form.watch('available_days');
+  const availableFrom = form.watch('available_from');
+  const availableTo = form.watch('available_to');
+
   const handleSubmit = (data: CategoryFormData) => {
-    onSubmit(data);
+    onSubmit({
+      ...data,
+      available_from: data.availability_enabled ? data.available_from || null : null,
+      available_to: data.availability_enabled ? data.available_to || null : null,
+      available_days: data.availability_enabled && data.available_days.length ? data.available_days : ALL_DAYS,
+    });
   };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
