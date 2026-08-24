@@ -33,6 +33,8 @@ import { ImageUploadWithCrop } from '@/components/ui/image-upload-with-crop';
 import { Loader2 } from 'lucide-react';
 import type { MenuProduct } from '@/hooks/useAdminProducts';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
+import { AvailabilityFields } from '@/components/admin/AvailabilityFields';
+import { ALL_DAYS, normalizeTime } from '@/lib/availability';
 
 const productSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100, 'Máximo de 100 caracteres'),
@@ -51,6 +53,10 @@ const productSchema = z.object({
       z.number().int().min(0, 'Ordem inválida').nullable(),
     )
     .default(null),
+  availability_enabled: z.boolean().default(false),
+  available_days: z.array(z.number().int().min(0).max(6)).default(ALL_DAYS),
+  available_from: z.string().nullable().default(null),
+  available_to: z.string().nullable().default(null),
 }).refine((data) => {
   if (data.promotional_price && data.promotional_price >= data.price) {
     return false;
@@ -59,6 +65,9 @@ const productSchema = z.object({
 }, {
   message: 'Preço promocional deve ser menor que o preço normal',
   path: ['promotional_price'],
+}).refine((data) => !data.availability_enabled || data.available_days.length > 0, {
+  message: 'Selecione ao menos um dia da semana',
+  path: ['available_days'],
 });
 
 function formatCurrencyInput(raw: string) {
@@ -113,12 +122,22 @@ export function ProductFormDialog({
       is_orderable: false,
       show_on_display: false,
       display_order: null,
+      availability_enabled: false,
+      available_days: ALL_DAYS,
+      available_from: null,
+      available_to: null,
     },
   });
 
   useEffect(() => {
     if (open) {
       if (product) {
+        const availability = product as MenuProduct & {
+          availability_enabled?: boolean | null;
+          available_days?: number[] | null;
+          available_from?: string | null;
+          available_to?: string | null;
+        };
         form.reset({
           name: product.name,
           description: product.description || '',
@@ -131,6 +150,10 @@ export function ProductFormDialog({
           is_orderable: (product as MenuProduct & { is_orderable?: boolean }).is_orderable ?? false,
           show_on_display: product.show_on_display ?? false,
           display_order: product.display_order ?? null,
+          availability_enabled: availability.availability_enabled ?? false,
+          available_days: availability.available_days?.length ? availability.available_days : ALL_DAYS,
+          available_from: normalizeTime(availability.available_from) || null,
+          available_to: normalizeTime(availability.available_to) || null,
         });
       } else {
         form.reset({
@@ -145,12 +168,20 @@ export function ProductFormDialog({
           is_orderable: false,
           show_on_display: false,
           display_order: null,
+          availability_enabled: false,
+          available_days: ALL_DAYS,
+          available_from: null,
+          available_to: null,
         });
       }
     }
   }, [open, product, form]);
 
   const watchedCategoryId = form.watch('category_id');
+  const availabilityEnabled = form.watch('availability_enabled');
+  const availableDays = form.watch('available_days');
+  const availableFrom = form.watch('available_from');
+  const availableTo = form.watch('available_to');
   const categorySuggestedOrder =
     (getSuggestedOrder && watchedCategoryId
       ? getSuggestedOrder(watchedCategoryId)
@@ -170,6 +201,10 @@ export function ProductFormDialog({
       image_url: data.image_url || null,
       promotional_price: data.promotional_price || null,
       display_order: order,
+      available_from: data.availability_enabled ? data.available_from || null : null,
+      available_to: data.availability_enabled ? data.available_to || null : null,
+      available_days:
+        data.availability_enabled && data.available_days.length ? data.available_days : ALL_DAYS,
     };
     await onSubmit(cleanData);
     onOpenChange(false);
