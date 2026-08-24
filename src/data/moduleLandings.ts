@@ -14,6 +14,7 @@ import agendaHero from "@/assets/modulo-agenda-de-funcionarios.jpg";
 import fidelidadeHero from "@/assets/modulo-fidelidade-cashback.jpg";
 import cuponsHero from "@/assets/modulo-cupons-promocoes.jpg";
 import indicacaoHero from "@/assets/modulo-programa-indicacao.jpg";
+import fichaHero from "@/assets/modulo-ficha-tecnica.jpg";
 
 export interface ModuleFeature {
   icon: string;
@@ -1314,6 +1315,77 @@ export const MODULE_LANDINGS: Record<string, ModuleLanding> = {
     cta: {
       title: "Cresça com indicações de clientes",
       desc: "Ative o Programa de Indicação e transforme seus clientes em promotores.",
+    },
+  },
+  "ficha-tecnica": {
+    slug: "ficha-tecnica",
+    moduleName: "Ficha Técnica e CMV",
+    title: "Ficha Técnica e CMV",
+    subtitle: "Saiba o custo real de cada prato e a margem de cada venda.",
+    description:
+      "Cadastre insumos, monte a ficha técnica de cada produto do cardápio e acompanhe o CMV, o custo por porção, a margem de contribuição e o desperdício em um painel único.",
+    heroImage: fichaHero,
+    tryPath: "/onboarding",
+    about: [
+      {
+        heading: "O que é a Ficha Técnica",
+        body: "É o receituário digital do seu estabelecimento: cada produto do cardápio recebe a lista exata de insumos, quantidades, rendimento e modo de preparo, com o custo calculado automaticamente." },
+      {
+        heading: "Quais problemas resolve",
+        body: "Acaba com o preço baseado em achismo, padroniza o preparo entre turnos e mostra quais pratos realmente dão lucro e quais estão corroendo a margem." },
+      {
+        heading: "Para quem foi desenvolvido",
+        body: "Restaurantes, bares, pizzarias, cafeterias, lanchonetes, confeitarias e cozinhas industriais que precisam controlar custo de mercadoria vendida." },
+      {
+        heading: "Como funciona",
+        body: "Você cadastra insumos com unidade e preço de compra, cria a ficha vinculada a um produto do cardápio e o sistema calcula custo total, custo por porção, CMV percentual e preço sugerido pela margem desejada." },
+      {
+        heading: "Como se integra à plataforma",
+        body: "As fichas usam os produtos do próprio Cardápio Digital e alimentam o Painel de CMV, os relatórios de métricas e o controle de desperdício." },
+    ],
+    features: [
+      { icon: "ClipboardList", title: "Fichas por produto", desc: "Cada ficha é vinculada a um produto real do cardápio." },
+      { icon: "Package", title: "Cadastro de insumos", desc: "Unidade de compra, unidade de uso, preço e fornecedor." },
+      { icon: "Calculator", title: "Custo automático", desc: "Custo total, custo por porção e CMV calculados na hora." },
+      { icon: "Percent", title: "Margem e preço sugerido", desc: "Defina a margem desejada e veja o preço ideal de venda." },
+      { icon: "Scale", title: "Rendimento e perdas", desc: "Fator de correção e rendimento por receita." },
+      { icon: "Trash2", title: "Controle de desperdício", desc: "Registre quebras e perdas por insumo e período." },
+      { icon: "BarChart3", title: "Painel de CMV", desc: "Visão consolidada do custo de mercadoria vendida." },
+      { icon: "TrendingUp", title: "Ranking de margem", desc: "Veja os pratos mais e menos rentáveis do cardápio." },
+      { icon: "RefreshCw", title: "Atualização em cascata", desc: "Mudou o preço do insumo? Todas as fichas recalculam." },
+      { icon: "Layers", title: "Sub-receitas", desc: "Use preparos base (molhos, massas) dentro de outras fichas." },
+      { icon: "Upload", title: "Importação de insumos", desc: "Suba sua lista de compras em CSV." },
+      { icon: "ShieldCheck", title: "Padronização", desc: "Mesmo preparo e mesma porção em todos os turnos." },
+    ],
+    flow: [
+      { title: "Cadastre os insumos", desc: "Informe unidade, preço de compra e rendimento." },
+      { title: "Crie a ficha do produto", desc: "Selecione o item do cardápio e monte a composição." },
+      { title: "Informe quantidades", desc: "Defina o quanto de cada insumo entra na porção." },
+      { title: "Veja o custo real", desc: "Custo por porção, CMV percentual e margem atual." },
+      { title: "Ajuste o preço", desc: "Use o preço sugerido pela margem desejada." },
+      { title: "Monitore no painel", desc: "Acompanhe CMV, desperdício e rentabilidade por período." },
+    ],
+    benefits: [
+      { icon: "Wallet", title: "Mais lucro por prato", desc: "Preço definido com base no custo real, não no palpite." },
+      { icon: "TrendingUp", title: "CMV sob controle", desc: "Enxergue desvios de custo antes de fechar o mês." },
+      { icon: "ShieldCheck", title: "Padrão de qualidade", desc: "Toda a cozinha segue a mesma receita e a mesma porção." },
+      { icon: "Clock", title: "Decisão rápida", desc: "Reajuste preços em minutos quando o insumo sobe." },
+      { icon: "Sparkles", title: "Menos desperdício", desc: "Perdas registradas viram plano de ação." },
+      { icon: "BarChart3", title: "Gestão profissional", desc: "Indicadores de custo no mesmo lugar da operação." },
+    ],
+    useCases: ["Restaurantes", "Pizzarias", "Bares", "Cafeterias", "Confeitarias", "Cozinhas industriais"],
+    integrations: ["Cardápio Digital", "Pedidos na Cozinha", "Comanda Digital", "Métricas e Relatórios"],
+    faq: [
+      { q: "Preciso digitar o nome do prato?", a: "Não. A ficha é criada a partir de um produto já existente no seu cardápio." },
+      { q: "Como o custo é calculado?", a: "Pelo preço de compra do insumo convertido para a unidade de uso, multiplicado pela quantidade da ficha." },
+      { q: "Consigo usar sub-receitas?", a: "Sim, um preparo base pode ser usado como insumo em outras fichas." },
+      { q: "O sistema sugere preço de venda?", a: "Sim, a partir da margem ou do CMV alvo que você definir." },
+      { q: "Dá para registrar desperdício?", a: "Sim, há controle de perdas por insumo, motivo e período." },
+      { q: "Preciso de outro sistema para CMV?", a: "Não, o Painel de CMV já vem integrado ao módulo." },
+    ],
+    cta: {
+      title: "Descubra o custo real do seu cardápio",
+      desc: "Ative a Ficha Técnica e passe a precificar com base em dados.",
     },
   },
 };
