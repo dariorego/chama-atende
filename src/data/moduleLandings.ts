@@ -84,6 +84,7 @@ export const MODULE_LANDINGS: Record<string, ModuleLanding> = {
       { icon: "Smartphone", title: "Feito para o celular", desc: "Interface rápida, responsiva e sem necessidade de instalar app." },
       { icon: "RefreshCw", title: "Atualização em tempo real", desc: "Alterou o preço no painel? O cliente já vê o novo valor." },
       { icon: "EyeOff", title: "Itens esgotados", desc: "Desative um produto com um clique quando faltar no estoque." },
+      { icon: "CalendarClock", title: "Disponibilidade por dia e horário", desc: "Programe itens e categorias para aparecerem só nos dias e horas certos." },
       { icon: "Globe", title: "Link compartilhável", desc: "Use o mesmo cardápio no Instagram, WhatsApp e Google." },
     ],
     flow: [
@@ -101,6 +102,7 @@ export const MODULE_LANDINGS: Record<string, ModuleLanding> = {
       { icon: "ShieldCheck", title: "Informação sempre correta", desc: "Um único lugar controla preços e disponibilidade." },
       { icon: "Sparkles", title: "Experiência premium", desc: "Menu bonito, com a identidade visual da sua casa." },
       { icon: "Clock", title: "Economia de tempo", desc: "Atualize o menu inteiro em minutos, de qualquer lugar." },
+      { icon: "CalendarClock", title: "Menu certo na hora certa", desc: "Café da manhã, almoço, happy hour e feijoada de sábado no automático." },
     ],
     useCases: [
       "Restaurantes",
@@ -145,6 +147,10 @@ export const MODULE_LANDINGS: Record<string, ModuleLanding> = {
       {
         q: "Como marco um item que acabou?",
         a: "Basta desativar o produto no painel. Ele deixa de aparecer no cardápio até você reativar.",
+      },
+      {
+        q: "Posso ter café da manhã, almoço e happy hour em horários diferentes?",
+        a: "Sim. Cada produto e cada categoria pode ter uma janela de disponibilidade com dias da semana e horário de início e fim (inclusive virando a madrugada). Fora da janela, o item simplesmente não aparece no cardápio — e volta sozinho no horário programado.",
       },
       {
         q: "Funciona sem os outros módulos?",
