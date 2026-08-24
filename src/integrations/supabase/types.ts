@@ -1301,6 +1301,10 @@ export type Database = {
       }
       menu_categories: {
         Row: {
+          availability_enabled: boolean
+          available_days: number[]
+          available_from: string | null
+          available_to: string | null
           created_at: string | null
           description: string | null
           display_order: number | null
@@ -1312,6 +1316,10 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          availability_enabled?: boolean
+          available_days?: number[]
+          available_from?: string | null
+          available_to?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
@@ -1323,6 +1331,10 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          availability_enabled?: boolean
+          available_days?: number[]
+          available_from?: string | null
+          available_to?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
@@ -1345,6 +1357,10 @@ export type Database = {
       }
       menu_products: {
         Row: {
+          availability_enabled: boolean
+          available_days: number[]
+          available_from: string | null
+          available_to: string | null
           category_id: string
           created_at: string | null
           description: string | null
@@ -1362,6 +1378,10 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          availability_enabled?: boolean
+          available_days?: number[]
+          available_from?: string | null
+          available_to?: string | null
           category_id: string
           created_at?: string | null
           description?: string | null
@@ -1379,6 +1399,10 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          availability_enabled?: boolean
+          available_days?: number[]
+          available_from?: string | null
+          available_to?: string | null
           category_id?: string
           created_at?: string | null
           description?: string | null
