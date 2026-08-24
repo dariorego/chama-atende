@@ -27,8 +27,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Pencil, Trash2, GripVertical } from 'lucide-react';
+import { Pencil, Trash2, GripVertical, Clock } from 'lucide-react';
+import { formatAvailabilityLabel } from '@/lib/availability';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
+
 
 interface CategoriesTableProps {
   categories: MenuCategory[] | undefined;
@@ -80,7 +82,18 @@ function SortableRow({ category, onEdit, onDelete, isDragDisabled, onToggleActiv
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </button>
       </TableCell>
-      <TableCell className="font-medium">{category.name}</TableCell>
+      <TableCell className="font-medium">
+        <div className="flex flex-col gap-1">
+          <span>{category.name}</span>
+          {formatAvailabilityLabel(category) && (
+            <span className="flex items-center gap-1 text-xs font-normal text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              {formatAvailabilityLabel(category)}
+            </span>
+          )}
+        </div>
+      </TableCell>
+
       <TableCell className="max-w-[200px] truncate text-muted-foreground">
         {category.description || '-'}
       </TableCell>

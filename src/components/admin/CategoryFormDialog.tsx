@@ -22,6 +22,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
+import { AvailabilityFields } from '@/components/admin/AvailabilityFields';
+import { ALL_DAYS, normalizeTime } from '@/lib/availability';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100, 'Máximo 100 caracteres'),
@@ -30,7 +32,15 @@ const categorySchema = z.object({
   description: z.string().max(500, 'Máximo 500 caracteres').optional().nullable(),
   display_order: z.coerce.number().int().min(1, 'Ordem mínima é 1'),
   is_active: z.boolean(),
+  availability_enabled: z.boolean().default(false),
+  available_days: z.array(z.number().int().min(0).max(6)).default(ALL_DAYS),
+  available_from: z.string().nullable().default(null),
+  available_to: z.string().nullable().default(null),
+}).refine((data) => !data.availability_enabled || data.available_days.length > 0, {
+  message: 'Selecione ao menos um dia da semana',
+  path: ['available_days'],
 });
+
 
 export type CategoryFormData = z.infer<typeof categorySchema>;
 
@@ -72,18 +82,33 @@ export function CategoryFormDialog({
       description: '',
       display_order: 1,
       is_active: true,
+      availability_enabled: false,
+      available_days: ALL_DAYS,
+      available_from: null,
+      available_to: null,
     },
   });
 
   useEffect(() => {
     if (open) {
-      if (category) {
+      const cat = category as (MenuCategory & {
+        availability_enabled?: boolean | null;
+        available_days?: number[] | null;
+        available_from?: string | null;
+        available_to?: string | null;
+      }) | null | undefined;
+
+      if (cat) {
         form.reset({
-          name: category.name,
-          slug: category.slug,
-          description: category.description ?? '',
-          display_order: category.display_order ?? 1,
-          is_active: category.is_active ?? true,
+          name: cat.name,
+          slug: cat.slug,
+          description: cat.description ?? '',
+          display_order: cat.display_order ?? 1,
+          is_active: cat.is_active ?? true,
+          availability_enabled: cat.availability_enabled ?? false,
+          available_days: cat.available_days?.length ? cat.available_days : ALL_DAYS,
+          available_from: normalizeTime(cat.available_from) || null,
+          available_to: normalizeTime(cat.available_to) || null,
         });
       } else {
         form.reset({
@@ -92,6 +117,10 @@ export function CategoryFormDialog({
           description: '',
           display_order: suggestedOrder,
           is_active: true,
+          availability_enabled: false,
+          available_days: ALL_DAYS,
+          available_from: null,
+          available_to: null,
         });
       }
     }
@@ -106,9 +135,20 @@ export function CategoryFormDialog({
     }
   }, [watchName, isEditing, form]);
 
+  const availabilityEnabled = form.watch('availability_enabled');
+  const availableDays = form.watch('available_days');
+  const availableFrom = form.watch('available_from');
+  const availableTo = form.watch('available_to');
+
   const handleSubmit = (data: CategoryFormData) => {
-    onSubmit(data);
+    onSubmit({
+      ...data,
+      available_from: data.availability_enabled ? data.available_from || null : null,
+      available_to: data.availability_enabled ? data.available_to || null : null,
+      available_days: data.availability_enabled && data.available_days.length ? data.available_days : ALL_DAYS,
+    });
   };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -207,6 +247,20 @@ export function CategoryFormDialog({
                 )}
               />
             </div>
+
+            <AvailabilityFields
+              enabled={availabilityEnabled}
+              days={availableDays ?? ALL_DAYS}
+              from={availableFrom ?? ''}
+              to={availableTo ?? ''}
+              scopeLabel="a categoria e seus itens"
+              onEnabledChange={(v) => form.setValue('availability_enabled', v, { shouldValidate: true })}
+              onDaysChange={(v) => form.setValue('available_days', v, { shouldValidate: true })}
+              onFromChange={(v) => form.setValue('available_from', v || null)}
+              onToChange={(v) => form.setValue('available_to', v || null)}
+            />
+
+
 
             <div className="flex justify-end gap-2 pt-4">
               <Button

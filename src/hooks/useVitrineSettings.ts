@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTenant } from '@/hooks/useTenant';
+import { isAvailableNow, useAvailabilityClock } from '@/lib/availability';
 
 export type VitrineModel = 'cinema' | 'split' | 'mosaico';
 
@@ -70,13 +72,19 @@ export function useVitrineSettings() {
 }
 
 export function useVitrineDisplayProducts(tenantId?: string | null) {
-  return useQuery({
+  const now = useAvailabilityClock();
+
+  const query = useQuery({
     queryKey: ['vitrine-display-products', tenantId],
     queryFn: async () => {
       if (!tenantId) return [];
       const { data, error } = await supabase
         .from('menu_products')
-        .select('id, name, description, price, image_url, category_id')
+        .select(`
+          id, name, description, price, image_url, category_id,
+          availability_enabled, available_days, available_from, available_to,
+          category:menu_categories(availability_enabled, available_days, available_from, available_to)
+        `)
         .eq('restaurant_id', tenantId)
         .eq('is_active', true)
         .eq('show_on_display', true)
@@ -88,4 +96,15 @@ export function useVitrineDisplayProducts(tenantId?: string | null) {
     enabled: !!tenantId,
     refetchInterval: 60000,
   });
+
+  // Hide products outside their availability window (category wins over item)
+  const data = useMemo(() => {
+    if (!query.data) return query.data;
+    return query.data.filter(
+      (p) =>
+        isAvailableNow(p.category ?? null, undefined, now) && isAvailableNow(p, undefined, now),
+    );
+  }, [query.data, now]);
+
+  return { ...query, data } as typeof query;
 }

@@ -1,12 +1,18 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { useTenant } from "@/hooks/useTenant";
+import { isAvailableNow, useAvailabilityClock } from "@/lib/availability";
 
 export type MenuProduct = Tables<'menu_products'> & {
   category?: {
     slug: string;
     name: string;
+    availability_enabled?: boolean | null;
+    available_days?: number[] | null;
+    available_from?: string | null;
+    available_to?: string | null;
   } | null;
 };
 
@@ -18,9 +24,11 @@ export function calculatePromotion(price: number, promotionalPrice: number | nul
 }
 
 export function useMenuProducts() {
-  const { tenantId } = useTenant();
+  const { tenantId, tenant } = useTenant();
+  const now = useAvailabilityClock();
+  const timezone = tenant?.timezone ?? 'America/Sao_Paulo';
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['menu-products', tenantId],
     queryFn: async () => {
       if (!tenantId) return [];
@@ -29,7 +37,7 @@ export function useMenuProducts() {
         .from('menu_products')
         .select(`
           *,
-          category:menu_categories(slug, name)
+          category:menu_categories(slug, name, availability_enabled, available_days, available_from, available_to)
         `)
         .eq('restaurant_id', tenantId)
         .eq('is_active', true)
@@ -41,4 +49,16 @@ export function useMenuProducts() {
     },
     enabled: !!tenantId,
   });
+
+  // Hide products outside their availability window (category wins over item)
+  const data = useMemo(() => {
+    if (!query.data) return query.data;
+    return query.data.filter(
+      (p) =>
+        isAvailableNow(p.category ?? null, timezone, now) &&
+        isAvailableNow(p, timezone, now),
+    );
+  }, [query.data, timezone, now]);
+
+  return { ...query, data } as typeof query;
 }

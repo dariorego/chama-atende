@@ -108,6 +108,10 @@ export default function AdminCategories() {
           description: data.description,
           display_order: data.display_order,
           is_active: data.is_active,
+          availability_enabled: data.availability_enabled,
+          available_days: data.available_days,
+          available_from: data.available_from,
+          available_to: data.available_to,
         });
         toast.success('Categoria atualizada com sucesso!');
       } else {
@@ -117,7 +121,12 @@ export default function AdminCategories() {
           description: data.description,
           display_order: data.display_order,
           is_active: data.is_active,
+          availability_enabled: data.availability_enabled,
+          available_days: data.available_days,
+          available_from: data.available_from,
+          available_to: data.available_to,
           restaurant_id: restaurantId,
+
         });
         toast.success('Categoria criada com sucesso!');
       }

@@ -38,7 +38,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Pencil, Trash2, Star, CameraOff, GripVertical, ZoomIn } from 'lucide-react';
+import { Pencil, Trash2, Star, CameraOff, GripVertical, ZoomIn, Clock } from 'lucide-react';
+import { formatAvailabilityLabel } from '@/lib/availability';
+
 import { ImageZoomDialog } from '@/components/ui/image-zoom-dialog';
 import type { MenuProduct } from '@/hooks/useAdminProducts';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
@@ -151,13 +153,22 @@ function SortableProductRow({
         )}
       </TableCell>
       <TableCell>
-        <div className="flex items-center gap-2">
-          <span className="font-medium">{product.name}</span>
-          {product.is_highlight && (
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{product.name}</span>
+            {product.is_highlight && (
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            )}
+          </div>
+          {formatAvailabilityLabel(product) && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              {formatAvailabilityLabel(product)}
+            </span>
           )}
         </div>
       </TableCell>
+
       <TableCell className="text-right">
         <div className="space-y-1">
           {product.promotional_price ? (
