@@ -48,6 +48,16 @@ export function usePreOrderProducts() {
   return { ...query, data } as typeof query;
 }
 
+export interface PreOrderCategory {
+  id: string;
+  name: string;
+  slug: string;
+  availability_enabled?: boolean | null;
+  available_days?: number[] | null;
+  available_from?: string | null;
+  available_to?: string | null;
+}
+
 export function usePreOrderCategories() {
   const now = useAvailabilityClock();
 
@@ -77,19 +87,29 @@ export function usePreOrderCategories() {
       
       // Remove duplicates and format
       const uniqueCategories = data?.reduce((acc, cat) => {
-        if (!acc.find(c => c.id === cat.id) && isAvailableNow(cat, undefined, now)) {
+        if (!acc.find(c => c.id === cat.id)) {
           acc.push({
             id: cat.id,
             name: cat.name,
             slug: cat.slug,
+            availability_enabled: cat.availability_enabled,
+            available_days: cat.available_days,
+            available_from: cat.available_from,
+            available_to: cat.available_to,
           });
         }
         return acc;
-      }, [] as { id: string; name: string; slug: string }[]);
+      }, [] as PreOrderCategory[]);
 
       return uniqueCategories ?? [];
     },
   });
 
-  return query;
+  // Hide categories outside their availability window
+  const data = useMemo(() => {
+    if (!query.data) return query.data;
+    return query.data.filter((cat) => isAvailableNow(cat, undefined, now));
+  }, [query.data, now]);
+
+  return { ...query, data } as typeof query;
 }
