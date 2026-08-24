@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
+import { brokeredPreviewStorage } from './previewAuthStorage';
 
 // Backend self-hosted (EasyPanel). Fixado no código porque o .env do projeto
 // é regravado automaticamente pela plataforma. URL e anon key são públicas.
@@ -17,7 +18,7 @@ export const SUPABASE_PROJECT_URL = SUPABASE_URL;
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
+    storage: brokeredPreviewStorage(),
     persistSession: true,
     autoRefreshToken: true,
   }
