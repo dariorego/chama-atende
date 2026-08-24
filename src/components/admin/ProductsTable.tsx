@@ -38,7 +38,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Pencil, Trash2, Star, CameraOff, GripVertical, ZoomIn } from 'lucide-react';
+import { Pencil, Trash2, Star, CameraOff, GripVertical, ZoomIn, Clock } from 'lucide-react';
+import { formatAvailabilityLabel } from '@/lib/availability';
+
 import { ImageZoomDialog } from '@/components/ui/image-zoom-dialog';
 import type { MenuProduct } from '@/hooks/useAdminProducts';
 import type { MenuCategory } from '@/hooks/useAdminCategories';
