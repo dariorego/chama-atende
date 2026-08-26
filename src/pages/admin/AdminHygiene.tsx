@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, Pencil, Play, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, Download, Pencil, Play, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { HygieneTemplateDialog } from "@/components/admin/HygieneTemplateDialog";
 import { HygieneRunSheet } from "@/components/admin/HygieneRunSheet";
