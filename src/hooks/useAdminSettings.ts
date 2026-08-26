@@ -26,6 +26,8 @@ export interface RestaurantSettings {
   business_hours: BusinessHours;
   timezone: string;
   google_maps_url: string | null;
+  google_review_url: string | null;
+  google_review_min_rating: number;
   location_coordinates: LocationCoordinates | null;
   plan: string | null;
   custom_domain: string | null;
