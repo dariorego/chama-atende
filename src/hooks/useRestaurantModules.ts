@@ -20,6 +20,7 @@ const DEFAULT_MODULES: ModulesMap = {
   coupons: false,
   referralProgram: false,
   technicalSheet: false,
+  hygieneChecklists: false,
 };
 
 type RestaurantPlan = 'starter' | 'professional' | 'enterprise' | string | null | undefined;

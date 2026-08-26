@@ -56,6 +56,8 @@ import AdminRecipes from "./pages/admin/AdminRecipes";
 import AdminCmv from "./pages/admin/AdminCmv";
 import AdminRecipeEditor from "./pages/admin/AdminRecipeEditor";
 import AdminWaste from "./pages/admin/AdminWaste";
+import AdminHygiene from "./pages/admin/AdminHygiene";
+import AdminShelfLife from "./pages/admin/AdminShelfLife";
 import EventBookingPage from "./pages/EventBookingPage";
 import VitrineDisplayPage from "./pages/VitrineDisplayPage";
 import PreOrderMenuPage from "./pages/PreOrderMenuPage";
@@ -424,6 +426,26 @@ function AdminTenantPages() {
               <AuthGuard requireAdmin section="cmv">
                 <AdminLayout>
                   <AdminCmv />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="higiene"
+            element={
+              <AuthGuard requireAdmin section="higiene">
+                <AdminLayout>
+                  <AdminHygiene />
+                </AdminLayout>
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="validades"
+            element={
+              <AuthGuard requireAdmin section="validades">
+                <AdminLayout>
+                  <AdminShelfLife />
                 </AdminLayout>
               </AuthGuard>
             }

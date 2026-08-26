@@ -91,6 +91,11 @@ export const MODULE_INFO: Record<string, { label: string; description: string; i
     description: "Insumos, fichas técnicas, CMV, desperdício e inventário",
     icon: "ClipboardList",
   },
+  hygiene_checklists: {
+    label: "Checklists de Higiene",
+    description: "Registro por turno, validação de temperatura e controle de validade (ANVISA)",
+    icon: "ShieldCheck",
+  },
 };
 
 export function useAdminModules() {
