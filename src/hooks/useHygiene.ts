@@ -178,12 +178,19 @@ export type RunWithRelations = HygieneRun & {
   hygiene_checklist_answers: HygieneAnswer[];
 };
 
-export function useHygieneRuns(from?: string, to?: string, shift?: HygieneShift | "ALL") {
+export function useHygieneRuns(
+  from?: string,
+  to?: string,
+  shift?: HygieneShift | "ALL",
+  options?: { enabled?: boolean; refetchInterval?: number },
+) {
   const { tenantId } = useTenant();
   return useQuery({
     queryKey: ["hyg-runs", tenantId, from, to, shift],
-    enabled: !!tenantId,
+    enabled: !!tenantId && (options?.enabled ?? true),
+    refetchInterval: options?.refetchInterval,
     queryFn: async () => {
+
       let q = supabase
         .from("hygiene_checklist_runs")
         .select("*, hygiene_checklists(name, shift), hygiene_checklist_answers(*)")
