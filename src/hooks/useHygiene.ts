@@ -57,11 +57,12 @@ export function currentShift(): HygieneShift {
 
 /* ------------------------------- Templates ------------------------------- */
 
-export function useHygieneChecklists() {
+export function useHygieneChecklists(options?: { enabled?: boolean }) {
   const { tenantId } = useTenant();
   return useQuery({
     queryKey: ["hyg-checklists", tenantId],
-    enabled: !!tenantId,
+    enabled: !!tenantId && (options?.enabled ?? true),
+
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hygiene_checklists")
