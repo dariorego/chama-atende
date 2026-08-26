@@ -262,21 +262,30 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {group.items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <NavLink
-                            to={item.url}
-                            end={item.url === adminBase}
-                            className="flex items-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors"
-                            activeClassName="bg-primary/10 text-primary font-medium"
-                          >
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                    {group.items.map((item) => {
+                      const badge = (item as { badge?: number }).badge ?? 0;
+                      return (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton asChild>
+                            <NavLink
+                              to={item.url}
+                              end={item.url === adminBase}
+                              className="flex items-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors"
+                              activeClassName="bg-primary/10 text-primary font-medium"
+                            >
+                              <item.icon className="h-4 w-4" />
+                              <span className="flex-1">{item.title}</span>
+                              {badge > 0 && (
+                                <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-semibold leading-none text-destructive-foreground">
+                                  {badge > 99 ? '99+' : badge}
+                                </span>
+                              )}
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
