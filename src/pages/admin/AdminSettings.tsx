@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Globe, MapPin, Check, X, Music } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Globe, MapPin, Check, X, Music, Star } from 'lucide-react';
 import { useTenantSettings } from '@/hooks/useAdminSettings';
 import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS, LocationCoordinates, NOTIFICATION_SOUNDS, type NotificationSoundType } from '@/types/restaurant';
 import { Slider } from '@/components/ui/slider';
