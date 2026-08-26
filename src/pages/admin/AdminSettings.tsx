@@ -66,6 +66,8 @@ export default function AdminSettings() {
   
   // Location states
   const [googleMapsUrl, setGoogleMapsUrl] = useState('');
+  const [googleReviewUrl, setGoogleReviewUrl] = useState('');
+  const [googleReviewMinRating, setGoogleReviewMinRating] = useState('4');
   const [locationCoordinates, setLocationCoordinates] = useState<LocationCoordinates | null>(null);
   const [locationError, setLocationError] = useState('');
   
@@ -149,6 +151,12 @@ export default function AdminSettings() {
       // Load location data
       if (restaurant.google_maps_url) {
         setGoogleMapsUrl(restaurant.google_maps_url);
+      }
+      if (restaurant.google_review_url) {
+        setGoogleReviewUrl(restaurant.google_review_url);
+      }
+      if (restaurant.google_review_min_rating) {
+        setGoogleReviewMinRating(String(restaurant.google_review_min_rating));
       }
       if (restaurant.location_coordinates) {
         setLocationCoordinates(restaurant.location_coordinates);
@@ -241,6 +249,8 @@ export default function AdminSettings() {
       business_hours: businessHours,
       timezone: timezone,
       google_maps_url: googleMapsUrl || null,
+      google_review_url: googleReviewUrl.trim() || null,
+      google_review_min_rating: Math.min(5, Math.max(1, Number(googleReviewMinRating) || 4)),
       location_coordinates: locationCoordinates,
     });
   };
@@ -672,6 +682,49 @@ export default function AdminSettings() {
                   </p>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Avaliação no Google */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Star className="h-5 w-5" />
+                Avaliação no Google
+              </CardTitle>
+              <CardDescription>
+                Clientes satisfeitos são levados direto para avaliar no Google
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Link de avaliação do Google</Label>
+                <Input
+                  value={googleReviewUrl}
+                  onChange={(e) => setGoogleReviewUrl(e.target.value)}
+                  placeholder="https://g.page/r/.../review"
+                  className="bg-surface placeholder:text-surface-foreground border-border focus:ring-primary"
+                />
+                <p className="text-xs text-muted-foreground">
+                  No Google Business Profile, use "Pedir avaliações" e copie o link. Também funciona:
+                  https://search.google.com/local/writereview?placeid=SEU_PLACE_ID
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label>Nota mínima para redirecionar</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={5}
+                  value={googleReviewMinRating}
+                  onChange={(e) => setGoogleReviewMinRating(e.target.value)}
+                  className="bg-surface placeholder:text-surface-foreground border-border focus:ring-primary max-w-24"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Avaliações com média igual ou maior que este valor abrem o Google automaticamente.
+                  Notas menores ficam apenas internas.
+                </p>
+              </div>
             </CardContent>
           </Card>
 
