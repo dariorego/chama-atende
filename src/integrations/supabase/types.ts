@@ -765,6 +765,286 @@ export type Database = {
           },
         ]
       }
+      hygiene_checklist_answers: {
+        Row: {
+          answer: Database["public"]["Enums"]["hygiene_answer"] | null
+          corrective_action: string | null
+          created_at: string
+          id: string
+          is_out_of_range: boolean
+          item_id: string
+          numeric_value: number | null
+          run_id: string
+          text_value: string | null
+          updated_at: string
+        }
+        Insert: {
+          answer?: Database["public"]["Enums"]["hygiene_answer"] | null
+          corrective_action?: string | null
+          created_at?: string
+          id?: string
+          is_out_of_range?: boolean
+          item_id: string
+          numeric_value?: number | null
+          run_id: string
+          text_value?: string | null
+          updated_at?: string
+        }
+        Update: {
+          answer?: Database["public"]["Enums"]["hygiene_answer"] | null
+          corrective_action?: string | null
+          created_at?: string
+          id?: string
+          is_out_of_range?: boolean
+          item_id?: string
+          numeric_value?: number | null
+          run_id?: string
+          text_value?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hygiene_checklist_answers_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "hygiene_checklist_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hygiene_checklist_answers_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "hygiene_checklist_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hygiene_checklist_items: {
+        Row: {
+          checklist_id: string
+          created_at: string
+          id: string
+          is_required: boolean
+          item_type: Database["public"]["Enums"]["hygiene_item_type"]
+          label: string
+          max_value: number | null
+          min_value: number | null
+          position: number
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          checklist_id: string
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          item_type?: Database["public"]["Enums"]["hygiene_item_type"]
+          label: string
+          max_value?: number | null
+          min_value?: number | null
+          position?: number
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          checklist_id?: string
+          created_at?: string
+          id?: string
+          is_required?: boolean
+          item_type?: Database["public"]["Enums"]["hygiene_item_type"]
+          label?: string
+          max_value?: number | null
+          min_value?: number | null
+          position?: number
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hygiene_checklist_items_checklist_id_fkey"
+            columns: ["checklist_id"]
+            isOneToOne: false
+            referencedRelation: "hygiene_checklists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hygiene_checklist_runs: {
+        Row: {
+          checklist_id: string
+          completed_at: string | null
+          compliance_pct: number
+          created_at: string
+          id: string
+          notes: string | null
+          performed_by: string | null
+          performed_by_name: string | null
+          restaurant_id: string
+          run_date: string
+          shift: Database["public"]["Enums"]["hygiene_shift"]
+          status: Database["public"]["Enums"]["hygiene_run_status"]
+          updated_at: string
+        }
+        Insert: {
+          checklist_id: string
+          completed_at?: string | null
+          compliance_pct?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          performed_by_name?: string | null
+          restaurant_id: string
+          run_date?: string
+          shift?: Database["public"]["Enums"]["hygiene_shift"]
+          status?: Database["public"]["Enums"]["hygiene_run_status"]
+          updated_at?: string
+        }
+        Update: {
+          checklist_id?: string
+          completed_at?: string | null
+          compliance_pct?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          performed_by_name?: string | null
+          restaurant_id?: string
+          run_date?: string
+          shift?: Database["public"]["Enums"]["hygiene_shift"]
+          status?: Database["public"]["Enums"]["hygiene_run_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hygiene_checklist_runs_checklist_id_fkey"
+            columns: ["checklist_id"]
+            isOneToOne: false
+            referencedRelation: "hygiene_checklists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hygiene_checklist_runs_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hygiene_checklists: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          restaurant_id: string
+          shift: Database["public"]["Enums"]["hygiene_shift"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          restaurant_id: string
+          shift?: Database["public"]["Enums"]["hygiene_shift"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          restaurant_id?: string
+          shift?: Database["public"]["Enums"]["hygiene_shift"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hygiene_checklists_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hygiene_shelf_life_items: {
+        Row: {
+          batch_code: string | null
+          created_at: string
+          created_by: string | null
+          discarded_at: string | null
+          discarded_reason: string | null
+          expires_at: string
+          id: string
+          ingredient_id: string | null
+          opened_at: string
+          product_name: string
+          quantity: number | null
+          restaurant_id: string
+          status: Database["public"]["Enums"]["hygiene_shelf_status"]
+          storage_location: string | null
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          batch_code?: string | null
+          created_at?: string
+          created_by?: string | null
+          discarded_at?: string | null
+          discarded_reason?: string | null
+          expires_at: string
+          id?: string
+          ingredient_id?: string | null
+          opened_at?: string
+          product_name: string
+          quantity?: number | null
+          restaurant_id: string
+          status?: Database["public"]["Enums"]["hygiene_shelf_status"]
+          storage_location?: string | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          batch_code?: string | null
+          created_at?: string
+          created_by?: string | null
+          discarded_at?: string | null
+          discarded_reason?: string | null
+          expires_at?: string
+          id?: string
+          ingredient_id?: string | null
+          opened_at?: string
+          product_name?: string
+          quantity?: number | null
+          restaurant_id?: string
+          status?: Database["public"]["Enums"]["hygiene_shelf_status"]
+          storage_location?: string | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hygiene_shelf_life_items_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hygiene_shelf_life_items_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ingredient_categories: {
         Row: {
           created_at: string
@@ -3789,6 +4069,11 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "manager" | "staff"
+      hygiene_answer: "CONFORME" | "NAO_CONFORME" | "NA"
+      hygiene_item_type: "CONFORMIDADE" | "NUMERICO" | "TEXTO"
+      hygiene_run_status: "EM_ANDAMENTO" | "CONCLUIDO"
+      hygiene_shelf_status: "ATIVO" | "DESCARTADO" | "CONSUMIDO"
+      hygiene_shift: "MANHA" | "TARDE" | "NOITE" | "INTEGRAL"
       ingredient_type: "COMPRADO" | "PREPARACAO"
       ingredient_unit: "KG" | "LT" | "UN"
       recipe_status: "RASCUNHO" | "PUBLICADA" | "FORA_DE_LINHA"
@@ -3936,6 +4221,11 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "manager", "staff"],
+      hygiene_answer: ["CONFORME", "NAO_CONFORME", "NA"],
+      hygiene_item_type: ["CONFORMIDADE", "NUMERICO", "TEXTO"],
+      hygiene_run_status: ["EM_ANDAMENTO", "CONCLUIDO"],
+      hygiene_shelf_status: ["ATIVO", "DESCARTADO", "CONSUMIDO"],
+      hygiene_shift: ["MANHA", "TARDE", "NOITE", "INTEGRAL"],
       ingredient_type: ["COMPRADO", "PREPARACAO"],
       ingredient_unit: ["KG", "LT", "UN"],
       recipe_status: ["RASCUNHO", "PUBLICADA", "FORA_DE_LINHA"],

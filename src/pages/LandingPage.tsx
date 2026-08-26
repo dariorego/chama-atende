@@ -153,6 +153,14 @@ const modules = [
     badge: "Novo",
   },
   {
+    icon: ShieldCheck,
+    title: "Checklists de Higiene",
+    slug: "checklists-higiene",
+    desc: "Registro por turno, validação de temperatura e controle de validade.",
+    span: "",
+    badge: "Novo",
+  },
+  {
     icon: UserPlus,
     title: "Programa de Indicação",
     slug: "programa-indicacao",

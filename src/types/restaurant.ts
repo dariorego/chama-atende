@@ -141,6 +141,7 @@ export interface ModulesMap {
   coupons: boolean;
   referralProgram: boolean;
   technicalSheet: boolean;
+  hygieneChecklists: boolean;
 }
 
 // Module name mapping from snake_case (DB) to camelCase (frontend)
@@ -161,6 +162,7 @@ export const MODULE_NAME_MAP: Record<string, keyof ModulesMap> = {
   'coupons': 'coupons',
   'referral_program': 'referralProgram',
   'technical_sheet': 'technicalSheet',
+  'hygiene_checklists': 'hygieneChecklists',
 };
 
 // Format time from database (HH:MM:SS) to display format (HH:MM)

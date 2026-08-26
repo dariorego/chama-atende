@@ -4,7 +4,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import {
   Puzzle, Loader2, UtensilsCrossed, Bell, CalendarDays, Users, ChefHat, Star, ShoppingBag,
-  Tv, Receipt, PartyPopper, CalendarClock, MessageCircle, Gift, Tag, UserPlus, ClipboardList,
+  Tv, Receipt, PartyPopper, CalendarClock, MessageCircle, Gift, Tag, UserPlus, ClipboardList, ShieldCheck,
   List, LayoutGrid,
 } from 'lucide-react';
 import { useAdminModules, MODULE_INFO } from '@/hooks/useAdminModules';
@@ -26,6 +26,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Tag,
   UserPlus,
   ClipboardList,
+  ShieldCheck,
 };
 
 export default function AdminModules() {

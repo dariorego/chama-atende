@@ -15,6 +15,7 @@ import fidelidadeHero from "@/assets/modulo-fidelidade-cashback.jpg";
 import cuponsHero from "@/assets/modulo-cupons-promocoes.jpg";
 import indicacaoHero from "@/assets/modulo-programa-indicacao.jpg";
 import fichaHero from "@/assets/modulo-ficha-tecnica.jpg";
+import higieneHero from "@/assets/modulo-checklists-higiene.jpg";
 
 export interface ModuleFeature {
   icon: string;
@@ -1392,6 +1393,77 @@ export const MODULE_LANDINGS: Record<string, ModuleLanding> = {
     cta: {
       title: "Descubra o custo real do seu cardápio",
       desc: "Ative a Ficha Técnica e passe a precificar com base em dados.",
+    },
+  },
+  "checklists-higiene": {
+    slug: "checklists-higiene",
+    moduleName: "Checklists de Higiene",
+    title: "Checklists de Higiene e ANVISA",
+    subtitle: "Boas práticas registradas turno a turno, com prova documental.",
+    description:
+      "Crie checklists por turno, registre temperaturas com validação automática de faixa, exija ação corretiva em cada não conformidade e controle a validade dos produtos manipulados.",
+    heroImage: higieneHero,
+    tryPath: "/onboarding",
+    about: [
+      {
+        heading: "O que são os Checklists de Higiene",
+        body: "É o controle digital das boas práticas exigidas pela vigilância sanitária: listas de verificação por turno com responsável identificado, horário do registro e histórico auditável." },
+      {
+        heading: "Quais problemas resolve",
+        body: "Elimina planilhas e fichas de papel que somem antes da fiscalização, evita registros preenchidos de qualquer jeito no fim do dia e garante que toda não conformidade tenha uma ação corretiva escrita." },
+      {
+        heading: "Para quem foi desenvolvido",
+        body: "Restaurantes, bares, padarias, confeitarias, lanchonetes, cozinhas industriais, buffets e qualquer operação que manipule alimentos e precise comprovar boas práticas." },
+      {
+        heading: "Como funciona",
+        body: "Você monta modelos de checklist com itens de conformidade, itens numéricos com faixa aceitável (como temperatura de câmara e freezer) e campos de texto. A equipe inicia o checklist do turno, responde os itens e o sistema calcula o percentual de conformidade." },
+      {
+        heading: "Como se integra à plataforma",
+        body: "O controle de validade usa os insumos cadastrados na Ficha Técnica, e os itens descartados podem ser lançados junto ao controle de desperdício para refletir no CMV." },
+    ],
+    features: [
+      { icon: "ClipboardList", title: "Modelos por turno", desc: "Checklists distintos para manhã, tarde, noite ou turno integral." },
+      { icon: "Thermometer", title: "Validação de temperatura", desc: "Defina faixa mínima e máxima e o sistema acusa o valor fora do padrão." },
+      { icon: "AlertTriangle", title: "Ação corretiva obrigatória", desc: "Nenhuma não conformidade é encerrada sem registro da providência." },
+      { icon: "UserCheck", title: "Responsável identificado", desc: "Cada registro guarda quem executou, a data e o turno." },
+      { icon: "Percent", title: "Percentual de conformidade", desc: "Cálculo automático a cada resposta do checklist." },
+      { icon: "CalendarX", title: "Controle de validade", desc: "Produtos manipulados com data de abertura, validade e lote." },
+      { icon: "ShieldCheck", title: "Semáforo de vencimento", desc: "Verde, amarelo e vermelho para agir antes de vencer." },
+      { icon: "Trash2", title: "Registro de descarte", desc: "Motivo do descarte documentado item por item." },
+      { icon: "History", title: "Histórico auditável", desc: "Consulte qualquer período por turno e por checklist." },
+      { icon: "Download", title: "Exportação em CSV", desc: "Leve os registros para a fiscalização ou para a consultoria." },
+      { icon: "Layers", title: "Itens flexíveis", desc: "Conformidade, numérico com unidade ou texto livre." },
+      { icon: "Lock", title: "Acesso por permissão", desc: "Somente perfis autorizados criam e encerram registros." },
+    ],
+    flow: [
+      { title: "Monte o modelo", desc: "Cadastre os itens do checklist e as faixas aceitáveis." },
+      { title: "Inicie o turno", desc: "A equipe abre o checklist do dia com responsável registrado." },
+      { title: "Responda os itens", desc: "Marque conformidade e informe temperaturas medidas." },
+      { title: "Trate desvios", desc: "Item fora da faixa exige ação corretiva antes de concluir." },
+      { title: "Conclua o registro", desc: "O sistema calcula o percentual de conformidade do turno." },
+      { title: "Acompanhe validades", desc: "Veja o que vence hoje e registre descartes." },
+    ],
+    benefits: [
+      { icon: "ShieldCheck", title: "Segurança sanitária", desc: "Boas práticas cumpridas e comprovadas todos os dias." },
+      { icon: "FileCheck", title: "Pronto para fiscalização", desc: "Histórico completo disponível em segundos." },
+      { icon: "Sparkles", title: "Menos perdas", desc: "Validades monitoradas evitam descarte por esquecimento." },
+      { icon: "Clock", title: "Rotina mais rápida", desc: "Checklist no celular ou tablet, sem papel." },
+      { icon: "Users", title: "Equipe responsável", desc: "Cada registro tem autor e horário." },
+      { icon: "BarChart3", title: "Indicadores de qualidade", desc: "Conformidade média e não conformidades por período." },
+    ],
+    useCases: ["Restaurantes", "Padarias", "Confeitarias", "Bares", "Cozinhas industriais", "Buffets"],
+    integrations: ["Ficha Técnica e CMV", "Controle de Desperdício", "Agenda de Funcionários", "Métricas e Relatórios"],
+    faq: [
+      { q: "Atende a RDC 216 da ANVISA?", a: "O módulo digitaliza os controles de boas práticas normalmente exigidos, como higienização, temperatura e validade, com registro por turno e responsável." },
+      { q: "Como funciona a validação de temperatura?", a: "Você define a faixa aceitável do item e, se o valor medido sair dela, o registro é marcado como não conformidade e exige ação corretiva." },
+      { q: "Posso criar checklists diferentes por turno?", a: "Sim, cada modelo é vinculado a um turno e pode ter itens próprios." },
+      { q: "Dá para consultar registros antigos?", a: "Sim, o histórico é filtrável por período e turno e pode ser exportado em CSV." },
+      { q: "O controle de validade usa meus insumos?", a: "Sim, você pode vincular o registro a um insumo já cadastrado ou informar um produto manipulado." },
+      { q: "Quem pode preencher os checklists?", a: "Perfis com permissão no módulo, definidos na tela de usuários do painel." },
+    ],
+    cta: {
+      title: "Coloque a higiene da sua cozinha no controle",
+      desc: "Ative os checklists e tenha registros prontos para qualquer fiscalização.",
     },
   },
 };

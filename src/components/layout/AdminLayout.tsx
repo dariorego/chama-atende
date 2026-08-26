@@ -50,6 +50,8 @@ import {
   Gift,
   Tag,
   UserPlus,
+  ShieldCheck,
+  CalendarX,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -127,6 +129,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'technical_sheet', title: 'Painel de CMV', url: `${adminBase}/cmv`, icon: Gauge },
     { moduleName: 'technical_sheet', title: 'Fichas Técnicas', url: `${adminBase}/fichas`, icon: ChefHat },
     { moduleName: 'technical_sheet', title: 'Desperdício', url: `${adminBase}/desperdicio`, icon: Trash2 },
+    { moduleName: 'hygiene_checklists', title: 'Higiene', url: `${adminBase}/higiene`, icon: ShieldCheck },
+    { moduleName: 'hygiene_checklists', title: 'Validades', url: `${adminBase}/validades`, icon: CalendarX },
   ].filter((item) => isModuleActive(item.moduleName));
 
   // Composição items (subitems of kitchen_order)
