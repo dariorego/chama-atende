@@ -49,6 +49,16 @@ import {
   Play,
   Move,
   PartyPopper,
+  Thermometer,
+  AlertTriangle,
+  UserCheck,
+  Percent,
+  CalendarX,
+  Trash2,
+  History,
+  Download,
+  Lock,
+  FileCheck,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -91,6 +101,16 @@ const ICONS: Record<string, LucideIcon> = {
   Play,
   Move,
   PartyPopper,
+  Thermometer,
+  AlertTriangle,
+  UserCheck,
+  Percent,
+  CalendarX,
+  Trash2,
+  History,
+  Download,
+  Lock,
+  FileCheck,
 };
 
 export default function ModuleDetailPage() {
