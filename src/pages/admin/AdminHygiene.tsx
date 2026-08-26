@@ -61,6 +61,10 @@ export default function AdminHygiene() {
 
   const activeTemplates = checklists.filter((c) => c.is_active);
 
+  const itemMap = useMemo(() => buildItemMap(checklists), [checklists]);
+  const openNc = useMemo(() => openNonConformities(runs, itemMap), [runs, itemMap]);
+  const openNcCompleted = openNc.filter((nc) => nc.run_status === "CONCLUIDO");
+
   const stats = useMemo(() => {
     const completed = runs.filter((r) => r.status === "CONCLUIDO");
     const avg =
@@ -73,6 +77,7 @@ export default function AdminHygiene() {
     );
     return { total: runs.length, completed: completed.length, avg, nc };
   }, [runs]);
+
 
   const handleStart = async () => {
     if (!startForm.checklist_id) {
