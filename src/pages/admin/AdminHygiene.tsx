@@ -15,7 +15,9 @@ import { downloadCSV, toCSV } from "@/lib/csv";
 import {
   SHIFTS,
   SHIFT_LABELS,
+  buildItemMap,
   currentShift,
+  openNonConformities,
   today,
   useDeleteChecklist,
   useDeleteRun,
@@ -27,6 +29,7 @@ import {
   type HygieneShift,
   type RunWithRelations,
 } from "@/hooks/useHygiene";
+
 
 type TemplateWithItems = HygieneChecklist & { hygiene_checklist_items: HygieneChecklistItem[] };
 
