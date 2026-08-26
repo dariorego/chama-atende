@@ -2981,6 +2981,8 @@ export type Database = {
           email: string | null
           features: Json | null
           google_maps_url: string | null
+          google_review_min_rating: number
+          google_review_url: string | null
           id: string
           identification_type: string | null
           is_active: boolean | null
@@ -3013,6 +3015,8 @@ export type Database = {
           email?: string | null
           features?: Json | null
           google_maps_url?: string | null
+          google_review_min_rating?: number
+          google_review_url?: string | null
           id?: string
           identification_type?: string | null
           is_active?: boolean | null
@@ -3045,6 +3049,8 @@ export type Database = {
           email?: string | null
           features?: Json | null
           google_maps_url?: string | null
+          google_review_min_rating?: number
+          google_review_url?: string | null
           id?: string
           identification_type?: string | null
           is_active?: boolean | null

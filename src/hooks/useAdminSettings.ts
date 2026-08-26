@@ -26,6 +26,8 @@ export interface RestaurantSettings {
   business_hours: BusinessHours;
   timezone: string;
   google_maps_url: string | null;
+  google_review_url: string | null;
+  google_review_min_rating: number;
   location_coordinates: LocationCoordinates | null;
   plan: string | null;
   custom_domain: string | null;
@@ -53,6 +55,8 @@ export interface UpdateRestaurantData {
   business_hours?: BusinessHours;
   timezone?: string;
   google_maps_url?: string | null;
+  google_review_url?: string | null;
+  google_review_min_rating?: number;
   location_coordinates?: LocationCoordinates | null;
 }
 
@@ -93,6 +97,8 @@ export function useAdminSettings(restaurantId?: string) {
         business_hours: (data.business_hours as unknown as BusinessHours) || DEFAULT_BUSINESS_HOURS,
         timezone: (data.timezone as string) || 'America/Sao_Paulo',
         google_maps_url: (data.google_maps_url as string) || null,
+        google_review_url: (data.google_review_url as string) || null,
+        google_review_min_rating: Number(data.google_review_min_rating ?? 4),
         location_coordinates: (data.location_coordinates as unknown as LocationCoordinates) || null,
         plan: data.plan || 'starter',
         custom_domain: data.custom_domain || null,

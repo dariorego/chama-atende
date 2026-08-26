@@ -120,12 +120,25 @@ const CustomerReviewPage = () => {
         observations: observations || null,
       });
 
+      // Média das notas informadas
+      const given = [ambienteRating, atendimentoRating, comidaRating].filter((r) => r > 0);
+      const average = given.length ? given.reduce((a, b) => a + b, 0) / given.length : 0;
+      const minRating = restaurant.google_review_min_rating || 4;
+      const googleUrl = restaurant.google_review_url?.trim();
+      const shouldRedirect = Boolean(googleUrl) && average >= minRating;
+
       toast({
         title: "Avaliação enviada!",
-        description: "Obrigado por compartilhar sua experiência conosco.",
+        description: shouldRedirect
+          ? "Obrigado! Vamos te levar ao Google para compartilhar sua experiência."
+          : "Obrigado por compartilhar sua experiência conosco.",
       });
 
       setTimeout(() => {
+        if (shouldRedirect && googleUrl) {
+          window.location.href = googleUrl;
+          return;
+        }
         navigate(tenant?.slug ? `/${tenant.slug}` : '/');
       }, 1500);
     } catch (error) {
