@@ -57,11 +57,12 @@ export function currentShift(): HygieneShift {
 
 /* ------------------------------- Templates ------------------------------- */
 
-export function useHygieneChecklists() {
+export function useHygieneChecklists(options?: { enabled?: boolean }) {
   const { tenantId } = useTenant();
   return useQuery({
     queryKey: ["hyg-checklists", tenantId],
-    enabled: !!tenantId,
+    enabled: !!tenantId && (options?.enabled ?? true),
+
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hygiene_checklists")
@@ -177,12 +178,19 @@ export type RunWithRelations = HygieneRun & {
   hygiene_checklist_answers: HygieneAnswer[];
 };
 
-export function useHygieneRuns(from?: string, to?: string, shift?: HygieneShift | "ALL") {
+export function useHygieneRuns(
+  from?: string,
+  to?: string,
+  shift?: HygieneShift | "ALL",
+  options?: { enabled?: boolean; refetchInterval?: number },
+) {
   const { tenantId } = useTenant();
   return useQuery({
     queryKey: ["hyg-runs", tenantId, from, to, shift],
-    enabled: !!tenantId,
+    enabled: !!tenantId && (options?.enabled ?? true),
+    refetchInterval: options?.refetchInterval,
     queryFn: async () => {
+
       let q = supabase
         .from("hygiene_checklist_runs")
         .select("*, hygiene_checklists(name, shift), hygiene_checklist_answers(*)")
@@ -278,11 +286,16 @@ export type ShelfLifeWithIngredient = ShelfLifeItem & {
   ingredients: { name: string; unit: string } | null;
 };
 
-export function useShelfLifeItems(status?: HygieneShelfStatus | "ALL") {
+export function useShelfLifeItems(
+  status?: HygieneShelfStatus | "ALL",
+  options?: { enabled?: boolean; refetchInterval?: number },
+) {
   const { tenantId } = useTenant();
   return useQuery({
     queryKey: ["hyg-shelf", tenantId, status],
-    enabled: !!tenantId,
+    enabled: !!tenantId && (options?.enabled ?? true),
+    refetchInterval: options?.refetchInterval,
+
     queryFn: async () => {
       let q = supabase
         .from("hygiene_shelf_life_items")
@@ -397,4 +410,79 @@ export function rangeLabel(item: HygieneChecklistItem): string {
   if (item.min_value !== null) return `Mínimo: ${item.min_value}${unit}`;
   if (item.max_value !== null) return `Máximo: ${item.max_value}${unit}`;
   return "";
+}
+
+/* --------------------------- Não conformidades --------------------------- */
+
+export type NonConformity = {
+  key: string;
+  run_id: string;
+  item_id: string;
+  run_date: string;
+  shift: HygieneShift;
+  checklist_name: string;
+  item_label: string;
+  value_label: string;
+  range_text: string;
+  performed_by_name: string | null;
+  run_status: HygieneRunStatus;
+  has_corrective: boolean;
+  kind: "NUMERICO" | "CONFORMIDADE";
+};
+
+/** Indexa os itens de todos os modelos por id, para resolver rótulos e faixas. */
+export function buildItemMap(
+  checklists: (HygieneChecklist & { hygiene_checklist_items: HygieneChecklistItem[] })[],
+): Map<string, HygieneChecklistItem> {
+  const map = new Map<string, HygieneChecklistItem>();
+  for (const c of checklists) {
+    for (const item of c.hygiene_checklist_items ?? []) map.set(item.id, item);
+  }
+  return map;
+}
+
+/** Lista todas as não conformidades (valor fora da faixa ou item "Não conforme"). */
+export function nonConformities(
+  runs: RunWithRelations[],
+  itemMap: Map<string, HygieneChecklistItem>,
+): NonConformity[] {
+  const list: NonConformity[] = [];
+  for (const run of runs) {
+    for (const answer of run.hygiene_checklist_answers ?? []) {
+      const item = itemMap.get(answer.item_id);
+      const numeric = answer.numeric_value === null ? null : Number(answer.numeric_value);
+      const outOfRange =
+        Boolean(answer.is_out_of_range) || (item ? isOutOfRange(item, numeric) : false);
+      const nonConforme = answer.answer === "NAO_CONFORME";
+      if (!outOfRange && !nonConforme) continue;
+      list.push({
+        key: `${answer.run_id}:${answer.item_id}`,
+        run_id: answer.run_id,
+        item_id: answer.item_id,
+        run_date: run.run_date,
+        shift: run.shift as HygieneShift,
+        checklist_name: run.hygiene_checklists?.name ?? "Checklist",
+        item_label: item?.label ?? "Item",
+        value_label: nonConforme
+          ? ANSWER_LABELS.NAO_CONFORME
+          : numeric === null
+            ? "-"
+            : `${numeric}${item?.unit ? ` ${item.unit}` : ""}`,
+        range_text: item ? rangeLabel(item) : "",
+        performed_by_name: run.performed_by_name,
+        run_status: run.status as HygieneRunStatus,
+        has_corrective: Boolean(answer.corrective_action?.trim()),
+        kind: nonConforme ? "CONFORMIDADE" : "NUMERICO",
+      });
+    }
+  }
+  return list;
+}
+
+/** Não conformidades ainda sem ação corretiva registrada. */
+export function openNonConformities(
+  runs: RunWithRelations[],
+  itemMap: Map<string, HygieneChecklistItem>,
+): NonConformity[] {
+  return nonConformities(runs, itemMap).filter((nc) => !nc.has_corrective);
 }

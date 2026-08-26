@@ -60,6 +60,8 @@ import { useAdminModules } from '@/hooks/useAdminModules';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { useTenant } from '@/hooks/useTenant';
 import { useAdminPermissions } from '@/hooks/useAdminPermissions';
+import { useHygieneAlerts } from '@/hooks/useHygieneAlerts';
+
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -108,8 +110,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const activeModules = modules?.filter((m) => m.is_active) || [];
   const isModuleActive = (moduleName: string) => activeModules.some((m) => m.module_name === moduleName);
 
+  // Alertas de higiene em tempo real (não conformidades sem ação corretiva)
+  const hygieneAlerts = useHygieneAlerts(isModuleActive('hygiene_checklists'));
+
   // Build dynamic menu based on active modules
-  const moduleMenuItems = [
+  const moduleMenuItems: { moduleName: string; title: string; url: string; icon: typeof Bell; badge?: number }[] = [
+
     { moduleName: 'waiter_call', title: 'Atendimentos', url: `${adminBase}/atendimentos`, icon: Bell },
     { moduleName: 'waiter_call', title: 'Mesas', url: `${adminBase}/mesas`, icon: LayoutGrid },
     { moduleName: 'waiter_call', title: 'Atendentes', url: `${adminBase}/atendentes`, icon: User },
@@ -129,9 +135,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { moduleName: 'technical_sheet', title: 'Painel de CMV', url: `${adminBase}/cmv`, icon: Gauge },
     { moduleName: 'technical_sheet', title: 'Fichas Técnicas', url: `${adminBase}/fichas`, icon: ChefHat },
     { moduleName: 'technical_sheet', title: 'Desperdício', url: `${adminBase}/desperdicio`, icon: Trash2 },
-    { moduleName: 'hygiene_checklists', title: 'Higiene', url: `${adminBase}/higiene`, icon: ShieldCheck },
-    { moduleName: 'hygiene_checklists', title: 'Validades', url: `${adminBase}/validades`, icon: CalendarX },
+    { moduleName: 'hygiene_checklists', title: 'Higiene', url: `${adminBase}/higiene`, icon: ShieldCheck, badge: hygieneAlerts.openCount },
+    { moduleName: 'hygiene_checklists', title: 'Validades', url: `${adminBase}/validades`, icon: CalendarX, badge: hygieneAlerts.criticalShelfCount },
   ].filter((item) => isModuleActive(item.moduleName));
+
 
   // Composição items (subitems of kitchen_order)
   const compositionMenuItems = isModuleActive('kitchen_order') ? [
@@ -255,21 +262,30 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {group.items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <NavLink
-                            to={item.url}
-                            end={item.url === adminBase}
-                            className="flex items-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors"
-                            activeClassName="bg-primary/10 text-primary font-medium"
-                          >
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                    {group.items.map((item) => {
+                      const badge = (item as { badge?: number }).badge ?? 0;
+                      return (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton asChild>
+                            <NavLink
+                              to={item.url}
+                              end={item.url === adminBase}
+                              className="flex items-center gap-2 hover:bg-secondary hover:text-secondary-foreground transition-colors"
+                              activeClassName="bg-primary/10 text-primary font-medium"
+                            >
+                              <item.icon className="h-4 w-4" />
+                              <span className="flex-1">{item.title}</span>
+                              {badge > 0 && (
+                                <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-semibold leading-none text-destructive-foreground">
+                                  {badge > 99 ? '99+' : badge}
+                                </span>
+                              )}
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>

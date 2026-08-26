@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, Pencil, Play, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, Download, Pencil, Play, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { HygieneTemplateDialog } from "@/components/admin/HygieneTemplateDialog";
 import { HygieneRunSheet } from "@/components/admin/HygieneRunSheet";
@@ -15,7 +15,9 @@ import { downloadCSV, toCSV } from "@/lib/csv";
 import {
   SHIFTS,
   SHIFT_LABELS,
+  buildItemMap,
   currentShift,
+  openNonConformities,
   today,
   useDeleteChecklist,
   useDeleteRun,
@@ -27,6 +29,7 @@ import {
   type HygieneShift,
   type RunWithRelations,
 } from "@/hooks/useHygiene";
+
 
 type TemplateWithItems = HygieneChecklist & { hygiene_checklist_items: HygieneChecklistItem[] };
 
@@ -58,6 +61,10 @@ export default function AdminHygiene() {
 
   const activeTemplates = checklists.filter((c) => c.is_active);
 
+  const itemMap = useMemo(() => buildItemMap(checklists), [checklists]);
+  const openNc = useMemo(() => openNonConformities(runs, itemMap), [runs, itemMap]);
+  const openNcCompleted = openNc.filter((nc) => nc.run_status === "CONCLUIDO");
+
   const stats = useMemo(() => {
     const completed = runs.filter((r) => r.status === "CONCLUIDO");
     const avg =
@@ -70,6 +77,7 @@ export default function AdminHygiene() {
     );
     return { total: runs.length, completed: completed.length, avg, nc };
   }, [runs]);
+
 
   const handleStart = async () => {
     if (!startForm.checklist_id) {
@@ -166,7 +174,60 @@ export default function AdminHygiene() {
         </Card>
       </div>
 
+      {openNc.length > 0 && (
+        <Card className="border-destructive/50 bg-surface">
+          <CardHeader className="pb-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-base">Não conformidades em aberto</CardTitle>
+              <Badge variant="destructive">{openNc.length}</Badge>
+            </div>
+            <CardDescription>
+              Registre a ação corretiva de cada item para encerrar a pendência.
+              {openNcCompleted.length > 0 && (
+                <span className="text-destructive">
+                  {" "}
+                  {openNcCompleted.length} em checklist(s) já concluído(s).
+                </span>
+              )}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {openNc.slice(0, 10).map((nc) => {
+              const run = runs.find((r) => r.id === nc.run_id) ?? null;
+              return (
+                <div
+                  key={nc.key}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-destructive/40 bg-background/40 p-3"
+                >
+                  <div className="text-sm">
+                    <p className="font-medium">{nc.item_label}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(nc.run_date + "T00:00:00").toLocaleDateString("pt-BR")} ·{" "}
+                      {SHIFT_LABELS[nc.shift]} · {nc.checklist_name} · {nc.performed_by_name ?? "-"}
+                    </p>
+                    <p className="text-xs text-destructive">
+                      {nc.value_label}
+                      {nc.range_text ? ` · ${nc.range_text}` : ""}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="outline" disabled={!run} onClick={() => run && openRun(run)}>
+                    Ver checklist
+                  </Button>
+                </div>
+              );
+            })}
+            {openNc.length > 10 && (
+              <p className="text-xs text-muted-foreground">
+                +{openNc.length - 10} pendência(s) — consulte o histórico.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       <Tabs defaultValue="execucao">
+
         <TabsList>
           <TabsTrigger value="execucao">Execução</TabsTrigger>
           <TabsTrigger value="historico">Histórico</TabsTrigger>
