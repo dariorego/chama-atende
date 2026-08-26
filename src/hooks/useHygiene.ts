@@ -286,11 +286,16 @@ export type ShelfLifeWithIngredient = ShelfLifeItem & {
   ingredients: { name: string; unit: string } | null;
 };
 
-export function useShelfLifeItems(status?: HygieneShelfStatus | "ALL") {
+export function useShelfLifeItems(
+  status?: HygieneShelfStatus | "ALL",
+  options?: { enabled?: boolean; refetchInterval?: number },
+) {
   const { tenantId } = useTenant();
   return useQuery({
     queryKey: ["hyg-shelf", tenantId, status],
-    enabled: !!tenantId,
+    enabled: !!tenantId && (options?.enabled ?? true),
+    refetchInterval: options?.refetchInterval,
+
     queryFn: async () => {
       let q = supabase
         .from("hygiene_shelf_life_items")
