@@ -108,8 +108,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const activeModules = modules?.filter((m) => m.is_active) || [];
   const isModuleActive = (moduleName: string) => activeModules.some((m) => m.module_name === moduleName);
 
+  // Alertas de higiene em tempo real (não conformidades sem ação corretiva)
+  const hygieneAlerts = useHygieneAlerts(isModuleActive('hygiene_checklists'));
+
   // Build dynamic menu based on active modules
-  const moduleMenuItems = [
+  const moduleMenuItems: { moduleName: string; title: string; url: string; icon: typeof Bell; badge?: number }[] = [
+
     { moduleName: 'waiter_call', title: 'Atendimentos', url: `${adminBase}/atendimentos`, icon: Bell },
     { moduleName: 'waiter_call', title: 'Mesas', url: `${adminBase}/mesas`, icon: LayoutGrid },
     { moduleName: 'waiter_call', title: 'Atendentes', url: `${adminBase}/atendentes`, icon: User },
