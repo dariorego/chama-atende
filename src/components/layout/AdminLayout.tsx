@@ -60,6 +60,8 @@ import { useAdminModules } from '@/hooks/useAdminModules';
 import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { useTenant } from '@/hooks/useTenant';
 import { useAdminPermissions } from '@/hooks/useAdminPermissions';
+import { useHygieneAlerts } from '@/hooks/useHygieneAlerts';
+
 
 interface AdminLayoutProps {
   children: ReactNode;
