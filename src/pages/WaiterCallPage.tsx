@@ -44,7 +44,10 @@ const WaiterCallPage = () => {
   const [activeTab, setActiveTab] = useState("atendimento");
   const [selectedTableId, setSelectedTableId] = useState<string>("");
   const [isSettingTable, setIsSettingTable] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [pendingType, setPendingType] = useState<"waiter" | "bill" | null>(null);
 
+  const { customerName, saveName } = useCustomerName();
   const { restaurant, isLoading } = useAdminSettings();
   const { data: tables, isLoading: isLoadingTables } = usePublicTables();
   
