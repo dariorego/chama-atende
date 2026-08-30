@@ -62,23 +62,33 @@ const TableEntryPage = () => {
 
   const goto = (path: string) => navigate(slug ? `/${slug}${path}` : path);
 
-  const handleCall = async (callType: "waiter" | "bill") => {
+  const sendCall = async (callType: "waiter" | "bill", name: string | null) => {
     if (!table?.id) return;
-    if (hasActiveCall(callType)) {
+    if (hasActiveCall(callType, name)) {
       toast({ title: "Solicitação já enviada", description: "Aguarde o atendimento." });
       return;
     }
     try {
-      await createCall({ tableId: table.id, sessionId: null, callType });
+      await createCall({ tableId: table.id, sessionId: null, callType, customerName: name });
       toast({
         title: callType === "waiter" ? "Atendente chamado!" : "Conta solicitada!",
         description: callType === "waiter"
-          ? "Um atendente está a caminho da sua mesa."
+          ? `Um atendente está a caminho da sua mesa${name ? `, ${name}` : ""}.`
           : "Aguarde, a conta está sendo preparada.",
       });
     } catch {
       toast({ title: "Erro", description: "Tente novamente.", variant: "destructive" });
     }
+  };
+
+  const handleCall = (callType: "waiter" | "bill") => {
+    if (!table?.id) return;
+    if (!customerName) {
+      setPendingType(callType);
+      setNameDialogOpen(true);
+      return;
+    }
+    void sendCall(callType, customerName);
   };
 
   if (loading || isTenantLoading) {
