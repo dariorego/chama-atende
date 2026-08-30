@@ -26,7 +26,10 @@ const TableEntryPage = () => {
   const [table, setTableInfo] = useState<TableInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [pendingType, setPendingType] = useState<"waiter" | "bill" | null>(null);
 
+  const { customerName, saveName } = useCustomerName();
   const { hasActiveCall, createCall, isCreatingCall } = useClientServiceCall(
     table?.id || null
   );
