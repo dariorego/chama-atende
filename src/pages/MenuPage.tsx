@@ -616,6 +616,20 @@ const MenuPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <CustomerNameDialog
+        open={isNameModalOpen}
+        onOpenChange={setIsNameModalOpen}
+        initialName={customerName}
+        onConfirm={(name) => {
+          const saved = saveName(name);
+          if (pendingTableId) {
+            const target = pendingTableId;
+            setPendingTableId(null);
+            void sendWaiterCall(target, saved);
+          }
+        }}
+      />
     </ClientLayout>
   );
 };
