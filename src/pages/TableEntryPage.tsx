@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Loader2, UtensilsCrossed, Bell, Receipt, Star } from "lucide-react";
+import { Loader2, UtensilsCrossed, Bell, Receipt, Star, UserRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
+import { useCustomerName } from "@/hooks/useCustomerName";
+import { CustomerNameDialog } from "@/components/CustomerNameDialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface TableInfo {
