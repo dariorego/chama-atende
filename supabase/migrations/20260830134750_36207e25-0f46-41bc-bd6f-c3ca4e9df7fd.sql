@@ -1,0 +1,1 @@
+ALTER TABLE public.service_calls ADD COLUMN IF NOT EXISTS customer_name text;
