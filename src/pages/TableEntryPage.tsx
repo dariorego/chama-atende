@@ -168,20 +168,20 @@ const TableEntryPage = () => {
 
           <button
             onClick={() => handleCall("waiter")}
-            disabled={isCreatingCall || hasActiveCall("waiter")}
+            disabled={isCreatingCall || hasActiveCall("waiter", customerName)}
             className="w-full py-4 rounded-lg bg-secondary text-secondary-foreground font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition disabled:opacity-60"
           >
             <Bell className="h-5 w-5" />
-            {hasActiveCall("waiter") ? "Atendente a caminho..." : "Chamar Atendente"}
+            {hasActiveCall("waiter", customerName) ? "Atendente a caminho..." : "Chamar Atendente"}
           </button>
 
           <button
             onClick={() => handleCall("bill")}
-            disabled={isCreatingCall || hasActiveCall("bill")}
+            disabled={isCreatingCall || hasActiveCall("bill", customerName)}
             className="w-full py-4 rounded-lg bg-accent text-accent-foreground font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition disabled:opacity-60"
           >
             <Receipt className="h-5 w-5" />
-            {hasActiveCall("bill") ? "Preparando a conta..." : "Pedir a Conta"}
+            {hasActiveCall("bill", customerName) ? "Preparando a conta..." : "Pedir a Conta"}
           </button>
 
           <button
