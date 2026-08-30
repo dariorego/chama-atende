@@ -23,6 +23,8 @@ import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
 import { useTenant } from "@/hooks/useTenant";
+import { useCustomerName } from "@/hooks/useCustomerName";
+import { CustomerNameDialog } from "@/components/CustomerNameDialog";
 
 interface TableData {
   id: string;
