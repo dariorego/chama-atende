@@ -368,6 +368,15 @@ const WaiterCallPage = () => {
               {tableNumber}
             </span>
           </div>
+          <button
+            onClick={() => {
+              setPendingType(null);
+              setNameDialogOpen(true);
+            }}
+            className="text-xs text-emerald-deep/60 hover:text-emerald-deep font-sans-editorial underline underline-offset-4"
+          >
+            {customerName ? `${customerName} · trocar nome` : "Informar meu nome"}
+          </button>
           <div className="mx-auto w-24 h-px bg-gold/60 mt-4" />
         </div>
 
