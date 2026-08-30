@@ -89,26 +89,23 @@ const MenuPage = () => {
   const { table, setTable } = useTableContext();
   const { data: tables, isLoading: isLoadingTables } = usePublicTables();
   const { hasActiveCall, createCall, isCreatingCall } = useClientServiceCall(table?.id || null);
+  const { customerName, saveName } = useCustomerName();
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+  const [pendingTableId, setPendingTableId] = useState<string | null>(null);
 
-  const isWaiterCalled = hasActiveCall("waiter");
+  const isWaiterCalled = hasActiveCall("waiter", customerName);
 
-  const handleQuickWaiterCall = async (tableId?: string) => {
-    const targetTableId = tableId || table?.id;
-    
-    if (!targetTableId) {
-      setIsTableModalOpen(true);
-      return;
-    }
-    
+  const sendWaiterCall = async (targetTableId: string, name: string | null) => {
     try {
       await createCall({
         tableId: targetTableId,
         sessionId: null,
         callType: "waiter",
+        customerName: name,
       });
       toast({
         title: "Atendente chamado!",
-        description: "Aguarde, estamos a caminho.",
+        description: name ? `Aguarde ${name}, estamos a caminho.` : "Aguarde, estamos a caminho.",
       });
       setIsTableModalOpen(false);
       setSelectedTableId("");
@@ -119,6 +116,23 @@ const MenuPage = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleQuickWaiterCall = async (tableId?: string) => {
+    const targetTableId = tableId || table?.id;
+
+    if (!targetTableId) {
+      setIsTableModalOpen(true);
+      return;
+    }
+
+    if (!customerName) {
+      setPendingTableId(targetTableId);
+      setIsNameModalOpen(true);
+      return;
+    }
+
+    await sendWaiterCall(targetTableId, customerName);
   };
 
   const handleTableSelectAndCall = async () => {
