@@ -146,6 +146,16 @@ const TableEntryPage = () => {
             {table.name && (
               <p className="text-sm text-muted-foreground mt-1">{table.name}</p>
             )}
+            <button
+              onClick={() => {
+                setPendingType(null);
+                setNameDialogOpen(true);
+              }}
+              className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition"
+            >
+              <UserRound className="h-3 w-3" />
+              {customerName ? `${customerName} · trocar nome` : "Informar meu nome"}
+            </button>
           </div>
 
           <button
