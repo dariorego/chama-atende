@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Loader2, UtensilsCrossed, Bell, Receipt, Star } from "lucide-react";
+import { Loader2, UtensilsCrossed, Bell, Receipt, Star, UserRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
+import { useCustomerName } from "@/hooks/useCustomerName";
+import { CustomerNameDialog } from "@/components/CustomerNameDialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface TableInfo {
@@ -24,7 +26,10 @@ const TableEntryPage = () => {
   const [table, setTableInfo] = useState<TableInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [pendingType, setPendingType] = useState<"waiter" | "bill" | null>(null);
 
+  const { customerName, saveName } = useCustomerName();
   const { hasActiveCall, createCall, isCreatingCall } = useClientServiceCall(
     table?.id || null
   );
@@ -57,23 +62,33 @@ const TableEntryPage = () => {
 
   const goto = (path: string) => navigate(slug ? `/${slug}${path}` : path);
 
-  const handleCall = async (callType: "waiter" | "bill") => {
+  const sendCall = async (callType: "waiter" | "bill", name: string | null) => {
     if (!table?.id) return;
-    if (hasActiveCall(callType)) {
+    if (hasActiveCall(callType, name)) {
       toast({ title: "Solicitação já enviada", description: "Aguarde o atendimento." });
       return;
     }
     try {
-      await createCall({ tableId: table.id, sessionId: null, callType });
+      await createCall({ tableId: table.id, sessionId: null, callType, customerName: name });
       toast({
         title: callType === "waiter" ? "Atendente chamado!" : "Conta solicitada!",
         description: callType === "waiter"
-          ? "Um atendente está a caminho da sua mesa."
+          ? `Um atendente está a caminho da sua mesa${name ? `, ${name}` : ""}.`
           : "Aguarde, a conta está sendo preparada.",
       });
     } catch {
       toast({ title: "Erro", description: "Tente novamente.", variant: "destructive" });
     }
+  };
+
+  const handleCall = (callType: "waiter" | "bill") => {
+    if (!table?.id) return;
+    if (!customerName) {
+      setPendingType(callType);
+      setNameDialogOpen(true);
+      return;
+    }
+    void sendCall(callType, customerName);
   };
 
   if (loading || isTenantLoading) {
@@ -131,6 +146,16 @@ const TableEntryPage = () => {
             {table.name && (
               <p className="text-sm text-muted-foreground mt-1">{table.name}</p>
             )}
+            <button
+              onClick={() => {
+                setPendingType(null);
+                setNameDialogOpen(true);
+              }}
+              className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition"
+            >
+              <UserRound className="h-3 w-3" />
+              {customerName ? `${customerName} · trocar nome` : "Informar meu nome"}
+            </button>
           </div>
 
           <button
@@ -143,20 +168,20 @@ const TableEntryPage = () => {
 
           <button
             onClick={() => handleCall("waiter")}
-            disabled={isCreatingCall || hasActiveCall("waiter")}
+            disabled={isCreatingCall || hasActiveCall("waiter", customerName)}
             className="w-full py-4 rounded-lg bg-secondary text-secondary-foreground font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition disabled:opacity-60"
           >
             <Bell className="h-5 w-5" />
-            {hasActiveCall("waiter") ? "Atendente a caminho..." : "Chamar Atendente"}
+            {hasActiveCall("waiter", customerName) ? "Atendente a caminho..." : "Chamar Atendente"}
           </button>
 
           <button
             onClick={() => handleCall("bill")}
-            disabled={isCreatingCall || hasActiveCall("bill")}
+            disabled={isCreatingCall || hasActiveCall("bill", customerName)}
             className="w-full py-4 rounded-lg bg-accent text-accent-foreground font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition disabled:opacity-60"
           >
             <Receipt className="h-5 w-5" />
-            {hasActiveCall("bill") ? "Preparando a conta..." : "Pedir a Conta"}
+            {hasActiveCall("bill", customerName) ? "Preparando a conta..." : "Pedir a Conta"}
           </button>
 
           <button
@@ -178,6 +203,20 @@ const TableEntryPage = () => {
           </p>
         </div>
       </div>
+
+      <CustomerNameDialog
+        open={nameDialogOpen}
+        onOpenChange={setNameDialogOpen}
+        initialName={customerName}
+        onConfirm={(name) => {
+          const saved = saveName(name);
+          if (pendingType) {
+            const type = pendingType;
+            setPendingType(null);
+            void sendCall(type, saved);
+          }
+        }}
+      />
     </div>
   );
 };

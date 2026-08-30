@@ -3184,6 +3184,7 @@ export type Database = {
           called_at: string | null
           completed_at: string | null
           created_at: string | null
+          customer_name: string | null
           id: string
           response_time_seconds: number | null
           restaurant_id: string | null
@@ -3199,6 +3200,7 @@ export type Database = {
           called_at?: string | null
           completed_at?: string | null
           created_at?: string | null
+          customer_name?: string | null
           id?: string
           response_time_seconds?: number | null
           restaurant_id?: string | null
@@ -3214,6 +3216,7 @@ export type Database = {
           called_at?: string | null
           completed_at?: string | null
           created_at?: string | null
+          customer_name?: string | null
           id?: string
           response_time_seconds?: number | null
           restaurant_id?: string | null

@@ -106,8 +106,14 @@ export function ServiceCallCard({ call, waiters, duplicateIds }: ServiceCallCard
               <Icon className="h-5 w-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-semibold">{tableName}</span>
+                {call.customer_name && (
+                  <Badge variant="outline" className="gap-1">
+                    <User className="h-3 w-3" />
+                    {call.customer_name}
+                  </Badge>
+                )}
                 <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
                 {totalCount > 1 && (
                   <Badge variant="secondary" title={`Cliente chamou ${totalCount} vezes antes do atendimento`}>

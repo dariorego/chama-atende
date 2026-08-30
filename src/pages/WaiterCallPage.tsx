@@ -23,6 +23,8 @@ import { useTableContext } from "@/hooks/useTableContext";
 import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
 import { useTenant } from "@/hooks/useTenant";
+import { useCustomerName } from "@/hooks/useCustomerName";
+import { CustomerNameDialog } from "@/components/CustomerNameDialog";
 
 interface TableData {
   id: string;
@@ -44,7 +46,10 @@ const WaiterCallPage = () => {
   const [activeTab, setActiveTab] = useState("atendimento");
   const [selectedTableId, setSelectedTableId] = useState<string>("");
   const [isSettingTable, setIsSettingTable] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [pendingType, setPendingType] = useState<"waiter" | "bill" | null>(null);
 
+  const { customerName, saveName } = useCustomerName();
   const { restaurant, isLoading } = useAdminSettings();
   const { data: tables, isLoading: isLoadingTables } = usePublicTables();
   
@@ -83,54 +88,48 @@ const WaiterCallPage = () => {
 
   const tableNumber = tableData?.number?.toString().padStart(2, "0") || "00";
 
-  // Derive state from hook
-  const isWaiterCalled = hasActiveCall("waiter");
-  const isBillRequested = hasActiveCall("bill");
+  // Derive state from hook (apenas chamados deste cliente bloqueiam)
+  const isWaiterCalled = hasActiveCall("waiter", customerName);
+  const isBillRequested = hasActiveCall("bill", customerName);
   const isRequestActive = isWaiterCalled || isBillRequested;
 
-  const handleCallWaiter = async () => {
+  const sendCall = async (callType: "waiter" | "bill", name: string | null) => {
     if (!tableData?.id) return;
-    
+
     try {
       await createCall({
         tableId: tableData.id,
         sessionId: null,
-        callType: "waiter",
+        callType,
+        customerName: name,
       });
       toast({
-        title: "Garçom chamado!",
-        description: "Um atendente está a caminho da sua mesa.",
+        title: callType === "waiter" ? "Garçom chamado!" : "Conta solicitada!",
+        description: callType === "waiter"
+          ? `Um atendente está a caminho da sua mesa${name ? `, ${name}` : ""}.`
+          : "Aguarde, a conta está sendo preparada.",
       });
     } catch (error) {
       toast({
-        title: "Erro ao chamar garçom",
+        title: callType === "waiter" ? "Erro ao chamar garçom" : "Erro ao solicitar conta",
         description: "Tente novamente.",
         variant: "destructive",
       });
     }
   };
 
-  const handleRequestBill = async () => {
+  const requestCall = (callType: "waiter" | "bill") => {
     if (!tableData?.id) return;
-    
-    try {
-      await createCall({
-        tableId: tableData.id,
-        sessionId: null,
-        callType: "bill",
-      });
-      toast({
-        title: "Conta solicitada!",
-        description: "Aguarde, a conta está sendo preparada.",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro ao solicitar conta",
-        description: "Tente novamente.",
-        variant: "destructive",
-      });
+    if (!customerName) {
+      setPendingType(callType);
+      setNameDialogOpen(true);
+      return;
     }
+    void sendCall(callType, customerName);
   };
+
+  const handleCallWaiter = () => requestCall("waiter");
+  const handleRequestBill = () => requestCall("bill");
 
   const handleCancelRequest = async () => {
     const activeCalls = pendingCalls.filter(c => 
@@ -369,6 +368,15 @@ const WaiterCallPage = () => {
               {tableNumber}
             </span>
           </div>
+          <button
+            onClick={() => {
+              setPendingType(null);
+              setNameDialogOpen(true);
+            }}
+            className="text-xs text-emerald-deep/60 hover:text-emerald-deep font-sans-editorial underline underline-offset-4"
+          >
+            {customerName ? `${customerName} · trocar nome` : "Informar meu nome"}
+          </button>
           <div className="mx-auto w-24 h-px bg-gold/60 mt-4" />
         </div>
 
@@ -447,6 +455,20 @@ const WaiterCallPage = () => {
           </div>
         </div>
       )}
+
+      <CustomerNameDialog
+        open={nameDialogOpen}
+        onOpenChange={setNameDialogOpen}
+        initialName={customerName}
+        onConfirm={(name) => {
+          const saved = saveName(name);
+          if (pendingType) {
+            const type = pendingType;
+            setPendingType(null);
+            void sendCall(type, saved);
+          }
+        }}
+      />
     </div>
   );
 };

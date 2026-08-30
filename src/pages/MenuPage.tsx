@@ -33,6 +33,8 @@ import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
 import { useToast } from "@/hooks/use-toast";
 import { useTenant } from "@/hooks/useTenant";
+import { useCustomerName } from "@/hooks/useCustomerName";
+import { CustomerNameDialog } from "@/components/CustomerNameDialog";
 
 interface Product {
   id: string;
@@ -89,26 +91,23 @@ const MenuPage = () => {
   const { table, setTable } = useTableContext();
   const { data: tables, isLoading: isLoadingTables } = usePublicTables();
   const { hasActiveCall, createCall, isCreatingCall } = useClientServiceCall(table?.id || null);
+  const { customerName, saveName } = useCustomerName();
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+  const [pendingTableId, setPendingTableId] = useState<string | null>(null);
 
-  const isWaiterCalled = hasActiveCall("waiter");
+  const isWaiterCalled = hasActiveCall("waiter", customerName);
 
-  const handleQuickWaiterCall = async (tableId?: string) => {
-    const targetTableId = tableId || table?.id;
-    
-    if (!targetTableId) {
-      setIsTableModalOpen(true);
-      return;
-    }
-    
+  const sendWaiterCall = async (targetTableId: string, name: string | null) => {
     try {
       await createCall({
         tableId: targetTableId,
         sessionId: null,
         callType: "waiter",
+        customerName: name,
       });
       toast({
         title: "Atendente chamado!",
-        description: "Aguarde, estamos a caminho.",
+        description: name ? `Aguarde ${name}, estamos a caminho.` : "Aguarde, estamos a caminho.",
       });
       setIsTableModalOpen(false);
       setSelectedTableId("");
@@ -119,6 +118,23 @@ const MenuPage = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleQuickWaiterCall = async (tableId?: string) => {
+    const targetTableId = tableId || table?.id;
+
+    if (!targetTableId) {
+      setIsTableModalOpen(true);
+      return;
+    }
+
+    if (!customerName) {
+      setPendingTableId(targetTableId);
+      setIsNameModalOpen(true);
+      return;
+    }
+
+    await sendWaiterCall(targetTableId, customerName);
   };
 
   const handleTableSelectAndCall = async () => {
@@ -600,6 +616,20 @@ const MenuPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <CustomerNameDialog
+        open={isNameModalOpen}
+        onOpenChange={setIsNameModalOpen}
+        initialName={customerName}
+        onConfirm={(name) => {
+          const saved = saveName(name);
+          if (pendingTableId) {
+            const target = pendingTableId;
+            setPendingTableId(null);
+            void sendWaiterCall(target, saved);
+          }
+        }}
+      />
     </ClientLayout>
   );
 };

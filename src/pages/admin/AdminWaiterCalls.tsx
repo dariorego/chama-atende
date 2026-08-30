@@ -139,7 +139,7 @@ const AdminWaiterCalls = () => {
                   // Agrupa chamados pendentes por mesa + tipo, mostrando um único card com contador
                   const groups = new Map<string, { representative: typeof pendingCalls[number]; ids: string[] }>();
                   for (const call of pendingCalls) {
-                    const key = `${call.table_id ?? "no-table"}-${call.call_type}`;
+                    const key = `${call.table_id ?? "no-table"}-${call.call_type}-${(call.customer_name ?? "").trim().toLowerCase()}`;
                     const existing = groups.get(key);
                     if (!existing) {
                       groups.set(key, { representative: call, ids: [call.id] });

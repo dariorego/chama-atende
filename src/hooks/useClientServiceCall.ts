@@ -76,19 +76,29 @@ export function useClientServiceCall(tableId: string | null) {
       tableId,
       sessionId,
       callType,
+      customerName,
     }: {
       tableId: string;
       sessionId: string | null;
       callType: "waiter" | "bill" | "help";
+      customerName?: string | null;
     }) => {
+      const name = customerName?.trim().slice(0, 60) || null;
       const { error } = await supabase.from("service_calls").insert({
         table_id: tableId,
         table_session_id: sessionId,
         call_type: callType,
         status: "pending",
+        customer_name: name,
       });
       if (error) throw error;
-      return { table_id: tableId, table_session_id: sessionId, call_type: callType, status: "pending" };
+      return {
+        table_id: tableId,
+        table_session_id: sessionId,
+        call_type: callType,
+        status: "pending",
+        customer_name: name,
+      };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["client-calls", tableId] });
@@ -108,10 +118,18 @@ export function useClientServiceCall(tableId: string | null) {
     },
   });
 
-  const hasActiveCall = (callType: string) => {
-    return pendingCalls.some(
-      (call) => call.call_type === callType && ["pending", "acknowledged", "in_progress"].includes(call.status || ""),
-    );
+  /**
+   * Só bloqueia se o chamado ativo for do MESMO cliente (nome deste
+   * dispositivo). Assim outra pessoa da mesma mesa consegue chamar de novo.
+   */
+  const hasActiveCall = (callType: string, customerName?: string | null) => {
+    const mine = customerName?.trim().toLowerCase() || null;
+    return pendingCalls.some((call) => {
+      if (call.call_type !== callType) return false;
+      if (!["pending", "acknowledged", "in_progress"].includes(call.status || "")) return false;
+      const callName = (call as { customer_name?: string | null }).customer_name?.trim().toLowerCase() || null;
+      return callName === mine;
+    });
   };
 
   return {

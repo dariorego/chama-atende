@@ -15,6 +15,7 @@ export interface ServiceCall {
   acknowledged_at: string | null;
   completed_at: string | null;
   response_time_seconds: number | null;
+  customer_name: string | null;
   created_at: string;
   updated_at: string;
   tables?: {
