@@ -203,6 +203,20 @@ const TableEntryPage = () => {
           </p>
         </div>
       </div>
+
+      <CustomerNameDialog
+        open={nameDialogOpen}
+        onOpenChange={setNameDialogOpen}
+        initialName={customerName}
+        onConfirm={(name) => {
+          const saved = saveName(name);
+          if (pendingType) {
+            const type = pendingType;
+            setPendingType(null);
+            void sendCall(type, saved);
+          }
+        }}
+      />
     </div>
   );
 };
