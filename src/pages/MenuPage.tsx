@@ -139,10 +139,11 @@ const MenuPage = () => {
 
   const handleTableSelectAndCall = async () => {
     if (!selectedTableId) return;
-    
+
     const success = await setTable(selectedTableId);
     if (success) {
-      await handleQuickWaiterCall(selectedTableId);
+      const saved = saveName(nameInput);
+      await sendWaiterCall(selectedTableId, saved);
     } else {
       toast({
         title: "Erro",
@@ -151,6 +152,7 @@ const MenuPage = () => {
       });
     }
   };
+
 
   const isLoading = isLoadingCategories || isLoadingProducts;
 
