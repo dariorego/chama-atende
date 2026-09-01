@@ -120,12 +120,38 @@ const REALTIME_QUERY_OPTIONS = {
   staleTime: 0,
 } as const;
 
+const OPEN_STATUSES = ["pending", "acknowledged", "in_progress"];
+
+/** Data "de hoje" no fuso de Recife (UTC-3), em formato YYYY-MM-DD. */
+function recifeToday(date: Date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Recife" }).format(date);
+}
+
+/** Cancela no banco chamados abertos de dias anteriores (falha silenciosa). */
+async function expireOldCalls() {
+  try {
+    await (supabase.rpc as unknown as (fn: string) => Promise<unknown>)("expire_old_service_calls");
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Remove da lista chamados abertos que não sejam do dia atual. */
+function dropStaleOpenCalls(calls: ServiceCall[]) {
+  const today = recifeToday();
+  return calls.filter((call) => {
+    if (!OPEN_STATUSES.includes(call.status)) return true;
+    return recifeToday(new Date(call.called_at)) === today;
+  });
+}
+
 export function useAdminServiceCalls() {
   const { playNotificationSound } = useNotificationSound();
 
   const query = useQuery({
     queryKey: ["admin-service-calls"],
     queryFn: async () => {
+      await expireOldCalls();
       const { data, error } = await supabase
         .from("service_calls")
         .select(`
@@ -136,7 +162,7 @@ export function useAdminServiceCalls() {
         .order("called_at", { ascending: false });
 
       if (error) throw error;
-      return data as ServiceCall[];
+      return dropStaleOpenCalls((data ?? []) as ServiceCall[]);
     },
     ...REALTIME_QUERY_OPTIONS,
   });
@@ -152,6 +178,7 @@ export function usePendingServiceCalls() {
   const query = useQuery({
     queryKey: ["pending-service-calls"],
     queryFn: async () => {
+      await expireOldCalls();
       const { data, error } = await supabase
         .from("service_calls")
         .select(`
@@ -163,7 +190,7 @@ export function usePendingServiceCalls() {
         .order("called_at", { ascending: true });
 
       if (error) throw error;
-      return data as ServiceCall[];
+      return dropStaleOpenCalls((data ?? []) as ServiceCall[]);
     },
     ...REALTIME_QUERY_OPTIONS,
   });
@@ -174,6 +201,7 @@ export function usePendingServiceCalls() {
 
   return query;
 }
+
 
 export function useCreateServiceCall() {
   const queryClient = useQueryClient();
