@@ -605,6 +605,21 @@ const MenuPage = () => {
               </SelectContent>
             </Select>
 
+            <div className="space-y-1.5">
+              <Input
+                value={nameInput}
+                maxLength={MAX_CUSTOMER_NAME}
+                onChange={(e) => setNameInput(e.target.value)}
+                placeholder="Seu nome (opcional)"
+                className="h-12 bg-surface placeholder:text-surface-foreground border-border focus:ring-primary"
+              />
+              <p className="text-xs text-muted-foreground">
+                Guardamos seu nome neste celular para os próximos chamados.
+              </p>
+            </div>
+
+
+
             <Button
               onClick={handleTableSelectAndCall}
               disabled={!selectedTableId || isCreatingCall}
