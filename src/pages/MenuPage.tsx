@@ -33,7 +33,7 @@ import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
 import { useToast } from "@/hooks/use-toast";
 import { useTenant } from "@/hooks/useTenant";
-import { useCustomerName } from "@/hooks/useCustomerName";
+import { useCustomerName, MAX_CUSTOMER_NAME } from "@/hooks/useCustomerName";
 import { CustomerNameDialog } from "@/components/CustomerNameDialog";
 
 interface Product {
