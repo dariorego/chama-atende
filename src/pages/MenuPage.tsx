@@ -94,6 +94,13 @@ const MenuPage = () => {
   const { customerName, saveName } = useCustomerName();
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [pendingTableId, setPendingTableId] = useState<string | null>(null);
+  const [nameInput, setNameInput] = useState("");
+
+  // Pré-preenche o campo de nome do diálogo com o nome salvo no aparelho.
+  useEffect(() => {
+    if (isTableModalOpen) setNameInput(customerName ?? "");
+  }, [isTableModalOpen, customerName]);
+
 
   const isWaiterCalled = hasActiveCall("waiter", customerName);
 
