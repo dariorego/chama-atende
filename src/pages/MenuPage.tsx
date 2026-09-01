@@ -33,7 +33,7 @@ import { useClientServiceCall } from "@/hooks/useClientServiceCall";
 import { usePublicTables } from "@/hooks/usePublicTables";
 import { useToast } from "@/hooks/use-toast";
 import { useTenant } from "@/hooks/useTenant";
-import { useCustomerName } from "@/hooks/useCustomerName";
+import { useCustomerName, MAX_CUSTOMER_NAME } from "@/hooks/useCustomerName";
 import { CustomerNameDialog } from "@/components/CustomerNameDialog";
 
 interface Product {
@@ -94,6 +94,13 @@ const MenuPage = () => {
   const { customerName, saveName } = useCustomerName();
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [pendingTableId, setPendingTableId] = useState<string | null>(null);
+  const [nameInput, setNameInput] = useState("");
+
+  // Pré-preenche o campo de nome do diálogo com o nome salvo no aparelho.
+  useEffect(() => {
+    if (isTableModalOpen) setNameInput(customerName ?? "");
+  }, [isTableModalOpen, customerName]);
+
 
   const isWaiterCalled = hasActiveCall("waiter", customerName);
 
@@ -139,10 +146,11 @@ const MenuPage = () => {
 
   const handleTableSelectAndCall = async () => {
     if (!selectedTableId) return;
-    
+
     const success = await setTable(selectedTableId);
     if (success) {
-      await handleQuickWaiterCall(selectedTableId);
+      const saved = saveName(nameInput);
+      await sendWaiterCall(selectedTableId, saved);
     } else {
       toast({
         title: "Erro",
@@ -151,6 +159,7 @@ const MenuPage = () => {
       });
     }
   };
+
 
   const isLoading = isLoadingCategories || isLoadingProducts;
 
@@ -595,6 +604,21 @@ const MenuPage = () => {
                 )}
               </SelectContent>
             </Select>
+
+            <div className="space-y-1.5">
+              <Input
+                value={nameInput}
+                maxLength={MAX_CUSTOMER_NAME}
+                onChange={(e) => setNameInput(e.target.value)}
+                placeholder="Seu nome (opcional)"
+                className="h-12 bg-surface placeholder:text-surface-foreground border-border focus:ring-primary"
+              />
+              <p className="text-xs text-muted-foreground">
+                Guardamos seu nome neste celular para os próximos chamados.
+              </p>
+            </div>
+
+
 
             <Button
               onClick={handleTableSelectAndCall}
