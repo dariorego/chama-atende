@@ -4009,6 +4009,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_old_service_calls: { Args: never; Returns: number }
       generate_comanda_code: {
         Args: { _restaurant_id: string; _table_id: string }
         Returns: {
