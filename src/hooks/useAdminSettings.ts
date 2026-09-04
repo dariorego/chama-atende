@@ -66,17 +66,19 @@ export interface UpdateRestaurantData {
  */
 export function useAdminSettings(restaurantId?: string) {
   const queryClient = useQueryClient();
+  const { tenantId } = useTenant();
+  const effectiveId = restaurantId || tenantId || undefined;
 
   const { data: restaurant, isLoading, error } = useQuery({
-    queryKey: ['admin-restaurant', restaurantId],
+    queryKey: ['admin-restaurant', effectiveId],
     queryFn: async () => {
       let query = supabase
         .from('restaurants')
         .select('*');
 
-      // If restaurantId provided, fetch specific restaurant
-      if (restaurantId) {
-        query = query.eq('id', restaurantId);
+      // Always scope to the current tenant when known
+      if (effectiveId) {
+        query = query.eq('id', effectiveId);
       } else {
         // Fallback: get first active restaurant (legacy single-tenant behavior)
         query = query.eq('is_active', true);
@@ -110,7 +112,7 @@ export function useAdminSettings(restaurantId?: string) {
 
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateRestaurantData) => {
-      const targetId = restaurantId || restaurant?.id;
+      const targetId = effectiveId || restaurant?.id;
       if (!targetId) throw new Error("Restaurant not found");
       
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,7 +124,7 @@ export function useAdminSettings(restaurantId?: string) {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-restaurant', restaurantId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-restaurant', effectiveId] });
       queryClient.invalidateQueries({ queryKey: ['tenant'] });
       toast.success("Configurações salvas com sucesso!");
     },
