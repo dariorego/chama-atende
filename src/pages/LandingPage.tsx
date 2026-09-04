@@ -720,7 +720,7 @@ export default function LandingPage() {
         </div>
         <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-border/60 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} ChamaAtende. Todos os direitos reservados.</span>
-          <span>Feito com cuidado no Brasil.</span>
+          <span>Feito com cuidado no Brasil.<br />Versão: 260904.0900</span>
         </div>
       </footer>
     </div>
