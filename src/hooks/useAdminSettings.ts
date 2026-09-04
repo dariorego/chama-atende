@@ -112,7 +112,7 @@ export function useAdminSettings(restaurantId?: string) {
 
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateRestaurantData) => {
-      const targetId = restaurantId || restaurant?.id;
+      const targetId = effectiveId || restaurant?.id;
       if (!targetId) throw new Error("Restaurant not found");
       
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -124,7 +124,7 @@ export function useAdminSettings(restaurantId?: string) {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-restaurant', restaurantId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-restaurant', effectiveId] });
       queryClient.invalidateQueries({ queryKey: ['tenant'] });
       toast.success("Configurações salvas com sucesso!");
     },
