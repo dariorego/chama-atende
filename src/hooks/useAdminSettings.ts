@@ -66,17 +66,19 @@ export interface UpdateRestaurantData {
  */
 export function useAdminSettings(restaurantId?: string) {
   const queryClient = useQueryClient();
+  const { tenantId } = useTenant();
+  const effectiveId = restaurantId || tenantId || undefined;
 
   const { data: restaurant, isLoading, error } = useQuery({
-    queryKey: ['admin-restaurant', restaurantId],
+    queryKey: ['admin-restaurant', effectiveId],
     queryFn: async () => {
       let query = supabase
         .from('restaurants')
         .select('*');
 
-      // If restaurantId provided, fetch specific restaurant
-      if (restaurantId) {
-        query = query.eq('id', restaurantId);
+      // Always scope to the current tenant when known
+      if (effectiveId) {
+        query = query.eq('id', effectiveId);
       } else {
         // Fallback: get first active restaurant (legacy single-tenant behavior)
         query = query.eq('is_active', true);
