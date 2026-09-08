@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Globe, MapPin, Check, X, Music, Star } from 'lucide-react';
+import { Settings, Loader2, Building2, Clock, Phone, Wifi, Palette, ImageIcon, RotateCcw, ClipboardList, Bed, Smartphone, Volume2, VolumeX, TableProperties, Globe, MapPin, Check, X, Music, Star, ExternalLink, Copy } from 'lucide-react';
 import { useTenantSettings } from '@/hooks/useAdminSettings';
 import { formatTime, IdentificationType, BusinessHours, DayHours, BRAZIL_TIMEZONES, WEEKDAYS, DEFAULT_BUSINESS_HOURS, LocationCoordinates, NOTIFICATION_SOUNDS, type NotificationSoundType } from '@/types/restaurant';
 import { Slider } from '@/components/ui/slider';
@@ -20,6 +20,9 @@ import { hexToHsl, hslToHex, DEFAULT_COLORS } from '@/lib/color-utils';
 import { useNotificationSound } from '@/hooks/useNotificationSound';
 import { useRestaurantStatus } from '@/hooks/useRestaurantStatus';
 import { parseGoogleMapsUrl, isGoogleMapsUrl, formatCoordinates } from '@/lib/google-maps-utils';
+import { toast } from 'sonner';
+import { useTenantModules } from '@/hooks/useRestaurantModules';
+import { filterModulesForExternal, MODULE_LABELS } from '@/lib/modules';
 
 const settingsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
@@ -42,6 +45,23 @@ type SettingsFormData = z.infer<typeof settingsSchema>;
 export default function AdminSettings() {
   const { restaurant, isLoading, updateRestaurant, isUpdating } = useTenantSettings();
   const { playTestSound } = useNotificationSound();
+  const { data: modules } = useTenantModules();
+  const [copied, setCopied] = useState(false);
+  
+  // Bio/Instagram link base
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://chamaatende.lovable.app';
+  const bioBaseUrl = restaurant?.custom_domain ? `https://${restaurant.custom_domain}` : origin;
+  const bioUrl = `${bioBaseUrl}/${restaurant?.slug || ''}?externo=1`;
+  const visibleBioModules = modules ? Object.entries(filterModulesForExternal(modules)).filter(([, v]) => v).map(([k]) => k as keyof typeof MODULE_LABELS) : [];
+  
+  const handleCopyBioLink = () => {
+    navigator.clipboard.writeText(bioUrl);
+    setCopied(true);
+    toast.success('Link copiado para a área de transferência!');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  
   
   // Image states
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
@@ -841,6 +861,67 @@ export default function AdminSettings() {
               />
             </CardContent>
           </Card>
+
+          {/* Link para Bio / Instagram */}
+          {restaurant && (
+            <Card className="bg-surface border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <ExternalLink className="h-5 w-5" />
+                  Link para Bio do Instagram
+                </CardTitle>
+                <CardDescription>
+                  Link público para colocar na bio do Instagram. Esconde módulos internos (comanda, atendimento, etc.) e mostra apenas opções para clientes externos.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={bioUrl}
+                      readOnly
+                      className="bg-surface border-border text-foreground pl-9"
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCopyBioLink}
+                    className="shrink-0 border-border"
+                  >
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    <span className="ml-2">{copied ? 'Copiado' : 'Copiar'}</span>
+                  </Button>
+                </div>
+                <a
+                  href={bioUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Abrir visualização
+                </a>
+                {visibleBioModules.length > 0 ? (
+                  <div className="pt-2">
+                    <p className="text-xs text-muted-foreground mb-2">Módulos visíveis neste link:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {visibleBioModules.map((key) => (
+                        <span key={key} className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs">
+                          {MODULE_LABELS[key]}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Nenhum módulo externo ativo. Ative Cardápio, Reservas, Fila, Encomendas, Avaliações ou Eventos.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Notificações */}
           <Card>
