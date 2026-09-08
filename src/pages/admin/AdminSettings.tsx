@@ -48,9 +48,8 @@ export default function AdminSettings() {
   const { data: modules } = useTenantModules();
   const [copied, setCopied] = useState(false);
   
-  // Bio/Instagram link base
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://chamaatende.lovable.app';
-  const bioBaseUrl = restaurant?.custom_domain ? `https://${restaurant.custom_domain}` : origin;
+  // Bio/Instagram link always points to the branded platform domain
+  const bioBaseUrl = 'https://plataforma.chamaatende.com';
   const bioUrl = `${bioBaseUrl}/${restaurant?.slug || ''}?externo=1`;
   const visibleBioModules = modules ? Object.entries(filterModulesForExternal(modules)).filter(([, v]) => v).map(([k]) => k as keyof typeof MODULE_LABELS) : [];
   
