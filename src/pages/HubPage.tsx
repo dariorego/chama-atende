@@ -33,6 +33,8 @@ import { useTableContext } from "@/hooks/useTableContext";
 import { SocialLinks, WifiInfo, LocationCoordinates, BusinessHours } from "@/types/restaurant";
 import { toast } from "sonner";
 import { generateGoogleMapsUrl } from "@/lib/google-maps-utils";
+import { filterModulesForExternal } from "@/lib/modules";
+
 
 const HubPage = () => {
   const [searchParams] = useSearchParams();
@@ -45,7 +47,12 @@ const HubPage = () => {
   const { data: modules, isLoading: isLoadingModules } = useTenantModules();
   const { table, tableNumber, tableName, hasTable, isLoading: isLoadingTable, setTable, clearTable } = useTableContext();
 
+  // "Bio" mode hides internal/table-only modules (e.g., Chamar Atendimento)
+  const externo = searchParams.get("externo") === "1" || searchParams.get("externo") === "true";
+  const displayModules = externo ? filterModulesForExternal(modules) : modules;
+
   const isLoading = isLoadingTenant || isLoadingModules || isLoadingTable;
+
 
   // Capture table from URL parameter
   const mesaParam = searchParams.get("mesa");
@@ -213,7 +220,7 @@ const HubPage = () => {
             </div>
 
             {/* Table Badge */}
-            {hasTable && (
+            {hasTable && !externo && (
               <div className="flex items-center gap-2 mt-3 px-4 py-2 rounded-xl bg-secondary border border-border">
                 <MapPin className="h-4 w-4 text-primary" />
                 <div className="flex-1">
@@ -280,7 +287,7 @@ const HubPage = () => {
         </div>
         <div className="space-y-3">
           {/* Hero Menu Card */}
-          {modules?.menu && (
+          {displayModules?.menu && (
             <ActionCard
               icon={UtensilsCrossed}
               title="Cardápio Digital"
@@ -292,7 +299,7 @@ const HubPage = () => {
           )}
 
           {/* Colored Module Cards */}
-          {modules?.waiterCall && (
+          {displayModules?.waiterCall && (
             <ActionCard
               icon={Bell}
               title="Pedir Atendimento"
@@ -303,7 +310,7 @@ const HubPage = () => {
             />
           )}
 
-          {modules?.reservations && (
+          {displayModules?.reservations && (
             <ActionCard
               icon={CalendarCheck}
               title="Fazer Reserva"
@@ -313,7 +320,7 @@ const HubPage = () => {
             />
           )}
 
-          {modules?.queue && (
+          {displayModules?.queue && (
             <ActionCard
               icon={Users}
               title="Fila de Espera"
@@ -324,7 +331,7 @@ const HubPage = () => {
             />
           )}
 
-          {modules?.kitchenOrder && (
+          {displayModules?.kitchenOrder && (
             <ActionCard
               icon={ChefHat}
               title="Pedido Cozinha"
@@ -335,7 +342,7 @@ const HubPage = () => {
             />
           )}
 
-          {modules?.customerReview && (
+          {displayModules?.customerReview && (
             <ActionCard
               icon={Star}
               title="Avaliar Experiência"
@@ -345,7 +352,7 @@ const HubPage = () => {
             />
           )}
 
-          {modules?.preOrders && (
+          {displayModules?.preOrders && (
             <ActionCard
               icon={ShoppingBag}
               title="Fazer Encomenda"
@@ -355,7 +362,7 @@ const HubPage = () => {
             />
           )}
 
-          {modules?.eventBookings && (
+          {displayModules?.eventBookings && (
             <ActionCard
               icon={PartyPopper}
               title="Reserva de Eventos"
@@ -364,6 +371,7 @@ const HubPage = () => {
               variant="rose"
             />
           )}
+
         </div>
 
         {/* Map Card - Usa coordenadas se disponíveis, senão usa endereço */}
