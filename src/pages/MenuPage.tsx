@@ -192,7 +192,7 @@ const MenuPage = () => {
   });
 
   const highlightedProducts = products.filter((p) => p.highlight);
-  const regularProducts = filteredProducts.filter((p) => !p.highlight);
+  const regularProducts = filteredProducts;
 
   // Group products by category for the scrollable, collapsible sections
   const sections = useMemo(() => {
