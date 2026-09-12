@@ -1368,6 +1368,58 @@ export type Database = {
         }
         Relationships: []
       }
+      license_audit_log: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          license_id: string
+          new_data: Json
+          old_data: Json | null
+          restaurant_id: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          license_id: string
+          new_data: Json
+          old_data?: Json | null
+          restaurant_id: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          license_id?: string
+          new_data?: Json
+          old_data?: Json | null
+          restaurant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_audit_log_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "license_audit_log_license_id_fkey"
+            columns: ["license_id"]
+            isOneToOne: false
+            referencedRelation: "restaurant_licenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "license_audit_log_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loyalty_programs: {
         Row: {
           created_at: string
@@ -2079,6 +2131,48 @@ export type Database = {
             columns: ["table_id"]
             isOneToOne: false
             referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      platform_admins: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_admins_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_admins_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2928,6 +3022,67 @@ export type Database = {
             columns: ["restaurant_id"]
             isOneToOne: false
             referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      restaurant_licenses: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          plan: string
+          restaurant_id: string
+          starts_at: string
+          status: Database["public"]["Enums"]["license_status"]
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          plan?: string
+          restaurant_id: string
+          starts_at?: string
+          status?: Database["public"]["Enums"]["license_status"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          plan?: string
+          restaurant_id?: string
+          starts_at?: string
+          status?: Database["public"]["Enums"]["license_status"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restaurant_licenses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "restaurant_licenses_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: true
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "restaurant_licenses_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -4038,10 +4193,39 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_platform_admin: { Args: { _user_id?: string }; Returns: boolean }
       recalc_recipe_cost: { Args: { _recipe_id: string }; Returns: undefined }
       recalc_recipe_tree: {
         Args: { _depth?: number; _recipe_id: string }
         Returns: undefined
+      }
+      save_platform_license: {
+        Args: {
+          _expires_at: string
+          _module_names: string[]
+          _plan: string
+          _restaurant_id: string
+          _starts_at: string
+          _status: Database["public"]["Enums"]["license_status"]
+        }
+        Returns: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          plan: string
+          restaurant_id: string
+          starts_at: string
+          status: Database["public"]["Enums"]["license_status"]
+          updated_at: string
+          updated_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "restaurant_licenses"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       search_pre_orders_by_phone: {
         Args: { search_phone: string }
@@ -4086,6 +4270,7 @@ export type Database = {
       hygiene_shift: "MANHA" | "TARDE" | "NOITE" | "INTEGRAL"
       ingredient_type: "COMPRADO" | "PREPARACAO"
       ingredient_unit: "KG" | "LT" | "UN"
+      license_status: "active" | "suspended"
       recipe_status: "RASCUNHO" | "PUBLICADA" | "FORA_DE_LINHA"
       recipe_type: "PRODUTO_FINAL" | "PREPARACAO"
       tenant_role:
@@ -4238,6 +4423,7 @@ export const Constants = {
       hygiene_shift: ["MANHA", "TARDE", "NOITE", "INTEGRAL"],
       ingredient_type: ["COMPRADO", "PREPARACAO"],
       ingredient_unit: ["KG", "LT", "UN"],
+      license_status: ["active", "suspended"],
       recipe_status: ["RASCUNHO", "PUBLICADA", "FORA_DE_LINHA"],
       recipe_type: ["PRODUTO_FINAL", "PREPARACAO"],
       tenant_role: ["owner", "admin", "manager", "staff", "kitchen", "waiter"],
