@@ -22,7 +22,7 @@ type RestaurantRow = {
   slug: string;
   plan: string | null;
   is_active: boolean;
-  restaurant_licenses: Array<{ id: string; plan: string; status: LicenseStatus; starts_at: string; expires_at: string | null }>;
+  restaurant_licenses: { id: string; plan: string; status: LicenseStatus; starts_at: string; expires_at: string | null } | null;
   restaurant_modules: Array<{ module_name: string; is_active: boolean | null }>;
 };
 
@@ -90,7 +90,7 @@ export default function PlatformDashboard() {
 
   const rows = restaurantsQuery.data ?? [];
   const computed = rows.map((restaurant) => {
-    const license = restaurant.restaurant_licenses[0] ?? null;
+    const license = restaurant.restaurant_licenses ?? null;
     return { restaurant, license, state: getLicenseState(license) };
   });
   const filtered = computed.filter(({ restaurant, state }) => {
@@ -106,7 +106,7 @@ export default function PlatformDashboard() {
   }), [computed]);
 
   const openEditor = (restaurant: RestaurantRow) => {
-    const license = restaurant.restaurant_licenses[0];
+    const license = restaurant.restaurant_licenses;
     const nextPlan = (license?.plan || restaurant.plan || 'starter') as PlanId;
     setEditing(restaurant);
     setPlan(nextPlan);
