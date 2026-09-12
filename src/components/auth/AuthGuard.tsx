@@ -6,8 +6,9 @@ import { useTenant } from '@/hooks/useTenant';
 import { useAdminPermissions } from '@/hooks/useAdminPermissions';
 import { isAdminSection } from '@/lib/adminSections';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, ShieldAlert, Lock, SearchX } from 'lucide-react';
+import { Loader2, ShieldAlert, Lock, SearchX, CalendarX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTenantLicense } from '@/hooks/useTenantLicense';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -211,6 +212,27 @@ function AccessDenied({ currentSlug }: { currentSlug: string | null }) {
   );
 }
 
+function LicenseBlocked({ state, expiresAt }: { state: 'expired' | 'suspended'; expiresAt?: string | null }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await logout();
+    navigate('/', { replace: true });
+  };
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-6">
+      <div className="max-w-md w-full bg-card border border-border rounded-lg p-8 text-center space-y-5">
+        <div className="flex justify-center"><div className="p-3 rounded-full bg-destructive/10"><CalendarX className="h-8 w-8 text-destructive" /></div></div>
+        <div className="space-y-2">
+          <h1 className="text-xl font-semibold text-foreground">Licença {state === 'suspended' ? 'suspensa' : 'vencida'}</h1>
+          <p className="text-sm text-muted-foreground">O acesso administrativo deste estabelecimento está temporariamente bloqueado{state === 'expired' && expiresAt ? ` desde ${new Intl.DateTimeFormat('pt-BR').format(new Date(`${expiresAt}T12:00:00`))}` : ''}. Entre em contato com a Chama-Atende para regularizar.</p>
+        </div>
+        <Button variant="outline" className="w-full" onClick={handleLogout}>Sair</Button>
+      </div>
+    </div>
+  );
+}
+
 export function AuthGuard({ children, requireAdmin = false, section }: AuthGuardProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -219,8 +241,9 @@ export function AuthGuard({ children, requireAdmin = false, section }: AuthGuard
   const { hasAccess, isLoading: accessLoading } = useAdminAccess();
   const { slug: tenantSlug, tenant, isLoading: tenantLoading } = useTenant();
   const { canAccessSection, isLoading: permissionsLoading } = useAdminPermissions();
+  const { data: license, state: licenseState, isLoading: licenseLoading } = useTenantLicense(tenant?.id);
 
-  const isLoading = authLoading || accessLoading || tenantLoading;
+  const isLoading = authLoading || accessLoading || tenantLoading || (!!tenant?.id && licenseLoading);
   const currentSlug = params.slug || tenantSlug || null;
 
   const getTenantLoginPath = () => {
@@ -257,6 +280,10 @@ export function AuthGuard({ children, requireAdmin = false, section }: AuthGuard
   // instead of bouncing back to login (which would loop with the same user).
   if (requireAdmin && !hasAccess) {
     return <AccessDenied currentSlug={currentSlug} />;
+  }
+
+  if (requireAdmin && (licenseState === 'expired' || licenseState === 'suspended')) {
+    return <LicenseBlocked state={licenseState} expiresAt={license?.expires_at} />;
   }
 
   if (requireAdmin && permissionsLoading) {

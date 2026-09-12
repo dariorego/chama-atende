@@ -25,6 +25,10 @@ import OnboardingPage from "./pages/OnboardingPage";
 import LandingPage from "./pages/LandingPage";
 import { AuthGuard } from "./components/auth/AuthGuard";
 import { AdminLayout } from "./components/layout/AdminLayout";
+import { PlatformAuthGuard } from "./components/platform-admin/PlatformAuthGuard";
+import { PlatformAdminLayout } from "./components/platform-admin/PlatformAdminLayout";
+import PlatformDashboard from "./pages/platform-admin/PlatformDashboard";
+import PlatformLoginPage from "./pages/platform-admin/PlatformLoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
@@ -473,6 +477,18 @@ function LandingWrapper() {
   );
 }
 
+function PlatformAdminPages() {
+  return (
+    <ThemeProvider storageKey="platform-admin-theme" defaultTheme="dark">
+      <PlatformAuthGuard>
+        <PlatformAdminLayout>
+          <PlatformDashboard />
+        </PlatformAdminLayout>
+      </PlatformAuthGuard>
+    </ThemeProvider>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -486,6 +502,8 @@ const App = () => (
           <Route path="/login/:slug" element={<TenantProvider><ThemeProvider><TenantThemeApplier /><LoginPage /></ThemeProvider></TenantProvider>} />
           <Route path="/signup" element={<ThemeProvider><SignupPage /></ThemeProvider>} />
           <Route path="/onboarding" element={<ThemeProvider><OnboardingPage /></ThemeProvider>} />
+          <Route path="/adminchamaatende/login" element={<ThemeProvider storageKey="platform-admin-theme" defaultTheme="dark"><PlatformLoginPage /></ThemeProvider>} />
+          <Route path="/adminchamaatende/*" element={<PlatformAdminPages />} />
 
           {/* Module marketing pages */}
           <Route path="/modulos/:moduleSlug" element={<ThemeProvider storageKey="landing-theme" defaultTheme="light"><ModuleDetailPage /></ThemeProvider>} />
