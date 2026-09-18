@@ -26,7 +26,7 @@ function estimatedWaitFrom(stats: QueueStats, position: number): number {
   if (!stats.recentSeated.length) return position * 10;
   const totalMinutes = stats.recentSeated.reduce((acc, entry) => {
     const joined = new Date(entry.joined_at).getTime();
-    const seated = new Date(entry.seated_at!).getTime();
+    const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
     return acc + (seated - joined) / 60000;
   }, 0);
   const avg = Math.round(totalMinutes / stats.recentSeated.length);

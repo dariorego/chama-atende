@@ -7,6 +7,7 @@ import { useTenant } from "@/hooks/useTenant";
 
 export interface QueueEntry {
   id: string;
+  restaurant_id: string;
   queue_code: string;
   customer_name: string;
   phone: string | null;
@@ -89,7 +90,7 @@ async function calculateEstimatedWait(restaurantId: string, position: number): P
   
   const totalMinutes = data.reduce((acc, entry) => {
     const joined = new Date(entry.joined_at).getTime();
-    const seated = new Date(entry.seated_at!).getTime();
+    const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
     return acc + (seated - joined) / 60000;
   }, 0);
   
@@ -125,6 +126,7 @@ export function useAdminQueue() {
 
   // Realtime subscription
   useEffect(() => {
+    if (!tenantId) return;
     const channelName = `queue-changes-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     const channel = supabase
@@ -168,7 +170,7 @@ export function useCalledQueue() {
   
   const calledEntries = allEntries
     ?.filter(e => e.status === 'called')
-    .sort((a, b) => new Date(a.called_at!).getTime() - new Date(b.called_at!).getTime());
+    .sort((a, b) => new Date(a.called_at ?? a.joined_at).getTime() - new Date(b.called_at ?? b.joined_at).getTime());
   
   return { data: calledEntries, ...rest };
 }
@@ -217,7 +219,7 @@ export function useQueueStats() {
   if (seatedEntries.length > 0) {
     const totalMinutes = seatedEntries.reduce((acc, entry) => {
       const joined = new Date(entry.joined_at).getTime();
-      const seated = new Date(entry.seated_at!).getTime();
+      const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
       return acc + (seated - joined) / 60000;
     }, 0);
     avgWaitTime = Math.round(totalMinutes / seatedEntries.length);
