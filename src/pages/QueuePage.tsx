@@ -597,7 +597,7 @@ export default function QueuePage() {
                 {/* Action button */}
                 <Button
                   onClick={() => {
-                    saveQueueCode(searchResult.queue_code);
+                    saveQueueCode(searchResult.queue_code, restaurantId);
                     setQueueCode(searchResult.queue_code);
                   }}
                   className="w-full h-14 rounded-full bg-emerald-deep text-cream font-sans-editorial text-base tracking-wide border border-gold/40 hover:bg-emerald-deep/90"
