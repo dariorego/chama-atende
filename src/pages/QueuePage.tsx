@@ -35,27 +35,29 @@ export default function QueuePage() {
   const [queueCode, setQueueCode] = useState<string | null>(null);
 
   const { restaurant, isLoading: isLoadingRestaurant } = useAdminSettings();
-  const { data: queueEntry, isLoading: isLoadingEntry } = useClientQueueEntry(queueCode);
-  const { data: currentPosition } = useQueuePosition(queueCode);
-  const joinQueue = useJoinQueue();
-  const leaveQueue = useLeaveQueue();
-  const { data: searchResult, isLoading: isSearching, search: searchByPhone, clearSearch, searchPhone } = useSearchQueueByPhone();
+  const restaurantId = restaurant?.id;
+  const { data: queueEntry, isLoading: isLoadingEntry } = useClientQueueEntry(queueCode, restaurantId);
+  const { data: currentPosition } = useQueuePosition(queueCode, restaurantId);
+  const joinQueue = useJoinQueue(restaurantId);
+  const leaveQueue = useLeaveQueue(restaurantId);
+  const { data: searchResult, isLoading: isSearching, search: searchByPhone, clearSearch, searchPhone } = useSearchQueueByPhone(restaurantId);
 
   // Load stored queue code on mount
   useEffect(() => {
-    const stored = getStoredQueueCode();
+    if (!restaurantId) return;
+    const stored = getStoredQueueCode(restaurantId);
     if (stored) {
       setQueueCode(stored);
     }
-  }, []);
+  }, [restaurantId]);
 
   // Check if entry is still valid (not cancelled/seated)
   useEffect(() => {
     if (queueEntry && ['cancelled', 'seated', 'no_show'].includes(queueEntry.status)) {
-      clearQueueCode();
+      clearQueueCode(restaurantId);
       setQueueCode(null);
     }
-  }, [queueEntry]);
+  }, [queueEntry, restaurantId]);
 
   const handleJoinQueue = async () => {
     if (!name.trim() || !phone.trim()) {
@@ -69,7 +71,7 @@ export default function QueuePage() {
       notes: observation.trim() || undefined,
     });
 
-    saveQueueCode(entry.queue_code);
+    saveQueueCode(entry.queue_code, restaurantId);
     setQueueCode(entry.queue_code);
   };
 
@@ -77,7 +79,7 @@ export default function QueuePage() {
     if (!queueEntry) return;
     
     await leaveQueue.mutateAsync(queueEntry.id);
-    clearQueueCode();
+    clearQueueCode(restaurantId);
     setQueueCode(null);
     setName("");
     setPhone("");
@@ -595,7 +597,7 @@ export default function QueuePage() {
                 {/* Action button */}
                 <Button
                   onClick={() => {
-                    saveQueueCode(searchResult.queue_code);
+                    saveQueueCode(searchResult.queue_code, restaurantId);
                     setQueueCode(searchResult.queue_code);
                   }}
                   className="w-full h-14 rounded-full bg-emerald-deep text-cream font-sans-editorial text-base tracking-wide border border-gold/40 hover:bg-emerald-deep/90"

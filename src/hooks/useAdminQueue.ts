@@ -3,9 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import { isToday } from "date-fns";
+import { useTenant } from "@/hooks/useTenant";
 
 export interface QueueEntry {
   id: string;
+  restaurant_id: string;
   queue_code: string;
   customer_name: string;
   phone: string | null;
@@ -24,13 +26,14 @@ export interface QueueEntry {
 }
 
 // Generate next queue code for today (A-001, A-002, etc.)
-async function generateQueueCode(): Promise<string> {
+async function generateQueueCode(restaurantId: string): Promise<string> {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
   const { data } = await supabase
     .from('queue_entries')
     .select('queue_code')
+    .eq('restaurant_id', restaurantId)
     .gte('created_at', today.toISOString())
     .order('created_at', { ascending: false })
     .limit(1);
@@ -60,20 +63,22 @@ async function generateQueueCode(): Promise<string> {
 }
 
 // Calculate position in queue
-async function calculatePosition(): Promise<number> {
+async function calculatePosition(restaurantId: string): Promise<number> {
   const { count } = await supabase
     .from('queue_entries')
     .select('*', { count: 'exact', head: true })
+    .eq('restaurant_id', restaurantId)
     .eq('status', 'waiting');
   
   return (count || 0) + 1;
 }
 
 // Calculate estimated wait time based on average service time
-async function calculateEstimatedWait(position: number): Promise<number> {
+async function calculateEstimatedWait(restaurantId: string, position: number): Promise<number> {
   const { data } = await supabase
     .from('queue_entries')
     .select('joined_at, seated_at')
+    .eq('restaurant_id', restaurantId)
     .eq('status', 'seated')
     .not('seated_at', 'is', null)
     .order('seated_at', { ascending: false })
@@ -85,7 +90,7 @@ async function calculateEstimatedWait(position: number): Promise<number> {
   
   const totalMinutes = data.reduce((acc, entry) => {
     const joined = new Date(entry.joined_at).getTime();
-    const seated = new Date(entry.seated_at!).getTime();
+    const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
     return acc + (seated - joined) / 60000;
   }, 0);
   
@@ -96,26 +101,32 @@ async function calculateEstimatedWait(position: number): Promise<number> {
 // Fetch all queue entries for today with realtime
 export function useAdminQueue() {
   const queryClient = useQueryClient();
+  const { tenantId } = useTenant();
   
   const query = useQuery({
-    queryKey: ['admin-queue'],
+    queryKey: ['admin-queue', tenantId],
     queryFn: async () => {
+      if (!tenantId) return [];
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
       const { data, error } = await supabase
         .from('queue_entries')
         .select('*')
+        .eq('restaurant_id', tenantId)
         .gte('created_at', today.toISOString())
         .order('joined_at', { ascending: true });
       
       if (error) throw error;
       return data as QueueEntry[];
     },
+    enabled: !!tenantId,
+    refetchInterval: 10000,
   });
 
   // Realtime subscription
   useEffect(() => {
+    if (!tenantId) return;
     const channelName = `queue-changes-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     const channel = supabase
@@ -125,10 +136,11 @@ export function useAdminQueue() {
         {
           event: '*',
           schema: 'public',
-          table: 'queue_entries'
+          table: 'queue_entries',
+          filter: `restaurant_id=eq.${tenantId}`,
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['admin-queue'] });
+          queryClient.invalidateQueries({ queryKey: ['admin-queue', tenantId] });
         }
       )
       .subscribe();
@@ -136,7 +148,7 @@ export function useAdminQueue() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, tenantId]);
 
   return query;
 }
@@ -158,7 +170,7 @@ export function useCalledQueue() {
   
   const calledEntries = allEntries
     ?.filter(e => e.status === 'called')
-    .sort((a, b) => new Date(a.called_at!).getTime() - new Date(b.called_at!).getTime());
+    .sort((a, b) => new Date(a.called_at ?? a.joined_at).getTime() - new Date(b.called_at ?? b.joined_at).getTime());
   
   return { data: calledEntries, ...rest };
 }
@@ -207,7 +219,7 @@ export function useQueueStats() {
   if (seatedEntries.length > 0) {
     const totalMinutes = seatedEntries.reduce((acc, entry) => {
       const joined = new Date(entry.joined_at).getTime();
-      const seated = new Date(entry.seated_at!).getTime();
+      const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
       return acc + (seated - joined) / 60000;
     }, 0);
     avgWaitTime = Math.round(totalMinutes / seatedEntries.length);
@@ -228,6 +240,7 @@ export function useQueueStats() {
 export function useCreateQueueEntry() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { tenantId } = useTenant();
 
   return useMutation({
     mutationFn: async (data: {
@@ -236,13 +249,15 @@ export function useCreateQueueEntry() {
       party_size: number;
       notes?: string;
     }) => {
-      const queue_code = await generateQueueCode();
-      const position = await calculatePosition();
-      const estimated_wait_minutes = await calculateEstimatedWait(position);
+      if (!tenantId) throw new Error('Estabelecimento não identificado');
+      const queue_code = await generateQueueCode(tenantId);
+      const position = await calculatePosition(tenantId);
+      const estimated_wait_minutes = await calculateEstimatedWait(tenantId, position);
       
       const { data: entry, error } = await supabase
         .from('queue_entries')
         .insert({
+          restaurant_id: tenantId,
           queue_code,
           customer_name: data.customer_name,
           phone: data.phone || null,
@@ -259,7 +274,7 @@ export function useCreateQueueEntry() {
       return entry as QueueEntry;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-queue'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-queue', tenantId] });
       toast({
         title: "Cliente adicionado",
         description: "Cliente entrou na fila com sucesso.",
@@ -280,6 +295,7 @@ export function useCreateQueueEntry() {
 export function useUpdateQueueEntry() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { tenantId } = useTenant();
 
   return useMutation({
     mutationFn: async ({ 
@@ -292,6 +308,7 @@ export function useUpdateQueueEntry() {
       [key: string]: any;
     }) => {
       const updates: any = { status, ...rest };
+      if (!tenantId) throw new Error('Estabelecimento não identificado');
       
       // Set appropriate timestamp based on status
       if (status === 'called') {
@@ -306,6 +323,7 @@ export function useUpdateQueueEntry() {
         .from('queue_entries')
         .update(updates)
         .eq('id', id)
+        .eq('restaurant_id', tenantId)
         .select()
         .single();
       
@@ -313,7 +331,7 @@ export function useUpdateQueueEntry() {
       return data as QueueEntry;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-queue'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-queue', tenantId] });
       
       const messages: Record<string, string> = {
         called: `${data.customer_name} foi chamado(a)!`,

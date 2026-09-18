@@ -270,11 +270,12 @@ Deno.serve(async (req) => {
       // ---------- QUEUE ----------
       case 'get-queue-entry': {
         const code = s(payload.queueCode, 20)
-        if (!code) return json(400, { error: 'queueCode required' })
+        if (!code || !isUuid(payload.restaurantId)) return json(400, { error: 'queueCode and restaurantId required' })
         const providedPhone = payload.phone != null ? normalizePhone(payload.phone) : ''
         const { data, error } = await supabase.from('queue_entries')
           .select('id, queue_code, restaurant_id, status, position, estimated_wait_minutes, party_size, joined_at, called_at, seated_at, cancelled_at, customer_name, phone, notes')
           .eq('queue_code', code)
+          .eq('restaurant_id', payload.restaurantId)
           .order('created_at', { ascending: false })
           .limit(1)
           .maybeSingle()
@@ -292,23 +293,27 @@ Deno.serve(async (req) => {
       }
       case 'get-queue-position': {
         const code = s(payload.queueCode, 20)
-        if (!code) return json(400, { error: 'queueCode required' })
+        if (!code || !isUuid(payload.restaurantId)) return json(400, { error: 'queueCode and restaurantId required' })
         const { data: entry } = await supabase.from('queue_entries').select('joined_at, status')
-          .eq('queue_code', code).order('created_at', { ascending: false }).limit(1).maybeSingle()
+          .eq('queue_code', code).eq('restaurant_id', payload.restaurantId).order('created_at', { ascending: false }).limit(1).maybeSingle()
         if (!entry || entry.status !== 'waiting') return json(200, { position: null })
         const { count } = await supabase.from('queue_entries')
           .select('*', { count: 'exact', head: true }).eq('status', 'waiting').lt('joined_at', entry.joined_at)
+          .eq('restaurant_id', payload.restaurantId)
         return json(200, { position: (count ?? 0) + 1 })
       }
       case 'get-queue-stats': {
+        if (!isUuid(payload.restaurantId)) return json(400, { error: 'restaurantId required' })
         // For generating next code + estimating wait
         const today = new Date(); today.setHours(0,0,0,0)
         const { data: latest } = await supabase.from('queue_entries').select('queue_code')
-          .gte('created_at', today.toISOString()).order('created_at', { ascending: false }).limit(1)
+          .eq('restaurant_id', payload.restaurantId).gte('created_at', today.toISOString()).order('created_at', { ascending: false }).limit(1)
         const { count: waitingCount } = await supabase.from('queue_entries')
           .select('*', { count: 'exact', head: true }).eq('status', 'waiting')
+          .eq('restaurant_id', payload.restaurantId)
         const { data: recent } = await supabase.from('queue_entries')
           .select('joined_at, seated_at').eq('status', 'seated')
+          .eq('restaurant_id', payload.restaurantId)
           .not('seated_at', 'is', null).order('seated_at', { ascending: false }).limit(10)
         return json(200, {
           lastCode: latest?.[0]?.queue_code ?? null,
@@ -317,29 +322,30 @@ Deno.serve(async (req) => {
         })
       }
       case 'cancel-queue-entry': {
-        if (!isUuid(payload.id)) return json(400, { error: 'id required' })
+        if (!isUuid(payload.id) || !isUuid(payload.restaurantId)) return json(400, { error: 'id and restaurantId required' })
         const providedPhone = normalizePhone(payload.phone ?? '')
         if (providedPhone.length < 8) return json(400, { error: 'phone required' })
         const { data: entry, error: fetchErr } = await supabase.from('queue_entries')
-          .select('id, phone, status').eq('id', payload.id).maybeSingle()
+          .select('id, phone, status').eq('id', payload.id).eq('restaurant_id', payload.restaurantId).maybeSingle()
         if (fetchErr) return json(500, { error: fetchErr.message })
         if (!entry) return json(404, { error: 'Not found' })
         if (normalizePhone(entry.phone ?? '') !== providedPhone) return json(403, { error: 'Forbidden' })
         const { error } = await supabase.from('queue_entries')
           .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-          .eq('id', payload.id).eq('status', 'waiting')
+          .eq('id', payload.id).eq('restaurant_id', payload.restaurantId).eq('status', 'waiting')
         if (error) return json(500, { error: error.message })
         return json(200, { ok: true })
       }
       case 'search-queue-by-phone': {
         const rawPhone = s(payload.phone, 20)
-        if (!rawPhone) return json(400, { error: 'phone required' })
+        if (!rawPhone || !isUuid(payload.restaurantId)) return json(400, { error: 'phone and restaurantId required' })
         const cleanPhone = normalizePhone(rawPhone)
         if (cleanPhone.length < 8) return json(400, { error: 'phone too short' })
         const today = new Date(); today.setHours(0,0,0,0)
         // Exact match on normalized phone only — never a substring match.
         const { data, error } = await supabase.from('queue_entries').select('*')
           .gte('created_at', today.toISOString())
+          .eq('restaurant_id', payload.restaurantId)
           .eq('phone', cleanPhone)
           .in('status', ['waiting','called'])
           .order('created_at', { ascending: false }).limit(1).maybeSingle()

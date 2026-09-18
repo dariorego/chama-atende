@@ -26,7 +26,7 @@ function estimatedWaitFrom(stats: QueueStats, position: number): number {
   if (!stats.recentSeated.length) return position * 10;
   const totalMinutes = stats.recentSeated.reduce((acc, entry) => {
     const joined = new Date(entry.joined_at).getTime();
-    const seated = new Date(entry.seated_at!).getTime();
+    const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
     return acc + (seated - joined) / 60000;
   }, 0);
   const avg = Math.round(totalMinutes / stats.recentSeated.length);
@@ -34,33 +34,34 @@ function estimatedWaitFrom(stats: QueueStats, position: number): number {
 }
 
 // Hook to get client's queue entry by code with realtime updates
-export function useClientQueueEntry(queueCode: string | null) {
-  const phone = getStoredQueuePhone();
+export function useClientQueueEntry(queueCode: string | null, restaurantId?: string) {
+  const phone = getStoredQueuePhone(restaurantId);
   return useQuery({
-    queryKey: ['client-queue-entry', queueCode, phone],
+    queryKey: ['client-queue-entry', restaurantId, queueCode, phone],
     queryFn: async () => {
-      if (!queueCode) return null;
+      if (!queueCode || !restaurantId) return null;
       const { data } = await callPublicApi<{ data: QueueEntry | null }>('get-queue-entry', {
         queueCode,
+        restaurantId,
         phone: phone || undefined,
       });
       return data;
     },
-    enabled: !!queueCode,
+    enabled: !!queueCode && !!restaurantId,
     refetchInterval: 10000,
   });
 }
 
 // Hook to get current position in queue
-export function useQueuePosition(queueCode: string | null) {
+export function useQueuePosition(queueCode: string | null, restaurantId?: string) {
   return useQuery({
-    queryKey: ['queue-position', queueCode],
+    queryKey: ['queue-position', restaurantId, queueCode],
     queryFn: async () => {
-      if (!queueCode) return null;
-      const { position } = await callPublicApi<{ position: number | null }>('get-queue-position', { queueCode });
+      if (!queueCode || !restaurantId) return null;
+      const { position } = await callPublicApi<{ position: number | null }>('get-queue-position', { queueCode, restaurantId });
       return position;
     },
-    enabled: !!queueCode,
+    enabled: !!queueCode && !!restaurantId,
     refetchInterval: 30000,
   });
 }
@@ -73,7 +74,7 @@ const joinQueueSchema = z.object({
 });
 
 // Hook to join queue
-export function useJoinQueue() {
+export function useJoinQueue(restaurantId?: string) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -84,8 +85,9 @@ export function useJoinQueue() {
       party_size: number;
       notes?: string;
     }) => {
+      if (!restaurantId) throw new Error('Estabelecimento não identificado');
       const validated = joinQueueSchema.parse(data);
-      const stats = await callPublicApi<QueueStats>('get-queue-stats');
+      const stats = await callPublicApi<QueueStats>('get-queue-stats', { restaurantId });
       const queue_code = nextCodeFrom(stats.lastCode);
       const position = stats.waitingCount + 1;
       const estimated_wait_minutes = estimatedWaitFrom(stats, position);
@@ -93,6 +95,7 @@ export function useJoinQueue() {
       const { error } = await supabase
         .from('queue_entries')
         .insert({
+          restaurant_id: restaurantId,
           queue_code,
           customer_name: validated.customer_name,
           phone: validated.phone || null,
@@ -104,7 +107,7 @@ export function useJoinQueue() {
         });
 
       if (error) throw error;
-      if (validated.phone) saveQueuePhone(validated.phone);
+      if (validated.phone) saveQueuePhone(validated.phone, restaurantId);
       return { queue_code, position, estimated_wait_minutes } as unknown as QueueEntry;
     },
     onSuccess: (entry) => {
@@ -126,20 +129,20 @@ export function useJoinQueue() {
 }
 
 // Hook to leave queue (cancel)
-export function useLeaveQueue() {
+export function useLeaveQueue(restaurantId?: string) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const phone = getStoredQueuePhone();
-      if (!phone) throw new Error('Telefone necessário para sair da fila');
-      await callPublicApi('cancel-queue-entry', { id, phone });
+      const phone = getStoredQueuePhone(restaurantId);
+      if (!phone || !restaurantId) throw new Error('Telefone e estabelecimento necessários para sair da fila');
+      await callPublicApi('cancel-queue-entry', { id, phone, restaurantId });
       return { id } as unknown as QueueEntry;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client-queue-entry'] });
-      clearQueuePhone();
+      clearQueuePhone(restaurantId);
       toast({
         title: "Você saiu da fila",
         description: "Sua posição foi liberada.",
@@ -157,17 +160,17 @@ export function useLeaveQueue() {
 }
 
 // Hook to search queue entry by phone
-export function useSearchQueueByPhone() {
+export function useSearchQueueByPhone(restaurantId?: string) {
   const [searchPhone, setSearchPhone] = useState<string | null>(null);
 
   const query = useQuery({
-    queryKey: ['queue-search-phone', searchPhone],
+    queryKey: ['queue-search-phone', restaurantId, searchPhone],
     queryFn: async () => {
-      if (!searchPhone) return null;
-      const { data } = await callPublicApi<{ data: QueueEntry | null }>('search-queue-by-phone', { phone: searchPhone });
+      if (!searchPhone || !restaurantId) return null;
+      const { data } = await callPublicApi<{ data: QueueEntry | null }>('search-queue-by-phone', { phone: searchPhone, restaurantId });
       return data;
     },
-    enabled: !!searchPhone && searchPhone.replace(/\D/g, '').length >= 8,
+    enabled: !!restaurantId && !!searchPhone && searchPhone.replace(/\D/g, '').length >= 8,
   });
 
   const search = (phone: string) => {
@@ -185,26 +188,30 @@ export function useSearchQueueByPhone() {
 const QUEUE_CODE_KEY = 'queue_code';
 const QUEUE_PHONE_KEY = 'queue_phone';
 
-export function saveQueueCode(code: string) {
-  localStorage.setItem(QUEUE_CODE_KEY, code);
+function tenantStorageKey(base: string, restaurantId?: string) {
+  return restaurantId ? `${base}:${restaurantId}` : base;
 }
 
-export function getStoredQueueCode(): string | null {
-  return localStorage.getItem(QUEUE_CODE_KEY);
+export function saveQueueCode(code: string, restaurantId?: string) {
+  localStorage.setItem(tenantStorageKey(QUEUE_CODE_KEY, restaurantId), code);
 }
 
-export function clearQueueCode() {
-  localStorage.removeItem(QUEUE_CODE_KEY);
+export function getStoredQueueCode(restaurantId?: string): string | null {
+  return localStorage.getItem(tenantStorageKey(QUEUE_CODE_KEY, restaurantId));
 }
 
-export function saveQueuePhone(phone: string) {
-  try { localStorage.setItem(QUEUE_PHONE_KEY, phone); } catch { /* ignore */ }
+export function clearQueueCode(restaurantId?: string) {
+  localStorage.removeItem(tenantStorageKey(QUEUE_CODE_KEY, restaurantId));
 }
 
-export function getStoredQueuePhone(): string | null {
-  try { return localStorage.getItem(QUEUE_PHONE_KEY); } catch { return null; }
+export function saveQueuePhone(phone: string, restaurantId?: string) {
+  try { localStorage.setItem(tenantStorageKey(QUEUE_PHONE_KEY, restaurantId), phone); } catch { /* ignore */ }
 }
 
-export function clearQueuePhone() {
-  try { localStorage.removeItem(QUEUE_PHONE_KEY); } catch { /* ignore */ }
+export function getStoredQueuePhone(restaurantId?: string): string | null {
+  try { return localStorage.getItem(tenantStorageKey(QUEUE_PHONE_KEY, restaurantId)); } catch { return null; }
+}
+
+export function clearQueuePhone(restaurantId?: string) {
+  try { localStorage.removeItem(tenantStorageKey(QUEUE_PHONE_KEY, restaurantId)); } catch { /* ignore */ }
 }
