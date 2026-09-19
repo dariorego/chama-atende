@@ -1,37 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { z } from "zod";
 import { callPublicApi } from "@/lib/publicApi";
 import type { QueueEntry } from "./useAdminQueue";
-
-interface QueueStats {
-  lastCode: string | null;
-  waitingCount: number;
-  recentSeated: Array<{ joined_at: string; seated_at: string | null }>;
-}
-
-function nextCodeFrom(lastCode: string | null): string {
-  if (!lastCode) return 'A-001';
-  const match = lastCode.match(/([A-Z])-(\d{3})/);
-  if (!match) return 'A-001';
-  let letter = match[1];
-  let number = parseInt(match[2], 10) + 1;
-  if (number > 999) { letter = String.fromCharCode(letter.charCodeAt(0) + 1); number = 1; }
-  return `${letter}-${number.toString().padStart(3, '0')}`;
-}
-
-function estimatedWaitFrom(stats: QueueStats, position: number): number {
-  if (!stats.recentSeated.length) return position * 10;
-  const totalMinutes = stats.recentSeated.reduce((acc, entry) => {
-    const joined = new Date(entry.joined_at).getTime();
-    const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
-    return acc + (seated - joined) / 60000;
-  }, 0);
-  const avg = Math.round(totalMinutes / stats.recentSeated.length);
-  return Math.max(5, avg * position);
-}
 
 // Hook to get client's queue entry by code with realtime updates
 export function useClientQueueEntry(queueCode: string | null, restaurantId?: string) {
