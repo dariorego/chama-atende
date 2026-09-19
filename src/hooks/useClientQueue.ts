@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { z } from "zod";
@@ -59,15 +60,27 @@ export function useJoinQueue(restaurantId?: string) {
     }) => {
       if (!restaurantId) throw new Error('Estabelecimento não identificado');
       const validated = joinQueueSchema.parse(data);
-      const { data: entry } = await callPublicApi<{ data: QueueEntry }>('create-queue-entry', {
-        restaurantId,
-        customerName: validated.customer_name,
-        phone: validated.phone,
-        partySize: validated.party_size,
-        notes: validated.notes,
-      });
+      const { data: entry, error } = await supabase
+        .from('queue_entries')
+        .insert({
+          restaurant_id: restaurantId,
+          queue_code: `A-${Date.now().toString().slice(-3)}`,
+          customer_name: validated.customer_name,
+          phone: validated.phone || null,
+          party_size: validated.party_size,
+          notes: validated.notes || null,
+          position: 1,
+          estimated_wait_minutes: 10,
+          status: 'waiting',
+        })
+        .select('*')
+        .single();
+      if (error) throw error;
+      if (!entry || entry.restaurant_id !== restaurantId) {
+        throw new Error('A entrada não foi vinculada ao estabelecimento');
+      }
       if (validated.phone) saveQueuePhone(validated.phone, restaurantId);
-      return entry;
+      return entry as QueueEntry;
     },
     onSuccess: (entry) => {
       queryClient.invalidateQueries({ queryKey: ['client-queue-entry'] });
