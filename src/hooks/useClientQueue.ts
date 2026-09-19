@@ -91,7 +91,6 @@ export function useJoinQueue(restaurantId?: string) {
       const queue_code = nextCodeFrom(stats.lastCode);
       const position = stats.waitingCount + 1;
       const estimated_wait_minutes = estimatedWaitFrom(stats, position);
-
       const { error } = await supabase
         .from('queue_entries')
         .insert({
@@ -105,7 +104,6 @@ export function useJoinQueue(restaurantId?: string) {
           estimated_wait_minutes,
           status: 'waiting',
         });
-
       if (error) throw error;
       if (validated.phone) saveQueuePhone(validated.phone, restaurantId);
       return { queue_code, position, estimated_wait_minutes } as unknown as QueueEntry;

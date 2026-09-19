@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
-import { isToday } from "date-fns";
 import { useTenant } from "@/hooks/useTenant";
 
 export interface QueueEntry {
@@ -116,7 +115,6 @@ export function useAdminQueue() {
         .eq('restaurant_id', tenantId)
         .gte('created_at', today.toISOString())
         .order('joined_at', { ascending: true });
-      
       if (error) throw error;
       return data as QueueEntry[];
     },
@@ -307,18 +305,11 @@ export function useUpdateQueueEntry() {
       status: QueueEntry['status'];
       [key: string]: any;
     }) => {
-      const updates: any = { status, ...rest };
       if (!tenantId) throw new Error('Estabelecimento não identificado');
-      
-      // Set appropriate timestamp based on status
-      if (status === 'called') {
-        updates.called_at = new Date().toISOString();
-      } else if (status === 'seated') {
-        updates.seated_at = new Date().toISOString();
-      } else if (status === 'cancelled' || status === 'no_show') {
-        updates.cancelled_at = new Date().toISOString();
-      }
-      
+      const updates: any = { status, ...rest };
+      if (status === 'called') updates.called_at = new Date().toISOString();
+      if (status === 'seated') updates.seated_at = new Date().toISOString();
+      if (status === 'cancelled' || status === 'no_show') updates.cancelled_at = new Date().toISOString();
       const { data, error } = await supabase
         .from('queue_entries')
         .update(updates)
@@ -326,7 +317,6 @@ export function useUpdateQueueEntry() {
         .eq('restaurant_id', tenantId)
         .select()
         .single();
-      
       if (error) throw error;
       return data as QueueEntry;
     },
