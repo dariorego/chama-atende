@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
-import { isToday } from "date-fns";
 import { useTenant } from "@/hooks/useTenant";
 
 export interface QueueEntry {
