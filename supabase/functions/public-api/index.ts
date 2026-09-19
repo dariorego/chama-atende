@@ -272,7 +272,7 @@ Deno.serve(async (req) => {
         const code = s(payload.queueCode, 20)
         if (!code || !isUuid(payload.restaurantId)) return json(400, { error: 'queueCode and restaurantId required' })
         const providedPhone = payload.phone != null ? normalizePhone(payload.phone) : ''
-        const { data, error } = await supabase.from('queue_entries')
+        const { data: tenantEntry, error } = await supabase.from('queue_entries')
           .select('id, queue_code, restaurant_id, status, position, estimated_wait_minutes, party_size, joined_at, called_at, seated_at, cancelled_at, customer_name, phone, notes')
           .eq('queue_code', code)
           .eq('restaurant_id', payload.restaurantId)
@@ -280,6 +280,20 @@ Deno.serve(async (req) => {
           .limit(1)
           .maybeSingle()
         if (error) return json(500, { error: error.message })
+        let data = tenantEntry
+        if (!data && providedPhone.length >= 8) {
+          const { data: legacyEntry, error: legacyError } = await supabase.from('queue_entries')
+            .select('id, queue_code, restaurant_id, status, position, estimated_wait_minutes, party_size, joined_at, called_at, seated_at, cancelled_at, customer_name, phone, notes')
+            .eq('queue_code', code)
+            .is('restaurant_id', null)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+          if (legacyError) return json(500, { error: legacyError.message })
+          if (legacyEntry && normalizePhone(legacyEntry.phone ?? '') === providedPhone) {
+            data = legacyEntry
+          }
+        }
         if (!data) return json(200, { data: null })
         const storedPhone = normalizePhone(data.phone ?? '')
         const ownerMatch = storedPhone.length > 0 && storedPhone === providedPhone
