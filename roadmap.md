@@ -7,3 +7,5 @@
 - [x] Validar acesso, telas e compilação
 - [x] Corrigir vínculo e isolamento da fila por estabelecimento
 - [x] Corrigir cancelamento de entradas atuais e antigas da fila
+- [x] Garantir que novas entradas da fila sejam vinculadas ao estabelecimento
+- [ ] Publicar a função atualizada e reparar a entrada antiga no Supabase self-hosted (aguardando acesso à VPS)

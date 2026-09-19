@@ -87,6 +87,26 @@ export function useJoinQueue(restaurantId?: string) {
     }) => {
       if (!restaurantId) throw new Error('Estabelecimento não identificado');
       const validated = joinQueueSchema.parse(data);
+      try {
+        const { data: entry } = await callPublicApi<{ data: QueueEntry }>('create-queue-entry', {
+          restaurantId,
+          customerName: validated.customer_name,
+          phone: validated.phone,
+          partySize: validated.party_size,
+          notes: validated.notes,
+        });
+        if (entry.restaurant_id !== restaurantId) {
+          throw new Error('A entrada não foi vinculada ao estabelecimento');
+        }
+        if (validated.phone) saveQueuePhone(validated.phone, restaurantId);
+        return entry;
+      } catch (serverError) {
+        // Compatibilidade temporária com instalações self-hosted que ainda
+        // não receberam a ação create-queue-entry. A política RLS exige um
+        // restaurante ativo e impede a criação sem restaurant_id.
+        console.warn('Server queue creation unavailable; using RLS-protected insert.', serverError);
+      }
+
       const stats = await callPublicApi<QueueStats>('get-queue-stats', { restaurantId });
       const queue_code = nextCodeFrom(stats.lastCode);
       const position = stats.waitingCount + 1;
