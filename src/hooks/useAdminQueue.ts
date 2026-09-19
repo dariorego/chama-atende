@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import { isToday } from "date-fns";
 import { useTenant } from "@/hooks/useTenant";
+import { callPublicApi } from "@/lib/publicApi";
 
 export interface QueueEntry {
   id: string;
@@ -110,15 +111,11 @@ export function useAdminQueue() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      const { data, error } = await supabase
-        .from('queue_entries')
-        .select('*')
-        .eq('restaurant_id', tenantId)
-        .gte('created_at', today.toISOString())
-        .order('joined_at', { ascending: true });
-      
-      if (error) throw error;
-      return data as QueueEntry[];
+      const { data } = await callPublicApi<{ data: QueueEntry[] }>('get-admin-queue', {
+        restaurantId: tenantId,
+        since: today.toISOString(),
+      });
+      return data;
     },
     enabled: !!tenantId,
     refetchInterval: 10000,
@@ -307,28 +304,13 @@ export function useUpdateQueueEntry() {
       status: QueueEntry['status'];
       [key: string]: any;
     }) => {
-      const updates: any = { status, ...rest };
       if (!tenantId) throw new Error('Estabelecimento não identificado');
-      
-      // Set appropriate timestamp based on status
-      if (status === 'called') {
-        updates.called_at = new Date().toISOString();
-      } else if (status === 'seated') {
-        updates.seated_at = new Date().toISOString();
-      } else if (status === 'cancelled' || status === 'no_show') {
-        updates.cancelled_at = new Date().toISOString();
-      }
-      
-      const { data, error } = await supabase
-        .from('queue_entries')
-        .update(updates)
-        .eq('id', id)
-        .eq('restaurant_id', tenantId)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data as QueueEntry;
+      const { data } = await callPublicApi<{ data: QueueEntry }>('update-admin-queue-entry', {
+        id,
+        restaurantId: tenantId,
+        status,
+      });
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['admin-queue', tenantId] });

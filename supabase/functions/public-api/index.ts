@@ -37,6 +37,18 @@ function intN(v: unknown, min = 1, max = 100): number | null {
   return n
 }
 
+async function canAdminTenant(req: Request, restaurantId: string): Promise<boolean> {
+  const authorization = req.headers.get('Authorization')
+  const token = authorization?.replace(/^Bearer\s+/i, '')
+  if (!token) return false
+  const { data: { user }, error } = await supabase.auth.getUser(token)
+  if (error || !user) return false
+  const { data: role } = await supabase.from('tenant_user_roles')
+    .select('id').eq('user_id', user.id).eq('restaurant_id', restaurantId)
+    .in('role', ['owner', 'admin', 'manager']).limit(1).maybeSingle()
+  return Boolean(role)
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json(405, { error: 'Method not allowed' })
@@ -268,6 +280,33 @@ Deno.serve(async (req) => {
       }
 
       // ---------- QUEUE ----------
+      case 'get-admin-queue': {
+        if (!isUuid(payload.restaurantId)) return json(400, { error: 'restaurantId required' })
+        if (!(await canAdminTenant(req, payload.restaurantId))) return json(403, { error: 'Forbidden' })
+        const since = s(payload.since, 40)
+        if (!since || Number.isNaN(Date.parse(since))) return json(400, { error: 'Valid since required' })
+        const { data, error } = await supabase.from('queue_entries').select('*')
+          .eq('restaurant_id', payload.restaurantId).gte('created_at', since).order('joined_at', { ascending: true })
+        if (error) return json(500, { error: error.message })
+        return json(200, { data: data ?? [] })
+      }
+      case 'update-admin-queue-entry': {
+        if (!isUuid(payload.restaurantId) || !isUuid(payload.id)) return json(400, { error: 'id and restaurantId required' })
+        if (!(await canAdminTenant(req, payload.restaurantId))) return json(403, { error: 'Forbidden' })
+        const status = s(payload.status, 20)
+        if (!status || !['waiting', 'called', 'seated', 'cancelled', 'no_show'].includes(status)) {
+          return json(400, { error: 'Invalid status' })
+        }
+        const updates: Record<string, string> = { status }
+        if (status === 'called') updates.called_at = new Date().toISOString()
+        if (status === 'seated') updates.seated_at = new Date().toISOString()
+        if (status === 'cancelled' || status === 'no_show') updates.cancelled_at = new Date().toISOString()
+        const { data, error } = await supabase.from('queue_entries').update(updates)
+          .eq('id', payload.id).eq('restaurant_id', payload.restaurantId).select('*').maybeSingle()
+        if (error) return json(500, { error: error.message })
+        if (!data) return json(404, { error: 'Not found' })
+        return json(200, { data })
+      }
       case 'create-queue-entry': {
         if (!isUuid(payload.restaurantId)) return json(400, { error: 'restaurantId required' })
         const customerName = s(payload.customerName, 100)
