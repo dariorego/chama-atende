@@ -87,28 +87,15 @@ export function useJoinQueue(restaurantId?: string) {
     }) => {
       if (!restaurantId) throw new Error('Estabelecimento não identificado');
       const validated = joinQueueSchema.parse(data);
-      const stats = await callPublicApi<QueueStats>('get-queue-stats', { restaurantId });
-      const queue_code = nextCodeFrom(stats.lastCode);
-      const position = stats.waitingCount + 1;
-      const estimated_wait_minutes = estimatedWaitFrom(stats, position);
-
-      const { error } = await supabase
-        .from('queue_entries')
-        .insert({
-          restaurant_id: restaurantId,
-          queue_code,
-          customer_name: validated.customer_name,
-          phone: validated.phone || null,
-          party_size: validated.party_size,
-          notes: validated.notes || null,
-          position,
-          estimated_wait_minutes,
-          status: 'waiting',
-        });
-
-      if (error) throw error;
+      const { data: entry } = await callPublicApi<{ data: QueueEntry }>('create-queue-entry', {
+        restaurantId,
+        customerName: validated.customer_name,
+        phone: validated.phone,
+        partySize: validated.party_size,
+        notes: validated.notes,
+      });
       if (validated.phone) saveQueuePhone(validated.phone, restaurantId);
-      return { queue_code, position, estimated_wait_minutes } as unknown as QueueEntry;
+      return entry;
     },
     onSuccess: (entry) => {
       queryClient.invalidateQueries({ queryKey: ['client-queue-entry'] });
