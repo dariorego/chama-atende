@@ -6,3 +6,4 @@
 - [x] Bloquear painel local para licença vencida ou suspensa
 - [x] Validar acesso, telas e compilação
 - [x] Corrigir vínculo e isolamento da fila por estabelecimento
+- [x] Corrigir cancelamento de entradas atuais e antigas da fila

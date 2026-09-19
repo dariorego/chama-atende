@@ -325,14 +325,29 @@ Deno.serve(async (req) => {
         if (!isUuid(payload.id) || !isUuid(payload.restaurantId)) return json(400, { error: 'id and restaurantId required' })
         const providedPhone = normalizePhone(payload.phone ?? '')
         if (providedPhone.length < 8) return json(400, { error: 'phone required' })
-        const { data: entry, error: fetchErr } = await supabase.from('queue_entries')
-          .select('id, phone, status').eq('id', payload.id).eq('restaurant_id', payload.restaurantId).maybeSingle()
-        if (fetchErr) return json(500, { error: fetchErr.message })
+        const { data: tenantEntry, error: tenantFetchErr } = await supabase.from('queue_entries')
+          .select('id, phone, status, restaurant_id').eq('id', payload.id).eq('restaurant_id', payload.restaurantId).maybeSingle()
+        if (tenantFetchErr) return json(500, { error: tenantFetchErr.message })
+
+        // Compatibility for entries created before queue rows were linked to a tenant.
+        // The full phone must still match before the legacy row can be cancelled.
+        let entry = tenantEntry
+        if (!entry) {
+          const { data: legacyEntry, error: legacyFetchErr } = await supabase.from('queue_entries')
+            .select('id, phone, status, restaurant_id').eq('id', payload.id).is('restaurant_id', null).maybeSingle()
+          if (legacyFetchErr) return json(500, { error: legacyFetchErr.message })
+          entry = legacyEntry
+        }
         if (!entry) return json(404, { error: 'Not found' })
         if (normalizePhone(entry.phone ?? '') !== providedPhone) return json(403, { error: 'Forbidden' })
-        const { error } = await supabase.from('queue_entries')
+        let cancelQuery = supabase.from('queue_entries')
           .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-          .eq('id', payload.id).eq('restaurant_id', payload.restaurantId).eq('status', 'waiting')
+          .eq('id', payload.id)
+          .eq('status', 'waiting')
+        cancelQuery = entry.restaurant_id
+          ? cancelQuery.eq('restaurant_id', payload.restaurantId)
+          : cancelQuery.is('restaurant_id', null)
+        const { error } = await cancelQuery
         if (error) return json(500, { error: error.message })
         return json(200, { ok: true })
       }
