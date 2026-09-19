@@ -192,12 +192,29 @@ function tenantStorageKey(base: string, restaurantId?: string) {
   return restaurantId ? `${base}:${restaurantId}` : base;
 }
 
+function getStoredTenantValue(base: string, restaurantId?: string): string | null {
+  try {
+    const scopedKey = tenantStorageKey(base, restaurantId);
+    const scopedValue = localStorage.getItem(scopedKey);
+    if (scopedValue || !restaurantId) return scopedValue;
+
+    const legacyValue = localStorage.getItem(base);
+    if (!legacyValue) return null;
+
+    localStorage.setItem(scopedKey, legacyValue);
+    localStorage.removeItem(base);
+    return legacyValue;
+  } catch {
+    return null;
+  }
+}
+
 export function saveQueueCode(code: string, restaurantId?: string) {
   localStorage.setItem(tenantStorageKey(QUEUE_CODE_KEY, restaurantId), code);
 }
 
 export function getStoredQueueCode(restaurantId?: string): string | null {
-  return localStorage.getItem(tenantStorageKey(QUEUE_CODE_KEY, restaurantId));
+  return getStoredTenantValue(QUEUE_CODE_KEY, restaurantId);
 }
 
 export function clearQueueCode(restaurantId?: string) {
@@ -209,7 +226,7 @@ export function saveQueuePhone(phone: string, restaurantId?: string) {
 }
 
 export function getStoredQueuePhone(restaurantId?: string): string | null {
-  try { return localStorage.getItem(tenantStorageKey(QUEUE_PHONE_KEY, restaurantId)); } catch { return null; }
+  return getStoredTenantValue(QUEUE_PHONE_KEY, restaurantId);
 }
 
 export function clearQueuePhone(restaurantId?: string) {
