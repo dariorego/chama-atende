@@ -1,37 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { z } from "zod";
 import { callPublicApi } from "@/lib/publicApi";
 import type { QueueEntry } from "./useAdminQueue";
-
-interface QueueStats {
-  lastCode: string | null;
-  waitingCount: number;
-  recentSeated: Array<{ joined_at: string; seated_at: string | null }>;
-}
-
-function nextCodeFrom(lastCode: string | null): string {
-  if (!lastCode) return 'A-001';
-  const match = lastCode.match(/([A-Z])-(\d{3})/);
-  if (!match) return 'A-001';
-  let letter = match[1];
-  let number = parseInt(match[2], 10) + 1;
-  if (number > 999) { letter = String.fromCharCode(letter.charCodeAt(0) + 1); number = 1; }
-  return `${letter}-${number.toString().padStart(3, '0')}`;
-}
-
-function estimatedWaitFrom(stats: QueueStats, position: number): number {
-  if (!stats.recentSeated.length) return position * 10;
-  const totalMinutes = stats.recentSeated.reduce((acc, entry) => {
-    const joined = new Date(entry.joined_at).getTime();
-    const seated = entry.seated_at ? new Date(entry.seated_at).getTime() : joined;
-    return acc + (seated - joined) / 60000;
-  }, 0);
-  const avg = Math.round(totalMinutes / stats.recentSeated.length);
-  return Math.max(5, avg * position);
-}
 
 // Hook to get client's queue entry by code with realtime updates
 export function useClientQueueEntry(queueCode: string | null, restaurantId?: string) {
@@ -87,46 +59,18 @@ export function useJoinQueue(restaurantId?: string) {
     }) => {
       if (!restaurantId) throw new Error('Estabelecimento não identificado');
       const validated = joinQueueSchema.parse(data);
-      try {
-        const { data: entry } = await callPublicApi<{ data: QueueEntry }>('create-queue-entry', {
-          restaurantId,
-          customerName: validated.customer_name,
-          phone: validated.phone,
-          partySize: validated.party_size,
-          notes: validated.notes,
-        });
-        if (entry.restaurant_id !== restaurantId) {
-          throw new Error('A entrada não foi vinculada ao estabelecimento');
-        }
-        if (validated.phone) saveQueuePhone(validated.phone, restaurantId);
-        return entry;
-      } catch (serverError) {
-        // Compatibilidade temporária com instalações self-hosted que ainda
-        // não receberam a ação create-queue-entry. A política RLS exige um
-        // restaurante ativo e impede a criação sem restaurant_id.
-        console.warn('Server queue creation unavailable; using RLS-protected insert.', serverError);
+      const { data: entry } = await callPublicApi<{ data: QueueEntry }>('create-queue-entry', {
+        restaurantId,
+        customerName: validated.customer_name,
+        phone: validated.phone,
+        partySize: validated.party_size,
+        notes: validated.notes,
+      });
+      if (entry.restaurant_id !== restaurantId) {
+        throw new Error('A entrada não foi vinculada ao estabelecimento');
       }
-
-      const stats = await callPublicApi<QueueStats>('get-queue-stats', { restaurantId });
-      const queue_code = nextCodeFrom(stats.lastCode);
-      const position = stats.waitingCount + 1;
-      const estimated_wait_minutes = estimatedWaitFrom(stats, position);
-      const { error } = await supabase
-        .from('queue_entries')
-        .insert({
-          restaurant_id: restaurantId,
-          queue_code,
-          customer_name: validated.customer_name,
-          phone: validated.phone || null,
-          party_size: validated.party_size,
-          notes: validated.notes || null,
-          position,
-          estimated_wait_minutes,
-          status: 'waiting',
-        });
-      if (error) throw error;
       if (validated.phone) saveQueuePhone(validated.phone, restaurantId);
-      return { queue_code, position, estimated_wait_minutes } as unknown as QueueEntry;
+      return entry;
     },
     onSuccess: (entry) => {
       queryClient.invalidateQueries({ queryKey: ['client-queue-entry'] });
